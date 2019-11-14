@@ -1,0 +1,17 @@
+{
+  "directed": true,
+  "nodes": [
+    {
+      "id": "A"
+    },
+    {
+      "id": "B"
+    }
+  ],
+  "edges": [
+    {
+      "source": "A",
+      "target": "B"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+
+set -e
+
+docker-compose \
+-f docker-compose.shared.base-images.yml \
+-f docker-compose.dev.build.yml \
+config > docker-stack.yml
+
+docker-compose -f docker-stack.yml build

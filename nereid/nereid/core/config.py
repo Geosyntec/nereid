@@ -1,0 +1,2 @@
+API_V1_STR = "/api/v1"
+API_LATEST = API_V1_STR

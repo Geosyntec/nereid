@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  
+  nereid:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.nereid
+  
+  celeryworker:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.celeryworker
+
+  nereid-tests:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.tests
+
+  redis:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.redis
