@@ -1,8 +1,6 @@
-
 set -e
 
 docker-compose \
--f docker-compose.shared.base-images.yml \
 -f docker-compose.shared.depends.yml \
 -f docker-compose.dev.build.yml \
 -f docker-compose.dev.ports.yml \

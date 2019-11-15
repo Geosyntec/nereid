@@ -1,4 +1,5 @@
 import os
+import time
 
 from starlette.testclient import TestClient
 
@@ -6,31 +7,41 @@ from nereid.core.config import API_LATEST
 from nereid.main import app
 import nereid.data.test_data
 
-client = TestClient(app)
+
 TEST_PATH = os.path.dirname(nereid.data.test_data.__file__)
 
 
-def test_network_validate_easy():
+class TestNetworkValidationRoutes(object):
+    def setup(self):
 
-    file = "network_validate_isvalid.json"
-    path = os.path.join(TEST_PATH, file)
-    assert os.path.isfile(path)
+        self.test_data_dir = TEST_PATH
+        self.route = API_LATEST + "/network/validate"
+        self.client = TestClient(app)
+        time.sleep(1)
 
-    with open(path, "r") as f:
-        payload = f.read()
+    def get_payload(self, file):
+        path = os.path.join(self.test_data_dir, file)
+        assert os.path.isfile(path)
 
-    response = client.post(API_LATEST + "/network/validate", data=payload)
-    assert response.status_code == 200
+        with open(path, "r") as f:
+            payload = f.read()
+        return payload
 
+    def test_network_validate_easy(self):
 
-def test_network_validate_cycle():
+        file = "network_validate_isvalid.json"
+        payload = self.get_payload(file)
 
-    file = "network_validate_is_invalid_cycle.json"
-    path = os.path.join(TEST_PATH, file)
-    assert os.path.isfile(path)
+        response = self.client.post(self.route, data=payload)
+        rjson = response.json()
+        assert rjson["status"].lower() == "success"
+        assert rjson["result"]["status"].lower() == "valid"
+        assert response.status_code == 200
 
-    with open(path, "r") as f:
-        payload = f.read()
+    def test_network_validate_cycle(self):
 
-    response = client.post(API_LATEST + "/network/validate", data=payload)
-    assert response.status_code != 200
+        file = "network_validate_is_invalid_cycle.json"
+        payload = self.get_payload(file)
+
+        response = self.client.post(self.route, data=payload)
+        assert response.status_code != 200

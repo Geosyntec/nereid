@@ -61,6 +61,9 @@ db.sqlite3
 # redis stuff:
 dump.rdb
 
+# docker stuff:
+docker-stack*
+
 # Flask stuff:
 instance/
 .webassets-cache

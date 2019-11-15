@@ -1,5 +1,0 @@
-version: '3.3'
-# services:
-#   redis:
-#     volumes:
-#       - ./nereid/redis.conf:/usr/local/etc/redis/redis.conf
