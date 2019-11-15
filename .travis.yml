@@ -1,6 +1,7 @@
 env:
-  - COMPOSE_PATH_SEPARATOR=":"
-  - COMPOSE_FILE=docker-compose.shared.depends.yml:docker-compose.dev.ports.yml:docker-compose.dev.build.yml:docker-compose.dev.env.yml
+  global:
+    - COMPOSE_PATH_SEPARATOR=":"
+    - COMPOSE_FILE=docker-compose.shared.depends.yml:docker-compose.dev.ports.yml:docker-compose.dev.build.yml:docker-compose.dev.env.yml
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
