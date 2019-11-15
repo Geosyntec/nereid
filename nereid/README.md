@@ -1,3 +1,10 @@
+## Nereid CI & Coverage
+
+https://travis-ci.org/Geosyntec/nereid
+
+https://codecov.io/gh/Geosyntec/nereid
+
+
 ## Quick Start
 
 First, ensure you are in the right directory by `cd`-ing into the top level directory of this repo, which contains many docker-compose files (i.e., one level up from this one).
