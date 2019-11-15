@@ -1,0 +1,42 @@
+name: nereid_dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+
+# business logic
+  - networkx=2.4.*
+  - numpy=1.17.*
+  - pandas=0.24.*
+  - scipy=1.2.*
+
+# web
+  - fastapi=0.42.*
+  - ujson=1.35
+  - uvicorn=0.9.*  
+  - starlette=0.12.*
+  - redis
+  - redis-py
+  - celery=4.4.*
+  - pydantic=0.32.*
+  - jinja2=2.10.*
+  - requests
+
+# viz
+  - matplotlib=3.1.*
+  - graphviz=2.38.*
+  - pydot=1.4.*
+
+# tests
+  - pytest
+  - mypy
+  - black
+
+# dev
+  - jupyter
+  - tqdm
+
+# pip
+  - pip:
+    # required silence annoying warnings from fastapi
+    - email-validator

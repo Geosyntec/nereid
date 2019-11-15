@@ -1,0 +1,25 @@
+FROM python:3.7
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends graphviz \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY ./nereid /nereid/nereid
+ENV PYTHONPATH=/nereid
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+WORKDIR /nereid
+
+COPY requirements_tests.txt /requirements_tests.txt
+RUN pip install -r /requirements_tests.txt
+
+COPY ./scripts/run-tests.sh /run-tests.sh
+RUN chmod +x /run-tests.sh
+
+# This will make the container wait, doing nothing, but alive
+CMD ["bash", "-c", "while true; do sleep 1; done"]
+
+EXPOSE 8888
+
+# Afterwards you can exec a command /run-tests.sh in the live container, like:
+# docker exec -it nereid-tests /run-tests.sh
