@@ -1,5 +1,5 @@
 env:
-  - COMPOSE_PATH_SEPARATOR=:
+  - COMPOSE_PATH_SEPARATOR=":"
   - COMPOSE_FILE=docker-compose.shared.depends.yml:docker-compose.dev.ports.yml:docker-compose.dev.build.yml:docker-compose.dev.env.yml
 
 before_install:
@@ -15,7 +15,7 @@ before_install:
 
 script:
   - docker-compose exec nereid-tests pytest -v
-  
+
 after_success:
   - docker-compose exec nereid-tests coverage run -m pytest
   - docker-compose exec nereid-tests coverage report -m
