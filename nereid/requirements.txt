@@ -10,3 +10,4 @@ celery==4.3.*
 jinja2==2.10.*
 redis==3.3.*
 email-validator
+ujson=1.35
