@@ -18,9 +18,11 @@ script:
   - docker-compose exec nereid-tests pytest -v
 
 after_success:
+  - ci_env=`bash <(curl -s https://codecov.io/env)`
   - docker-compose exec nereid-tests coverage run -m pytest
   - docker-compose exec nereid-tests coverage report -m
-  - docker-compose exec nereid-tests codecov
+  - docker-compose exec nereid-tests $ci_env
+  - docker-compose exec nereid-tests bash <(curl -s https://codecov.io/bash)
 
 
 
