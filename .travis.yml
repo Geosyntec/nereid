@@ -19,6 +19,6 @@ script:
 
 after_success:
   - docker-compose exec nereid-tests coverage run -m pytest
-  - docker-compose exec nereid-tests coverage report -m
-  - docker-compose exec nereid-tests cat /nereid/.coverage > .coverage
+  - docker-compose exec nereid-tests coverage report -m > coverage.txt
+  - docker-compose exec nereid-tests cat /nereid/coverage.txt > coverage.txt
   - bash <(curl -s https://codecov.io/bash)
