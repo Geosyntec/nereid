@@ -21,8 +21,3 @@ after_success:
   - docker-compose exec nereid-tests coverage run -m pytest
   - docker-compose exec nereid-tests coverage report -m
   - docker-compose exec nereid-tests codecov --commit=$TRAVIS_COMMIT
-
-
-
-
-
