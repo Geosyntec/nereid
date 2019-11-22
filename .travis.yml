@@ -1,0 +1,26 @@
+env:
+  global:
+    - COMPOSE_PATH_SEPARATOR=":"
+    - COMPOSE_FILE=docker-compose.shared.depends.yml:docker-compose.dev.ports.yml:docker-compose.dev.build.yml:docker-compose.dev.env.yml
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker-compose --version
+  - chmod +x ./scripts/build_dev.sh
+  - ./scripts/build_dev.sh
+  - docker-compose up -d
+  - docker-compose ps
+
+script:
+  - docker-compose exec nereid-tests pytest -v
+
+after_success:
+  - docker-compose exec nereid-tests coverage run -m pytest
+  - docker-compose exec nereid-tests coverage report -m 
+  - docker-compose exec nereid-tests coverage xml
+  - docker-compose exec nereid-tests cat /nereid/coverage.xml > coverage.xml
+  - docker-compose exec nereid-tests cat /nereid/.coverage > .coverage
+  - bash <(curl -s https://codecov.io/bash)

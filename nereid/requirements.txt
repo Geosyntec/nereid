@@ -1,0 +1,13 @@
+numpy==1.17.*
+pandas==0.24.*
+scipy==1.2.*
+networkx==2.4.*
+pydot==1.4.*
+graphviz==0.13.*
+matplotlib==3.1.*
+fastapi==0.42.*
+celery==4.3.*
+jinja2==2.10.*
+redis==3.3.*
+email-validator
+ujson==1.35

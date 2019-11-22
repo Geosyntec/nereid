@@ -1,3 +1,5 @@
+_no_git*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -56,6 +58,12 @@ coverage.xml
 local_settings.py
 db.sqlite3
 
+# redis stuff:
+dump.rdb
+
+# docker stuff:
+docker-stack*
+
 # Flask stuff:
 instance/
 .webassets-cache
@@ -102,3 +110,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# mac os
+*.DS_Store
