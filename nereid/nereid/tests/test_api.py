@@ -29,14 +29,15 @@ class TestNetworkValidationRoutes(object):
 
     def test_network_validate_easy(self):
 
-        file = "network_validate_isvalid.json"
+        file = "network_validate_is_valid.json"
         payload = self.get_payload(file)
 
         response = self.client.post(self.route, data=payload)
+        assert response.status_code == 200
+
         rjson = response.json()
         assert rjson["status"].lower() == "success"
         assert rjson["result"]["status"].lower() == "valid"
-        assert response.status_code == 200
 
     def test_network_validate_cycle(self):
 
@@ -44,4 +45,8 @@ class TestNetworkValidationRoutes(object):
         payload = self.get_payload(file)
 
         response = self.client.post(self.route, data=payload)
-        assert response.status_code != 200
+        assert response.status_code == 200
+
+        rjson = response.json()
+        assert rjson["status"].lower() == "success"
+        assert rjson["result"]["status"].lower() == "invalid"
