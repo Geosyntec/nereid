@@ -10,7 +10,7 @@ from nereid.api.api_v1.api import api_router
 from nereid.core import config
 
 app = FastAPI(title="nereid", docs_url=None, redoc_url=None)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="nereid/static"), name="static")
 
 
 @app.get("/docs", include_in_schema=False)
