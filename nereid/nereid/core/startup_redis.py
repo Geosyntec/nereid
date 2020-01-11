@@ -23,7 +23,7 @@ def load_reference_data():
     redis_cache.mset(dct)
 
 
-def init(): # pragma: no cover
+def init():  # pragma: no cover
     print("nereid-init-redis: initializing reference data cache...")
 
     for i in range(10):
@@ -43,5 +43,5 @@ def init(): # pragma: no cover
     print("nereid-init-redis: reference data initialized.")
 
 
-if __name__ == "__main__": # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     init()

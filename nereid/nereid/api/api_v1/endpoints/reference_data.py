@@ -12,10 +12,12 @@ router = APIRouter()
 
 class ReferenceData(BaseModel):
     path: str
+    state: str
+    region: str
     data: Any
 
 
-@router.get("/reference_data/refresh", tags=["reference_data"],)
+@router.get("/reference_data/refresh", tags=["reference_data"])
 async def refresh_data():
 
     status = "failed"
@@ -27,26 +29,26 @@ async def refresh_data():
     return dict(status=status)
 
 
-@router.get(
-    "/reference_data/{filename}", tags=["reference_data"], response_model=ReferenceData
-)
-async def get_bmp_performance_data(filename: str, state: str = 'state', region: str = 'region'):
+@router.get("/reference_data", tags=["reference_data"], response_model=ReferenceData)
+async def get_bmp_performance_data(
+    state: str = "state", region: str = "region", filename: str = ""
+):
 
-    dirname = 'project_data'
+    dirname = "project_data"
 
-    if state == 'state' and region == 'region':
-        dirname = 'default_data'
+    if state == "state" and region == "region":
+        dirname = "default_data"
 
     key = rf"nereid/data/{dirname}/{state}/{region}/{filename}"
 
     json_blob = redis_cache.get(key)
 
     if json_blob is None:
-        detail = f"state '{state}', region '{region}', or filename '{filename}' not found."
+        detail = (
+            f"state '{state}', region '{region}', or filename '{filename}' not found."
+        )
         raise HTTPException(status_code=404, detail=detail)
 
     data = json.loads(json_blob)
 
-    return ReferenceData(path=key, data=data)
-
-
+    return ReferenceData(path=key, state=state, region=region, data=data)
