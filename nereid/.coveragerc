@@ -5,3 +5,10 @@ branch = True
 omit =
     nereid/tests/*
     nereid/data/*
+
+[report]
+include = nereid/*.py
+ignore_errors = True
+omit =
+    nereid/tests/*
+    nereid/data/*
