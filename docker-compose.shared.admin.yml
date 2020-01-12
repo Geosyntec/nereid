@@ -1,4 +1,7 @@
 version: '3.7'
 services:
   flower:
-    image: mher/flower
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: flower
