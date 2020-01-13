@@ -1,6 +1,22 @@
+language: minimal
+dist: xenial
+
 env:
   global:
     - COMPOSE_FILE=docker-stack.yml
+
+matrix:
+  include:
+    - name: tests
+      env: 
+        - BUILD_SCRIPT_PATH=./scripts/build_dev.sh
+        - COVERAGE=true
+    - name: edge
+      env: 
+        - BUILD_SCRIPT_PATH=./scripts/build_edge.sh
+        - COVERAGE=false
+  allow_failures:
+    - name: edge
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -8,8 +24,10 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker-compose --version
-  - chmod +x ./scripts/build_dev.sh
-  - ./scripts/build_dev.sh
+
+install: 
+  - chmod +x ${BUILD_SCRIPT_PATH}
+  - bash ${BUILD_SCRIPT_PATH}
   - docker-compose up -d
   - docker-compose ps
 
@@ -17,9 +35,11 @@ script:
   - docker-compose exec nereid-tests pytest -v
 
 after_success:
-  - docker-compose exec nereid-tests coverage run -m pytest
-  - docker-compose exec nereid-tests coverage report -m 
-  - docker-compose exec nereid-tests coverage xml
-  - docker-compose exec nereid-tests cat /nereid/coverage.xml > coverage.xml
-  - docker-compose exec nereid-tests cat /nereid/.coverage > .coverage
-  - bash <(curl -s https://codecov.io/bash)
+  - if [ ${COVERAGE} = true ]; then
+      docker-compose exec nereid-tests coverage run -m pytest;
+      docker-compose exec nereid-tests coverage report -m;
+      docker-compose exec nereid-tests coverage xml;
+      docker-compose exec nereid-tests cat /nereid/coverage.xml > coverage.xml;
+      docker-compose exec nereid-tests cat /nereid/.coverage > .coverage;
+      bash <(curl -s https://codecov.io/bash);
+    fi

@@ -92,3 +92,20 @@ RUN chmod +x /run-tests.sh
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 EXPOSE 8888
+
+
+FROM python:3.7 as nereid-edge
+COPY requirements_edge.txt /requirements_edge.txt
+RUN pip install -r requirements_edge.txt
+COPY ./nereid /nereid/nereid
+WORKDIR /nereid
+ENV PYTHONPATH=/nereid
+
+FROM nereid-edge as nereid-edge-tests
+CMD ["bash", "-c", "while true; do sleep 1; done"]
+
+FROM nereid-edge as celeryworker-edge
+ENV C_FORCE_ROOT=1
+COPY ./scripts/run-worker.sh /run-worker.sh
+RUN chmod +x /run-worker.sh
+CMD ["bash", "/run-worker.sh"]
