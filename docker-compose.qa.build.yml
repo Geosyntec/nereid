@@ -5,22 +5,26 @@ services:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
-      target: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid
+      image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid
+      target: nereid
   
   celeryworker:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
-      target: sitkacontainers.azurecr.io/ocstormwatertools/nereid_celeryworker
+      image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_celeryworker
+      target: celeryworker
 
   nereid-tests:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
-      target: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid-tests
+      image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid-tests
+      target: nereid-tests
 
   redis:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
-      target: sitkacontainers.azurecr.io/ocstormwatertools/nereid_redis
+      image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_redis
+      target: redis
