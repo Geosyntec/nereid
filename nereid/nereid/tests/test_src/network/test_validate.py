@@ -34,3 +34,16 @@ def test_validate_network(edgelist, isvalid, result):
     g = nx.from_edgelist(edgelist, create_using=nx.MultiDiGraph)
     assert isvalid == is_valid(g)
     assert result == validate_network(g)
+
+
+@pytest.mark.parametrize(
+    "g, expected",
+    [  # multiple out connections
+        (nx.gnc_graph(10, seed=42), False),
+        # multiple out connections, cycles, duplicated edges
+        (nx.random_k_out_graph(10, 2, 1, seed=42), False),
+        (nx.gn_graph(10, seed=42), True),
+    ],
+)
+def test_isvalid(g, expected):
+    assert expected == is_valid(g)
