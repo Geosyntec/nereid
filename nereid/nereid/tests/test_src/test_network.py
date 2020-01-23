@@ -1,7 +1,7 @@
 import pytest
 import networkx as nx
 
-from nereid.network.network_validate import is_valid, validate_network
+from nereid.src.network.validate import is_valid, validate_network
 
 
 @pytest.mark.parametrize(

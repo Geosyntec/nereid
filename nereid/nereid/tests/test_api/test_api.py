@@ -1,14 +1,13 @@
-import os
-import time
+from pathlib import Path
 
 from starlette.testclient import TestClient
 
 from nereid.core.config import API_LATEST
 from nereid.main import app
-import nereid.data.test_data
+import nereid.tests.test_data
 
 
-TEST_PATH = os.path.dirname(nereid.data.test_data.__file__)
+TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
 
 
 class TestNetworkValidationRoutes(object):
@@ -17,15 +16,12 @@ class TestNetworkValidationRoutes(object):
         self.test_data_dir = TEST_PATH
         self.route = API_LATEST + "/network/validate"
         self.client = TestClient(app)
-        time.sleep(1)
 
     def get_payload(self, file):
-        path = os.path.join(self.test_data_dir, file)
-        assert os.path.isfile(path)
+        path = self.test_data_dir / file
+        assert path.is_file()
 
-        with open(path, "r") as f:
-            payload = f.read()
-        return payload
+        return path.read_text()
 
     def test_network_validate_easy(self):
 
