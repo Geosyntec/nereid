@@ -13,12 +13,12 @@
 │   │   │   └───templates
 │   │   ├───core
 │   │   ├───data
-│   │   │	├───project_data (This folder is where the '_project_data' contents are mounted.)
-│   │   │	├───default_data
-│   │   │	│   │   README.md (Learn how to structure your own project data directory by reading this file.)
-│   │   │	│   │
-│   │   │	│   └───state
-│   │   │	│       └───region
+│   │   │   ├───project_data (This folder is where the '_project_data' contents are mounted.)
+│   │   │   ├───default_data
+│   │   │   │   │   README.md (Learn how to structure your own project data directory by reading this file.)
+│   │   │   │   │
+│   │   │   │   └───state
+│   │   │   │       └───region
 │   │   │   │       
 │   │   │   └───test_data
 │   │   ├───network
