@@ -33,6 +33,7 @@ install:
 
 script:
   - docker-compose exec nereid-tests pytest -v
+  - docker-compose exec nereid-tests mypy -p nereid
 
 after_success:
   - if [ ${COVERAGE} = true ]; then
