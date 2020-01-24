@@ -90,6 +90,7 @@ RUN pip install \
   rm -rf /tsts/*
 COPY ./scripts/run-tests.sh /run-tests.sh
 COPY .coveragerc /nereid/.coveragerc
+COPY mypy.ini /nereid/mypy.ini
 RUN chmod +x /run-tests.sh
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
