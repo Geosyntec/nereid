@@ -16,3 +16,4 @@ coverage
 codecov
 requests
 mypy
+pyyaml
