@@ -10,16 +10,6 @@ class TestReferenceData(object):
         self.route = API_LATEST + "/reference_data"
         self.client = TestClient(app)
 
-    def test_refresh(self):
-        endpoint = "refresh"
-        url = "/".join([self.route, endpoint])
-
-        response = self.client.get(url)
-        assert response.status_code == 200
-        rjson = response.json()
-        assert "status" in rjson
-        assert rjson["status"] == "success"
-
     @pytest.mark.parametrize(
         "query, should_work",
         [
@@ -39,8 +29,13 @@ class TestReferenceData(object):
         if should_work:
             assert response.status_code == 200
             rjson = response.json()
-            assert "path" in rjson
-            assert "schema" in rjson["data"]
-            assert "data" in rjson["data"]
+            assert rjson["status"] == "success"
+
+            rjsondata = rjson["data"]
+            assert "state" in rjsondata
+            assert "region" in rjsondata
+            assert "schema" in rjsondata["filedata"]
+            assert "data" in rjsondata["filedata"]
+
         else:
             assert response.status_code == 404

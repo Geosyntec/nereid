@@ -1,7 +1,11 @@
 import networkx as nx
 from nereid.core.celery_app import celery_app
 
-from nereid.src.network.tasks import network_subgraphs, validate_network
+from nereid.src.network.tasks import (
+    validate_network,
+    network_subgraphs,
+    render_subgraph_svg,
+)
 
 
 @celery_app.task(acks_late=True, track_started=True)
@@ -12,3 +16,11 @@ def background_validate_network_from_dict(graph):
 @celery_app.task(acks_late=True, track_started=True)
 def background_network_subgraphs(graph, nodes):
     return network_subgraphs(graph, nodes)
+
+
+@celery_app.task(acks_late=True, track_started=True)
+def background_render_subgraph_svg(task_result):
+    svg = render_subgraph_svg(task_result)
+    if isinstance(svg, bytes):
+        svg = svg.decode("utf-8")
+    return svg

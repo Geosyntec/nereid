@@ -29,3 +29,14 @@ def graph_factory(graph: nx.Graph):
         )
 
     return G
+
+
+def nxGraph_to_dict(g):
+    result = nx.node_link_data(g, {"link": "edges"})
+    for dct in result["nodes"]:
+        dct["id"] = str(dct["id"])
+
+    for dct in result["edges"]:
+        dct["source"] = str(dct["source"])
+        dct["target"] = str(dct["target"])
+    return result

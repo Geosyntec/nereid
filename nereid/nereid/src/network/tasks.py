@@ -2,9 +2,32 @@ from typing import Dict, List, Any
 
 import networkx as nx
 
+from nereid.core.cache import cache_decorator
+
 from . import validate
 from .utils import graph_factory
 from .algorithms import get_subset
+from .render import render_subgraphs, fig_to_image
+
+
+def validate_network(graph: Dict) -> Dict:
+    G = graph_factory(graph)
+
+    isvalid = validate.is_valid(G)
+
+    if isvalid:
+        return {"isvalid": isvalid}
+
+    else:
+        res = validate.validate_network(G)
+        simplecycles, findcycles, multiple_outs, duplicate_edges = res
+        return {
+            "isvalid": isvalid,
+            "node_cycles": simplecycles,
+            "edge_cycles": findcycles,
+            "multiple_out_edges": multiple_outs,
+            "duplicate_edges": duplicate_edges,
+        }
 
 
 def network_subgraphs(
@@ -29,19 +52,16 @@ def network_subgraphs(
     return result
 
 
-def validate_network(graph: Dict) -> Dict:
-    G = graph_factory(graph)
-    res = validate.validate_network(G)
+@cache_decorator(ex=3600 * 24)  # expires in 24 hours
+def render_subgraph_svg(task_result: dict) -> str:
 
-    if all([len(_) == 0 for _ in res]):
-        return {"status": "valid"}
+    g = graph_factory(task_result["graph"])
 
-    else:
-        simplecycles, findcycles, multiple_outs, duplicate_edges = res
-        return {
-            "status": "invalid",
-            "node_cycles": simplecycles,
-            "edge_cycles": findcycles,
-            "multiple_out_edges": multiple_outs,
-            "duplicate_edges": duplicate_edges,
-        }
+    fig = render_subgraphs(
+        g, task_result["requested_nodes"], task_result["subgraph_nodes"]
+    )
+
+    svg_bin = fig_to_image(fig)
+    svg = svg_bin.read().decode("utf-8")
+
+    return svg

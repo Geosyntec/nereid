@@ -35,6 +35,9 @@ class SubgraphNodes(BaseModel):
     subgraph_nodes: List[Nodes]
 
 
-class SubgraphRequest(BaseModel):
-    graph: Graph
-    nodes: Nodes  # List[Node]
+class NetworkValidation(BaseModel):
+    isvalid: bool
+    node_cycles: Optional[List]
+    edge_cycles: Optional[List]
+    multiple_out_edges: Optional[List]
+    duplicate_edges: Optional[List]
