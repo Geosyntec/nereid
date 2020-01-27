@@ -24,14 +24,14 @@ def get_request_context(
         else:
             datadir = basepath / context.get("project_data_directory", "")
 
-    data_path = Path(datadir) / state / region / "config.yml"
+    data_path = Path(datadir) / state / region
 
     if not data_path.exists():
         return context
 
     request_context = copy.deepcopy(context)
 
-    request_context.update(load_cfg(data_path))
+    request_context.update(load_cfg(data_path / "config.yml"))
     request_context["data_path"] = str(data_path)
 
     return request_context
