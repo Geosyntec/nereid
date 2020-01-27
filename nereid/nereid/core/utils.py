@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 import copy
 from pathlib import Path
 
@@ -11,7 +11,7 @@ def get_request_context(
     region: str,
     datadir: Optional[str] = None,
     context: Optional[dict] = None,
-):
+) -> Dict[str, Any]:
 
     if context is None:
         context = APP_CONTEXT
@@ -24,14 +24,14 @@ def get_request_context(
         else:
             datadir = basepath / context.get("project_data_directory", "")
 
-    data_path = Path(datadir) / state / region
+    data_path = Path(datadir) / state / region / "config.yml"
 
     if not data_path.exists():
         return context
 
     request_context = copy.deepcopy(context)
 
-    request_context.update(load_cfg(Path(data_path) / "config.yml"))
+    request_context.update(load_cfg(data_path))
     request_context["data_path"] = str(data_path)
 
     return request_context
