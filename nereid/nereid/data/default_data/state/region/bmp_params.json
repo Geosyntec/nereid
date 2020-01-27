@@ -1,0 +1,96 @@
+{
+  "schema": {
+    "fields": [
+      {
+        "name": "bmp",
+        "type": "string"
+      },
+      {
+        "name": "pollutant",
+        "type": "string"
+      },
+      {
+        "name": "unit",
+        "type": "string"
+      },
+      {
+        "name": "N",
+        "type": "integer"
+      },
+      {
+        "name": "ND_infl",
+        "type": "integer"
+      },
+      {
+        "name": "ND_effl",
+        "type": "integer"
+      },
+      {
+        "name": "dl",
+        "type": "number"
+      },
+      {
+        "name": "A",
+        "type": "number"
+      },
+      {
+        "name": "B",
+        "type": "number"
+      },
+      {
+        "name": "e1",
+        "type": "number"
+      },
+      {
+        "name": "C",
+        "type": "number"
+      },
+      {
+        "name": "D",
+        "type": "number"
+      },
+      {
+        "name": "E",
+        "type": "number"
+      },
+      {
+        "name": "e2",
+        "type": "number"
+      },
+      {
+        "name": "Low_Slope",
+        "type": "number"
+      },
+      {
+        "name": "High_Slope",
+        "type": "number"
+      },
+      {
+        "name": "MAD",
+        "type": "number"
+      }
+    ],
+    "pandas_version": "0.20.0"
+  },
+  "data": [
+    {
+      "bmp": "Biofiltration/Bioretention",
+      "pollutant": "Total Nitrogen",
+      "unit": "mg/L",
+      "N": 240,
+      "ND_infl": 2,
+      "ND_effl": 3,
+      "dl": 1.7000000477,
+      "A": 1.8728950828,
+      "B": null,
+      "e1": 0.1171972864,
+      "C": 0.7688208386,
+      "D": null,
+      "E": null,
+      "e2": null,
+      "Low_Slope": 0.4763452842,
+      "High_Slope": 1.0909578468,
+      "MAD": 1.1055511058
+    }
+  ]
+}

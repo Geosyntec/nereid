@@ -1,0 +1,3 @@
+data_path: nereid/data
+default_data_directory: default_data
+project_data_directory: project_data

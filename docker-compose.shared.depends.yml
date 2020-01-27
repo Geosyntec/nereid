@@ -6,3 +6,7 @@ services:
   celeryworker:
     depends_on: 
       - redis
+  flower:
+    depends_on:
+      - redis
+      - celeryworker
