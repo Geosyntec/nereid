@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 
 import networkx as nx
 
@@ -10,34 +10,32 @@ from .algorithms import get_subset
 from .render import render_subgraphs, fig_to_image
 
 
-def validate_network(graph: Dict) -> Dict:
+def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
     G = graph_factory(graph)
 
     isvalid = validate.is_valid(G)
 
+    result: Dict[str, Union[bool, List]] = {"isvalid": isvalid}
+
     if isvalid:
-        return {"isvalid": isvalid}
+        return result
 
     else:
-        res = validate.validate_network(G)
-        simplecycles, findcycles, multiple_outs, duplicate_edges = res
-        return {
-            "isvalid": isvalid,
-            "node_cycles": simplecycles,
-            "edge_cycles": findcycles,
-            "multiple_out_edges": multiple_outs,
-            "duplicate_edges": duplicate_edges,
-        }
+        _keys = ["node_cycles", "edge_cycles", "multiple_out_edges", "duplicate_edges"]
+        for key, value in zip(_keys, validate.validate_network(G)):
+            result[key] = value
+
+        return result
 
 
 def network_subgraphs(
     graph: Dict[str, Any], nodes: List[Dict[str, Any]]
 ) -> Dict[str, Any]:
 
-    nodelist = [node["id"] for node in nodes]
+    node_ids = [node["id"] for node in nodes]
 
     G = graph_factory(graph)
-    subset = get_subset(G, nodelist)
+    subset = get_subset(G, node_ids)
     g = G.subgraph(subset)
 
     subgraph_nodes = [

@@ -9,4 +9,3 @@ services:
   nereid-tests:
     volumes:
       - ./nereid/nereid:/nereid/nereid
-      

@@ -19,10 +19,10 @@ async def get_bmp_performance_data(
 
     filepath = ""
     req_ctxt = get_request_context(state=state, region=region)
-    filepath = f"{req_ctxt['data_path']}//{filename}.json"
+    filepath = f"{req_ctxt['data_path']}/{filename}.json"
 
     try:
-        data = load_json(filepath)
+        filedata = load_json(filepath)
 
     except FileNotFoundError as e:
         detail = f"state '{state}', region '{region}', or filename '{filename}' not found. {filepath}"
@@ -30,5 +30,5 @@ async def get_bmp_performance_data(
 
     return ReferenceDataResponse(
         status="success",
-        data=dict(state=state, region=region, file=filename, filedata=data),
+        data=dict(state=state, region=region, file=filename, filedata=filedata),
     )

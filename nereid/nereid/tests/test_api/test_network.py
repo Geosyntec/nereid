@@ -53,8 +53,12 @@ class TestNetworkValidationRoutes(object):
         assert rjson["data"]["isvalid"] == False
 
     @pytest.mark.parametrize("N", [10, 100, 1000, 5000, 15000])
-    def test_long_validation(self, N):
-        g = nx.gnc_graph(N, seed=42)
+    @pytest.mark.parametrize(
+        "nxGraph, gkwargs, expect",
+        [(nx.gnc_graph, {}, False), (nx.gnr_graph, {"p": 0.05}, True)],
+    )
+    def test_long_validation(self, N, nxGraph, gkwargs, expect):
+        g = nxGraph(N, seed=42, **gkwargs)
         payload = json.dumps(nxGraph_to_dict(g))
 
         start = time()
@@ -67,7 +71,7 @@ class TestNetworkValidationRoutes(object):
 
         rjson = response.json()
         if rjson["status"].lower() == "success":
-            assert rjson["data"]["isvalid"] == False
+            assert rjson["data"]["isvalid"] == expect
         else:
             assert rjson["status"].lower() in ["started", "pending", "success"]
             assert rjson["result_route"] is not None
