@@ -26,10 +26,6 @@ def validate_network(G: nx.Graph, **kwargs) -> Tuple[List, List, List, List]:
     return simplecycles, findcycles, multiple_outs, duplicate_edges
 
 
-def deprecated_is_valid(G: nx.Graph) -> bool:  # pragma no cover
-    return all([len(_) == 0 for _ in validate_network(G)])
-
-
 def is_valid(G: nx.Graph) -> bool:
     try:
         # catch cycles

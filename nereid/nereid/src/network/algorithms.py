@@ -32,7 +32,7 @@ def _recursive_get_subset(
     return subset
 
 
-def get_subset(g: nx.DiGraph, nodes: Union[Set[str], List[str]]) -> Set[str]:
+def get_subset(g: nx.DiGraph, nodes: Union[str, Set[str], List[str]]) -> Set[str]:
     if isinstance(nodes, (set, list)):
         result = set()
         for n in nodes:

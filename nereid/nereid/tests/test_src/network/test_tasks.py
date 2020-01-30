@@ -33,15 +33,22 @@ from nereid.src.network.tasks import (
     ],
 )
 def test_validate_network(edgelist, isvalid, exp):
+    expected_result = [isvalid] + list(exp)
 
     g = {"edges": [{"source": s, "target": t} for s, t in edgelist], "directed": True}
 
     result = validate_network(g)
 
-    if isvalid:
-        assert result["isvalid"] == True
-    else:
-        assert result["isvalid"] == False
+    keys = [
+        "isvalid",
+        "node_cycles",
+        "edge_cycles",
+        "multiple_out_edges",
+        "duplicate_edges",
+    ]
+
+    for key, value in zip(keys, expected_result):
+        result[key] = value
 
 
 @pytest.fixture

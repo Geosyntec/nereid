@@ -1,10 +1,10 @@
+from typing import Dict, Any
 import json
 import networkx as nx
 
 
-def graph_factory(graph: nx.Graph):
+def graph_factory(graph: Dict[str, Any]):
     """
-
     Parameters
     ----------
     graph : dict

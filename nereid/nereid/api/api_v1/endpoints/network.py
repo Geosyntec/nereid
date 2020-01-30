@@ -11,8 +11,9 @@ from starlette.requests import Request
 from starlette.responses import FileResponse
 from starlette.templating import Jinja2Templates
 
-import celery
 from celery.result import AsyncResult
+
+from nereid.api.utils import wait_a_sec_and_see_if_we_can_return_some_data
 
 from nereid.api.api_v1.models import (
     JSONAPIResponse,
@@ -60,10 +61,12 @@ async def validate_network(
     logger.debug(f"elapsed time submit task: {end1-start1:.4f}")
 
     start2 = time()
-    try:
-        _ = task.get(timeout=0.2)
-    except celery.exceptions.TimeoutError:
-        pass
+
+    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
+    # try:
+    #     _ = task.get(timeout=0.2)
+    # except celery.exceptions.TimeoutError:
+    #     pass
     end2 = time()
     logger.debug(f"elapsed time try to get task: {end2-start2:.4f}")
     logger.debug(f"cumul time: {end2-start1:.4f}")
@@ -149,10 +152,7 @@ async def subgraph_network(
         args=(graph.dict(), jsonable_encoder(nodes))
     )
 
-    try:
-        _ = task.get(timeout=0.2)
-    except celery.exceptions.TimeoutError:
-        pass
+    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
 
     response = dict(task_id=task.task_id, status=task.status)
 
@@ -205,11 +205,7 @@ async def get_subgraph_network_as_img(
         if media_type == "svg":
 
             render_task = background_render_subgraph_svg.delay(result)
-
-            try:
-                _ = render_task.get(timeout=0.1)
-            except celery.exceptions.TimeoutError:
-                pass
+            _ = wait_a_sec_and_see_if_we_can_return_some_data(render_task, timeout=0.1)
 
             svgresponse = dict(task_id=render_task.task_id, status=render_task.status)
 

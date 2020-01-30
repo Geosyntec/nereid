@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 redis_cache = redis.Redis(host="redis", port=6379, db=9)
 
 try:
+    # It's ok if redis isn't up, we'll fall back to an lru_cache if we can only
+    # use the main process. If redis is available, let's flush the cache to start
+    # fresh.
     if redis_cache.ping():
         redis_cache.flushdb()
         logger.debug("flushed redis function cache")
@@ -56,6 +59,15 @@ def lru_cache(**rkwargs):
 
 
 def get_cache_decorator():
+    """fetch a cache decorator for functions. If redis is up,
+    use that, else use lru_cache.
+
+    The point of the lru fallback is to make development easier.
+    In production and even in CI this should use the redis cache.
+    Sometimes it's nice for things that can be separate to be
+    separate; like during development, local testing, and benchmarking.
+
+    """
     try:
         if redis_cache.ping():
             return rcache
