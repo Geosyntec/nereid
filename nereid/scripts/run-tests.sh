@@ -1,1 +1,2 @@
-pytest -v 
+pytest -v
+mypy -p nereid
