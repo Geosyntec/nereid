@@ -60,6 +60,6 @@ def render_subgraph_svg(task_result: dict) -> str:
     )
 
     svg_bin = fig_to_image(fig)
-    svg = svg_bin.read().decode("utf-8")
+    svg = svg_bin.read()
 
     return svg
