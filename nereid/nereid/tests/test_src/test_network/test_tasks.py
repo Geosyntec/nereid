@@ -106,6 +106,4 @@ def test_network_subgraphs(subgraph_request):
 
 def test_render_subgraph_svg(subgraph_result):
     result = render_subgraph_svg(subgraph_result)
-    if isinstance(result, bytes):
-        result = result.decode()
-    assert "svg" in result
+    assert b"svg" in result

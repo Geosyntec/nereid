@@ -6,3 +6,4 @@ branch = True
 [report]
 include = nereid/*.py
 ignore_errors = True
+omit = nereid/data/*
