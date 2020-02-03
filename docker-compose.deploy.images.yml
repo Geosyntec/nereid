@@ -1,12 +1,12 @@
 version: '3.7'
 services:
   nereid:
-    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid:${NEREID_IMAGE_TAG-latest:-latest}
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid:${NEREID_IMAGE_TAG:-latest}
   celeryworker:
-    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_celeryworker:${NEREID_IMAGE_TAG-latest:-latest}
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_celeryworker:${NEREID_IMAGE_TAG:-latest}
   nereid-tests:
-    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid-tests:${NEREID_IMAGE_TAG-latest:-latest}
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid-tests:${NEREID_IMAGE_TAG:-latest}
   redis:
-    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_redis:${NEREID_IMAGE_TAG-latest:-latest}
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_redis:${NEREID_IMAGE_TAG:-latest}
   flower:
-    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_flower:${NEREID_IMAGE_TAG-latest:-latest}
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_flower:${NEREID_IMAGE_TAG:-latest}
