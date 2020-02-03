@@ -1,5 +1,10 @@
 version: '3.7'
 services:
+  nereid:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: nereid
   celeryworker:
     build:
       context: ./nereid
@@ -15,8 +20,8 @@ services:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: redis
-  nereid:
+  flower:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
-      target: nereid
+      target: flower

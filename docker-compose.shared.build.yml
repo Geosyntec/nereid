@@ -20,3 +20,8 @@ services:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: redis
+  flower:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: flower
