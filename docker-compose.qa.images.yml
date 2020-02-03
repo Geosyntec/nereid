@@ -1,0 +1,14 @@
+version: '3.4'
+services:
+  
+  nereid:
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid
+      
+  celeryworker:
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_celeryworker
+    
+  nereid-tests:
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_nereid-tests
+
+  redis:
+    image: sitkacontainers.azurecr.io/ocstormwatertools/nereid_redis
