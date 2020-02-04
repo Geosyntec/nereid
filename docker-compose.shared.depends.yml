@@ -1,12 +1,5 @@
-version: '3.7'
+version: '3.4'
 services:
-  nereid:
-    depends_on:
-      - redis
   celeryworker:
     depends_on: 
       - redis
-  flower:
-    depends_on:
-      - redis
-      - celeryworker

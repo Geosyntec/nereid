@@ -1,20 +1,24 @@
-version: '3.7'
+version: '3.4'
 services:
+  
   nereid:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: nereid
+  
   celeryworker:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: celeryworker
+
   nereid-tests:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: nereid-tests
+
   redis:
     build:
       context: ./nereid

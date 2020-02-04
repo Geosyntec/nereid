@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 # https://github.com/jsongraph/json-graph-specification
 class Node(BaseModel):
@@ -35,9 +35,6 @@ class SubgraphNodes(BaseModel):
     subgraph_nodes: List[Nodes]
 
 
-class NetworkValidation(BaseModel):
-    isvalid: bool
-    node_cycles: Optional[List]
-    edge_cycles: Optional[List]
-    multiple_out_edges: Optional[List]
-    duplicate_edges: Optional[List]
+class SubgraphRequest(BaseModel):
+    graph: Graph
+    nodes: List[Node]

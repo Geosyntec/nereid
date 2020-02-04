@@ -1,4 +1,3 @@
-from typing import Optional, IO
 from io import BytesIO
 
 import numpy
@@ -10,14 +9,8 @@ mpl.use("svg")
 from matplotlib import pyplot as plt
 
 
-def render_subgraphs(
-    g: nx.DiGraph,
-    request_nodes: list,
-    subgraph_nodes: list,
-    xs: Optional[float] = None,
-    ys: Optional[float] = None,
-    node_size: Optional[float] = None,
-    zoom: Optional[float] = None,
+def render(
+    g, request_nodes, subgraph_nodes, xs=None, ys=None, node_size=None, zoom=None
 ):
     if xs is None:
         xs = 1
@@ -85,12 +78,9 @@ def render_subgraphs(
     return fig
 
 
-def fig_to_image(fig: mpl.figure.Figure, **kwargs) -> IO:
-    bbox_inches = kwargs.pop("bbox_inches", "tight")
-    format_ = "svg"
-
+def fig_to_image(fig):
     img = BytesIO()
-    fig.savefig(img, bbox_inches=bbox_inches, format=format_, **kwargs)
+    fig.savefig(img, bbox_inches="tight")
     img.seek(0)
 
     return img
