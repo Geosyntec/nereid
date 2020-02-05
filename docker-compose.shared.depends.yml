@@ -3,9 +3,14 @@ services:
   nereid:
     depends_on:
       - redis
+      - celeryworker
   celeryworker:
     depends_on: 
       - redis
+  nereid-tests:  
+    depends_on:
+      - redis
+      - celeryworker
   flower:
     depends_on:
       - redis

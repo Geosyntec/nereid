@@ -5,21 +5,21 @@
 # time to build and is considerably more complex for scipy and pandas.
 
 
-From redis:5.0.7-alpine as redis
+From redis:5.0.7-alpine3.11 as redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:alpine as flower
+FROM python:3.7-alpine3.11 as flower
 RUN apk add --no-cache ca-certificates && update-ca-certificates
-RUN pip install --no-cache-dir redis flower==0.9.3
+RUN pip install --no-cache-dir redis==3.4.1 flower==0.9.3
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
 EXPOSE 5555
 USER nobody
 ENTRYPOINT ["flower"]
 
 
-FROM python:3.7 as builder
+FROM python:3.7-buster as builder
 COPY requirements.txt /requirements.txt
 COPY requirements_tests.txt /requirements_tests.txt
 COPY requirements_server.txt /requirements_server.txt
@@ -41,7 +41,7 @@ FROM python:3.7-slim-buster as core
 COPY --from=builder /core /core
 COPY requirements.txt /requirements.txt
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends graphviz && \ 
+  apt-get install -y --no-install-recommends graphviz=2.38 && \ 
   rm -rf /var/lib/apt/lists/* && \ 
   pip install \
     --no-index \
@@ -97,7 +97,7 @@ CMD ["bash", "-c", "while true; do sleep 1; done"]
 EXPOSE 8888
 
 
-FROM python:3.7 as nereid-edge
+FROM python:3.7-buster as nereid-edge
 RUN apt-get update && apt-get install -y graphviz
 COPY requirements_edge.txt /requirements_edge.txt
 RUN pip install -r requirements_edge.txt
