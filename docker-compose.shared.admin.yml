@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  flower:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: flower

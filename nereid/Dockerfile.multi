@@ -5,13 +5,24 @@
 # time to build and is considerably more complex for scipy and pandas.
 
 
-From redis:5.0.6-alpine as redis
+From redis:5.0.7-alpine as redis
 COPY redis.conf /redis.conf
+CMD ["redis-server", "/redis.conf"]
+
+
+FROM python:alpine as flower
+RUN apk add --no-cache ca-certificates && update-ca-certificates
+RUN pip install --no-cache-dir redis flower==0.9.3
+ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
+EXPOSE 5555
+USER nobody
+ENTRYPOINT ["flower"]
 
 
 FROM python:3.7 as builder
 COPY requirements.txt /requirements.txt
 COPY requirements_tests.txt /requirements_tests.txt
+COPY requirements_server.txt /requirements_server.txt
 RUN mkdir /core && \
   pip wheel \
     --wheel-dir=/core \
@@ -23,8 +34,7 @@ RUN mkdir /tsts && \
 RUN mkdir /serve && \
   pip wheel \
     --wheel-dir=/serve \
-    gunicorn \
-    uvicorn
+    -r /requirements_server.txt
 
 
 FROM python:3.7-slim-buster as core
@@ -38,8 +48,6 @@ RUN apt-get update && \
     --no-cache-dir \
     --find-links=/core \
     -r /requirements.txt && \
-    find /usr/local/lib/python3.*/ -name 'tests' -exec rm -r '{}' + && \
-    find /usr/local/lib/python3.*/site-packages/ -name '*.so' -print -exec sh -c 'file "{}" | grep -q "not stripped" && strip -s "{}"' \; && \
     rm -rf /core/* 
 COPY ./nereid /nereid/nereid
 WORKDIR /nereid
@@ -55,13 +63,12 @@ CMD ["bash", "/run-worker.sh"]
 
 FROM core as nereid
 COPY --from=builder /serve /serve
+COPY requirements_server.txt /requirements_server.txt
 RUN pip install \
   --no-index \
   --no-cache-dir \
   --find-links=/serve \
-  gunicorn uvicorn && \
-  find /usr/local/lib/python3.*/ -name 'tests' -exec rm -r '{}' + && \
-  find /usr/local/lib/python3.*/site-packages/ -name '*.so' -print -exec sh -c 'file "{}" | grep -q "not stripped" && strip -s "{}"' \; && \
+  -r /requirements_server.txt && \
   rm -rf /serve/*
 COPY gunicorn_conf.py /gunicorn_conf.py
 COPY ./scripts/start.sh /start.sh
@@ -80,11 +87,30 @@ RUN pip install \
   --no-cache-dir \
   --find-links=/tsts \
   -r /requirements_tests.txt && \
-  find /usr/local/lib/python3.*/ -name 'tests' -exec rm -r '{}' + && \
-  find /usr/local/lib/python3.*/site-packages/ -name '*.so' -print -exec sh -c 'file "{}" | grep -q "not stripped" && strip -s "{}"' \; && \
   rm -rf /tsts/*
 COPY ./scripts/run-tests.sh /run-tests.sh
+COPY .coveragerc /nereid/.coveragerc
+COPY mypy.ini /nereid/mypy.ini
 RUN chmod +x /run-tests.sh
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 EXPOSE 8888
+
+
+FROM python:3.7 as nereid-edge
+RUN apt-get update && apt-get install -y graphviz
+COPY requirements_edge.txt /requirements_edge.txt
+RUN pip install -r requirements_edge.txt
+COPY ./nereid /nereid/nereid
+WORKDIR /nereid
+ENV PYTHONPATH=/nereid
+
+FROM nereid-edge as nereid-edge-tests
+COPY mypy.ini /nereid/mypy.ini
+CMD ["bash", "-c", "while true; do sleep 1; done"]
+
+FROM nereid-edge as celeryworker-edge
+ENV C_FORCE_ROOT=1
+COPY ./scripts/run-worker.sh /run-worker.sh
+RUN chmod +x /run-worker.sh
+CMD ["bash", "/run-worker.sh"]
