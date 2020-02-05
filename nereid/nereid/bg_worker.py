@@ -20,7 +20,4 @@ def background_network_subgraphs(graph, nodes):
 
 @celery_app.task(acks_late=True, track_started=True)
 def background_render_subgraph_svg(task_result):
-    svg = render_subgraph_svg(task_result)
-    if isinstance(svg, bytes):
-        svg = svg.decode("utf-8")
-    return svg
+    return render_subgraph_svg(task_result).decode()

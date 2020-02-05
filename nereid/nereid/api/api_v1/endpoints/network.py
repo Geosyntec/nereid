@@ -53,27 +53,13 @@ async def validate_network(
         },
     )
 ):
-    start1 = time()
 
     task = background_validate_network_from_dict.apply_async(args=(graph.dict(),))
 
-    end1 = time()
-    logger.debug(f"elapsed time submit task: {end1-start1:.4f}")
-
-    start2 = time()
-
     _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-    # try:
-    #     _ = task.get(timeout=0.2)
-    # except celery.exceptions.TimeoutError:
-    #     pass
-    end2 = time()
-    logger.debug(f"elapsed time try to get task: {end2-start2:.4f}")
-    logger.debug(f"cumul time: {end2-start1:.4f}")
 
     response = dict(task_id=task.task_id, status=task.status)
 
-    start3 = time()
     if task.successful():
         response["data"] = task.result
 
@@ -82,9 +68,6 @@ async def validate_network(
             "get_validate_network_result", task_id=task.id
         )
         response["result_route"] = f"{config.API_V1_STR}{result_path}"
-    end3 = time()
-    logger.debug(f"elapsed time load task if successful: {end3-start3:.4f}")
-    logger.debug(f"cumul time: {end3-start1:.4f}")
 
     return response
 
