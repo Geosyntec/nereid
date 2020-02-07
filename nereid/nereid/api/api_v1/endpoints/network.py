@@ -15,13 +15,12 @@ from celery.result import AsyncResult
 
 from nereid.api.utils import wait_a_sec_and_see_if_we_can_return_some_data
 
-from nereid.api.api_v1.models import (
-    JSONAPIResponse,
+from nereid.api.api_v1.models.network_models import (
+    Graph,
+    Node,
     NetworkValidationResponse,
     SubgraphResponse,
 )
-
-from nereid.src.network.models import Graph, Node
 
 from nereid.bg_worker import (
     background_validate_network_from_dict,
@@ -56,18 +55,16 @@ async def validate_network(
 
     task = background_validate_network_from_dict.apply_async(args=(graph.dict(),))
 
+    result_path = router.url_path_for("get_validate_network_result", task_id=task.id)
+
+    result_route = f"{config.API_V1_STR}{result_path}"
+
     _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
 
-    response = dict(task_id=task.task_id, status=task.status)
+    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
 
     if task.successful():
         response["data"] = task.result
-
-    else:
-        result_path = router.url_path_for(
-            "get_validate_network_result", task_id=task.id
-        )
-        response["result_route"] = f"{config.API_V1_STR}{result_path}"
 
     return response
 
@@ -80,7 +77,11 @@ async def validate_network(
 async def get_validate_network_result(task_id: str):
     task = background_validate_network_from_dict.AsyncResult(task_id, app=router)
 
-    response = dict(task_id=task.task_id, status=task.status)
+    result_path = router.url_path_for("get_validate_network_result", task_id=task.id)
+
+    result_route = f"{config.API_V1_STR}{result_path}"
+
+    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
 
     if task.successful():
         response["data"] = task.result
@@ -135,19 +136,18 @@ async def subgraph_network(
         args=(graph.dict(), jsonable_encoder(nodes))
     )
 
+    result_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
+
+    response_route = f"{config.API_V1_STR}{result_path}"
+
     _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
 
-    response = dict(task_id=task.task_id, status=task.status)
+    response = dict(
+        task_id=task.task_id, status=task.status, result_route=response_route
+    )
 
     if task.successful():
         response["data"] = task.result
-
-    else:
-        result_path = router.url_path_for(
-            "get_subgraph_network_result", task_id=task.id
-        )
-
-        response["result_route"] = f"{config.API_V1_STR}{result_path}"
 
     return response
 
@@ -160,7 +160,12 @@ async def subgraph_network(
 async def get_subgraph_network_result(task_id: str):
 
     task = background_network_subgraphs.AsyncResult(task_id, app=router)
-    response = dict(task_id=task.task_id, status=task.status)
+    result_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
+
+    response_route = f"{config.API_V1_STR}{result_path}"
+    response = dict(
+        task_id=task.task_id, status=task.status, result_route=response_route
+    )
 
     if task.successful():
         response["data"] = task.result
@@ -171,7 +176,7 @@ async def get_subgraph_network_result(task_id: str):
 @router.get(
     "/network/subgraph/{task_id}/img",
     tags=["network", "visualize"],
-    response_model=JSONAPIResponse,
+    response_model=SubgraphResponse,
 )
 async def get_subgraph_network_as_img(
     request: Request, task_id: str, media_type: str = Query("svg")

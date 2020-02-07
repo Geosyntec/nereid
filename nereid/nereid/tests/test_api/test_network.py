@@ -8,6 +8,7 @@ from starlette.testclient import TestClient
 
 from nereid.core.config import API_LATEST
 from nereid.main import app
+from nereid.api.api_v1.models import network_models
 from nereid.src.network.utils import nxGraph_to_dict
 import nereid.tests.test_data
 
@@ -15,49 +16,81 @@ import nereid.tests.test_data
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
 
 
+def get_payload(file):
+    path = TEST_PATH / file
+    return path.read_text()
+
+
 class TestNetworkValidationRoutes(object):
     def setup(self):
-
-        self.test_data_dir = TEST_PATH
         self.route = API_LATEST + "/network/validate"
         self.client = TestClient(app)
 
-    def get_payload(self, file):
-        path = self.test_data_dir / file
-        assert path.is_file()
+        self.init_post_requests = [
+            ("valid_graph_response", "network_validate_is_valid.json"),
+            ("invalid_graph_response", "network_validate_is_invalid_cycle.json"),
+        ]
 
-        return path.read_text()
+        for attr, file in self.init_post_requests:
+            payload = get_payload(file)
+            response = self.client.post(self.route, data=payload)
+            setattr(self, attr, response)
 
-    def test_network_validate_easy(self):
+    @pytest.mark.parametrize(
+        "post_response_name, isvalid",
+        [("valid_graph_response", True), ("invalid_graph_response", False)],
+    )
+    def test_get_network_validate(self, post_response_name, isvalid):
+        post_response = getattr(self, post_response_name)
 
-        file = "network_validate_is_valid.json"
-        payload = self.get_payload(file)
+        prjson = post_response.json()
+        result_route = prjson["result_route"]
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
+        get_response = self.client.get(result_route)
+        assert get_response.status_code == 200
 
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert rjson["data"]["isvalid"] == True
+        grjson = get_response.json()
+        assert network_models.NetworkValidationResponse(**grjson)
 
-    def test_network_validate_cycle(self):
+        assert grjson["task_id"] == prjson["task_id"]
+        assert grjson["result_route"] == prjson["result_route"]
 
-        file = "network_validate_is_invalid_cycle.json"
-        payload = self.get_payload(file)
+        gr_status = prjson["status"].lower()
+        assert gr_status != "failure"
+        if gr_status == "success":
+            assert prjson["data"] is not None
+            assert prjson["data"]["isvalid"] == isvalid
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
 
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert rjson["data"]["isvalid"] == False
+    @pytest.mark.parametrize(
+        "post_response_name, isvalid",
+        [("valid_graph_response", True), ("invalid_graph_response", False)],
+    )
+    def test_post_network_validate(self, post_response_name, isvalid):
+
+        post_response = getattr(self, post_response_name)
+        assert post_response.status_code == 200
+
+        prjson = post_response.json()
+        assert network_models.NetworkValidationResponse(**prjson)
+        assert prjson["task_id"] is not None
+        assert prjson["result_route"] is not None
+        ping = self.client.get(prjson["result_route"])
+        assert ping.status_code == 200
+
+        pr_status = prjson["status"].lower()
+        assert pr_status != "failure"
+        if pr_status == "success":
+            assert prjson["data"] is not None
+            assert prjson["data"]["isvalid"] == isvalid
+
 
     @pytest.mark.parametrize("N", [10, 100, 1000, 5000, 15000])
     @pytest.mark.parametrize(
-        "nxGraph, gkwargs, expect",
+        "nxGraph, gkwargs, isvalid",
         [(nx.gnc_graph, {}, False), (nx.gnr_graph, {"p": 0.05}, True)],
     )
-    def test_long_validation(self, N, nxGraph, gkwargs, expect):
+    def test_long_validation(self, N, nxGraph, gkwargs, isvalid):
         g = nxGraph(N, seed=42, **gkwargs)
         payload = json.dumps(nxGraph_to_dict(g))
 
@@ -69,67 +102,82 @@ class TestNetworkValidationRoutes(object):
         print(f"elapsed time: {elapsed:.4f} seconds")
         assert response.status_code == 200
 
-        rjson = response.json()
-        if rjson["status"].lower() == "success":
-            assert rjson["data"]["isvalid"] == expect
-        else:
-            assert rjson["status"].lower() in ["started", "pending", "success"]
-            assert rjson["result_route"] is not None
-            assert rjson["task_id"] is not None
-            response = self.client.get(self.route + f"/{rjson['task_id']}")
-            assert response.status_code == 200
+        prjson = response.json()
+        assert network_models.NetworkValidationResponse(**prjson)
+        assert prjson["result_route"] is not None
+        assert prjson["task_id"] is not None
+
+        pr_status = prjson["status"].lower()
+        assert pr_status != "failure"
+        if pr_status == "success":
+            assert prjson["data"]["isvalid"] == isvalid
+
+        response = self.client.get(prjson["result_route"])
+        assert response.status_code == 200
 
 
 class TestNetworkSubgraphRoutes(object):
     def setup(self):
-
-        self.test_data_dir = TEST_PATH
         self.route = API_LATEST + "/network/subgraph"
         self.client = TestClient(app)
 
-    def get_payload(self, file):
-        path = self.test_data_dir / file
-        assert path.is_file()
+        self.init_post_requests = [
+            ("subgraph_response", "network_subgraph_request.json")
+        ]
 
-        return path.read_text()
+        for attr, file in self.init_post_requests:
+            payload = get_payload(file)
+            response = self.client.post(self.route, data=payload)
+            setattr(self, attr, response)
 
-    def test_network_subgraph_example(self):
+    @pytest.mark.parametrize(
+        "post_response_name, exp_n_nodes", [("subgraph_response", 2)]
+    )
+    def test_get_network_subgraph(self, post_response_name, exp_n_nodes):
+        post_response = getattr(self, post_response_name)
 
-        file = "network_subgraph_request.json"
-        payload = self.get_payload(file)
+        prjson = post_response.json()
+        result_route = prjson["result_route"]
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
+        get_response = self.client.get(result_route)
+        assert get_response.status_code == 200
 
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert len(rjson["data"]["subgraph_nodes"]) == 2
+        grjson = get_response.json()
+        assert network_models.SubgraphResponse(**prjson)
 
-    def test_get_network_subgraph_example(self):
+        assert grjson["status"].lower() != "failure"
+        assert grjson["task_id"] is not None
+        assert grjson["result_route"] is not None
 
-        file = "network_subgraph_request.json"
-        payload = self.get_payload(file)
+        if grjson["status"].lower() == "success":
+            assert grjson["data"] is not None
+            assert len(grjson["data"]["subgraph_nodes"]) == exp_n_nodes
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
+    @pytest.mark.parametrize(
+        "post_response_name, exp_n_nodes", [("subgraph_response", 2)]
+    )
+    def test_post_network_subgraph(self, post_response_name, exp_n_nodes):
 
-        tid = response.json()["task_id"]
+        post_response = getattr(self, post_response_name)
+        assert post_response.status_code == 200
 
-        response = self.client.get(self.route + f"/{tid}")
-        assert response.status_code == 200
+        prjson = post_response.json()
+        assert network_models.SubgraphResponse(**prjson)
 
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert len(rjson["data"]["subgraph_nodes"]) == 2
+        assert prjson["status"].lower() != "failure"
+        assert prjson["task_id"] is not None
+        assert prjson["result_route"] is not None
+
+        if prjson["status"].lower() == "success":
+            assert prjson["data"] is not None
+            assert len(prjson["data"]["subgraph_nodes"]) == exp_n_nodes
 
     def test_render_subgraph_svg(self):
-        file = "network_subgraph_request.json"
-        payload = self.get_payload(file)
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
+        rjson = self.subgraph_response.json()
 
-        task_id = response.json()["task_id"]
+        result_route = rjson["result_route"]
 
-        svg_response = self.client.get(self.route + f"/{task_id}/img")
+        svg_response = self.client.get(result_route + "/img")
         assert svg_response.status_code == 200
+        assert "svg" in svg_response.content.decode()

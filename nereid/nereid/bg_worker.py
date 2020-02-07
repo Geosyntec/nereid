@@ -10,14 +10,14 @@ from nereid.src.network.tasks import (
 
 @celery_app.task(acks_late=True, track_started=True)
 def background_validate_network_from_dict(graph):
-    return validate_network(graph)
+    return validate_network(graph)  # pragma: no cover
 
 
 @celery_app.task(acks_late=True, track_started=True)
 def background_network_subgraphs(graph, nodes):
-    return network_subgraphs(graph, nodes)
+    return network_subgraphs(graph, nodes)  # pragma: no cover
 
 
 @celery_app.task(acks_late=True, track_started=True)
 def background_render_subgraph_svg(task_result):
-    return render_subgraph_svg(task_result).decode()
+    return render_subgraph_svg(task_result).decode()  # pragma: no cover

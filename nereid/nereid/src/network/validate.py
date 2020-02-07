@@ -6,24 +6,28 @@ import networkx as nx
 from .algorithms import find_cycle
 
 
-def validate_network(G: nx.Graph, **kwargs) -> Tuple[List, List, List, List]:
+def validate_network(
+    G: nx.Graph, **kwargs
+) -> Tuple[List[List[str]], List[List[str]], List[List[str]], List[List[str]]]:
     """Checks if there is a cycle, and prints a helpful
     message if there is.
     """
     _partial_sort = partial(sorted, key=lambda x: str(x))
 
     # force cycles to be ordered so that we can test against them
-    simplecycles = list(map(_partial_sort, nx.simple_cycles(G)))
+    node_cycles: List[List[str]] = list(
+        map(_partial_sort, nx.simple_cycles(G))  # type: ignore
+    )
 
-    findcycles = find_cycle(G, **kwargs)
+    edge_cycles = [list(map(str, _)) for _ in find_cycle(G, **kwargs)]
 
-    multiple_outs = [(k, v) for k, v in G.out_degree() if v > 1]
+    multiple_outs = [[str(k), str(v)] for k, v in G.out_degree() if v > 1]
 
-    duplicate_edges: List = []
+    duplicate_edges: List[List[str]] = []
     if len(G.edges()) != len(set(G.edges())):
-        duplicate_edges = [(s, t) for s, t, k in G.edges(keys=True) if k > 0]
+        duplicate_edges = [[s, t] for s, t, k in G.edges(keys=True) if k > 0]
 
-    return simplecycles, findcycles, multiple_outs, duplicate_edges
+    return node_cycles, edge_cycles, multiple_outs, duplicate_edges
 
 
 def is_valid(G: nx.Graph) -> bool:

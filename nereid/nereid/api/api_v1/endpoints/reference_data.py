@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from nereid.api.api_v1.models import ReferenceDataResponse
+from nereid.api.api_v1.models.reference_models import ReferenceDataResponse
 from nereid.core.utils import get_request_context
 from nereid.core.io import load_json
 
