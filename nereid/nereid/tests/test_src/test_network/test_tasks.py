@@ -18,17 +18,22 @@ from nereid.src.network.tasks import (
         (
             [("a", "b"), ("b", "c"), ("d", "c"), ("c", "a")],
             False,
-            ([["a", "b", "c"]], [("a", "b", 0), ("b", "c", 0), ("c", "a", 0)], [], []),
+            (
+                [["a", "b", "c"]],
+                [["a", "b", "0"], ["b", "c", "0"], ["c", "a", "0"]],
+                [],
+                [],
+            ),
         ),  # cycle a->b->c->a
         (
             [("a", "b"), ("b", "c"), ("d", "c"), ("c", "e"), ("c", "e")],
             False,
-            ([], [], [("c", 2)], [("c", "e")]),
+            ([], [], [["c", "2"]], [["c", "e"]]),
         ),  # duplicate edge
         (
             [("a", "b"), ("b", "c"), ("d", "c"), ("a", "e")],
             False,
-            ([], [], [("a", 2)], []),
+            ([], [], [["a", "2"]], []),
         ),  # multiple out edges, a->b & a->e
     ],
 )
@@ -47,13 +52,16 @@ def test_validate_network(edgelist, isvalid, exp):
         "duplicate_edges",
     ]
 
-    for key, value in zip(keys, expected_result):
-        result[key] = value
+    if isvalid:
+        assert result["isvalid"] == isvalid
+    else:
+        for key, value in zip(keys, expected_result):
+            assert result[key] == value
 
 
 @pytest.fixture
 def subgraph_request():
-    return {
+    graph = {
         "graph": {
             "directed": True,
             "edges": [
@@ -90,6 +98,8 @@ def subgraph_request():
         "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
     }
 
+    return graph
+
 
 @pytest.fixture()
 def subgraph_result(subgraph_request):
@@ -101,9 +111,10 @@ def test_network_subgraphs(subgraph_request):
 
     assert "graph" in result
     assert "subgraph_nodes" in result
+    assert len(result["subgraph_nodes"]) == 2
     assert "requested_nodes" in result
 
 
 def test_render_subgraph_svg(subgraph_result):
-    result = render_subgraph_svg(subgraph_result)
-    assert b"svg" in result
+    result = render_subgraph_svg(subgraph_result).decode()
+    assert "svg" in result

@@ -44,7 +44,6 @@ class NetworkValidation(BaseModel):
 
 ## Network Response Models
 
-
 class NetworkValidationResponse(JSONAPIResponse):
     data: Optional[NetworkValidation] = None
 

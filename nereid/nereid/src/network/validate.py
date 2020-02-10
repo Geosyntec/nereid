@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Callable
 from collections import deque
 from functools import partial
 
@@ -12,7 +12,7 @@ def validate_network(
     """Checks if there is a cycle, and prints a helpful
     message if there is.
     """
-    _partial_sort = partial(sorted, key=lambda x: str(x))
+    _partial_sort: Callable = partial(sorted, key=lambda x: str(x))
 
     # force cycles to be ordered so that we can test against them
     node_cycles: List[List[str]] = list(

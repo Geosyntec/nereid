@@ -193,7 +193,7 @@ async def get_subgraph_network_as_img(
         if media_type == "svg":
 
             render_task = background_render_subgraph_svg.delay(result)
-            _ = wait_a_sec_and_see_if_we_can_return_some_data(render_task, timeout=0.1)
+            _ = wait_a_sec_and_see_if_we_can_return_some_data(render_task, timeout=0.2)
 
             svgresponse = dict(task_id=render_task.task_id, status=render_task.status)
 
