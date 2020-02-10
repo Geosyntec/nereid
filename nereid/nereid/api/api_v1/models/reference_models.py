@@ -1,7 +1,7 @@
 from typing import Optional, Any
 from pydantic import BaseModel
 
-from .response_models import JSONAPIResponse
+from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 
 class ReferenceData(BaseModel):

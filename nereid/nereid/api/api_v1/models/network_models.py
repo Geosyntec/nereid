@@ -1,7 +1,7 @@
 from typing import Optional, Any, List
 from pydantic import BaseModel, Field
 
-from .response_models import JSONAPIResponse
+from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 ## Network Request Models
 

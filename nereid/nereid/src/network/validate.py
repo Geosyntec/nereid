@@ -3,7 +3,7 @@ from collections import deque
 from functools import partial
 
 import networkx as nx
-from .algorithms import find_cycle
+from nereid.src.network.algorithms import find_cycle
 
 
 def validate_network(

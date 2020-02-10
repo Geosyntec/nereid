@@ -4,12 +4,12 @@ import json
 
 import yaml
 
-from .cache import cache_decorator
+from nereid.core.cache import cache_decorator
 
 PathType = Union[Path, str]
 
 
-@cache_decorator(ex=3600 * 24)  # expires in 24 hours
+# @cache_decorator(ex=3600 * 24)  # expires in 24 hours
 def _load_file(filepath: PathType) -> str:
     fp = Path(filepath)
     return fp.read_text()

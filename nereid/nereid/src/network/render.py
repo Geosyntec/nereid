@@ -53,18 +53,6 @@ def render_subgraphs(
         label="all nodes",
     )
 
-    for i, _nodes in enumerate(sgs):
-        subgraphs = nx.draw_networkx_nodes(
-            g.subgraph(_nodes),
-            ax=ax,
-            pos=pos,
-            node_size=ns,
-            node_color=f"C{i}",
-            with_labels=True,
-            font_size=5 * zoom,
-            label=f"subgraph {i+1}",
-        )
-
     selection = nx.draw_networkx_nodes(
         g.subgraph(req),
         ax=ax,
@@ -78,6 +66,18 @@ def render_subgraphs(
 
     selection.set_edgecolor("firebrick")
     selection.set_linewidths(1.5)
+
+    for i, _nodes in enumerate(sgs):
+        subgraphs = nx.draw_networkx_nodes(
+            g.subgraph(_nodes),
+            ax=ax,
+            pos=pos,
+            node_size=ns,
+            node_color=f"C{i}",
+            with_labels=True,
+            font_size=5 * zoom,
+            label=f"subgraph {i+1}",
+        )
 
     ax.legend(loc="upper center", ncol=4, bbox_to_anchor=(0.5, -0.05))
     ax.set_title("User requested nodes: " + ", ".join(req))

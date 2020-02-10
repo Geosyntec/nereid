@@ -61,7 +61,6 @@ class TestNetworkValidationRoutes(object):
             assert prjson["data"] is not None
             assert prjson["data"]["isvalid"] == isvalid
 
-
     @pytest.mark.parametrize(
         "post_response_name, isvalid",
         [("valid_graph_response", True), ("invalid_graph_response", False)],
@@ -83,7 +82,6 @@ class TestNetworkValidationRoutes(object):
         if pr_status == "success":
             assert prjson["data"] is not None
             assert prjson["data"]["isvalid"] == isvalid
-
 
     @pytest.mark.parametrize("N", [10, 100, 1000, 5000, 15000])
     @pytest.mark.parametrize(

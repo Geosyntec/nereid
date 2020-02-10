@@ -2,8 +2,8 @@ from typing import Optional, Dict, Any
 import copy
 from pathlib import Path
 
-from .io import load_cfg
-from .config import APP_CONTEXT
+from nereid.core.io import load_cfg
+from nereid.core.config import APP_CONTEXT
 
 
 def get_request_context(

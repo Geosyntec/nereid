@@ -4,7 +4,7 @@ import networkx as nx
 
 from nereid.core.cache import cache_decorator
 
-from . import validate
+from nereid.src.network import validate
 from .utils import graph_factory
 from .algorithms import get_subset
 from .render import render_subgraphs, fig_to_image
