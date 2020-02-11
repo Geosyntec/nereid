@@ -5,9 +5,9 @@ import networkx as nx
 from nereid.core.cache import cache_decorator
 
 from nereid.src.network import validate
-from .utils import graph_factory
-from .algorithms import get_subset
-from .render import render_subgraphs, fig_to_image
+from nereid.src.network.utils import graph_factory
+from nereid.src.network.algorithms import get_subset
+from nereid.src.network.render import render_subgraphs, fig_to_image
 
 
 def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:

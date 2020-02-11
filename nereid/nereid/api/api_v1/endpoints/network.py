@@ -146,7 +146,7 @@ async def subgraph_network(
         task_id=task.task_id, status=task.status, result_route=response_route
     )
 
-    if task.successful():
+    if task.successful(): # pragma: no branch
         response["data"] = task.result
 
     return response
@@ -167,7 +167,7 @@ async def get_subgraph_network_result(task_id: str):
         task_id=task.task_id, status=task.status, result_route=response_route
     )
 
-    if task.successful():
+    if task.successful(): # pragma: no branch
         response["data"] = task.result
 
     return response
@@ -185,7 +185,7 @@ async def get_subgraph_network_as_img(
     task = background_network_subgraphs.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
 
-    if task.successful():
+    if task.successful(): # pragma: no branch
 
         result = task.result
         response["data"] = task.result
@@ -206,7 +206,7 @@ async def get_subgraph_network_as_img(
                 )
             return svgresponse
 
-        detail = f"media_type not supported '{media_type}'."
+        detail = f"media_type not supported: '{media_type}'."
         raise HTTPException(status_code=404, detail=detail)
 
-    return response
+    return response # pragma: no cover

@@ -13,7 +13,7 @@ router = APIRouter()
 @router.get(
     "/reference_data", tags=["reference_data"], response_model=ReferenceDataResponse
 )
-async def get_bmp_performance_data(
+async def get_reference_data_json(
     state: str = "state", region: str = "region", filename: str = ""
 ):
 
