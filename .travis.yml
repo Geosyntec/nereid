@@ -1,46 +1,88 @@
-language: minimal
+language: shell
+os: linux
 dist: xenial
 
-env:
-  global:
-    - COMPOSE_FILE=docker-stack.yml
-
-matrix:
+jobs:
   include:
-    - name: tests
+
+    # This ensures that the src code is coupled loosely enough to be tested indepedently
+    # from the docker images. This doesn't require services like redis or celeryworkers.
+    - name: python_tests
+      language: python
+      python: 3.7.6
+      before_install:
+        - sudo apt-get install graphviz
+        - pip install --upgrade pip
+      install:
+        - pip install -r nereid/requirements.txt
+        - pip install -r nereid/requirements_tests.txt
+      script:
+        - mypy --config-file=nereid/mypy.ini nereid/nereid
+        - coverage run --source=nereid/nereid/src -m pytest nereid/nereid/tests/test_src -xv
+        - coverage report -m --omit=*test*
+
+    # This checks that the source code all runs on latest versions of python packages.
+    - name: python_edge
+      language: python
+      python: 3.7.6
+      before_install:
+        - sudo apt-get install graphviz
+        - pip install --upgrade pip
+      install:
+        - pip install -r nereid/requirements_edge.txt
+      script:
+        - pytest nereid/nereid/tests/test_src -xv
+
+    # This is the main test and best analog for whether the code will run in production
+    # Uses pinned versions of docker-compose and all python dependencies.
+    - name: docker_tests
       env: 
         - BUILD_SCRIPT_PATH=./scripts/build_dev.sh
-        - COVERAGE=true
-    - name: edge
+        - DOCKER_COMPOSE_VERSION=1.25.4
+        - COMPOSE_FILE=docker-stack.yml
+      before_install:
+        - sudo rm /usr/local/bin/docker-compose
+        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+        - chmod +x docker-compose
+        - sudo mv docker-compose /usr/local/bin
+        - docker-compose --version
+      install: 
+        - chmod +x ${BUILD_SCRIPT_PATH}
+        - bash ${BUILD_SCRIPT_PATH}
+        - docker-compose up -d
+        - docker-compose ps
+      script:
+        - docker-compose exec nereid-tests mypy -p nereid
+        - docker-compose exec nereid-tests coverage run -m pytest -xv
+      after_success:
+        - docker-compose exec nereid-tests coverage report -m
+        - docker-compose exec nereid-tests coverage xml
+        - docker-compose exec nereid-tests cat /nereid/coverage.xml > coverage.xml
+        - docker-compose exec nereid-tests cat /nereid/.coverage > .coverage
+        - bash <(curl -s https://codecov.io/bash)
+    
+    # Test on latest docker and docker-compose versions with latest python packages too.
+    # Docker images are loosely pinned per the project dockerfile "_edge" images.
+    - name: docker_edge
       env: 
         - BUILD_SCRIPT_PATH=./scripts/build_edge.sh
-        - COVERAGE=false
+        - COMPOSE_FILE=docker-stack.yml
+      before_install:
+        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        - sudo apt-get update
+        - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+        - docker-compose --version
+      install: 
+        - chmod +x ${BUILD_SCRIPT_PATH}
+        - bash ${BUILD_SCRIPT_PATH}
+        - docker-compose up -d
+        - docker-compose ps
+      script:
+        - docker-compose exec nereid-tests pytest -xv
+  
   allow_failures:
-    - name: edge
+    - name: python_edge
+    - name: docker_edge
 
-before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  - docker-compose --version
 
-install: 
-  - chmod +x ${BUILD_SCRIPT_PATH}
-  - bash ${BUILD_SCRIPT_PATH}
-  - docker-compose up -d
-  - docker-compose ps
-
-script:
-  - docker-compose exec nereid-tests pytest -v
-  - docker-compose exec nereid-tests mypy -p nereid
-
-after_success:
-  - if [ ${COVERAGE} = true ]; then
-      docker-compose exec nereid-tests coverage run -m pytest;
-      docker-compose exec nereid-tests coverage report -m;
-      docker-compose exec nereid-tests coverage xml;
-      docker-compose exec nereid-tests cat /nereid/coverage.xml > coverage.xml;
-      docker-compose exec nereid-tests cat /nereid/.coverage > .coverage;
-      bash <(curl -s https://codecov.io/bash);
-    fi
