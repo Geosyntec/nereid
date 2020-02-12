@@ -50,31 +50,31 @@ def rcache(**rkwargs):
     return _rcache
 
 
-def lru_cache(**rkwargs):  # pragma: no cover
-    maxsize = rkwargs.pop("maxsize", 128)
-    typed = rkwargs.pop("typed", False)
-    logger.debug("cached with functools.lru_cache")
+def no_cache(**rkwargs):
+    def _rcache(obj):
+        @functools.wraps(obj)
+        def memoizer(*args, **kwargs):
+            return obj(*args, **kwargs)
 
-    return functools.lru_cache(maxsize=maxsize, typed=typed)
+        return memoizer
+
+    return _rcache
 
 
 def get_cache_decorator():  # pragma: no cover
     """fetch a cache decorator for functions. If redis is up,
-    use that, else use lru_cache.
+    use that, else use no_cache.
 
-    The point of the lru fallback is to make development easier.
+    The point of the no_cache fallback is to make development easier.
     In production and even in CI this should use the redis cache.
-    Sometimes it's nice for things that can be separate to be
-    separate; like during development, local testing, and benchmarking.
-
     """
     try:
         if redis_cache.ping():
             return rcache
         else:
-            return lru_cache
+            return no_cache
     except redis.ConnectionError:
-        return lru_cache
+        return no_cache
 
 
 cache_decorator = get_cache_decorator()
