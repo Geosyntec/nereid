@@ -3,6 +3,7 @@ from collections import deque
 from functools import partial
 
 import networkx as nx
+
 from nereid.src.network.algorithms import find_cycle
 
 

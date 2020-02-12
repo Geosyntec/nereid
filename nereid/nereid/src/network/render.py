@@ -19,13 +19,13 @@ def render_subgraphs(
     node_size: Optional[float] = None,
     zoom: Optional[float] = None,
 ):
-    if xs is None:
+    if xs is None:  # pragma: no branch
         xs = 1
-    if ys is None:
+    if ys is None:  # pragma: no branch
         ys = 1
-    if node_size is None:
+    if node_size is None:  # pragma: no branch
         node_size = 10
-    if zoom is None:
+    if zoom is None:  # pragma: no branch
         zoom = 1
 
     ns = numpy.pi * ((node_size * zoom) ** 2) / 4

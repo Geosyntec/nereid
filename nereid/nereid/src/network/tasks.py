@@ -3,7 +3,6 @@ from typing import Dict, List, Any, Union
 import networkx as nx
 
 from nereid.core.cache import cache_decorator
-
 from nereid.src.network import validate
 from nereid.src.network.utils import graph_factory
 from nereid.src.network.algorithms import get_subset

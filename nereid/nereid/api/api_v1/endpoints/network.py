@@ -1,8 +1,4 @@
 from typing import List, Dict, Optional
-import tempfile
-import json
-import logging
-from time import time
 
 from fastapi import APIRouter, Body, Query, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -14,6 +10,7 @@ from starlette.templating import Jinja2Templates
 from celery.result import AsyncResult
 
 from nereid.api.utils import wait_a_sec_and_see_if_we_can_return_some_data
+from nereid.core import config
 
 from nereid.api.api_v1.models.network_models import (
     Graph,
@@ -28,9 +25,6 @@ from nereid.bg_worker import (
     background_render_subgraph_svg,
 )
 
-from nereid.core import config
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -53,7 +47,9 @@ async def validate_network(
     )
 ):
 
-    task = background_validate_network_from_dict.apply_async(args=(graph.dict(),))
+    task = background_validate_network_from_dict.apply_async(
+        args=(graph.dict(by_alias=True),)
+    )
 
     result_path = router.url_path_for("get_validate_network_result", task_id=task.id)
 
@@ -133,7 +129,7 @@ async def subgraph_network(
 ):
 
     task = background_network_subgraphs.apply_async(
-        args=(graph.dict(), jsonable_encoder(nodes))
+        args=(graph.dict(by_alias=True), jsonable_encoder(nodes))
     )
 
     result_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
@@ -146,7 +142,7 @@ async def subgraph_network(
         task_id=task.task_id, status=task.status, result_route=response_route
     )
 
-    if task.successful(): # pragma: no branch
+    if task.successful():  # pragma: no branch
         response["data"] = task.result
 
     return response
@@ -167,7 +163,7 @@ async def get_subgraph_network_result(task_id: str):
         task_id=task.task_id, status=task.status, result_route=response_route
     )
 
-    if task.successful(): # pragma: no branch
+    if task.successful():  # pragma: no branch
         response["data"] = task.result
 
     return response
@@ -185,7 +181,7 @@ async def get_subgraph_network_as_img(
     task = background_network_subgraphs.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
 
-    if task.successful(): # pragma: no branch
+    if task.successful():  # pragma: no branch
 
         result = task.result
         response["data"] = task.result
@@ -209,4 +205,4 @@ async def get_subgraph_network_as_img(
         detail = f"media_type not supported: '{media_type}'."
         raise HTTPException(status_code=404, detail=detail)
 
-    return response # pragma: no cover
+    return response  # pragma: no cover

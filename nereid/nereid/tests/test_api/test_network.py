@@ -164,6 +164,11 @@ def test_get_render_subgraph_svg(
         assert srjson["status"].lower() != "failure"
         assert srjson["task_id"] is not None
 
+    if isfast:
+        # cover cached retrieval too
+        svg_response = client.get(result_route + "/img")
+        assert svg_response.status_code == 200
+
 
 @pytest.mark.parametrize(
     "post_response_name, isfast",

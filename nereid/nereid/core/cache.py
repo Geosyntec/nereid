@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 redis_cache = redis.Redis(host="redis", port=6379, db=9)
 
-try:
+try:  # pragma: no cover
     # It's ok if redis isn't up, we'll fall back to an lru_cache if we can only
     # use the main process. If redis is available, let's flush the cache to start
     # fresh.
     if redis_cache.ping():
         redis_cache.flushdb()
         logger.debug("flushed redis function cache")
-except redis.ConnectionError:
+except redis.ConnectionError:  # pragma: no cover
     pass
 
 
@@ -50,7 +50,7 @@ def rcache(**rkwargs):
     return _rcache
 
 
-def lru_cache(**rkwargs):
+def lru_cache(**rkwargs):  # pragma: no cover
     maxsize = rkwargs.pop("maxsize", 128)
     typed = rkwargs.pop("typed", False)
     logger.debug("cached with functools.lru_cache")
@@ -58,7 +58,7 @@ def lru_cache(**rkwargs):
     return functools.lru_cache(maxsize=maxsize, typed=typed)
 
 
-def get_cache_decorator():
+def get_cache_decorator():  # pragma: no cover
     """fetch a cache decorator for functions. If redis is up,
     use that, else use lru_cache.
 

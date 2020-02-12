@@ -33,7 +33,7 @@ def named_validation_responses(client):
         )
     )
 
-    init_post_requests_fromfile = [
+    init_post_requests = [
         ("valid_graph_response_fast", get_payload("network_validate_is_valid.json")),
         (
             "invalid_graph_response_fast",
@@ -43,10 +43,11 @@ def named_validation_responses(client):
         ("invalid_graph_response_slow", slow_invalid),
     ]
 
-    for name, payload in init_post_requests_fromfile:
-        responses[name] = client.post(route, data=payload)
+    for name, payload in init_post_requests:
+        response = client.post(route, data=payload)
+        responses[name] = response
 
-    return responses
+    yield responses
 
 
 @pytest.fixture(scope="module")
@@ -80,4 +81,4 @@ def named_subgraph_responses(client):
             client.get(result_route + "/img?media_type=svg")
             time.sleep(0.5)
 
-    return responses
+    yield responses
