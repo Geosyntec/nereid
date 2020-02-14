@@ -72,7 +72,28 @@ def graph_factory(graph: Dict[str, Any]):
     return g
 
 
-def nxGraph_to_dict(g):
+def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
+    result = copy.deepcopy(graph_dict)
+
+    nodes = result.get("nodes", None)
+    if nodes is not None:
+        for dct in nodes:
+            dct["metadata"] = {}
+
+    edges = result.get("edges", [{}])
+    for dct in edges:
+        meta = dct.get("metadata", {})
+
+        if "key" in meta and meta.get("key", None) is not None:
+            key = meta["key"]
+            dct["metadata"] = {"key": key}
+        else:
+            dct["metadata"] = {}
+
+    return result
+
+
+def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
     result = nx.node_link_data(g, {"link": "edges"})
     for dct in result["nodes"]:
         id_ = dct.pop("id")
@@ -88,3 +109,7 @@ def nxGraph_to_dict(g):
         dct["target"] = target
 
     return result
+
+
+def clean_graph_dict(g):
+    return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))

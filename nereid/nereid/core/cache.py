@@ -50,7 +50,7 @@ def rcache(**rkwargs):
     return _rcache
 
 
-def no_cache(**rkwargs):
+def no_cache(**rkwargs):  # pragma: no cover
     def _rcache(obj):
         @functools.wraps(obj)
         def memoizer(*args, **kwargs):
@@ -61,7 +61,7 @@ def no_cache(**rkwargs):
     return _rcache
 
 
-def get_cache_decorator():  # pragma: no cover
+def get_cache_decorator():
     """fetch a cache decorator for functions. If redis is up,
     use that, else use no_cache.
 
@@ -71,9 +71,9 @@ def get_cache_decorator():  # pragma: no cover
     try:
         if redis_cache.ping():
             return rcache
-        else:
+        else:  # pragma: no cover
             return no_cache
-    except redis.ConnectionError:
+    except redis.ConnectionError:  # pragma: no cover
         return no_cache
 
 
