@@ -59,3 +59,75 @@ def get_all_successors(
         subset.add(s)
         get_all_successors(g, s, subset=subset)
     return subset
+
+
+def find_leafy_branch_larger_than_size(G: nx.DiGraph, size: int = 1):
+    """This algorithm will sort the graph `G` and return the outermost
+    contiguous subgraph that is larger than `size`
+    """
+    if not nx.is_weakly_connected(G):
+        raise nx.NetworkXUnfeasible("Graphs must be directed and weakly connected.")
+
+    # exit early if our graph is already the right size
+    if len(G) <= size:
+        return G
+
+    # Start at the leaves and work through branches.
+    # Return first subgraph larger than or equal to `size`.
+    for node in nx.lexicographical_topological_sort(G):  # pragma: no branch
+        us = get_all_predecessors(G, node)
+        us.add(node)
+        if len(us) >= size:
+            return G.subgraph(us)
+
+
+def sequential_subgraph_nodes(G: nx.DiGraph, size: int):
+
+    if not nx.is_weakly_connected(G):
+        raise nx.NetworkXUnfeasible(
+            "sequential solutions are not possible for disconnected graphs."
+        )
+
+    if size <= 1:
+        raise nx.NetworkXUnfeasible("the minimum directed subgraph length is 2 nodes.")
+
+    g = G.copy()  # make a copy because we'll modify the structure
+
+    graphs = []
+
+    while len(g.nodes()) > 1:
+
+        sg = find_leafy_branch_larger_than_size(g, size)
+
+        sg_nodes = list(nx.lexicographical_topological_sort(sg))
+        graphs.append(sg_nodes)
+
+        # trim the upstream nodes out of the graph, except the upstream root
+        us_nodes = [n for n, deg in sg.out_degree if deg > 0]
+        g = g.subgraph([n for n in g.nodes() if n not in us_nodes])
+
+        # rinse and repeat until there's one or fewer nodes left in the graph
+
+    return graphs
+
+
+def parallel_sequential_subgraph_nodes(G: nx.DiGraph, size: int):
+    # strip the input graph to just the edge info
+    g = nx.DiGraph()
+    g.add_edges_from(G.edges())
+
+    parallel_graphs = []
+
+    # Weakly connected components are to directed graphs as
+    # connected components are to undirected graphs.
+    # In this case, it separates the input graph into subgraphs
+    # with different root nodes, or outfalls.
+    for ws in nx.weakly_connected_components(g):
+
+        ws_graph = g.subgraph(ws)
+
+        sequential_subgraphs = sequential_subgraph_nodes(ws_graph, size)
+
+        parallel_graphs.append(sequential_subgraphs)
+
+    return parallel_graphs

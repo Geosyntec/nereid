@@ -5,6 +5,9 @@ from nereid.src.network.algorithms import (
     get_all_predecessors,
     get_all_successors,
     get_subset,
+    find_leafy_branch_larger_than_size,
+    sequential_subgraph_nodes,
+    parallel_sequential_subgraph_nodes,
 )
 
 
@@ -133,3 +136,69 @@ def test_network_algo_get_subset(graph, nodes, exp):
 
     subset = get_subset(graph, nodes)
     assert subset == set(exp)
+
+
+def test_find_leafy_branch_larger_than_size(graph):
+
+    with pytest.raises(nx.NetworkXUnfeasible):
+        sg = find_leafy_branch_larger_than_size(graph, len(graph))
+
+    for components in nx.weakly_connected_components(graph):
+        c_graph = graph.subgraph(components)
+        for size in range(1, len(c_graph) + 3):
+            sg = find_leafy_branch_larger_than_size(c_graph, size)
+
+            assert len(sg) >= size or sg == c_graph
+
+
+def check_sequential(seqs, ls):
+
+    root = seqs[-1][-1]  # last sequence, last element
+    ls_ix_of_prev_seq_root = -1
+
+    results = []
+    for seq in seqs:
+        last_ele = seq[-1]
+
+        ls_ix_of_current_seq_root = ls.index(last_ele)
+
+        # ensures that the roots of the sub sequences are
+        # in topographical order with the entire sorted graph
+        results.append(ls_ix_of_current_seq_root > ls_ix_of_prev_seq_root)
+
+    results.append(last_ele == root)
+
+    return all(results)
+
+
+@pytest.mark.parametrize("size", [1, 3, 5, 10, 100])
+def test_sequential_subgraph_nodes(graph, size):
+
+    with pytest.raises(nx.NetworkXUnfeasible):
+        seq = sequential_subgraph_nodes(graph, size)
+
+    for components in nx.weakly_connected_components(graph):
+        c_graph = graph.subgraph(components)
+
+        if size == 1:
+            with pytest.raises(nx.NetworkXUnfeasible):
+                seqs = sequential_subgraph_nodes(c_graph, size)
+
+        else:
+            seqs = sequential_subgraph_nodes(c_graph, size)
+            ls = list(nx.lexicographical_topological_sort(c_graph))
+            assert check_sequential(seqs, ls)
+
+
+@pytest.mark.parametrize("size", [1, 3, 5, 10, 100])
+def test_parallel_sequential_subgraph_nodes(graph, size):
+
+    if size == 1:
+        with pytest.raises(nx.NetworkXUnfeasible):
+            p_seqs = parallel_sequential_subgraph_nodes(graph, size)
+
+    else:
+        p_seqs = parallel_sequential_subgraph_nodes(graph, size)
+        ls = list(nx.lexicographical_topological_sort(graph))
+        for seqs in p_seqs:
+            assert check_sequential(seqs, ls)

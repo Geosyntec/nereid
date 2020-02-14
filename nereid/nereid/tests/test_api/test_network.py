@@ -1,4 +1,6 @@
 import pytest
+import ujson as json
+import time
 
 from nereid.api.api_v1.models import network_models
 
@@ -165,7 +167,7 @@ def test_get_render_subgraph_svg(
         assert srjson["task_id"] is not None
 
     if isfast:
-        # cover cached retrieval too
+        # try to cover cached retrieval by asking again
         svg_response = client.get(result_route + "/img")
         assert svg_response.status_code == 200
 
@@ -183,6 +185,89 @@ def test_get_render_subgraph_svg_bad_media_type(
 
     result_route = rjson["result_route"]
 
+    svg_response = client.get(result_route + "/img?media_type=png")
+    assert svg_response.status_code == 404
+    assert "media_type not supported" in svg_response.content.decode()
+
+
+@pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
+@pytest.mark.parametrize("n_graphs", [1, 3, 5, 10])
+@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+def test_post_solution_sequence(
+    solution_sequence_response, min_branch_size, n_graphs, min_max
+):
+
+    key = min_branch_size, n_graphs, min_max
+    post_response = solution_sequence_response[key]
+
+    assert post_response.status_code == 200
+    prjson = post_response.json()
+    assert network_models.SolutionSequenceResponse(**prjson)
+    assert prjson["status"].lower() != "failure"
+    assert prjson["task_id"] is not None
+    assert prjson["result_route"] is not None
+
+
+@pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
+@pytest.mark.parametrize("n_graphs", [1, 3, 5, 10])
+@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+def test_get_solution_sequence(
+    client, solution_sequence_response, min_branch_size, n_graphs, min_max
+):
+
+    key = min_branch_size, n_graphs, min_max
+    post_response = solution_sequence_response[key]
+
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
+
+    get_response = client.get(result_route)
+    assert get_response.status_code == 200
+
+    grjson = get_response.json()
+    assert network_models.SolutionSequenceResponse(**prjson)
+
+    assert grjson["status"].lower() == "success"
+    assert grjson["task_id"] == prjson["task_id"]
+    assert grjson["result_route"] == prjson["result_route"]
+    assert grjson["data"] is not None
+
+
+@pytest.mark.parametrize("min_branch_size", [6])
+@pytest.mark.parametrize("n_graphs", [3])
+@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+def test_get_render_solution_sequence(
+    client, solution_sequence_response, min_branch_size, n_graphs, min_max
+):
+
+    key = min_branch_size, n_graphs, min_max
+    post_response = solution_sequence_response[key]
+
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
+
+    _ = client.get(result_route + "/img")
+    svg_response = client.get(result_route + "/img")
+
+    assert svg_response.status_code == 200
+
+    if "html" in svg_response.headers["content-type"]:
+        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
+
+    else:
+        srjson = svg_response.json()
+        assert srjson["status"].lower() != "failure"
+        assert srjson["task_id"] is not None
+
+
+def test_get_render_solution_sequence_bad_media_type(
+    client, solution_sequence_response
+):
+    key = 6, 3, (10, 11)
+    post_response = solution_sequence_response[key]
+
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
     svg_response = client.get(result_route + "/img?media_type=png")
     assert svg_response.status_code == 404
     assert "media_type not supported" in svg_response.content.decode()

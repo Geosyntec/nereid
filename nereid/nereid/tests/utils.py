@@ -1,6 +1,9 @@
 from pathlib import Path
 from typing import Union, Dict, Set, List
 
+import numpy
+import networkx as nx
+
 import nereid.tests.test_data
 
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
@@ -30,3 +33,20 @@ def is_equal_subset(
 
     # assume that subset is a plain value if none of the above match
     return subset == superset
+
+
+def generate_n_random_valid_watershed_graphs(
+    n_graphs: int = 3,
+    min_graph_nodes: int = 20,
+    max_graph_nodes: int = 50,
+    seed: int = 42,
+):
+
+    G = nx.DiGraph()
+    numpy.random.seed(seed)
+    for i in range(n_graphs):
+        n_nodes = numpy.random.randint(min_graph_nodes, max_graph_nodes)
+        offset = len(G.nodes())
+        g = nx.gnr_graph(n_nodes, 0.0, seed=i)
+        G.add_edges_from([((offset + s), (offset + t)) for s, t in g.edges])
+    return G

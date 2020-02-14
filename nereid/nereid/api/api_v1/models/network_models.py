@@ -35,6 +35,18 @@ class SubgraphNodes(BaseModel):
     subgraph_nodes: List[Nodes]
 
 
+class SeriesSequence(BaseModel):
+    series: List[Nodes]
+
+
+class ParallelSeriesSequence(BaseModel):
+    parallel: List[SeriesSequence]
+
+
+class SolutionSequence(BaseModel):
+    solution_sequence: ParallelSeriesSequence
+
+
 class NetworkValidation(BaseModel):
     isvalid: bool
     node_cycles: Optional[List[List[str]]]
@@ -52,3 +64,7 @@ class NetworkValidationResponse(JSONAPIResponse):
 
 class SubgraphResponse(JSONAPIResponse):
     data: Optional[SubgraphNodes] = None
+
+
+class SolutionSequenceResponse(JSONAPIResponse):
+    data: Optional[SolutionSequence] = None
