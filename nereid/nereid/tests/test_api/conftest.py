@@ -102,3 +102,21 @@ def solution_sequence_response(client):
             time.sleep(0.5)
 
     yield responses
+
+
+@pytest.fixture(scope="module")
+def land_surface_loading_responses(client, land_surface_loading_response_dicts):
+
+    details = ["true", "false"]
+    responses = {}
+
+    for detail_tf, ((nrows, nnodes), ls_request) in product(
+        details, land_surface_loading_response_dicts.items()
+    ):
+
+        payload = json.dumps(ls_request)
+        route = API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
+        response = client.post(route, data=payload)
+        responses[(detail_tf, nrows, nnodes)] = response
+
+    yield responses

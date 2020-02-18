@@ -7,8 +7,8 @@ from nereid.core.config import APP_CONTEXT
 
 
 def get_request_context(
-    state: str,
-    region: str,
+    state: str = "state",
+    region: str = "region",
     datadir: Optional[str] = None,
     context: Optional[dict] = None,
 ) -> Dict[str, Any]:

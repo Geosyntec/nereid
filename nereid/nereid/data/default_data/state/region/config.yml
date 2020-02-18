@@ -1,1 +1,14 @@
 test: true
+
+project_reference_data:
+  land_surface_table: 
+    file: land_surface_data.json
+    request_join_key: surface_id
+    expand_fields: 
+      - field: surface_id
+        sep: "-"
+        new_column_names:
+          - subbasin
+          - land_use
+          - soil
+          - slope

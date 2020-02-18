@@ -1,6 +1,5 @@
 import pytest
 import ujson as json
-import time
 
 from nereid.api.api_v1.models import network_models
 

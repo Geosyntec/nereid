@@ -1,4 +1,11 @@
+from pathlib import Path
+from itertools import product
+
 import pytest
+
+from nereid.core.utils import get_request_context
+from nereid.core.io import load_json
+from nereid.src.land_surface.utils import make_fake_land_surface_requests
 
 
 @pytest.fixture
@@ -41,3 +48,29 @@ def subgraph_request_dict():
     }
 
     return graph
+
+
+@pytest.fixture(scope="module")
+def land_surface_ids():
+
+    context = get_request_context()
+    ls_data = load_json(Path(context["data_path"]) / "land_surface_data.json")["data"]
+    ls_ids = [dct["surface_id"] for dct in ls_data]
+
+    yield ls_ids
+
+
+@pytest.fixture(scope="module")
+def land_surface_loading_response_dicts(land_surface_ids):
+
+    n_rows = [10, 50, 5000]
+    n_nodes = [5, 50, 1000]
+    responses = {}
+
+    for nrows, nnodes in product(n_rows, n_nodes,):
+        ls_list = make_fake_land_surface_requests(nrows, nnodes, land_surface_ids)
+        ls_request = dict(land_surfaces=ls_list)
+
+        responses[(nrows, nnodes)] = ls_request
+
+    yield responses

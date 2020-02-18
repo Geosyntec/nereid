@@ -22,7 +22,7 @@ def test_endpoints(client, query, isvalid):
     if isvalid:
         assert response.status_code == 200
         rjson = response.json()
-        assert rjson["status"] == "success"
+        assert rjson["status"].lower() == "success"
 
         rjsondata = rjson["data"]
         assert "state" in rjsondata
