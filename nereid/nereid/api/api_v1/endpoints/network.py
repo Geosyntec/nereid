@@ -284,7 +284,7 @@ async def get_network_solution_sequence(task_id: str):
 
 @router.get(
     "/network/solution_sequence/{task_id}/img",
-    tags=["network", "sequence"],
+    tags=["network", "sequence", "visualize"],
     response_model=network_models.SolutionSequenceResponse,
 )
 async def get_network_solution_sequence_as_img(
