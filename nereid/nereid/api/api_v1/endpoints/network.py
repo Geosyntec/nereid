@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any, Union
 
 from fastapi import APIRouter, Body, Query, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -34,7 +34,7 @@ async def validate_network(
             "edges": [{"source": "A", "target": "B"}],
         },
     )
-):
+) -> Dict[str, Any]:
 
     task = bg.background_validate_network_from_dict.apply_async(
         args=(graph.dict(by_alias=True),)
@@ -59,7 +59,7 @@ async def validate_network(
     tags=["network", "validate"],
     response_model=network_models.NetworkValidationResponse,
 )
-async def get_validate_network_result(task_id: str):
+async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
     task = bg.background_validate_network_from_dict.AsyncResult(task_id, app=router)
 
     router_path = router.url_path_for("get_validate_network_result", task_id=task.id)
@@ -119,7 +119,7 @@ async def subgraph_network(
     nodes: List[network_models.Node] = Body(
         ..., example=[{"id": "3"}, {"id": "29"}, {"id": "18"}]
     ),
-):
+) -> Dict[str, Any]:
 
     task = bg.background_network_subgraphs.apply_async(
         args=(graph.dict(by_alias=True), jsonable_encoder(nodes))
@@ -144,7 +144,7 @@ async def subgraph_network(
     tags=["network", "subgraph"],
     response_model=network_models.SubgraphResponse,
 )
-async def get_subgraph_network_result(task_id: str):
+async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
     router_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
@@ -168,7 +168,7 @@ async def get_subgraph_network_as_img(
     task_id: str,
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
-):
+) -> Union[Dict[str, Any], Any]:
 
     task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
@@ -243,7 +243,7 @@ async def network_solution_sequence(
         },
     ),
     min_branch_size: int = Query(4),
-):
+) -> Dict[str, Any]:
 
     task = bg.background_solution_sequence.apply_async(
         args=(graph.dict(by_alias=True), min_branch_size)
@@ -268,7 +268,7 @@ async def network_solution_sequence(
     tags=["network", "sequence"],
     response_model=network_models.SolutionSequenceResponse,
 )
-async def get_network_solution_sequence(task_id: str):
+async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
     router_path = router.url_path_for("get_network_solution_sequence", task_id=task.id)
@@ -292,7 +292,7 @@ async def get_network_solution_sequence_as_img(
     task_id: str,
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
-):
+) -> Union[Dict[str, Any], Any]:
 
     task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)

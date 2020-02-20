@@ -1,5 +1,5 @@
 import ujson as json
-from typing import Any
+from typing import Dict, Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -15,7 +15,7 @@ router = APIRouter()
 )
 async def get_reference_data_json(
     state: str = "state", region: str = "region", filename: str = ""
-):
+) -> Dict[str, Any]:
 
     filepath = ""
     req_ctxt = get_request_context(state=state, region=region)

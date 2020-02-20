@@ -3,7 +3,7 @@ from typing import List, Optional, Set, Union
 import networkx as nx
 
 
-def find_cycle(G: nx.Graph, **kwargs) -> List:
+def find_cycle(G: nx.Graph, **kwargs: dict) -> List:
     """Wraps networkx.find_cycle to return empty list
     if no cycle is found.
     """
@@ -61,7 +61,7 @@ def get_all_successors(
     return subset
 
 
-def find_leafy_branch_larger_than_size(G: nx.DiGraph, size: int = 1):
+def find_leafy_branch_larger_than_size(G: nx.DiGraph, size: int = 1) -> nx.DiGraph:
     """This algorithm will sort the graph `G` and return the outermost
     contiguous subgraph that is larger than `size`
     """
@@ -81,7 +81,7 @@ def find_leafy_branch_larger_than_size(G: nx.DiGraph, size: int = 1):
             return G.subgraph(us)
 
 
-def sequential_subgraph_nodes(G: nx.DiGraph, size: int):
+def sequential_subgraph_nodes(G: nx.DiGraph, size: int) -> List[List[Union[str, int]]]:
 
     if not nx.is_weakly_connected(G):
         raise nx.NetworkXUnfeasible(
@@ -111,7 +111,9 @@ def sequential_subgraph_nodes(G: nx.DiGraph, size: int):
     return graphs
 
 
-def parallel_sequential_subgraph_nodes(G: nx.DiGraph, size: int):
+def parallel_sequential_subgraph_nodes(
+    G: nx.DiGraph, size: int
+) -> List[List[List[Union[str, int]]]]:
     # strip the input graph to just the edge info
     g = nx.DiGraph()
     g.add_edges_from(G.edges())

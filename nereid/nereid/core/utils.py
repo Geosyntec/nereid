@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 import copy
 from pathlib import Path
 
@@ -6,7 +6,9 @@ from nereid.core.io import load_cfg
 from nereid.core.config import APP_CONTEXT
 
 
-def validate_request_context(context: Dict[str, Any], state: str, region: str):
+def validate_request_context(
+    context: Dict[str, Any], state: str, region: str
+) -> Tuple[bool, str]:
 
     dp = context.get("data_path")
 

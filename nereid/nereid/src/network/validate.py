@@ -8,7 +8,7 @@ from nereid.src.network.algorithms import find_cycle
 
 
 def validate_network(
-    G: nx.Graph, **kwargs
+    G: nx.Graph, **kwargs: dict
 ) -> Tuple[List[List[str]], List[List[str]], List[List[str]], List[List[str]]]:
     """Checks if there is a cycle, and prints a helpful
     message if there is.
@@ -16,9 +16,7 @@ def validate_network(
     _partial_sort: Callable = partial(sorted, key=lambda x: str(x))
 
     # force cycles to be ordered so that we can test against them
-    node_cycles: List[List[str]] = list(
-        map(_partial_sort, nx.simple_cycles(G))  # type: ignore
-    )
+    node_cycles: List[List[str]] = list(map(_partial_sort, nx.simple_cycles(G)))
 
     edge_cycles = [list(map(str, _)) for _ in find_cycle(G, **kwargs)]
 
