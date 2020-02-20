@@ -9,7 +9,10 @@ from starlette.templating import Jinja2Templates
 
 from celery.result import AsyncResult
 
-from nereid.api.api_v1.utils import wait_a_sec_and_see_if_we_can_return_some_data
+from nereid.api.api_v1.utils import (
+    standard_json_response,
+    wait_a_sec_and_see_if_we_can_return_some_data,
+)
 from nereid.core import config
 from nereid.api.api_v1.models import network_models
 import nereid.bg_worker as bg
@@ -40,18 +43,7 @@ async def validate_network(
         args=(graph.dict(by_alias=True),)
     )
 
-    router_path = router.url_path_for("get_validate_network_result", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_validate_network_result")
 
 
 @router.get(
@@ -62,16 +54,7 @@ async def validate_network(
 async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
     task = bg.background_validate_network_from_dict.AsyncResult(task_id, app=router)
 
-    router_path = router.url_path_for("get_validate_network_result", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_validate_network_result")
 
 
 @router.post(
@@ -125,18 +108,7 @@ async def subgraph_network(
         args=(graph.dict(by_alias=True), jsonable_encoder(nodes))
     )
 
-    router_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_subgraph_network_result")
 
 
 @router.get(
@@ -147,15 +119,8 @@ async def subgraph_network(
 async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
-    router_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
 
-    result_route = f"{config.API_V1_STR}{router_path}"
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_subgraph_network_result")
 
 
 @router.get(
@@ -249,18 +214,7 @@ async def network_solution_sequence(
         args=(graph.dict(by_alias=True), min_branch_size)
     )
 
-    router_path = router.url_path_for("get_network_solution_sequence", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_network_solution_sequence")
 
 
 @router.get(
@@ -271,15 +225,7 @@ async def network_solution_sequence(
 async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
-    router_path = router.url_path_for("get_network_solution_sequence", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_network_solution_sequence")
 
 
 @router.get(
