@@ -43,6 +43,7 @@ def standard_json_response(
 
 def get_valid_context(state: str = "state", region: str = "region") -> Dict[str, Any]:
     context = utils.get_request_context(state, region)
+    context["state"], context["region"] = state, region
     isvalid, msg = utils.validate_request_context(context, state, region)
     if not isvalid:
         raise HTTPException(status_code=400, detail=msg)

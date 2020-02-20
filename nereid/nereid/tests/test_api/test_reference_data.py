@@ -31,4 +31,4 @@ def test_endpoints(client, query, isvalid):
         assert "data" in rjsondata["filedata"]
 
     else:
-        assert response.status_code == 404
+        assert response.status_code == 400
