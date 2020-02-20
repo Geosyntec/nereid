@@ -1,5 +1,6 @@
 from pathlib import Path
 from itertools import product
+from copy import deepcopy
 
 import pytest
 
@@ -67,10 +68,48 @@ def land_surface_loading_response_dicts(land_surface_ids):
     n_nodes = [5, 50, 1000]
     responses = {}
 
-    for nrows, nnodes in product(n_rows, n_nodes,):
+    for nrows, nnodes in product(n_rows, n_nodes):
         ls_list = make_fake_land_surface_requests(nrows, nnodes, land_surface_ids)
         ls_request = dict(land_surfaces=ls_list)
 
         responses[(nrows, nnodes)] = ls_request
 
     yield responses
+
+
+@pytest.fixture
+def contexts():
+
+    cx1 = get_request_context()
+
+    cx2 = deepcopy(cx1)
+    cx2.pop("data_path")
+
+    cx3 = deepcopy(cx1)
+    cx3["data_path"] = r"¯\_(ツ)_/¯"
+
+    cx4 = deepcopy(cx1)
+    cx4.pop("project_reference_data")
+
+    cx5 = deepcopy(cx1)
+    cx5["project_reference_data"]["land_surface_table"].pop("file")
+
+    cx6 = deepcopy(cx1)
+    cx6["project_reference_data"]["land_surface_table"]["file"] = r"¯\_(ツ)_/¯"
+
+    cx7 = deepcopy(cx1)
+    cx7["project_reference_data"]["land_surface_table"] = [r"¯\_(ツ)_/¯"]
+
+    keys = [  # these are easier to copy into tests
+        "default",
+        "default_no_data_path_invalid",
+        "default_dne_data_path_invalid",
+        "default_no_ref_data_invalid",
+        "default_no_lst_file_invalid",
+        "default_lst_file_dne_invalid",
+        "default_lst_not_dict_invalid",
+    ]
+
+    values = [cx1, cx2, cx3, cx4, cx5, cx6, cx7]
+
+    return {k: v for k, v in zip(keys, values)}

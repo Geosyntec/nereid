@@ -19,7 +19,7 @@ async def get_reference_data_json(
 
     filepath = ""
     req_ctxt = get_request_context(state=state, region=region)
-    filepath = f"{req_ctxt['data_path']}/{filename}.json"
+    filepath = f"{req_ctxt.get('data_path', '')}/{filename}.json"
 
     try:
         filedata = load_json(filepath)

@@ -12,3 +12,22 @@ project_reference_data:
           - land_use
           - soil
           - slope
+
+    joins:
+      - other: land_surface_emc_table
+        how: left
+        left_on: land_use
+        right_on: land_use
+
+  land_surface_emc_table:
+    file: land_surface_emc.json
+    parameters:
+      - long_name: Total Suspended Solids
+        short_name: TSS
+        unit: mg/L
+      - long_name: Total Copper
+        short_name: TCu
+        unit: ug/L
+      - long_name: Fecal Coliform
+        short_name: FC
+        unit: MPN/100mL

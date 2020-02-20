@@ -21,7 +21,12 @@ class LandSurfaces(BaseModel):
 ## Land Surface Response Models
 
 
-class LandSurfaceSummary(BaseModel):
+class LandSurfaceBase(BaseModel):
+    class Config:
+        extra = "allow"
+
+
+class LandSurfaceSummary(LandSurfaceBase):
     node_id: str
     area_acres: float
     imp_area_acres: float
@@ -35,7 +40,7 @@ class LandSurfaceSummary(BaseModel):
     ro_coeff: float
 
 
-class LandSurfaceDetails(BaseModel):
+class LandSurfaceDetails(LandSurfaceBase):
     node_id: str
     surface_key: str
     area_acres: float
@@ -65,6 +70,7 @@ class LandSurfaceDetails(BaseModel):
 class LandSurfaceResults(BaseModel):
     summary: List[LandSurfaceSummary]
     details: Optional[List[LandSurfaceDetails]] = None
+    errors: Optional[List[str]] = None
 
 
 class LandSurfaceResponse(JSONAPIResponse):

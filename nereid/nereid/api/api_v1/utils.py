@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from celery.exceptions import TimeoutError
 from celery.result import AsyncResult
-from nereid.core import config
+
+from nereid.core import config, utils
 
 
 def wait_a_sec_and_see_if_we_can_return_some_data(
@@ -36,3 +37,11 @@ def standard_json_response(
         response["data"] = task.result
 
     return response
+
+
+def get_valid_context(state: str = "state", region: str = "region"):
+    context = utils.get_request_context(state, region)
+    isvalid, msg = utils.validate_request_context(context, state, region)
+    if not isvalid:
+        raise HTTPException(status_code=400, detail=msg)
+    return context
