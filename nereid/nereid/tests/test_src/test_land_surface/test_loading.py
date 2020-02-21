@@ -68,3 +68,72 @@ def test_detailed_land_surface_loading_results(
     if not "no_joins" in key and not "no_params" in key:
         assert any(["conc" in c for c in t.columns])
         assert any(["load" in c for c in t.columns])
+
+
+def test_detailed_land_surface_volume_loading_results(
+    known_land_surface_volume_loading_result,
+):
+
+    numpy.random.seed(42)
+    size = 2
+    MAP = 10  # inches
+    area_acres = numpy.random.randint(0, 11, size)
+    imp_area_acres = numpy.round(numpy.random.random(size) * area_acres, 1)
+    perv_ro_depth_inches = numpy.random.randint(0, 5, size)
+    imp_ro_depth_inches = 2 * perv_ro_depth_inches
+    perv_ro_coeff = perv_ro_depth_inches / MAP
+    imp_ro_coeff = imp_ro_depth_inches / MAP
+
+    input_df = pandas.DataFrame(
+        dict(
+            area_acres=area_acres,
+            imp_area_acres=imp_area_acres,
+            perv_ro_depth_inches=perv_ro_depth_inches,
+            imp_ro_depth_inches=imp_ro_depth_inches,
+            perv_ro_coeff=perv_ro_coeff,
+            imp_ro_coeff=imp_ro_coeff,
+        )
+    )
+
+    result = detailed_land_surface_volume_loading_results(input_df).round(2)
+    known = known_land_surface_volume_loading_result
+    numpy.testing.assert_array_equal(result, known)
+
+
+def test_detailed_land_surface_pollutant_loading_results(
+    known_land_surface_pollutant_loading_result,
+):
+    numpy.random.seed(42)
+    size = 4
+
+    runoff_volume_cuft = numpy.random.randint(0, 4, size)
+    FC_conc = numpy.random.randint(0, 1e5, size)  # mpn/100ml
+    TCu_conc = numpy.random.randint(0, 1000, size)  # ug/l
+    TSS_conc = numpy.random.randint(0, 1000, size)  # mg/l
+
+    input_df = pandas.DataFrame(
+        {
+            "runoff_volume_cuft": runoff_volume_cuft,
+            "FC_conc_mpn/100ml": FC_conc,
+            "TCu_conc_ug/l": TCu_conc,
+            "TSS_conc_mg/l": TSS_conc,
+        }
+    )
+    parameters = [
+        {"long_name": "Total Suspended Solids", "short_name": "TSS", "unit": "mg/L"},
+        {"long_name": "Total Copper", "short_name": "TCu", "unit": "ug/L"},
+        {"long_name": "Fecal Coliform", "short_name": "FC", "unit": "MPN/100mL"},
+    ]
+
+    def sigfigs(x, N):
+
+        if x > 0 or x < 0:
+            return numpy.round(x, 4 - int(numpy.floor(numpy.log10(abs(x)))))
+        else:
+            return 0
+
+    result = detailed_land_surface_pollutant_loading_results(
+        input_df, parameters
+    ).applymap(lambda x: sigfigs(x, 4))
+    known = known_land_surface_pollutant_loading_result
+    numpy.testing.assert_allclose(result, known, rtol=1e-7, atol=1e-6)
