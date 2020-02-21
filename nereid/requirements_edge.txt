@@ -9,7 +9,6 @@ aiofiles
 celery
 jinja2
 redis
-email-validator
 ujson
 pytest
 coverage
