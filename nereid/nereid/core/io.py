@@ -19,13 +19,15 @@ def _load_file(filepath: PathType) -> str:
 
 def load_file(filepath: PathType) -> str:
     """wrapper to ensure the cache is called with an absolute path"""
-    return _load_file(Path(filepath).resolve())
+    contents: str = _load_file(Path(filepath).resolve())
+    return contents
 
 
 def load_cfg(filepath: PathType) -> Dict[str, Any]:
     """load cached yaml file"""
     f = load_file(filepath)
-    return yaml.safe_load(f)
+    contents: Dict[str, Any] = yaml.safe_load(f)
+    return contents
 
 
 def load_multiple_cfgs(files: List[PathType]) -> Dict[str, Any]:
@@ -39,7 +41,8 @@ def load_multiple_cfgs(files: List[PathType]) -> Dict[str, Any]:
 def load_json(filepath: PathType) -> Dict[str, Any]:
     """load cached json file"""
     f = load_file(filepath)
-    return json.loads(f)
+    contents: Dict[str, Any] = json.loads(f)
+    return contents
 
 
 def load_ref_data(filepath: PathType) -> pandas.DataFrame:

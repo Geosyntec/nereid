@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any, Union
 
 from fastapi import APIRouter, Body, Query, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -9,7 +9,10 @@ from starlette.templating import Jinja2Templates
 
 from celery.result import AsyncResult
 
-from nereid.api.api_v1.utils import wait_a_sec_and_see_if_we_can_return_some_data
+from nereid.api.api_v1.utils import (
+    standard_json_response,
+    wait_a_sec_and_see_if_we_can_return_some_data,
+)
 from nereid.core import config
 from nereid.api.api_v1.models import network_models
 import nereid.bg_worker as bg
@@ -34,24 +37,13 @@ async def validate_network(
             "edges": [{"source": "A", "target": "B"}],
         },
     )
-):
+) -> Dict[str, Any]:
 
     task = bg.background_validate_network_from_dict.apply_async(
         args=(graph.dict(by_alias=True),)
     )
 
-    router_path = router.url_path_for("get_validate_network_result", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_validate_network_result")
 
 
 @router.get(
@@ -59,19 +51,10 @@ async def validate_network(
     tags=["network", "validate"],
     response_model=network_models.NetworkValidationResponse,
 )
-async def get_validate_network_result(task_id: str):
+async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
     task = bg.background_validate_network_from_dict.AsyncResult(task_id, app=router)
 
-    router_path = router.url_path_for("get_validate_network_result", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_validate_network_result")
 
 
 @router.post(
@@ -119,24 +102,13 @@ async def subgraph_network(
     nodes: List[network_models.Node] = Body(
         ..., example=[{"id": "3"}, {"id": "29"}, {"id": "18"}]
     ),
-):
+) -> Dict[str, Any]:
 
     task = bg.background_network_subgraphs.apply_async(
         args=(graph.dict(by_alias=True), jsonable_encoder(nodes))
     )
 
-    router_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_subgraph_network_result")
 
 
 @router.get(
@@ -144,18 +116,11 @@ async def subgraph_network(
     tags=["network", "subgraph"],
     response_model=network_models.SubgraphResponse,
 )
-async def get_subgraph_network_result(task_id: str):
+async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
-    router_path = router.url_path_for("get_subgraph_network_result", task_id=task.id)
 
-    result_route = f"{config.API_V1_STR}{router_path}"
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_subgraph_network_result")
 
 
 @router.get(
@@ -168,7 +133,7 @@ async def get_subgraph_network_as_img(
     task_id: str,
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
-):
+) -> Union[Dict[str, Any], Any]:
 
     task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
@@ -243,24 +208,13 @@ async def network_solution_sequence(
         },
     ),
     min_branch_size: int = Query(4),
-):
+) -> Dict[str, Any]:
 
     task = bg.background_solution_sequence.apply_async(
         args=(graph.dict(by_alias=True), min_branch_size)
     )
 
-    router_path = router.url_path_for("get_network_solution_sequence", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=0.2)
-
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_network_solution_sequence")
 
 
 @router.get(
@@ -268,18 +222,10 @@ async def network_solution_sequence(
     tags=["network", "sequence"],
     response_model=network_models.SolutionSequenceResponse,
 )
-async def get_network_solution_sequence(task_id: str):
+async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
-    router_path = router.url_path_for("get_network_solution_sequence", task_id=task.id)
-
-    result_route = f"{config.API_V1_STR}{router_path}"
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
-
-    if task.successful():  # pragma: no branch
-        response["data"] = task.result
-
-    return response
+    return standard_json_response(task, router, "get_network_solution_sequence")
 
 
 @router.get(
@@ -292,7 +238,7 @@ async def get_network_solution_sequence_as_img(
     task_id: str,
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
-):
+) -> Union[Dict[str, Any], Any]:
 
     task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
