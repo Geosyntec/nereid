@@ -8,12 +8,12 @@ from nereid.src.network.tasks import (
     solution_sequence,
     render_solution_sequence_svg,
 )
-
 from nereid.src.land_surface.tasks import land_surface_loading
+from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
 
 
 @celery_app.task(acks_late=True, track_started=True)
-def background_validate_network_from_dict(graph):
+def background_validate_network(graph):
     return validate_network(graph)  # pragma: no cover
 
 
@@ -40,3 +40,10 @@ def background_render_solution_sequence_svg(task_result, npi):
 @celery_app.task(acks_late=True, track_started=True)
 def background_land_surface_loading(land_surfaces, details, context):
     return land_surface_loading(land_surfaces, details, context)  # pragma: no cover
+
+
+@celery_app.task(acks_late=True, track_started=True)
+def background_initialize_treatment_facilities(treatment_facilities, context):
+    return initialize_treatment_facilities(  # pragma: no cover
+        treatment_facilities, context
+    )

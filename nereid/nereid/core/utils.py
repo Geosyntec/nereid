@@ -1,16 +1,16 @@
 from typing import Optional, Dict, Any, Tuple
-import copy
+from copy import deepcopy
 from pathlib import Path
 
 from nereid.core.io import load_cfg
 from nereid.core.config import APP_CONTEXT
 
 
-def validate_request_context(
-    context: Dict[str, Any], state: str, region: str
-) -> Tuple[bool, str]:
+def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
 
     dp = context.get("data_path")
+    state = context["state"]
+    region = context["region"]
 
     if not dp:
         message = f"No configuration exists for the requested state: '{state}' and/or region: '{region}'."
@@ -63,6 +63,9 @@ def get_request_context(
     if context is None:
         context = APP_CONTEXT
 
+    context["state"] = state
+    context["region"] = region
+
     if datadir is None:
         default_path = Path(__file__).parent.parent / "data"
         basepath = Path(context.get("data_path", default_path))
@@ -77,7 +80,7 @@ def get_request_context(
     if not data_path.exists():
         return context
 
-    request_context = copy.deepcopy(context)
+    request_context = deepcopy(context)
 
     request_context.update(load_cfg(data_path / "config.yml"))
     request_context["data_path"] = str(data_path)

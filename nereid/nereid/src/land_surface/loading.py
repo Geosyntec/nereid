@@ -1,20 +1,37 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Tuple
+from copy import deepcopy
 
 import pandas
 
 from nereid.core.units import ureg
+from nereid.core.io import parse_api_recognize
 
 # TODO: implement fallback to e.g., "TRANS-B-10" rather than "401070-TRANS-B-10"
 # in case ref data is missing.
 
 
-def detailed_land_surface_volume_loading_results(
+def build_land_surface_dataframe(
+    land_surfaces_list: List[Dict[str, Any]], context: Dict[str, Any]
+) -> Tuple[pandas.DataFrame, List[str]]:
+
+    land_surfaces_df = pandas.DataFrame(land_surfaces_list)
+    df = land_surfaces_df
+    df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
+
+    df, msg = parse_api_recognize(df, "land_surfaces", context)
+
+    df["imp_pct"] = df["imp_pct"].clip(0, 100)
+    df["imp_area_acres"] = df["area_acres"] * (df["imp_pct"] / 100)
+
+    return df, msg
+
+
+def detailed_volume_loading_results(
     land_surfaces_df: pandas.DataFrame,
 ) -> pandas.DataFrame:
 
     # method chaining with 'df.assign' looks better, but it's much less memory efficient
     df = land_surfaces_df
-
     df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
     df["perv_area_acres"] = df["area_acres"] - df["imp_area_acres"]
     df["imp_area_sqft"] = df["imp_area_acres"] * 43560
@@ -31,8 +48,9 @@ def detailed_land_surface_volume_loading_results(
     return df
 
 
-def detailed_land_surface_pollutant_loading_results(
-    land_surfaces_df: pandas.DataFrame, parameters: List[Dict[str, str]]
+def detailed_pollutant_loading_results(
+    land_surfaces_df: pandas.DataFrame,
+    parameters: Optional[List[Dict[str, str]]] = None,
 ) -> pandas.DataFrame:
 
     #  TODO: make this more flexible and units agnostic.
@@ -46,6 +64,9 @@ def detailed_land_surface_pollutant_loading_results(
     }
 
     df = land_surfaces_df
+
+    if parameters is None:
+        return df
 
     for param in parameters:
         unit = param["unit"].lower()
@@ -61,22 +82,23 @@ def detailed_land_surface_pollutant_loading_results(
     return df
 
 
-def detailed_land_surface_loading_results(
-    land_surfaces_df: pandas.DataFrame, parameters: List[Dict[str, str]]
+def detailed_loading_results(
+    land_surfaces_df: pandas.DataFrame,
+    parameters: Optional[List[Dict[str, str]]] = None,
 ) -> pandas.DataFrame:
 
     # fmt: off
     results = (
         land_surfaces_df
-        .pipe(detailed_land_surface_volume_loading_results)
-        .pipe(detailed_land_surface_pollutant_loading_results, parameters)
+        .pipe(detailed_volume_loading_results)
+        .pipe(detailed_pollutant_loading_results, parameters)
     )
     # fmt: on
 
     return results
 
 
-def summary_land_surface_loading_results(
+def summary_loading_results(
     detailed_results: pandas.DataFrame, parameters: List[Dict[str, str]]
 ) -> pandas.DataFrame:
 
