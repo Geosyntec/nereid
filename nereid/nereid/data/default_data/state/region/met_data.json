@@ -1,0 +1,36 @@
+{
+  "schema": {
+    "fields": [
+      {
+        "name": "subbasin",
+        "type": "string"
+      },
+      {
+        "name": "rain_gauge",
+        "type": "string"
+      },
+      {
+        "name": "et_zone",
+        "type": "string"
+      }
+    ],
+    "pandas_version": "0.20.0"
+  },
+  "data": [
+    {
+      "subbasin": "10101000",
+      "rain_gauge": "100_LAGUNABEACH",
+      "et_zone": "Zone4"
+    },
+    {
+      "subbasin": "10101200",
+      "rain_gauge": "1130_LAGUNA_AUDUBON",
+      "et_zone": "Zone6"
+    },
+    {
+      "subbasin": "20101000",
+      "rain_gauge": "100_LAGUNABEACH",
+      "et_zone": "Zone4"
+    }
+  ]
+}

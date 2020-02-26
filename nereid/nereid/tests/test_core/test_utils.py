@@ -32,12 +32,19 @@ def test_get_request_context(state, region, dirname, context, exp):
         "default_no_lst_file_invalid",
         "default_lst_file_dne_invalid",
         "default_lst_not_dict_invalid",
+        "default_lst_no_expanded_fields_valid",
+        "default_emc_file_dne_invalid",
+        "default_emc_no_params_valid",
+        "default_api_no_ls_joins_valid",
+        "default_api_no_ls_remaps_valid",
+        "default_api_no_ls_joins_or_remaps_valid",
+        "default_api_ls_joins_no_merge_no_params_valid",
     ],
 )
 def test_validate_request_context(contexts, key):
     context = contexts[key]
 
-    isvalid, msg = utils.validate_request_context(context, "state", "region")
+    isvalid, msg = utils.validate_request_context(context)
 
     assert len(msg) > 0
 
