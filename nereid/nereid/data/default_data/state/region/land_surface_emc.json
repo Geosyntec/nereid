@@ -1,0 +1,139 @@
+{
+  "schema": {
+    "fields": [
+      {
+        "name": "land_use",
+        "type": "string"
+      },
+      {
+        "name": "FC_conc_mpn/100ml",
+        "type": "number"
+      },
+      {
+        "name": "TCu_conc_ug/l",
+        "type": "number"
+      },
+      {
+        "name": "TSS_conc_mg/l",
+        "type": "number"
+      }
+    ],
+    "pandas_version": "0.20.0"
+  },
+  "data": [
+    {
+      "land_use": "COMM",
+      "FC_conc_mpn/100ml": 51600.0,
+      "TCu_conc_ug/l": 54.84,
+      "TSS_conc_mg/l": 127.68
+    },
+    {
+      "land_use": "EDU",
+      "FC_conc_mpn/100ml": 2148.0,
+      "TCu_conc_ug/l": 12.02,
+      "TSS_conc_mg/l": 132.11
+    },
+    {
+      "land_use": "IND",
+      "FC_conc_mpn/100ml": 26703.0,
+      "TCu_conc_ug/l": 53.54,
+      "TSS_conc_mg/l": 125.18
+    },
+    {
+      "land_use": "OSAGIR",
+      "FC_conc_mpn/100ml": 60300.0,
+      "TCu_conc_ug/l": 100.1,
+      "TSS_conc_mg/l": 999.2
+    },
+    {
+      "land_use": "OSAGNI",
+      "FC_conc_mpn/100ml": 60300.0,
+      "TCu_conc_ug/l": 100.1,
+      "TSS_conc_mg/l": 999.2
+    },
+    {
+      "land_use": "OSDEV",
+      "FC_conc_mpn/100ml": 6684.0,
+      "TCu_conc_ug/l": 8.36,
+      "TSS_conc_mg/l": 2523.76
+    },
+    {
+      "land_use": "OSFOR",
+      "FC_conc_mpn/100ml": 484.0,
+      "TCu_conc_ug/l": 10.6,
+      "TSS_conc_mg/l": 216.6
+    },
+    {
+      "land_use": "OSIRR",
+      "FC_conc_mpn/100ml": 6684.0,
+      "TCu_conc_ug/l": 8.36,
+      "TSS_conc_mg/l": 2523.76
+    },
+    {
+      "land_use": "OSLOW",
+      "FC_conc_mpn/100ml": 484.0,
+      "TCu_conc_ug/l": 10.6,
+      "TSS_conc_mg/l": 216.6
+    },
+    {
+      "land_use": "OSVAC",
+      "FC_conc_mpn/100ml": 484.0,
+      "TCu_conc_ug/l": 10.6,
+      "TSS_conc_mg/l": 216.6
+    },
+    {
+      "land_use": "OSWET",
+      "FC_conc_mpn/100ml": 484.0,
+      "TCu_conc_ug/l": 10.6,
+      "TSS_conc_mg/l": 216.6
+    },
+    {
+      "land_use": "RESMF",
+      "FC_conc_mpn/100ml": 11800.0,
+      "TCu_conc_ug/l": 12.1,
+      "TSS_conc_mg/l": 39.9
+    },
+    {
+      "land_use": "RESSFH",
+      "FC_conc_mpn/100ml": 35557.0,
+      "TCu_conc_ug/l": 25.96,
+      "TSS_conc_mg/l": 123.41
+    },
+    {
+      "land_use": "RESSFL",
+      "FC_conc_mpn/100ml": 6684.0,
+      "TCu_conc_ug/l": 8.36,
+      "TSS_conc_mg/l": 2523.76
+    },
+    {
+      "land_use": "TRANS",
+      "FC_conc_mpn/100ml": 1680.0,
+      "TCu_conc_ug/l": 52.2,
+      "TSS_conc_mg/l": 77.8
+    },
+    {
+      "land_use": "TRFWY",
+      "FC_conc_mpn/100ml": 1680.0,
+      "TCu_conc_ug/l": 52.2,
+      "TSS_conc_mg/l": 77.8
+    },
+    {
+      "land_use": "TROTH",
+      "FC_conc_mpn/100ml": 1680.0,
+      "TCu_conc_ug/l": 52.2,
+      "TSS_conc_mg/l": 77.8
+    },
+    {
+      "land_use": "UTIL",
+      "FC_conc_mpn/100ml": 51600.0,
+      "TCu_conc_ug/l": 54.84,
+      "TSS_conc_mg/l": 127.68
+    },
+    {
+      "land_use": "WATER",
+      "FC_conc_mpn/100ml": 0.0,
+      "TCu_conc_ug/l": 0.0,
+      "TSS_conc_mg/l": 0.0
+    }
+  ]
+}

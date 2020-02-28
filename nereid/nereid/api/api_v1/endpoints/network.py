@@ -9,7 +9,7 @@ from starlette.templating import Jinja2Templates
 
 from celery.result import AsyncResult
 
-from nereid.api.utils import wait_a_sec_and_see_if_we_can_return_some_data
+from nereid.api.api_v1.utils import wait_a_sec_and_see_if_we_can_return_some_data
 from nereid.core import config
 from nereid.api.api_v1.models import network_models
 import nereid.bg_worker as bg
@@ -195,7 +195,7 @@ async def get_subgraph_network_as_img(
             return svgresponse
 
         detail = f"media_type not supported: '{media_type}'."
-        raise HTTPException(status_code=404, detail=detail)
+        raise HTTPException(status_code=400, detail=detail)
 
     return response  # pragma: no cover
 
@@ -319,6 +319,6 @@ async def get_network_solution_sequence_as_img(
             return svgresponse
 
         detail = f"media_type not supported: '{media_type}'."
-        raise HTTPException(status_code=404, detail=detail)
+        raise HTTPException(status_code=400, detail=detail)
 
     return response  # pragma: no cover

@@ -19,7 +19,7 @@ async def get_reference_data_json(
 
     filepath = ""
     req_ctxt = get_request_context(state=state, region=region)
-    filepath = f"{req_ctxt['data_path']}/{filename}.json"
+    filepath = f"{req_ctxt.get('data_path', '')}/{filename}.json"
 
     try:
         filedata = load_json(filepath)
@@ -28,7 +28,9 @@ async def get_reference_data_json(
         detail = f"state '{state}', region '{region}', or filename '{filename}' not found. {filepath}"
         raise HTTPException(status_code=404, detail=detail)
 
-    return ReferenceDataResponse(
-        status="success",
+    response = dict(
+        status="SUCCESS",
         data=dict(state=state, region=region, file=filename, filedata=filedata),
     )
+
+    return response

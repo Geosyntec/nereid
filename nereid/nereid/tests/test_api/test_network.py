@@ -1,6 +1,5 @@
 import pytest
 import ujson as json
-import time
 
 from nereid.api.api_v1.models import network_models
 
@@ -186,7 +185,7 @@ def test_get_render_subgraph_svg_bad_media_type(
     result_route = rjson["result_route"]
 
     svg_response = client.get(result_route + "/img?media_type=png")
-    assert svg_response.status_code == 404
+    assert svg_response.status_code == 400
     assert "media_type not supported" in svg_response.content.decode()
 
 
@@ -269,5 +268,5 @@ def test_get_render_solution_sequence_bad_media_type(
     prjson = post_response.json()
     result_route = prjson["result_route"]
     svg_response = client.get(result_route + "/img?media_type=png")
-    assert svg_response.status_code == 404
+    assert svg_response.status_code == 400
     assert "media_type not supported" in svg_response.content.decode()

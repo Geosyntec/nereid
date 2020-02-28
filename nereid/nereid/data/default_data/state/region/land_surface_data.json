@@ -1,0 +1,2206 @@
+{
+  "schema": {
+    "fields": [
+      {
+        "name": "surface_id",
+        "type": "string"
+      },
+      {
+        "name": "perv_ro_depth_inches",
+        "type": "number"
+      },
+      {
+        "name": "imp_ro_depth_inches",
+        "type": "number"
+      },
+      {
+        "name": "perv_ro_coeff",
+        "type": "number"
+      },
+      {
+        "name": "imp_ro_coeff",
+        "type": "number"
+      }
+    ],
+    "pandas_version": "0.20.0"
+  },
+  "data": [
+    {
+      "surface_id": "10101200-COMM-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-COMM-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-COMM-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-COMM-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-COMM-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-EDU-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-EDU-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-EDU-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-EDU-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-EDU-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-EDU-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-EDU-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-EDU-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-EDU-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESSFH-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-RESSFH-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESSFH-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESSFH-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-RESSFH-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESSFH-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESSFL-D-10",
+      "perv_ro_depth_inches": 1.2404415731,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.100437636,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESSFL-D-5",
+      "perv_ro_depth_inches": 1.1988538495,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0970703088,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-RESMF-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-RESMF-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-RESMF-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-water-0",
+      "perv_ro_depth_inches": 21.5807288191,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 1.7473756386,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-RESMF-water-10",
+      "perv_ro_depth_inches": 21.5805243912,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 1.7473590862,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-RESMF-water-5",
+      "perv_ro_depth_inches": 21.5805948139,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 1.7473647883,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRFWY-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-TRFWY-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-B-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-TRFWY-B-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-B-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-TRFWY-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-TRFWY-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-rock-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-TRFWY-rock-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRFWY-rock-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-TRANS-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-TRANS-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRANS-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRANS-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-TRANS-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRANS-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRANS-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-TRANS-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRANS-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-TRANS-rock-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSAGIR-A-0",
+      "perv_ro_depth_inches": 0.0728050095,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0058949677,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSAGIR-A-10",
+      "perv_ro_depth_inches": 0.1149248662,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0093053813,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSAGIR-A-5",
+      "perv_ro_depth_inches": 0.0976278297,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0079048531,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSAGIR-D-0",
+      "perv_ro_depth_inches": 1.0847344599,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0878301463,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSAGIR-D-10",
+      "perv_ro_depth_inches": 1.1897788978,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0963355167,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSAGIR-D-5",
+      "perv_ro_depth_inches": 1.1418499819,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0924547478,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSAGIR-rock-0",
+      "perv_ro_depth_inches": 1.0847344599,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0878301463,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSAGIR-rock-10",
+      "perv_ro_depth_inches": 1.1897788978,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0963355167,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSAGIR-rock-5",
+      "perv_ro_depth_inches": 1.1418499819,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0924547478,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSDEV-A-0",
+      "perv_ro_depth_inches": 0.0379965172,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.0030765499,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-OSDEV-A-10",
+      "perv_ro_depth_inches": 0.0746413457,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0060436545,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-A-5",
+      "perv_ro_depth_inches": 0.0565149925,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0045759771,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-B-10",
+      "perv_ro_depth_inches": 0.0746413457,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0060436545,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-C-0",
+      "perv_ro_depth_inches": 0.2829165606,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.0229075445,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-OSDEV-C-10",
+      "perv_ro_depth_inches": 0.3949998093,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0319828422,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-C-5",
+      "perv_ro_depth_inches": 0.3564504746,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0288615311,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-D-0",
+      "perv_ro_depth_inches": 1.0703720856,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.0866672355,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-OSDEV-D-10",
+      "perv_ro_depth_inches": 1.1458774603,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0927808498,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-D-5",
+      "perv_ro_depth_inches": 1.1217772592,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0908294743,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-rock-10",
+      "perv_ro_depth_inches": 1.1458774603,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0927808498,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-rock-5",
+      "perv_ro_depth_inches": 1.1217772592,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.0908294743,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-water-0",
+      "perv_ro_depth_inches": 10.5829101797,
+      "imp_ro_depth_inches": 21.2078090154,
+      "perv_ro_coeff": 0.8568904039,
+      "imp_ro_coeff": 1.7171805981
+    },
+    {
+      "surface_id": "10101200-OSDEV-water-10",
+      "perv_ro_depth_inches": 10.5832453416,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.8569175417,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSDEV-water-5",
+      "perv_ro_depth_inches": 10.5831611061,
+      "imp_ro_depth_inches": 21.2078476398,
+      "perv_ro_coeff": 0.8569107212,
+      "imp_ro_coeff": 1.7171837255
+    },
+    {
+      "surface_id": "10101200-OSIRR-A-0",
+      "perv_ro_depth_inches": 0.0800260426,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0064796494,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSIRR-A-10",
+      "perv_ro_depth_inches": 0.1258471958,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0101897543,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-A-5",
+      "perv_ro_depth_inches": 0.1068667655,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0086529229,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-C-0",
+      "perv_ro_depth_inches": 0.3250062091,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0263155122,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSIRR-C-10",
+      "perv_ro_depth_inches": 0.4256371281,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0344635232,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-C-5",
+      "perv_ro_depth_inches": 0.3879723309,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0314138325,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-D-0",
+      "perv_ro_depth_inches": 1.2334735691,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0998734419,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSIRR-D-10",
+      "perv_ro_depth_inches": 1.3643963429,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.110474162,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-D-5",
+      "perv_ro_depth_inches": 1.3076254273,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.105877463,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-water-0",
+      "perv_ro_depth_inches": 60.4649375988,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 4.8958012416,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSIRR-water-10",
+      "perv_ro_depth_inches": 60.4631789704,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 4.8956588468,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSIRR-water-5",
+      "perv_ro_depth_inches": 60.4637742458,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 4.8957070458,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-A-0",
+      "perv_ro_depth_inches": 0.0379965172,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0030765499,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSLOW-A-10",
+      "perv_ro_depth_inches": 0.0746413457,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0060436545,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-A-5",
+      "perv_ro_depth_inches": 0.0565149925,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0045759771,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-B-0",
+      "perv_ro_depth_inches": 0.0379965172,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0030765499,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSLOW-B-10",
+      "perv_ro_depth_inches": 0.0746413457,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0060436545,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-B-5",
+      "perv_ro_depth_inches": 0.0565149925,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0045759771,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-C-0",
+      "perv_ro_depth_inches": 0.2829165606,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0229075445,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSLOW-C-10",
+      "perv_ro_depth_inches": 0.3949998093,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0319828422,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-C-5",
+      "perv_ro_depth_inches": 0.3564504746,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0288615311,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-D-0",
+      "perv_ro_depth_inches": 1.0703720856,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0866672355,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSLOW-D-10",
+      "perv_ro_depth_inches": 1.1458774603,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0927808498,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-D-5",
+      "perv_ro_depth_inches": 1.1217772592,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0908294743,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-rock-0",
+      "perv_ro_depth_inches": 1.0703720856,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0866672355,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSLOW-rock-10",
+      "perv_ro_depth_inches": 1.1458774603,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0927808498,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-rock-5",
+      "perv_ro_depth_inches": 1.1217772592,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0908294743,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-water-0",
+      "perv_ro_depth_inches": 10.5829101797,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.8568904039,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSLOW-water-10",
+      "perv_ro_depth_inches": 10.5832453416,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.8569175417,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSLOW-water-5",
+      "perv_ro_depth_inches": 10.5831611061,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.8569107212,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSFOR-A-10",
+      "perv_ro_depth_inches": 0.1544576819,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0125063242,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSFOR-A-5",
+      "perv_ro_depth_inches": 0.1237614661,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0100208743,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSFOR-C-10",
+      "perv_ro_depth_inches": 0.4888261276,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0395798897,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSFOR-C-5",
+      "perv_ro_depth_inches": 0.4506548767,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0364891918,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSFOR-D-10",
+      "perv_ro_depth_inches": 1.377488925,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1115342586,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSFOR-D-5",
+      "perv_ro_depth_inches": 1.3224193944,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1070753195,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-A-0",
+      "perv_ro_depth_inches": 0.0063974686,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0005179983,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSWET-A-10",
+      "perv_ro_depth_inches": 0.013118924,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0010622296,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-A-5",
+      "perv_ro_depth_inches": 0.0099832867,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0008083393,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-C-0",
+      "perv_ro_depth_inches": 0.1483200965,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0120093684,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSWET-C-10",
+      "perv_ro_depth_inches": 0.2107259779,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0170623265,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-C-5",
+      "perv_ro_depth_inches": 0.185055919,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0149838408,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-D-0",
+      "perv_ro_depth_inches": 0.7664599845,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0620596976,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSWET-D-10",
+      "perv_ro_depth_inches": 0.8227711301,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0666191694,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-D-5",
+      "perv_ro_depth_inches": 0.80885702,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0654925542,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-water-0",
+      "perv_ro_depth_inches": 9.9496963341,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.8056195475,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSWET-water-10",
+      "perv_ro_depth_inches": 9.9500299742,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.8056465621,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSWET-water-5",
+      "perv_ro_depth_inches": 9.949945493,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.8056397217,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSVAC-C-0",
+      "perv_ro_depth_inches": 0.3323708046,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.026911818,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-OSVAC-C-10",
+      "perv_ro_depth_inches": 0.4462127426,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0361295155,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-OSVAC-C-5",
+      "perv_ro_depth_inches": 0.4078241929,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.033021223,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-A-0",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-WATER-A-10",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-A-5",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-C-0",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-WATER-C-10",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-C-5",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-D-0",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-WATER-D-10",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-D-5",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-water-0",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10101200-WATER-water-10",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10101200-WATER-water-5",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-IND-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-IND-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-IND-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-IND-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-IND-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-UTIL-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-UTIL-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-UTIL-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-UTIL-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-UTIL-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-UTIL-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESSFH-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-RESSFH-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESSFH-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESSFH-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-RESSFH-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESSFH-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESSFH-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-RESSFH-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESSFH-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESMF-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-RESMF-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESMF-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESMF-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-RESMF-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESMF-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESMF-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-RESMF-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-RESMF-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TRFWY-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-TRFWY-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-TRFWY-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-TRFWY-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-TRFWY-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-TRFWY-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-TRFWY-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-TRFWY-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-TRFWY-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-TRANS-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-TRANS-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TRANS-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TRANS-C-0",
+      "perv_ro_depth_inches": 3.1235409649,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.2529107999,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-TRANS-C-10",
+      "perv_ro_depth_inches": 3.464885681,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2805492289,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TRANS-C-5",
+      "perv_ro_depth_inches": 3.3381980345,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.2702914239,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TRANS-D-0",
+      "perv_ro_depth_inches": 5.2549405226,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.4254886444,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-TRANS-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TRANS-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TROTH-A-0",
+      "perv_ro_depth_inches": 1.9575157603,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.1584986022,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-TROTH-A-10",
+      "perv_ro_depth_inches": 2.2349104664,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1809590462,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TROTH-A-5",
+      "perv_ro_depth_inches": 2.1384890623,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.1731518765,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TROTH-D-10",
+      "perv_ro_depth_inches": 5.5858283153,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4522803841,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-TROTH-D-5",
+      "perv_ro_depth_inches": 5.4610633532,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.4421782575,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSDEV-A-0",
+      "perv_ro_depth_inches": 0.0379965172,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.0030765499,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-OSDEV-A-10",
+      "perv_ro_depth_inches": 0.0746413457,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.0060436545,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSDEV-A-5",
+      "perv_ro_depth_inches": 0.0565149925,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.0045759771,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSDEV-C-0",
+      "perv_ro_depth_inches": 0.2829165606,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.0229075445,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-OSDEV-C-10",
+      "perv_ro_depth_inches": 0.3949998093,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.0319828422,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSDEV-C-5",
+      "perv_ro_depth_inches": 0.3564504746,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.0288615311,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSDEV-D-0",
+      "perv_ro_depth_inches": 1.0703720856,
+      "imp_ro_depth_inches": 14.6119680812,
+      "perv_ro_coeff": 0.0866672355,
+      "imp_ro_coeff": 1.1831202398
+    },
+    {
+      "surface_id": "10102000-OSDEV-D-10",
+      "perv_ro_depth_inches": 1.1458774603,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.0927808498,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSDEV-D-5",
+      "perv_ro_depth_inches": 1.1217772592,
+      "imp_ro_depth_inches": 14.6120115027,
+      "perv_ro_coeff": 0.0908294743,
+      "imp_ro_coeff": 1.1831237557
+    },
+    {
+      "surface_id": "10102000-OSIRR-A-0",
+      "perv_ro_depth_inches": 0.0800260426,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0064796494,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-OSIRR-A-10",
+      "perv_ro_depth_inches": 0.1258471958,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0101897543,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSIRR-A-5",
+      "perv_ro_depth_inches": 0.1068667655,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0086529229,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSIRR-C-0",
+      "perv_ro_depth_inches": 0.3250062091,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0263155122,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-OSIRR-C-10",
+      "perv_ro_depth_inches": 0.4256371281,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0344635232,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSIRR-C-5",
+      "perv_ro_depth_inches": 0.3879723309,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0314138325,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSIRR-D-10",
+      "perv_ro_depth_inches": 1.3643963429,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.110474162,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSLOW-A-0",
+      "perv_ro_depth_inches": 0.0379965172,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0030765499,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-OSLOW-A-10",
+      "perv_ro_depth_inches": 0.0746413457,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0060436545,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSLOW-A-5",
+      "perv_ro_depth_inches": 0.0565149925,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0045759771,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSLOW-C-0",
+      "perv_ro_depth_inches": 0.2829165606,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0229075445,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-OSLOW-C-10",
+      "perv_ro_depth_inches": 0.3949998093,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0319828422,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSLOW-C-5",
+      "perv_ro_depth_inches": 0.3564504746,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0288615311,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSLOW-D-0",
+      "perv_ro_depth_inches": 1.0703720856,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0866672355,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-OSLOW-D-10",
+      "perv_ro_depth_inches": 1.1458774603,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0927808498,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSLOW-D-5",
+      "perv_ro_depth_inches": 1.1217772592,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0908294743,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "10102000-OSFOR-C-0",
+      "perv_ro_depth_inches": 0.3724670756,
+      "imp_ro_depth_inches": 11.3929944568,
+      "perv_ro_coeff": 0.0301583834,
+      "imp_ro_coeff": 0.9224823281
+    },
+    {
+      "surface_id": "10102000-OSFOR-C-10",
+      "perv_ro_depth_inches": 0.4888261276,
+      "imp_ro_depth_inches": 11.3930402195,
+      "perv_ro_coeff": 0.0395798897,
+      "imp_ro_coeff": 0.9224860335
+    },
+    {
+      "surface_id": "20101000-COMM-A-0",
+      "perv_ro_depth_inches": 1.8163694504,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.1599122011,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-COMM-A-10",
+      "perv_ro_depth_inches": 2.0777742896,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1829261442,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-COMM-A-5",
+      "perv_ro_depth_inches": 1.9838008055,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1746527686,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-COMM-C-10",
+      "perv_ro_depth_inches": 3.2132235382,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2828904925,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-COMM-D-0",
+      "perv_ro_depth_inches": 4.8370891529,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.4258547582,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-COMM-D-10",
+      "perv_ro_depth_inches": 5.1157428435,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.450387281,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-IND-A-0",
+      "perv_ro_depth_inches": 1.8163694504,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.1599122011,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-IND-A-10",
+      "perv_ro_depth_inches": 2.0777742896,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1829261442,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-IND-A-5",
+      "perv_ro_depth_inches": 1.9838008055,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1746527686,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-IND-C-0",
+      "perv_ro_depth_inches": 2.8840589406,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.2539110163,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-IND-C-10",
+      "perv_ro_depth_inches": 3.2132235382,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2828904925,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-IND-C-5",
+      "perv_ro_depth_inches": 3.0855649523,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2716514985,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-IND-D-10",
+      "perv_ro_depth_inches": 5.1157428435,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.450387281,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-IND-D-5",
+      "perv_ro_depth_inches": 5.0122464298,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.4412755118,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESSFH-A-0",
+      "perv_ro_depth_inches": 1.8163694504,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.1599122011,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-RESSFH-A-10",
+      "perv_ro_depth_inches": 2.0777742896,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1829261442,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESSFH-A-5",
+      "perv_ro_depth_inches": 1.9838008055,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1746527686,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESSFH-C-0",
+      "perv_ro_depth_inches": 2.8840589406,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.2539110163,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-RESSFH-C-10",
+      "perv_ro_depth_inches": 3.2132235382,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2828904925,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESSFH-C-5",
+      "perv_ro_depth_inches": 3.0855649523,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2716514985,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESSFH-D-0",
+      "perv_ro_depth_inches": 4.8370891529,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.4258547582,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-RESSFH-D-10",
+      "perv_ro_depth_inches": 5.1157428435,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.450387281,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESSFH-D-5",
+      "perv_ro_depth_inches": 5.0122464298,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.4412755118,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESMF-A-0",
+      "perv_ro_depth_inches": 1.8163694504,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.1599122011,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-RESMF-A-10",
+      "perv_ro_depth_inches": 2.0777742896,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1829261442,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESMF-A-5",
+      "perv_ro_depth_inches": 1.9838008055,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1746527686,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESMF-C-0",
+      "perv_ro_depth_inches": 2.8840589406,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.2539110163,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-RESMF-C-10",
+      "perv_ro_depth_inches": 3.2132235382,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2828904925,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESMF-C-5",
+      "perv_ro_depth_inches": 3.0855649523,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2716514985,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESMF-D-0",
+      "perv_ro_depth_inches": 4.8370891529,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.4258547582,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-RESMF-D-10",
+      "perv_ro_depth_inches": 5.1157428435,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.450387281,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-RESMF-D-5",
+      "perv_ro_depth_inches": 5.0122464298,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.4412755118,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-TRANS-A-0",
+      "perv_ro_depth_inches": 1.8163694504,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.1599122011,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-TRANS-A-10",
+      "perv_ro_depth_inches": 2.0777742896,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1829261442,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-TRANS-A-5",
+      "perv_ro_depth_inches": 1.9838008055,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.1746527686,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-TRANS-C-0",
+      "perv_ro_depth_inches": 2.8840589406,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.2539110163,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-TRANS-C-10",
+      "perv_ro_depth_inches": 3.2132235382,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2828904925,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-TRANS-C-5",
+      "perv_ro_depth_inches": 3.0855649523,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.2716514985,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-TRANS-D-0",
+      "perv_ro_depth_inches": 4.8370891529,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.4258547582,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-TRANS-D-10",
+      "perv_ro_depth_inches": 5.1157428435,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.450387281,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-TRANS-D-5",
+      "perv_ro_depth_inches": 5.0122464298,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.4412755118,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSAGIR-A-0",
+      "perv_ro_depth_inches": 0.0638138087,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0056181338,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSAGIR-A-10",
+      "perv_ro_depth_inches": 0.0948732647,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0083525918,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSAGIR-A-5",
+      "perv_ro_depth_inches": 0.0844979776,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.007439157,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSAGIR-C-10",
+      "perv_ro_depth_inches": 0.2988957604,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0263146239,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSAGIR-D-10",
+      "perv_ro_depth_inches": 1.1010572966,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0969364992,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSAGIR-D-5",
+      "perv_ro_depth_inches": 1.048890662,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0923437764,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSAGNI-A-0",
+      "perv_ro_depth_inches": 0.04161083,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0036633954,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSAGNI-A-10",
+      "perv_ro_depth_inches": 0.0718773279,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0063280417,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSAGNI-A-5",
+      "perv_ro_depth_inches": 0.0599937597,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0052818187,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSDEV-A-0",
+      "perv_ro_depth_inches": 0.0269044383,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.0023686524,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-OSDEV-A-10",
+      "perv_ro_depth_inches": 0.0500341682,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.0044049816,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSDEV-A-5",
+      "perv_ro_depth_inches": 0.0396102416,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.0034872646,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSDEV-C-0",
+      "perv_ro_depth_inches": 0.2205884094,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.0194204863,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-OSDEV-C-10",
+      "perv_ro_depth_inches": 0.2943722796,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.025916379,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSDEV-C-5",
+      "perv_ro_depth_inches": 0.2623579573,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.0230978551,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSDEV-D-0",
+      "perv_ro_depth_inches": 0.972814116,
+      "imp_ro_depth_inches": 17.9849266154,
+      "perv_ro_coeff": 0.0856460377,
+      "imp_ro_coeff": 1.5833833806
+    },
+    {
+      "surface_id": "20101000-OSDEV-D-10",
+      "perv_ro_depth_inches": 1.0403465784,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.0915915598,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSDEV-D-5",
+      "perv_ro_depth_inches": 1.0101651542,
+      "imp_ro_depth_inches": 17.9849665313,
+      "perv_ro_coeff": 0.0889344033,
+      "imp_ro_coeff": 1.5833868948
+    },
+    {
+      "surface_id": "20101000-OSIRR-A-0",
+      "perv_ro_depth_inches": 0.0706374915,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0062188872,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSIRR-A-10",
+      "perv_ro_depth_inches": 0.1041944797,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0091732266,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSIRR-A-5",
+      "perv_ro_depth_inches": 0.0928787164,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0081769928,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSLOW-A-0",
+      "perv_ro_depth_inches": 0.0269044383,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0023686524,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSLOW-A-10",
+      "perv_ro_depth_inches": 0.0500341682,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0044049816,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSLOW-A-5",
+      "perv_ro_depth_inches": 0.0396102416,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0034872646,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSLOW-C-0",
+      "perv_ro_depth_inches": 0.2205884094,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0194204863,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSLOW-C-10",
+      "perv_ro_depth_inches": 0.2943722796,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.025916379,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSLOW-C-5",
+      "perv_ro_depth_inches": 0.2623579573,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0230978551,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSLOW-D-0",
+      "perv_ro_depth_inches": 0.972814116,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0856460377,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSLOW-D-10",
+      "perv_ro_depth_inches": 1.0403465784,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0915915598,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSLOW-D-5",
+      "perv_ro_depth_inches": 1.0101651542,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0889344033,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSFOR-C-0",
+      "perv_ro_depth_inches": 0.3010152386,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0265012216,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSFOR-C-10",
+      "perv_ro_depth_inches": 0.3886825082,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0342194014,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSFOR-C-5",
+      "perv_ro_depth_inches": 0.359101753,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0316151275,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSFOR-D-10",
+      "perv_ro_depth_inches": 1.2134941371,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.1068353789,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSFOR-D-5",
+      "perv_ro_depth_inches": 1.152503288,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.1014657769,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSWET-A-0",
+      "perv_ro_depth_inches": 0.0043155822,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0003799416,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSWET-A-10",
+      "perv_ro_depth_inches": 0.0094785396,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0008344856,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSWET-A-5",
+      "perv_ro_depth_inches": 0.0070606176,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.000621613,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSWET-C-0",
+      "perv_ro_depth_inches": 0.1250462371,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0110090043,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSWET-C-10",
+      "perv_ro_depth_inches": 0.1662058421,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.014632674,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSWET-C-5",
+      "perv_ro_depth_inches": 0.1522502329,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0134040296,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-OSWET-D-0",
+      "perv_ro_depth_inches": 0.6617346435,
+      "imp_ro_depth_inches": 10.4332088706,
+      "perv_ro_coeff": 0.0582587663,
+      "imp_ro_coeff": 0.9185341639
+    },
+    {
+      "surface_id": "20101000-OSWET-D-10",
+      "perv_ro_depth_inches": 0.71764471,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0631810589,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-WATER-A-10",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9185381929
+    },
+    {
+      "surface_id": "20101000-WATER-A-5",
+      "perv_ro_depth_inches": 0.0,
+      "imp_ro_depth_inches": 10.4332546333,
+      "perv_ro_coeff": 0.0,
+      "imp_ro_coeff": 0.9185381929
+    }
+  ]
+}

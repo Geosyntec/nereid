@@ -14,3 +14,4 @@ redis==3.3.11
 email-validator==1.0.5
 ujson==1.35
 pyyaml==5.3
+pint==0.10.1
