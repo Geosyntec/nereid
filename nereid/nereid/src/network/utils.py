@@ -6,7 +6,7 @@ import logging
 import networkx as nx
 
 
-def graph_factory(graph: Dict[str, Any]):
+def graph_factory(graph: Dict[str, Any]) -> nx.Graph:
     """
     Parameters
     ----------
@@ -94,7 +94,7 @@ def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
-    result = nx.node_link_data(g, {"link": "edges"})
+    result: Dict[str, Any] = nx.node_link_data(g, {"link": "edges"})
     for dct in result["nodes"]:
         id_ = dct.pop("id")
         dct["metadata"] = copy.deepcopy(dct)

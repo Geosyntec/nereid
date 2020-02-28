@@ -12,12 +12,19 @@ from matplotlib import pyplot as plt
 
 
 @lru_cache(maxsize=100)
-def _cached_layout(edge_json: str, prog: str):
+def _cached_layout(
+    edge_json: str, prog: str
+) -> Dict[Union[str, int], Tuple[float, float]]:
     g = nx.from_edgelist(json.loads(edge_json), create_using=nx.MultiDiGraph)
-    return nx.nx_pydot.pydot_layout(g, prog=prog)
+    layout: Dict[Union[str, int], Tuple[float, float]] = nx.nx_pydot.pydot_layout(
+        g, prog=prog
+    )
+    return layout
 
 
-def cached_layout(g: nx.Graph, prog: str = "dot"):
+def cached_layout(
+    g: nx.Graph, prog: str = "dot"
+) -> Dict[Union[str, int], Tuple[float, float]]:
     edges = sorted(g.edges(), key=lambda x: str(x))
     edge_json = json.dumps(list(edges))
     return _cached_layout(edge_json, prog=prog)
@@ -28,7 +35,7 @@ def get_figure_width_height_from_graph_layout(
     npi: Optional[float] = None,
     min_width: float = 1.0,
     min_height: float = 1.0,
-):
+) -> Tuple[float, float]:
     """
     Parameters
     ----------
@@ -64,7 +71,7 @@ def render_subgraphs(
     node_size: float = 200,
     ax: Optional[mpl.axes.Axes] = None,
     fig_kwargs: Optional[Dict] = None,
-):
+) -> mpl.figure.Figure:
 
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
@@ -141,7 +148,7 @@ def render_solution_sequence(
     marker_cycle_str: str = "^ovs>",
     nx_draw_kwargs: Optional[Dict] = None,
     fig_kwargs: Optional[Dict] = None,
-):
+) -> mpl.figure.Figure:
     if layout is None:  # pragma: no branch
         layout = cached_layout(G, prog="dot")
     if fig_kwargs is None:  # pragma: no branch
@@ -199,7 +206,7 @@ def render_solution_sequence(
     return ax.get_figure()
 
 
-def fig_to_image(fig: mpl.figure.Figure, **kwargs) -> IO:
+def fig_to_image(fig: mpl.figure.Figure, **kwargs: dict) -> IO:
     bbox_inches = kwargs.pop("bbox_inches", "tight")
     format_ = "svg"
 

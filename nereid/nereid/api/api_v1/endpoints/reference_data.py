@@ -1,10 +1,10 @@
 import ujson as json
-from typing import Any
+from typing import Dict, Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from nereid.api.api_v1.models.reference_models import ReferenceDataResponse
-from nereid.core.utils import get_request_context
+from nereid.api.api_v1.utils import get_valid_context
 from nereid.core.io import load_json
 
 router = APIRouter()
@@ -14,19 +14,19 @@ router = APIRouter()
     "/reference_data", tags=["reference_data"], response_model=ReferenceDataResponse
 )
 async def get_reference_data_json(
-    state: str = "state", region: str = "region", filename: str = ""
-):
+    context: dict = Depends(get_valid_context), filename: str = ""
+) -> Dict[str, Any]:
 
     filepath = ""
-    req_ctxt = get_request_context(state=state, region=region)
-    filepath = f"{req_ctxt.get('data_path', '')}/{filename}.json"
+    filepath = f"{context.get('data_path', '')}/{filename}.json"
+    state, region = context["state"], context["region"]
 
     try:
         filedata = load_json(filepath)
 
     except FileNotFoundError as e:
         detail = f"state '{state}', region '{region}', or filename '{filename}' not found. {filepath}"
-        raise HTTPException(status_code=404, detail=detail)
+        raise HTTPException(status_code=400, detail=detail)
 
     response = dict(
         status="SUCCESS",

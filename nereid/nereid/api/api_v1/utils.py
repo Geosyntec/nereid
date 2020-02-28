@@ -1,3 +1,5 @@
+from typing import Optional, Dict, Any
+
 from fastapi import APIRouter, HTTPException
 from celery.exceptions import TimeoutError
 from celery.result import AsyncResult
@@ -7,7 +9,7 @@ from nereid.core import config, utils
 
 def wait_a_sec_and_see_if_we_can_return_some_data(
     task: AsyncResult, timeout: float = 0.2
-):
+) -> Optional[Dict[str, Any]]:
     result = None
     try:
         result = task.get(timeout=timeout)
@@ -23,7 +25,7 @@ def standard_json_response(
     get_route: str,
     timeout: float = 0.2,
     api_version: str = config.API_LATEST,
-):
+) -> Dict[str, Any]:
     router_path = router.url_path_for(get_route, task_id=task.id)
 
     result_route = f"{api_version}{router_path}"
@@ -39,8 +41,9 @@ def standard_json_response(
     return response
 
 
-def get_valid_context(state: str = "state", region: str = "region"):
+def get_valid_context(state: str = "state", region: str = "region") -> Dict[str, Any]:
     context = utils.get_request_context(state, region)
+    context["state"], context["region"] = state, region
     isvalid, msg = utils.validate_request_context(context, state, region)
     if not isvalid:
         raise HTTPException(status_code=400, detail=msg)

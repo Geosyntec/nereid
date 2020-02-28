@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
 
@@ -57,7 +59,7 @@ async def calculate_loading(
     ),
     details: bool = False,
     context: dict = Depends(get_valid_context),
-):
+) -> Dict[str, Any]:
 
     land_surfaces_req = land_surfaces.dict(by_alias=True)
 
@@ -73,6 +75,6 @@ async def calculate_loading(
     tags=["land_surface", "loading"],
     response_model=LandSurfaceResponse,
 )
-async def get_land_surface_loading_result(task_id: str):
+async def get_land_surface_loading_result(task_id: str) -> Dict[str, Any]:
     task = bg.background_land_surface_loading.AsyncResult(task_id, app=router)
     return standard_json_response(task, router, "get_land_surface_loading_result")

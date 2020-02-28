@@ -80,7 +80,7 @@ jobs:
         - docker-compose ps
       script:
         - docker-compose exec nereid-tests pytest -xv
-  
+  fast_finish: true
   allow_failures:
     - name: python_edge
     - name: docker_edge

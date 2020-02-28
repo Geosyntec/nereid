@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Union, Optional
+from typing import Dict, List, Any, Union, Optional, IO
 
 import networkx as nx
 
@@ -58,7 +58,7 @@ def network_subgraphs(
 
 
 @cache_decorator(ex=3600 * 24)  # expires in 24 hours
-def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> str:
+def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> IO:
 
     g = graph_factory(task_result["graph"])
 
@@ -70,7 +70,7 @@ def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> str:
     )
 
     svg_bin = fig_to_image(fig)
-    svg = svg_bin.read()
+    svg: IO = svg_bin.read()
 
     return svg
 
@@ -100,7 +100,7 @@ def solution_sequence(
 
 
 @cache_decorator(ex=3600 * 24)  # expires in 24 hours
-def render_solution_sequence_svg(task_result: dict, npi: Optional[float] = None) -> str:
+def render_solution_sequence_svg(task_result: dict, npi: Optional[float] = None) -> IO:
 
     _graph = thin_graph_dict(task_result["graph"])  # strip unneeded metadata
 
@@ -116,6 +116,6 @@ def render_solution_sequence_svg(task_result: dict, npi: Optional[float] = None)
     fig = render_solution_sequence(g, solution_sequence=solution_sequence, npi=npi)
 
     svg_bin = fig_to_image(fig)
-    svg = svg_bin.read()
+    svg: IO = svg_bin.read()
 
     return svg
