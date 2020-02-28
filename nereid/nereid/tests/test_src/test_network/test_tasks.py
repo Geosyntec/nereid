@@ -1,10 +1,16 @@
 import pytest
 
-from nereid.src.network.tasks import (
-    validate_network,
-    network_subgraphs,
-    render_subgraph_svg,
-)
+from nereid.src.network import tasks
+
+# import (
+#     validate_network,
+#     network_subgraphs,
+#     render_subgraph_svg,
+#     solution_sequence,
+#     render_solution_sequence_svg,
+# )
+
+from nereid.src.network.utils import graph_factory
 
 
 @pytest.mark.parametrize(
@@ -18,17 +24,22 @@ from nereid.src.network.tasks import (
         (
             [("a", "b"), ("b", "c"), ("d", "c"), ("c", "a")],
             False,
-            ([["a", "b", "c"]], [("a", "b", 0), ("b", "c", 0), ("c", "a", 0)], [], []),
+            (
+                [["a", "b", "c"]],
+                [["a", "b", "0"], ["b", "c", "0"], ["c", "a", "0"]],
+                [],
+                [],
+            ),
         ),  # cycle a->b->c->a
         (
             [("a", "b"), ("b", "c"), ("d", "c"), ("c", "e"), ("c", "e")],
             False,
-            ([], [], [("c", 2)], [("c", "e")]),
+            ([], [], [["c", "2"]], [["c", "e"]]),
         ),  # duplicate edge
         (
             [("a", "b"), ("b", "c"), ("d", "c"), ("a", "e")],
             False,
-            ([], [], [("a", 2)], []),
+            ([], [], [["a", "2"]], []),
         ),  # multiple out edges, a->b & a->e
     ],
 )
@@ -37,7 +48,9 @@ def test_validate_network(edgelist, isvalid, exp):
 
     g = {"edges": [{"source": s, "target": t} for s, t in edgelist], "directed": True}
 
-    result = validate_network(g)
+    G = graph_factory(g)
+
+    result = tasks.validate_network(g)
 
     keys = [
         "isvalid",
@@ -47,63 +60,47 @@ def test_validate_network(edgelist, isvalid, exp):
         "duplicate_edges",
     ]
 
-    for key, value in zip(keys, expected_result):
-        result[key] = value
+    if isvalid:
+        assert result["isvalid"] == isvalid
+    else:
+        for key, value in zip(keys, expected_result):
+            assert result[key] == value
 
 
 @pytest.fixture
-def subgraph_request():
-    return {
-        "graph": {
-            "directed": True,
-            "edges": [
-                {"source": "3", "target": "1"},
-                {"source": "5", "target": "3"},
-                {"source": "7", "target": "1"},
-                {"source": "9", "target": "1"},
-                {"source": "11", "target": "1"},
-                {"source": "13", "target": "3"},
-                {"source": "15", "target": "9"},
-                {"source": "17", "target": "7"},
-                {"source": "19", "target": "17"},
-                {"source": "21", "target": "15"},
-                {"source": "23", "target": "1"},
-                {"source": "25", "target": "5"},
-                {"source": "27", "target": "11"},
-                {"source": "29", "target": "7"},
-                {"source": "31", "target": "11"},
-                {"source": "33", "target": "25"},
-                {"source": "35", "target": "23"},
-                {"source": "4", "target": "2"},
-                {"source": "6", "target": "2"},
-                {"source": "8", "target": "6"},
-                {"source": "10", "target": "2"},
-                {"source": "12", "target": "2"},
-                {"source": "14", "target": "2"},
-                {"source": "16", "target": "12"},
-                {"source": "18", "target": "12"},
-                {"source": "20", "target": "8"},
-                {"source": "22", "target": "6"},
-                {"source": "24", "target": "12"},
-            ],
-        },
-        "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
-    }
+def subgraph_result(subgraph_request_dict):
+    return tasks.network_subgraphs(
+        subgraph_request_dict["graph"], subgraph_request_dict["nodes"]
+    )
 
 
-@pytest.fixture()
-def subgraph_result(subgraph_request):
-    return network_subgraphs(subgraph_request["graph"], subgraph_request["nodes"])
-
-
-def test_network_subgraphs(subgraph_request):
-    result = network_subgraphs(subgraph_request["graph"], subgraph_request["nodes"])
+def test_network_subgraph_result(subgraph_result):
+    result = subgraph_result
 
     assert "graph" in result
     assert "subgraph_nodes" in result
+    assert len(result["subgraph_nodes"]) == 2
     assert "requested_nodes" in result
 
 
 def test_render_subgraph_svg(subgraph_result):
-    result = render_subgraph_svg(subgraph_result)
-    assert b"svg" in result
+    result = tasks.render_subgraph_svg(subgraph_result).decode()
+    assert "svg" in result
+
+
+@pytest.fixture
+def solution_sequence_result(subgraph_request_dict):
+    return tasks.solution_sequence(subgraph_request_dict["graph"], 4)
+
+
+def test_solution_sequence_result(solution_sequence_result):
+    result = solution_sequence_result
+
+    assert "graph" in result
+    assert "min_branch_size" in result
+    assert len(result["solution_sequence"]["parallel"]) == 2
+
+
+def test_render_solution_sequence_svg(solution_sequence_result):
+    result = tasks.render_solution_sequence_svg(solution_sequence_result).decode()
+    assert "svg" in result

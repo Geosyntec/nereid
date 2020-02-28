@@ -1,17 +1,22 @@
-from typing import Dict, List, Any, Union
+from typing import Dict, List, Any, Union, Optional
 
 import networkx as nx
 
 from nereid.core.cache import cache_decorator
-
-from . import validate
-from .utils import graph_factory
-from .algorithms import get_subset
-from .render import render_subgraphs, fig_to_image
+from nereid.src.network import validate
+from nereid.src.network.utils import graph_factory, thin_graph_dict
+from nereid.src.network.algorithms import get_subset, parallel_sequential_subgraph_nodes
+from nereid.src.network.render import (
+    render_subgraphs,
+    render_solution_sequence,
+    fig_to_image,
+)
 
 
 def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
-    G = graph_factory(graph)
+
+    _graph = thin_graph_dict(graph)
+    G = graph_factory(_graph)
 
     isvalid = validate.is_valid(G)
 
@@ -32,18 +37,20 @@ def network_subgraphs(
     graph: Dict[str, Any], nodes: List[Dict[str, Any]]
 ) -> Dict[str, Any]:
 
+    _graph = thin_graph_dict(graph)
+
     node_ids = [node["id"] for node in nodes]
 
-    G = graph_factory(graph)
+    G = graph_factory(_graph)
     subset = get_subset(G, node_ids)
-    g = G.subgraph(subset)
+    sub_g = G.subgraph(subset)
 
     subgraph_nodes = [
         {"nodes": [{"id": n} for n in nodes]}
-        for nodes in nx.weakly_connected_components(g)
+        for nodes in nx.weakly_connected_components(sub_g)
     ]
 
-    result: Dict[str, Any] = {"graph": graph}
+    result: Dict[str, Any] = {"graph": _graph}
     result.update({"requested_nodes": nodes})
     result.update({"subgraph_nodes": subgraph_nodes})
 
@@ -51,13 +58,62 @@ def network_subgraphs(
 
 
 @cache_decorator(ex=3600 * 24)  # expires in 24 hours
-def render_subgraph_svg(task_result: dict) -> str:
+def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> str:
 
     g = graph_factory(task_result["graph"])
 
     fig = render_subgraphs(
-        g, task_result["requested_nodes"], task_result["subgraph_nodes"]
+        g,
+        request_nodes=task_result["requested_nodes"],
+        subgraph_nodes=task_result["subgraph_nodes"],
+        npi=npi,
     )
+
+    svg_bin = fig_to_image(fig)
+    svg = svg_bin.read()
+
+    return svg
+
+
+def solution_sequence(
+    graph: Dict[str, Any], min_branch_size: int
+) -> Dict[str, Dict[str, List[Dict[str, List[Dict[str, Union[str, Dict]]]]]]]:
+
+    _graph = thin_graph_dict(graph)  # strip unneeded metadata
+
+    G = graph_factory(_graph)
+
+    _sequence = parallel_sequential_subgraph_nodes(G, min_branch_size)
+
+    sequence = {
+        "parallel": [
+            {"series": [{"nodes": [{"id": n} for n in nodes]} for nodes in series]}
+            for series in _sequence
+        ]
+    }
+
+    result: Dict[str, Any] = {"graph": _graph}
+    result["min_branch_size"] = min_branch_size
+    result["solution_sequence"] = sequence
+
+    return result
+
+
+@cache_decorator(ex=3600 * 24)  # expires in 24 hours
+def render_solution_sequence_svg(task_result: dict, npi: Optional[float] = None) -> str:
+
+    _graph = thin_graph_dict(task_result["graph"])  # strip unneeded metadata
+
+    g = graph_factory(_graph)
+
+    _sequence = task_result["solution_sequence"]
+
+    solution_sequence = [
+        [[n["id"] for n in ser["nodes"]] for ser in p["series"]]
+        for p in _sequence["parallel"]
+    ]
+
+    fig = render_solution_sequence(g, solution_sequence=solution_sequence, npi=npi)
 
     svg_bin = fig_to_image(fig)
     svg = svg_bin.read()

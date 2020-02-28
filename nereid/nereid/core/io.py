@@ -4,7 +4,7 @@ import json
 
 import yaml
 
-from .cache import cache_decorator
+from nereid.core.cache import cache_decorator
 
 PathType = Union[Path, str]
 

@@ -1,135 +1,273 @@
-from pathlib import Path
-import json
-from time import time
-
 import pytest
-import networkx as nx
-from starlette.testclient import TestClient
+import ujson as json
+import time
 
-from nereid.core.config import API_LATEST
-from nereid.main import app
-from nereid.src.network.utils import nxGraph_to_dict
-import nereid.tests.test_data
+from nereid.api.api_v1.models import network_models
 
 
-TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
+@pytest.mark.parametrize(
+    "post_response_name, isfast, isvalid",
+    [
+        ("valid_graph_response_fast", True, True),
+        ("invalid_graph_response_fast", True, False),
+        ("valid_graph_response_slow", False, True),
+        ("invalid_graph_response_slow", False, False),
+    ],
+)
+def test_post_network_validate(
+    client, named_validation_responses, post_response_name, isfast, isvalid
+):
+
+    post_response = named_validation_responses[post_response_name]
+    assert post_response.status_code == 200
+
+    prjson = post_response.json()
+
+    assert network_models.NetworkValidationResponse(**prjson)
+    assert prjson["task_id"] is not None
+    assert prjson["result_route"] is not None
+    ping = client.get(prjson["result_route"])
+    assert ping.status_code == 200
+
+    if isfast:
+        assert prjson["status"].lower() == "success"
+        assert prjson["data"] is not None
+        assert prjson["data"]["isvalid"] == isvalid
+    else:
+        assert prjson["status"].lower() != "failure"
 
 
-class TestNetworkValidationRoutes(object):
-    def setup(self):
+@pytest.mark.parametrize(
+    "post_response_name, isfast, isvalid",
+    [
+        ("valid_graph_response_fast", True, True),
+        ("invalid_graph_response_fast", True, False),
+        ("valid_graph_response_slow", False, True),
+        ("invalid_graph_response_slow", False, False),
+    ],
+)
+def test_get_network_validate(
+    client, named_validation_responses, post_response_name, isfast, isvalid
+):
+    post_response = named_validation_responses[post_response_name]
 
-        self.test_data_dir = TEST_PATH
-        self.route = API_LATEST + "/network/validate"
-        self.client = TestClient(app)
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
 
-    def get_payload(self, file):
-        path = self.test_data_dir / file
-        assert path.is_file()
+    get_response = client.get(result_route)
+    assert get_response.status_code == 200
 
-        return path.read_text()
+    grjson = get_response.json()
+    assert network_models.NetworkValidationResponse(**grjson)
 
-    def test_network_validate_easy(self):
-
-        file = "network_validate_is_valid.json"
-        payload = self.get_payload(file)
-
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
-
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert rjson["data"]["isvalid"] == True
-
-    def test_network_validate_cycle(self):
-
-        file = "network_validate_is_invalid_cycle.json"
-        payload = self.get_payload(file)
-
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
-
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert rjson["data"]["isvalid"] == False
-
-    @pytest.mark.parametrize("N", [10, 100, 1000, 5000, 15000])
-    @pytest.mark.parametrize(
-        "nxGraph, gkwargs, expect",
-        [(nx.gnc_graph, {}, False), (nx.gnr_graph, {"p": 0.05}, True)],
-    )
-    def test_long_validation(self, N, nxGraph, gkwargs, expect):
-        g = nxGraph(N, seed=42, **gkwargs)
-        payload = json.dumps(nxGraph_to_dict(g))
-
-        start = time()
-        response = self.client.post(self.route, data=payload)
-        end = time()
-
-        elapsed = end - start
-        print(f"elapsed time: {elapsed:.4f} seconds")
-        assert response.status_code == 200
-
-        rjson = response.json()
-        if rjson["status"].lower() == "success":
-            assert rjson["data"]["isvalid"] == expect
-        else:
-            assert rjson["status"].lower() in ["started", "pending", "success"]
-            assert rjson["result_route"] is not None
-            assert rjson["task_id"] is not None
-            response = self.client.get(self.route + f"/{rjson['task_id']}")
-            assert response.status_code == 200
+    assert grjson["task_id"] == prjson["task_id"]
+    assert grjson["result_route"] == prjson["result_route"]
+    if isfast:
+        assert grjson["status"].lower() == "success"
+        assert grjson["data"] is not None
+        assert grjson["data"]["isvalid"] == isvalid
+    else:
+        assert grjson["status"].lower() != "failure"
 
 
-class TestNetworkSubgraphRoutes(object):
-    def setup(self):
+@pytest.mark.parametrize(
+    "post_response_name, exp",
+    [
+        (
+            "subgraph_response_fast",
+            {
+                "subgraph_nodes": [
+                    {
+                        "nodes": [
+                            {"id": "3", "metadata": {}},
+                            {"id": "7", "metadata": {}},
+                            {"id": "5", "metadata": {}},
+                            {"id": "29", "metadata": {}},
+                            {"id": "23", "metadata": {}},
+                            {"id": "17", "metadata": {}},
+                            {"id": "9", "metadata": {}},
+                            {"id": "13", "metadata": {}},
+                            {"id": "1", "metadata": {}},
+                            {"id": "11", "metadata": {}},
+                        ]
+                    },
+                    {
+                        "nodes": [
+                            {"id": "12", "metadata": {}},
+                            {"id": "6", "metadata": {}},
+                            {"id": "2", "metadata": {}},
+                            {"id": "4", "metadata": {}},
+                            {"id": "24", "metadata": {}},
+                            {"id": "10", "metadata": {}},
+                            {"id": "16", "metadata": {}},
+                            {"id": "18", "metadata": {}},
+                            {"id": "14", "metadata": {}},
+                        ]
+                    },
+                ]
+            },
+        )
+    ],
+)
+def test_get_finished_network_subgraph(
+    client, named_subgraph_responses, post_response_name, exp
+):
+    post_response = named_subgraph_responses[post_response_name]
 
-        self.test_data_dir = TEST_PATH
-        self.route = API_LATEST + "/network/subgraph"
-        self.client = TestClient(app)
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
 
-    def get_payload(self, file):
-        path = self.test_data_dir / file
-        assert path.is_file()
+    get_response = client.get(result_route)
+    assert get_response.status_code == 200
 
-        return path.read_text()
+    grjson = get_response.json()
+    assert network_models.SubgraphResponse(**prjson)
 
-    def test_network_subgraph_example(self):
+    assert grjson["status"].lower() == "success"
+    assert grjson["task_id"] is not None
+    assert grjson["result_route"] is not None
+    assert grjson["data"] is not None
 
-        file = "network_subgraph_request.json"
-        payload = self.get_payload(file)
+    assert len(grjson["data"]["subgraph_nodes"]) == len(exp["subgraph_nodes"])
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
 
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert len(rjson["data"]["subgraph_nodes"]) == 2
+@pytest.mark.parametrize(
+    "post_response_name", [("subgraph_response_fast"), ("subgraph_response_slow")]
+)
+def test_post_network_subgraph(client, named_subgraph_responses, post_response_name):
+    post_response = named_subgraph_responses[post_response_name]
+    assert post_response.status_code == 200
+    prjson = post_response.json()
+    assert network_models.SubgraphResponse(**prjson)
+    assert prjson["status"].lower() != "failure"
+    assert prjson["task_id"] is not None
+    assert prjson["result_route"] is not None
 
-    def test_get_network_subgraph_example(self):
 
-        file = "network_subgraph_request.json"
-        payload = self.get_payload(file)
+@pytest.mark.parametrize(
+    "post_response_name, isfast",
+    [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
+)
+def test_get_render_subgraph_svg(
+    client, named_subgraph_responses, post_response_name, isfast
+):
 
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
+    post_response = named_subgraph_responses[post_response_name]
+    rjson = post_response.json()
 
-        tid = response.json()["task_id"]
+    result_route = rjson["result_route"]
 
-        response = self.client.get(self.route + f"/{tid}")
-        assert response.status_code == 200
+    svg_response = client.get(result_route + "/img")
+    assert svg_response.status_code == 200
+    if isfast:
+        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
+    else:
+        srjson = svg_response.json()
+        assert srjson["status"].lower() != "failure"
+        assert srjson["task_id"] is not None
 
-        rjson = response.json()
-        assert rjson["status"].lower() == "success"
-        assert len(rjson["data"]["subgraph_nodes"]) == 2
-
-    def test_render_subgraph_svg(self):
-        file = "network_subgraph_request.json"
-        payload = self.get_payload(file)
-
-        response = self.client.post(self.route, data=payload)
-        assert response.status_code == 200
-
-        task_id = response.json()["task_id"]
-
-        svg_response = self.client.get(self.route + f"/{task_id}/img")
+    if isfast:
+        # try to cover cached retrieval by asking again
+        svg_response = client.get(result_route + "/img")
         assert svg_response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "post_response_name, isfast",
+    [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
+)
+def test_get_render_subgraph_svg_bad_media_type(
+    client, named_subgraph_responses, post_response_name, isfast
+):
+
+    post_response = named_subgraph_responses[post_response_name]
+    rjson = post_response.json()
+
+    result_route = rjson["result_route"]
+
+    svg_response = client.get(result_route + "/img?media_type=png")
+    assert svg_response.status_code == 404
+    assert "media_type not supported" in svg_response.content.decode()
+
+
+@pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
+@pytest.mark.parametrize("n_graphs", [1, 3, 5, 10])
+@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+def test_post_solution_sequence(
+    solution_sequence_response, min_branch_size, n_graphs, min_max
+):
+
+    key = min_branch_size, n_graphs, min_max
+    post_response = solution_sequence_response[key]
+
+    assert post_response.status_code == 200
+    prjson = post_response.json()
+    assert network_models.SolutionSequenceResponse(**prjson)
+    assert prjson["status"].lower() != "failure"
+    assert prjson["task_id"] is not None
+    assert prjson["result_route"] is not None
+
+
+@pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
+@pytest.mark.parametrize("n_graphs", [1, 3, 5, 10])
+@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+def test_get_solution_sequence(
+    client, solution_sequence_response, min_branch_size, n_graphs, min_max
+):
+
+    key = min_branch_size, n_graphs, min_max
+    post_response = solution_sequence_response[key]
+
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
+
+    get_response = client.get(result_route)
+    assert get_response.status_code == 200
+
+    grjson = get_response.json()
+    assert network_models.SolutionSequenceResponse(**prjson)
+
+    assert grjson["status"].lower() == "success"
+    assert grjson["task_id"] == prjson["task_id"]
+    assert grjson["result_route"] == prjson["result_route"]
+    assert grjson["data"] is not None
+
+
+@pytest.mark.parametrize("min_branch_size", [6])
+@pytest.mark.parametrize("n_graphs", [3])
+@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+def test_get_render_solution_sequence(
+    client, solution_sequence_response, min_branch_size, n_graphs, min_max
+):
+
+    key = min_branch_size, n_graphs, min_max
+    post_response = solution_sequence_response[key]
+
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
+
+    _ = client.get(result_route + "/img")
+    svg_response = client.get(result_route + "/img")
+
+    assert svg_response.status_code == 200
+
+    if "html" in svg_response.headers["content-type"]:
+        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
+
+    else:
+        srjson = svg_response.json()
+        assert srjson["status"].lower() != "failure"
+        assert srjson["task_id"] is not None
+
+
+def test_get_render_solution_sequence_bad_media_type(
+    client, solution_sequence_response
+):
+    key = 6, 3, (10, 11)
+    post_response = solution_sequence_response[key]
+
+    prjson = post_response.json()
+    result_route = prjson["result_route"]
+    svg_response = client.get(result_route + "/img?media_type=png")
+    assert svg_response.status_code == 404
+    assert "media_type not supported" in svg_response.content.decode()
