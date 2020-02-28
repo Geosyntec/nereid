@@ -1,6 +1,8 @@
 import pytest
+import pandas
 
 from nereid.src.treatment_facility.constructors import build_treatment_facility_nodes
+from nereid.core.io import parse_configuration_logic
 
 
 @pytest.mark.parametrize(
@@ -28,16 +30,22 @@ def test_build_treatment_facility_nodes(
 ):
 
     context = contexts[ctxt_key]
-    tmnt_facilities = [valid_treatment_facility_dicts[model]]
-    nodes, msg = build_treatment_facility_nodes(tmnt_facilities, context)
+    tmnt_facilities = pandas.DataFrame([valid_treatment_facility_dicts[model]])
+    df, messages = parse_configuration_logic(
+        df=pandas.DataFrame(tmnt_facilities),
+        config_section="api_recognize",
+        config_object="treatment_facility",
+        context=context,
+    )
+    node = build_treatment_facility_nodes(df)[0]
 
-    check_val = nodes[0].get(checkfor)
+    check_val = node.get(checkfor)
     assert isinstance(check_val, float)
 
     if has_met_data:
-        assert nodes[0].get("rain_gauge") is not None
+        assert node.get("rain_gauge") is not None
     else:
-        assert nodes[0].get("rain_gauge") is None
+        assert node.get("rain_gauge") is None
 
 
 @pytest.mark.parametrize(
@@ -49,8 +57,14 @@ def test_build_treatment_facility_nodes_from_long_list(
 ):
 
     context = contexts[ctxt_key]
-    tmnt_facilities = valid_treatment_facilities
-    nodes, msg = build_treatment_facility_nodes(tmnt_facilities, context)
+    tmnt_facilities = pandas.DataFrame(valid_treatment_facilities)
+    df, messages = parse_configuration_logic(
+        df=tmnt_facilities,
+        config_section="api_recognize",
+        config_object="treatment_facility",
+        context=context,
+    )
+    nodes = build_treatment_facility_nodes(df)
 
     for n in nodes:
         if has_met_data:

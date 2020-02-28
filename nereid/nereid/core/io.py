@@ -55,83 +55,111 @@ def load_ref_data(tablename: str, context: dict) -> pandas.DataFrame:
     filepath = data_path / table_context["file"]
     ref_table = pandas.read_json(load_file(filepath), orient="table")
 
-    for field_params in table_context.get("expand_fields", [{}]):
-        field = field_params.get("field")
-        sep = field_params.get("sep", "_")
-        cols = field_params.get("new_column_names", [])
+    df, msg = parse_configuration_logic(
+        df=ref_table,
+        config_section="project_reference_data",
+        config_object=tablename,
+        context=context,
+    )
 
-        for ix, col in enumerate(cols):
-            ref_table[col] = ref_table[field].str.split(sep).str[ix]
-
-    return ref_table
+    return df, msg
 
 
-def parse_joins(
+def parse_expand_fields(
     df: pandas.DataFrame,
-    api_recognize_key: str,
+    config_section: str,
+    config_object: str,
     context: Dict[str, Any],
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
 
-    api_key_context = context.get("api_recognize", {}).get(api_recognize_key)
+    obj_context = context.get(config_section, {}).get(config_object)
 
-    if api_key_context is None:
-        messages.append(
-            f"ERROR: cannot recognize key {api_recognize_key} in config file: {context['data_path']}"
-        )
-        return df, messages
+    if "expand_fields" in obj_context:
+        for f in deepcopy(obj_context["expand_fields"]):
+            try:
+                field = f.get("field")
+                sep = f.get("sep", "_")
+                cols = f.get("new_column_names", [])
 
-    if "joins" in api_key_context:
-        for j in deepcopy(api_key_context["joins"]):
+                for ix, col in enumerate(cols):
+                    df[col] = df[field].str.split(sep).str[ix]
+            except:
+                messages.append(
+                    f"unable to expand fields in {config_section}:{config_object} "
+                    f"for instructions {f}"
+                )
+
+    return df, messages
+
+
+def parse_joins(
+    df: pandas.DataFrame,
+    config_section: str,
+    config_object: str,
+    context: Dict[str, Any],
+    messages: List[str],
+) -> Tuple[pandas.DataFrame, List[str]]:
+
+    obj_context = context.get(config_section, {}).get(config_object)
+
+    if "joins" in obj_context:
+        for j in deepcopy(obj_context["joins"]):
             try:
                 tablename = j.pop("other")
-                table = load_ref_data(tablename, context)
+                table, msg = load_ref_data(tablename, context)
+                messages.extend(msg)
                 df = df.merge(table, **j)
-            except:
-                msg = f"unable to merge {tablename} to {api_recognize_key}"
+            except Exception as e:
+                messages.append(
+                    f"unable to merge {tablename} in {config_section}:{config_object}\n{e}"
+                )
                 return df, messages
 
-    if "_merge" in df:
-        if not all(df["_merge"] == "both"):
-            messages.append(
-                "ERROR: unable match all requested join keys to reference data."
-            )
-        df = df.drop(columns="_merge")
+            if "_merge" in df:
+                if not all(df["_merge"] == "both"):
+                    messages.append(
+                        f"ERROR: Some data failed the requested join '{j}' to "
+                        f"reference data in {config_section}:{config_object}."
+                    )
+                    if not 'errors' in df:
+                        df['errors'] = ''
+                    df.loc[df["_merge"] != "both", 'errors'] += (
+                        f"ERROR: unable join '{j['left_on']}' to '{j['right_on']}' for "
+                        f"reference data in {config_section}:{config_object}.  \n"
+                    )
+                df = df.drop(columns="_merge")
 
     return df, messages
 
 
 def parse_remaps(
     df: pandas.DataFrame,
-    api_recognize_key: str,
+    config_section: str,
+    config_object: str,
     context: Dict[str, Any],
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
 
-    api_key_context = context.get("api_recognize", {}).get(api_recognize_key)
+    obj_context = context.get(config_section, {}).get(config_object)
 
-    if api_key_context is None:
-        messages.append(
-            f"ERROR: cannot recognize key {api_recognize_key} in config file: {context['data_path']}"
-        )
-        return df, messages
-
-    if "remaps" in api_key_context:
-        for remap in deepcopy(api_key_context["remaps"]):
+    if "remaps" in obj_context:
+        for remap in deepcopy(obj_context["remaps"]):
             left = remap["left"]
             if left not in df:
                 messages.append(
-                    f"ERROR: key {left} not found in config[api_recognize][{api_recognize_key}]"
+                    f"WARNING: REMAP key {left} not found in columns '{df.columns}' "
+                    f"from {config_section}:{config_object}."
                 )
                 continue
 
-            right = remap["right"]
             how = remap["how"]
             mapping = remap["mapping"]
             fillna = remap.get("fillna", pandas.NA)
 
             try:
                 if how == "addend":
+                    right = remap["right"]
                     df["ini_" + right] = df[right]
                     df["addend_" + right] = df[left].map(mapping)
                     df.loc[pandas.notnull(df["addend_" + right]), right] = (
@@ -139,29 +167,50 @@ def parse_remaps(
                     ).fillna(fillna)
 
                 elif how == "left":
+                    right = remap["right"]
                     df.loc[pandas.notnull(df[left]), right] = (
                         df[left].map(mapping).fillna(fillna)
                     )
 
+                elif how == "replace":
+                    df[left] = df[left].replace(mapping)
+
                 else:
                     messages.append(
-                        f"ERROR: unrecognized remap method '{how}' in {api_recognize_key}"
+                        f"ERROR: unrecognized remap method '{how}' "
+                        f"in {config_section}:{config_object}."
                     )
 
             except:
                 messages.append(
-                    f"ERROR: unable to apply mapping '{remap}' to {api_recognize_key}"
+                    f"ERROR: unable to apply mapping '{remap}' in "
+                    f"{config_section}:{config_object}."
                 )
 
     return df, messages
 
 
-def parse_api_recognize(
-    df: pandas.DataFrame, api_recognize_key: str, context: Dict[str, Any]
+def parse_configuration_logic(
+    df: pandas.DataFrame,
+    config_section: str,
+    config_object: str,
+    context: Dict[str, Any],
 ) -> Tuple[pandas.DataFrame, List[str]]:
 
+    obj_context = context.get(config_section, {}).get(config_object)
+
+    if obj_context is None:
+        messages = [
+            (
+                f"ERROR: cannot find {config_section}:{config_object} "
+                f"in config file: {context['data_path']}"
+            )
+        ]
+        return df, messages
+
     msg: List[str] = []
-    df, msg = parse_joins(df, api_recognize_key, context, msg)
-    df, msg = parse_remaps(df, api_recognize_key, context, msg)
+    df, msg = parse_expand_fields(df, config_section, config_object, context, msg)
+    df, msg = parse_joins(df, config_section, config_object, context, msg)
+    df, msg = parse_remaps(df, config_section, config_object, context, msg)
 
     return df, msg

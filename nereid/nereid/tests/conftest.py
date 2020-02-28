@@ -192,6 +192,11 @@ def contexts():
         }
     ]
 
+    cx20 = deepcopy(cx1)
+    cx20["project_reference_data"]["land_surface_table"]["expand_fields"] = [
+        {"field": r"¯\_(ツ)_/¯", "sep": "-", "new_column_names": [1, 2, 3]}
+    ]
+
     keys = [  # these are easier to copy into tests
         "default",
         "default_no_data_path_invalid",
@@ -212,6 +217,7 @@ def contexts():
         "default_api_ls_remap_left_dne_valid",
         "default_api_ls_remap_how_dne_valid",
         "default_api_ls_remap_right_dne_valid",
+        "default_lst_expand_field_dne_valid",
     ]
 
     values = [
@@ -234,6 +240,7 @@ def contexts():
         cx17,
         cx18,
         cx19,
+        cx20,
     ]
 
     return {k: v for k, v in zip(keys, values)}

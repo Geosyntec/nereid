@@ -11,7 +11,7 @@ from celery.result import AsyncResult
 
 from nereid.api.api_v1.utils import (
     standard_json_response,
-    run_task_by_name,
+    run_task,
     wait_a_sec_and_see_if_we_can_return_some_data,
 )
 from nereid.core import config
@@ -40,20 +40,8 @@ async def validate_network(
     )
 ) -> Dict[str, Any]:
 
-    args = (graph.dict(by_alias=True),)
-
-    response = run_task_by_name(
-        taskname="validate_network",
-        router=router,
-        args=args,
-        get_route="get_validate_network_result",
-    )
-
-    return response
-
-    # task = bg.background_validate_network.apply_async(args=)
-
-    # return standard_json_response(task, router, "get_validate_network_result")
+    task = bg.background_validate_network.s(graph=graph.dict(by_alias=True))
+    return run_task(task=task, router=router, get_route="get_validate_network_result")
 
 
 @router.get(
@@ -62,8 +50,8 @@ async def validate_network(
     response_model=network_models.NetworkValidationResponse,
 )
 async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
-    task = bg.background_validate_network.AsyncResult(task_id, app=router)
 
+    task = bg.background_validate_network.AsyncResult(task_id, app=router)
     return standard_json_response(task, router, "get_validate_network_result")
 
 
@@ -114,21 +102,11 @@ async def subgraph_network(
     ),
 ) -> Dict[str, Any]:
 
-    # task = bg.background_network_subgraphs.apply_async(
-    #     args=(graph.dict(by_alias=True), jsonable_encoder(nodes))
-    # )
-
-    # return standard_json_response(task, router, "get_subgraph_network_result")
-
-    args = (graph.dict(by_alias=True), jsonable_encoder(nodes))
-    response = run_task_by_name(
-        taskname="network_subgraphs",
-        router=router,
-        args=args,
-        get_route="get_subgraph_network_result",
+    task = bg.background_network_subgraphs.s(
+        graph=graph.dict(by_alias=True), nodes=jsonable_encoder(nodes)
     )
 
-    return response
+    return run_task(task=task, router=router, get_route="get_subgraph_network_result")
 
 
 @router.get(
@@ -139,7 +117,6 @@ async def subgraph_network(
 async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
 
     task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
-
     return standard_json_response(task, router, "get_subgraph_network_result")
 
 
@@ -230,21 +207,11 @@ async def network_solution_sequence(
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
 
-    # task = bg.background_solution_sequence.apply_async(
-    #     args=(graph.dict(by_alias=True), min_branch_size)
-    # )
-
-    # return standard_json_response(task, router, "get_network_solution_sequence")
-
-    args = (graph.dict(by_alias=True), min_branch_size)
-    response = run_task_by_name(
-        taskname="solution_sequence",
-        router=router,
-        args=args,
-        get_route="get_network_solution_sequence",
+    task = bg.background_solution_sequence.s(
+        graph=graph.dict(by_alias=True), min_branch_size=min_branch_size
     )
 
-    return response
+    return run_task(task=task, router=router, get_route="get_network_solution_sequence")
 
 
 @router.get(

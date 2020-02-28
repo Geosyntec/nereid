@@ -2,8 +2,9 @@ import pytest
 import pandas
 import numpy
 
+from nereid.core.io import parse_configuration_logic
 from nereid.src.land_surface.loading import (
-    build_land_surface_dataframe,
+    clean_land_surface_dataframe,
     detailed_loading_results,
     detailed_volume_loading_results,
     detailed_pollutant_loading_results,
@@ -13,25 +14,15 @@ from nereid.src.land_surface.loading import (
 
 @pytest.mark.parametrize("n_rows", [10])
 @pytest.mark.parametrize("n_nodes", [5])
-@pytest.mark.parametrize(
-    "key",
-    [
-        "default",
-        "default_emc_no_params_valid",
-        "default_api_no_ls_remaps_valid",
-        "default_api_no_ls_joins_valid",
-        "default_api_no_ls_joins_or_remaps_valid",
-        "default_api_ls_joins_no_merge_no_params_valid",
-    ],
-)
 def test_build_land_surface_dataframe(
-    land_surface_loading_response_dicts, contexts, key, n_rows, n_nodes,
+    land_surface_loading_response_dicts, n_rows, n_nodes
 ):
 
     land_surfaces = land_surface_loading_response_dicts[(n_rows, n_nodes)]
     land_surfaces_list = land_surfaces["land_surfaces"]
-    context = contexts[key]
-    land_surfaces_df, msg = build_land_surface_dataframe(land_surfaces_list, context)
+    df = pandas.DataFrame(land_surfaces_list)
+    df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
+    land_surfaces_df = clean_land_surface_dataframe(df)
 
     total_area = sum([ls["area_acres"] for ls in land_surfaces_list])
     assert total_area == land_surfaces_df["area_acres"].sum()
@@ -49,13 +40,23 @@ def test_build_land_surface_dataframe(
     ],
 )
 def test_detailed_land_surface_loading_results(
-    land_surface_loading_response_dicts, contexts, key, n_rows, n_nodes,
+    land_surface_loading_response_dicts, contexts, key, n_rows, n_nodes
 ):
 
     land_surfaces = land_surface_loading_response_dicts[(n_rows, n_nodes)]
     land_surfaces_list = land_surfaces["land_surfaces"]
+    df = pandas.DataFrame(land_surfaces_list)
     context = contexts[key]
-    land_surfaces_df, msg = build_land_surface_dataframe(land_surfaces_list, context)
+    df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
+
+    df, msg = parse_configuration_logic(
+        df=df,
+        config_section="api_recognize",
+        config_object="land_surfaces",
+        context=context,
+    )
+
+    land_surfaces_df = clean_land_surface_dataframe(df)
 
     parameters = context["project_reference_data"]["land_surface_emc_table"].get(
         "parameters"
@@ -131,9 +132,24 @@ def test_detailed_land_surface_pollutant_loading_results(
         }
     )
     parameters = [
-        {"long_name": "Total Suspended Solids", "short_name": "TSS", "unit": "mg/L"},
-        {"long_name": "Total Copper", "short_name": "TCu", "unit": "ug/L"},
-        {"long_name": "Fecal Coliform", "short_name": "FC", "unit": "MPN/100mL"},
+        {
+            "long_name": "Total Suspended Solids",
+            "short_name": "TSS",
+            "concentration_unit": "mg/L",
+            "load_unit": "lbs",
+        },
+        {
+            "long_name": "Total Copper",
+            "short_name": "TCu",
+            "concentration_unit": "ug/L",
+            "load_unit": "lbs",
+        },
+        {
+            "long_name": "Fecal Coliform",
+            "short_name": "FC",
+            "concentration_unit": "MPN/_100mL",
+            "load_unit": "mpn",
+        },
     ]
 
     def sigfigs(x, N):

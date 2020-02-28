@@ -4,34 +4,22 @@ from copy import deepcopy
 import pandas
 
 from nereid.core.units import ureg
-from nereid.core.io import parse_api_recognize
 
 # TODO: implement fallback to e.g., "TRANS-B-10" rather than "401070-TRANS-B-10"
 # in case ref data is missing.
 
 
-def build_land_surface_dataframe(
-    land_surfaces_list: List[Dict[str, Any]], context: Dict[str, Any]
-) -> Tuple[pandas.DataFrame, List[str]]:
-
-    land_surfaces_df = pandas.DataFrame(land_surfaces_list)
-    df = land_surfaces_df
-    df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
-
-    df, msg = parse_api_recognize(df, "land_surfaces", context)
+def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
 
     df["imp_pct"] = df["imp_pct"].clip(0, 100)
     df["imp_area_acres"] = df["area_acres"] * (df["imp_pct"] / 100)
 
-    return df, msg
+    return df
 
 
-def detailed_volume_loading_results(
-    land_surfaces_df: pandas.DataFrame,
-) -> pandas.DataFrame:
+def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
 
     # method chaining with 'df.assign' looks better, but it's much less memory efficient
-    df = land_surfaces_df
     df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
     df["perv_area_acres"] = df["area_acres"] - df["imp_area_acres"]
     df["imp_area_sqft"] = df["imp_area_acres"] * 43560
@@ -49,34 +37,21 @@ def detailed_volume_loading_results(
 
 
 def detailed_pollutant_loading_results(
-    land_surfaces_df: pandas.DataFrame,
-    parameters: Optional[List[Dict[str, str]]] = None,
+    df: pandas.DataFrame, parameters: Optional[List[Dict[str, str]]] = None
 ) -> pandas.DataFrame:
 
-    #  TODO: make this more flexible and units agnostic.
-    convert_to_load = {
-        "mg/l": (ureg("(mg/l)*(cubic_feet)").to("lbs").magnitude, "lbs"),
-        "ug/l": (ureg("(ug/l)*(cubic_feet)").to("lbs").magnitude, "lbs"),
-        "mpn/100ml": (
-            ureg("(count/(100*ml)) * cubic_feet").to("count").magnitude,
-            "mpn",
-        ),  # count per cuft
-    }
-
-    df = land_surfaces_df
-
-    if parameters is None:
+    if parameters is None or len(parameters) == 0:
         return df
 
     for param in parameters:
-        unit = param["unit"].lower()
+        conc_unit = param["concentration_unit"]
+        load_unit = param["load_unit"]
         poc = param["short_name"]
-        emc_col = "_".join([poc, "conc", unit])
+        emc_col = "_".join([poc, "conc", conc_unit.lower().replace("_", "")])
+        load_col = "_".join([poc, "load", load_unit.lower().replace("_", "")])
+
         if emc_col in df:
-            factor, to_unit = convert_to_load[unit]
-
-            load_col = "_".join([poc, "load", to_unit])
-
+            factor = (ureg("cubic_feet") * ureg(conc_unit)).to(load_unit).magnitude
             df[load_col] = df["runoff_volume_cuft"] * df[emc_col] * factor
 
     return df
@@ -90,6 +65,7 @@ def detailed_loading_results(
     # fmt: off
     results = (
         land_surfaces_df
+        .pipe(clean_land_surface_dataframe)
         .pipe(detailed_volume_loading_results)
         .pipe(detailed_pollutant_loading_results, parameters)
     )
@@ -103,17 +79,9 @@ def summary_loading_results(
 ) -> pandas.DataFrame:
 
     groupby_cols = ["node_id"]
-
-    pocs = [dct["short_name"] for dct in parameters]
-
-    # -> TODO clean this process up
     load_cols = [
-        c
-        for poc in pocs
-        for c in detailed_results.columns
-        if all((poc == c.split("_")[0], "load" in c))
+        "_".join([dct["short_name"], "load", dct["load_unit"]]) for dct in parameters
     ]
-    # <-
 
     output_columns_summable = [
         "area_acres",
@@ -146,23 +114,14 @@ def summary_loading_results(
 
     df.reset_index(inplace=True)
 
-    convert_to_conc = {
-        ("mg/l", "lbs"): ureg("(lbs/cubic_feet)").to("mg/l").magnitude,
-        ("ug/l", "lbs"): ureg("(lbs/cubic_feet)").to("ug/l").magnitude,
-        ("mpn/100ml", "mpn"): ureg("count/cubic_feet").to("count/(ml)").magnitude * 100,
-    }
-
     for param in parameters:
-        unit = param["unit"].lower()
+        conc_unit = param["concentration_unit"]
+        load_unit = param["load_unit"]
+
         poc = param["short_name"]
-
-        # -> TODO clean this process up
-        load_col = [c for c in load_cols if all((poc in c, "load" in c))][0]
-        load_unit = load_col.split("_")[-1]
-        # <-
-
-        conc_col = "_".join([poc, "conc", unit])
-        factor = convert_to_conc[(unit, load_unit)]
+        load_col = "_".join([poc, "load", load_unit.lower().replace("_", "")])
+        conc_col = "_".join([poc, "conc", conc_unit.lower().replace("_", "")])
+        factor = (ureg(load_unit) / ureg("cubic_feet")).to(conc_unit).magnitude
 
         df[conc_col] = (df[load_col] / df["runoff_volume_cuft"]) * factor
 

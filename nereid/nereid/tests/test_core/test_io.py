@@ -57,9 +57,7 @@ def test_load_ref_data(contexts, table, key):
 
 @pytest.mark.parametrize("n_rows", [10])
 @pytest.mark.parametrize("n_nodes", [5])
-@pytest.mark.parametrize(
-    "recog", ["land_surfaces", r"¯\_(ツ)_/¯",],
-)
+@pytest.mark.parametrize("recog", ["land_surfaces", r"¯\_(ツ)_/¯"])
 @pytest.mark.parametrize(
     "key, raises_msgs",
     [
@@ -73,6 +71,7 @@ def test_load_ref_data(contexts, table, key):
         ("default_api_ls_remap_left_dne_valid", True),
         ("default_api_ls_remap_how_dne_valid", True),
         ("default_api_ls_remap_right_dne_valid", True),
+        ("default_lst_expand_field_dne_valid", True),
     ],
 )
 def test_parse_api_recognize(
@@ -93,7 +92,7 @@ def test_parse_api_recognize(
 
     if recog == "land_surfaces":
         df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
-    df, msg = io.parse_api_recognize(df, recog, context)
+    df, msg = io.parse_configuration_logic(df, "api_recognize", recog, context)
     if recog in ["land_surfaces", "treatment_facility"] and not raises_msgs:
         assert len(msg) == 0
     else:

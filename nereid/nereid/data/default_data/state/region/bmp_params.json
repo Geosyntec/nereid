@@ -2,7 +2,7 @@
   "schema": {
     "fields": [
       {
-        "name": "bmp",
+        "name": "facility_type",
         "type": "string"
       },
       {
@@ -74,7 +74,7 @@
   },
   "data": [
     {
-      "bmp": "Biofiltration/Bioretention",
+      "facility_type": "Biofiltration",
       "pollutant": "Total Nitrogen",
       "unit": "mg/L",
       "N": 240,
@@ -93,7 +93,7 @@
       "MAD": 1.1055511058
     },
     {
-      "bmp": "Detention Basin",
+      "facility_type": "Detention Basin",
       "pollutant": "Dissolved Copper",
       "unit": "ug/L",
       "N": 134,
@@ -112,7 +112,7 @@
       "MAD": 1.2688514137
     },
     {
-      "bmp": "Sand Filter",
+      "facility_type": "Sand Filter",
       "pollutant": "Dissolved Copper",
       "unit": "ug/L",
       "N": 128,

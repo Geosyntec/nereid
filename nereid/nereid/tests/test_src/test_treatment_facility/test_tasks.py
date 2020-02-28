@@ -13,7 +13,9 @@ def test_construct_nodes_from_treatment_facility_request(
 
     context = contexts[ctxt_key]
     tmnt_facilities = {"treatment_facilities": valid_treatment_facilities}
-    treatment_facilities = initialize_treatment_facilities(tmnt_facilities, context)
+    treatment_facilities = initialize_treatment_facilities(
+        tmnt_facilities, context=context
+    )
 
     tmnt_lst = treatment_facilities["treatment_facilities"]
 
@@ -53,7 +55,9 @@ def test_construct_nodes_from_treatment_facility_request_checkval(
     context = contexts[ctxt_key]
     tmnt_facilities = {"treatment_facilities": [valid_treatment_facility_dicts[model]]}
 
-    treatment_facilities = initialize_treatment_facilities(tmnt_facilities, context)
+    treatment_facilities = initialize_treatment_facilities(
+        tmnt_facilities, context=context
+    )
     tmnt_lst = treatment_facilities["treatment_facilities"][0]
 
     check_val = tmnt_lst.get(checkfor)

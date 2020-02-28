@@ -4,11 +4,7 @@ from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.utils import (
-    standard_json_response,
-    run_task_by_name,
-    get_valid_context,
-)
+from nereid.api.api_v1.utils import standard_json_response, run_task, get_valid_context
 from nereid.api.api_v1.models.utils import validate_models_with_discriminator
 from nereid.api.api_v1.models import treatment_facility_models
 from nereid.api.api_v1.models.treatment_facility_models import (
@@ -124,15 +120,12 @@ async def initialize_treatment_facility_parameters(
 
     treatment_facilities, context = tmnt_facility_req
 
-    args = (treatment_facilities.dict(), context)
-    response = run_task_by_name(
-        taskname="initialize_treatment_facilities",
-        router=router,
-        args=args,
-        get_route="get_treatment_facility_parameters",
+    task = bg.background_initialize_treatment_facilities.s(
+        treatment_facilities=treatment_facilities.dict(), context=context
     )
-
-    return response
+    return run_task(
+        task=task, router=router, get_route="get_treatment_facility_parameters"
+    )
 
 
 @router.get(

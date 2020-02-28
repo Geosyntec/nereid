@@ -1,6 +1,8 @@
+import os
 import pytest
 
 from nereid.api.api_v1.models import land_surface_models
+from nereid.core import config
 
 
 @pytest.mark.parametrize("details", ["true", "false"])
@@ -17,10 +19,9 @@ def test_post_land_surface_loading(
     prjson = post_response.json()
     assert land_surface_models.LandSurfaceResponse(**prjson)
     assert prjson["status"].lower() != "failure"
-    assert prjson["task_id"] is not None
-    assert prjson["result_route"] is not None
 
 
+@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("details", ["true", "false"])
 @pytest.mark.parametrize("n_rows", [10, 50, 5000])
 @pytest.mark.parametrize("n_nodes", [5, 50, 1000])

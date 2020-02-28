@@ -148,6 +148,7 @@ TREATMENT_FACILITY_MODELS = [
 
 class TreatmentFacilities(BaseModel):
     treatment_facilities: List[STRUCTURAL_FACILITY_TYPE]
+    errors: Optional[List[str]] = None
 
 
 class TreatmentFacilitiesResponse(JSONAPIResponse):
@@ -159,10 +160,22 @@ def validate_treatment_facility_models(
 ) -> List[Any]:
 
     mapping = context["api_recognize"]["treatment_facility"]["facility_type"]
-    model_map = {k: globals().get(v.get("validator")) for k, v in mapping.items()}
-    fallback_map = {
-        k: globals().get(v.get("validation_fallback")) for k, v in mapping.items()
+    model_map_str = {k: v.get("validator") for k, v in mapping.items()}
+    fallback_map_str = {k: v.get("validation_fallback") for k, v in mapping.items()}
+    tmnt_performance_map_str = {
+        k: v.get("tmnt_performance_facility_type") for k, v in mapping.items()
     }
+
+    for dct in unvalidated_data:
+        facility_type = dct["facility_type"]
+        dct["validator"] = model_map_str.get(facility_type)
+        dct["validation_fallback"] = fallback_map_str.get(facility_type)
+        dct["tmnt_performance_facility_type"] = tmnt_performance_map_str.get(
+            facility_type
+        )
+
+    model_map = {k: globals().get(v) for k, v in model_map_str.items()}
+    fallback_map = {k: globals().get(v) for k, v in fallback_map_str.items()}
 
     valid_models = validate_models_with_discriminator(
         unvalidated_data=unvalidated_data,

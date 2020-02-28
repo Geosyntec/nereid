@@ -2,6 +2,7 @@ from fastapi import HTTPException
 import pytest
 
 from nereid.api.api_v1 import utils
+import nereid.bg_worker as bg
 
 
 @pytest.mark.parametrize(
@@ -17,12 +18,11 @@ def test_get_valid_context(state, region, raises, exp):
 
 
 def test_run_task_by_name(subgraph_request_dict):
-    args = (subgraph_request_dict["graph"], subgraph_request_dict["nodes"])
 
-    result = utils.run_task_by_name(
-        taskname="network_subgraphs",
-        router=r"¯\_(ツ)_/¯",
-        args=args,
-        get_route=r"¯\_(ツ)_/¯",
-        force_foreground=True,
+    graph, nodes = subgraph_request_dict["graph"], subgraph_request_dict["nodes"]
+
+    task = bg.background_network_subgraphs.s(graph=graph, nodes=nodes)
+
+    return utils.run_task(
+        task=task, router=r"¯\_(ツ)_/¯", get_route=r"¯\_(ツ)_/¯", force_foreground=True
     )

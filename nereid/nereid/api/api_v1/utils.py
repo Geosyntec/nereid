@@ -4,6 +4,7 @@ import os
 from fastapi import APIRouter, HTTPException
 from celery.exceptions import TimeoutError
 from celery.result import AsyncResult
+from celery.task import Task
 
 from nereid.core import config, utils
 import nereid.bg_worker as bg
@@ -21,22 +22,20 @@ def wait_a_sec_and_see_if_we_can_return_some_data(
     return result
 
 
-def run_task_by_name(
-    taskname: str,
+def run_task(
+    task: Task,
     router: APIRouter,
-    args: Tuple,
     get_route: str,
     force_foreground: Optional[bool] = False,
 ) -> Dict[str, Any]:
 
-    if force_foreground:
-        fxn = getattr(bg, taskname)
-        result = fxn(*args)
-        return dict(data=result)
+    if force_foreground or config.NEREID_FORCE_FOREGROUND:
+        response = dict(data=task(), task_id="foreground", result_route="foreground")
 
-    background_task = getattr(bg, "background_" + taskname)
-    task = background_task.apply_async(args=args)
-    return standard_json_response(task, router, get_route)
+    else:
+        response = standard_json_response(task.apply_async(), router, get_route)
+
+    return response
 
 
 def standard_json_response(
@@ -54,8 +53,7 @@ def standard_json_response(
 
     response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
 
-    # TODO: remove this pragma and apply to other routes
-    if task.successful():  # pragma: no branch
+    if task.successful():
         response["data"] = task.result
 
     return response

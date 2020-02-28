@@ -1,4 +1,8 @@
 test: true
+pint_unit_registry:
+  # all units must be either compatible with `pint` or be defined here.
+  - MPN = count = mpn
+  - _100ml = 100 * milliliter = _100mL
 api_recognize:
   land_surfaces:
     joins: # joins are passed to pandas.DataFrame.merge()
@@ -13,6 +17,8 @@ api_recognize:
         how: left
         left_on: land_use
         right_on: land_use
+        validate: many_to_one
+        indicator: True
     
     remaps:
       - left: land_use
@@ -31,6 +37,8 @@ api_recognize:
         how: left
         left_on: ref_data_key
         right_on: subbasin
+        validate: many_to_one
+        indicator: True
     
     remaps:
       - left: hsg
@@ -62,12 +70,12 @@ api_recognize:
       bioretention: 
         validator: BioInfFacility
         validation_fallback: NTFacility
-        tmnt_performance_facility_type: Biofiltration/Bioretention 
+        tmnt_performance_facility_type: Biofiltration
 
       biofiltration: 
         validator: TmntFacility
         validation_fallback: NTFacility
-        tmnt_performance_facility_type: Biofiltration/Bioretention
+        tmnt_performance_facility_type: Biofiltration
 
       wet_detention:
         validator: PermPoolFacility
@@ -85,13 +93,17 @@ project_reference_data:
   
   tmnt_performance_table: 
     file: bmp_params.json
-    facility_category:
-      - Biofiltration/Bioretention
-      - Detention Basin
-      - Sand Filter
-      - Vegetated Swale
-      - Wet Pond
-  
+    facility_column: facility_type
+    pollutant_column: pollutant
+    remaps:
+      - left: unit
+        right: -- # with how = replace, the right key is not parsed at all.
+        how: replace  # interpreted as 'left' = mapping['left']
+        mapping:
+          # units must be compatible with the `pint` library
+          "MPN/100mL": "MPN/_100ml"
+          "MNN/100 mL": "MPN/_100ml"
+
   land_surface_table: 
     file: land_surface_data.json
     expand_fields: 
@@ -106,12 +118,16 @@ project_reference_data:
   land_surface_emc_table:
     file: land_surface_emc.json
     parameters:
+      # units must be compatible with the `pint` library
       - long_name: Total Suspended Solids
         short_name: TSS
-        unit: mg/L
+        concentration_unit: mg/L
+        load_unit: lbs
       - long_name: Total Copper
         short_name: TCu
-        unit: ug/L
+        concentration_unit: ug/L
+        load_unit: lbs
       - long_name: Fecal Coliform
         short_name: FC
-        unit: MPN/100mL
+        concentration_unit: MPN/_100mL
+        load_unit: mpn

@@ -4,11 +4,7 @@ from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.utils import (
-    standard_json_response,
-    run_task_by_name,
-    get_valid_context,
-)
+from nereid.api.api_v1.utils import standard_json_response, run_task, get_valid_context
 from nereid.api.api_v1.models.land_surface_models import (
     LandSurfaces,
     LandSurfaceResponse,
@@ -66,16 +62,14 @@ async def calculate_loading(
 ) -> Dict[str, Any]:
 
     land_surfaces_req = land_surfaces.dict(by_alias=True)
-    args = (land_surfaces_req, details, context)
-    response = run_task_by_name(
-        taskname="land_surface_loading",
-        router=router,
-        args=args,
-        get_route="get_land_surface_loading_result",
-        force_foreground=False,
+
+    task = bg.background_land_surface_loading.s(
+        land_surfaces=land_surfaces_req, details=details, context=context
     )
 
-    return response
+    return run_task(
+        task=task, router=router, get_route="get_land_surface_loading_result"
+    )
 
 
 @router.get(

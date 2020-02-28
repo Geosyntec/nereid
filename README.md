@@ -11,6 +11,9 @@
 <a href="https://codecov.io/gh/Geosyntec/nereid" target="_blank">
     <img src="https://codecov.io/gh/Geosyntec/nereid/branch/develop/graph/badge.svg" alt="Coverage">
 </a>
+<a href="http://mypy-lang.org/" target="_blank">
+    <img src="http://www.mypy-lang.org/static/mypy_badge.svg" alt="mypy">
+</a>
 </p>
 
 This project, like it's [namesake moon](https://en.wikipedia.org/wiki/Nereid_(moon)), orbits Neptune, which in turn orbits Orange County.

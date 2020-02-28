@@ -3,27 +3,19 @@ from copy import deepcopy
 
 import pandas
 
-from nereid.core.io import parse_api_recognize
 
+def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]:
 
-def build_treatment_facility_nodes(
-    treatment_facility_list: List[Dict[str, Any]], context: Dict[str, Any]
-) -> pandas.DataFrame:
-
-    tmnt_facilities_df = pandas.DataFrame(treatment_facility_list)
-    df = tmnt_facilities_df
-
-    df, msg = parse_api_recognize(df, "treatment_facility", context)
-    treatment_facility_list = [
+    _treatment_facility_list:List[Dict[str, Any]] = [
         {k: v for k, v in m.items() if pandas.notnull(v)}
         for m in df.to_dict(orient="records")
     ]
 
-    treatment_facility_list = list(
-        map(construct_treatment_facility_node_context, treatment_facility_list)
+    treatment_facility_list:List[Dict[str, Any]] = list(
+        map(construct_treatment_facility_node_context, _treatment_facility_list)
     )
 
-    return treatment_facility_list, msg
+    return treatment_facility_list
 
 
 def construct_treatment_facility_node_context(
