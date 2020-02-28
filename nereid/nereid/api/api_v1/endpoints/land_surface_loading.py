@@ -3,12 +3,12 @@ from typing import Dict, Any
 from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
 
-from nereid.api.api_v1.utils import standard_json_response, get_valid_context
+import nereid.bg_worker as bg
+from nereid.api.api_v1.utils import standard_json_response, run_task, get_valid_context
 from nereid.api.api_v1.models.land_surface_models import (
     LandSurfaces,
     LandSurfaceResponse,
 )
-import nereid.bg_worker as bg
 
 
 router = APIRouter()
@@ -63,11 +63,13 @@ async def calculate_loading(
 
     land_surfaces_req = land_surfaces.dict(by_alias=True)
 
-    task = bg.background_land_surface_loading.apply_async(
-        args=(land_surfaces_req, jsonable_encoder(details), context)
+    task = bg.background_land_surface_loading.s(
+        land_surfaces=land_surfaces_req, details=details, context=context
     )
 
-    return standard_json_response(task, router, "get_land_surface_loading_result")
+    return run_task(
+        task=task, router=router, get_route="get_land_surface_loading_result"
+    )
 
 
 @router.get(

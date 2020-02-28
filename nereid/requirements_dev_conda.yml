@@ -4,18 +4,17 @@ channels:
   - defaults
 dependencies:
   - python=3.7.*
-  - pip=19.*
+  - pip=20.*
 
 # business logic
   - networkx=2.4.*
-  - numpy=1.17.*
-  - pandas=0.25.*
+  - numpy=1.18.*
+  - pandas=1.0.*
   - scipy=1.4.*
 
 # web
-  - fastapi=0.46.*
   - ujson=1.35
-  - uvicorn=0.9.*  
+  - uvicorn=0.11.*  
   - starlette=0.12.*
   - aiofiles=0.4.*
   - redis
@@ -43,5 +42,4 @@ dependencies:
 
 # pip
   - pip:
-    # required silence annoying warnings from fastapi
-    - email-validator==1.0.*
+    - fastapi=0.49.*

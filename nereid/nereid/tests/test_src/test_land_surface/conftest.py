@@ -1,40 +1,7 @@
-from copy import deepcopy
 from io import StringIO
 
 import pandas
 import pytest
-
-from nereid.core.utils import get_request_context
-
-
-@pytest.fixture
-def land_surface_data_contexts():
-
-    cx1 = get_request_context()
-
-    cx2 = deepcopy(cx1)
-    cx2["project_reference_data"]["land_surface_table"].pop("joins")
-
-    cx3 = deepcopy(cx2)
-    cx3["project_reference_data"]["land_surface_table"].pop("expand_fields")
-
-    cx4 = deepcopy(cx1)
-    cx4["project_reference_data"]["land_surface_emc_table"]["file"] = r"¯\_(ツ)_/¯"
-
-    cx5 = deepcopy(cx1)
-    cx5["project_reference_data"]["land_surface_emc_table"].pop("parameters")
-
-    keys = [
-        "default",
-        "land_surface_table_no_joins",
-        "land_surface_table_no_joins_no_expanded_fields",
-        "land_surface_emc_table_dne",
-        "land_surface_emc_table_no_params",
-    ]
-
-    values = [cx1, cx2, cx3, cx4, cx5]
-
-    return {k: v for k, v in zip(keys, values)}
 
 
 @pytest.fixture
@@ -46,7 +13,7 @@ def known_land_surface_volume_loading_result():
 1           3             2.2                     4                    8            0.4           0.8    73.33              0.8        95832.0         34848.0               0.67                0.33             63888.0              11616.0             75504.0                1.76                 0.32            2.08
 """
     )
-    return pandas.read_csv(known, sep="\s+")
+    return pandas.read_csv(known, sep=r"\s+")
 
 
 @pytest.fixture
@@ -60,4 +27,4 @@ def known_land_surface_pollutant_loading_result():
 3                   2              82386             87            663      0.082779      0.000011   46658000.0
 """
     )
-    return pandas.read_csv(known, sep="\s+")
+    return pandas.read_csv(known, sep=r"\s+")

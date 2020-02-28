@@ -2,7 +2,7 @@
   "schema": {
     "fields": [
       {
-        "name": "bmp",
+        "name": "facility_type",
         "type": "string"
       },
       {
@@ -74,7 +74,7 @@
   },
   "data": [
     {
-      "bmp": "Biofiltration/Bioretention",
+      "facility_type": "Biofiltration",
       "pollutant": "Total Nitrogen",
       "unit": "mg/L",
       "N": 240,
@@ -91,6 +91,44 @@
       "Low_Slope": 0.4763452842,
       "High_Slope": 1.0909578468,
       "MAD": 1.1055511058
+    },
+    {
+      "facility_type": "Detention Basin",
+      "pollutant": "Dissolved Copper",
+      "unit": "ug/L",
+      "N": 134,
+      "ND_infl": 4,
+      "ND_effl": 6,
+      "dl": 3.0,
+      "A": null,
+      "B": null,
+      "e1": null,
+      "C": null,
+      "D": 0.9236272807,
+      "E": 0.9513943204,
+      "e2": 1.1465436448,
+      "Low_Slope": 0.8753243543,
+      "High_Slope": 1.0207210595,
+      "MAD": 1.2688514137
+    },
+    {
+      "facility_type": "Sand Filter",
+      "pollutant": "Dissolved Copper",
+      "unit": "ug/L",
+      "N": 128,
+      "ND_infl": 4,
+      "ND_effl": 8,
+      "dl": 3.0,
+      "A": 0.0684261477,
+      "B": 0.8213287735,
+      "e1": 0.0903267613,
+      "C": null,
+      "D": null,
+      "E": null,
+      "e2": null,
+      "Low_Slope": 0.7222222222,
+      "High_Slope": 0.9148936103,
+      "MAD": 1.1804019651
     }
   ]
 }

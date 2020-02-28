@@ -12,8 +12,7 @@ def test_land_surface_loading(
 ):
     key = n_rows, n_nodes
     land_surfaces = land_surface_loading_response_dicts[key]
-    context = get_request_context()
-    result = land_surface_loading(land_surfaces, details, context)
+    result = land_surface_loading(land_surfaces, details, context=get_request_context())
 
     assert result.get("summary") is not None
     assert len(result.get("summary")) <= len(land_surfaces["land_surfaces"])
@@ -33,8 +32,7 @@ def test_land_surface_loading_with_err(
     land_surfaces = land_surface_loading_response_dicts[key]
 
     land_surfaces["land_surfaces"][5]["surface_key"] = r"¯\_(ツ)_/¯"
-    context = get_request_context()
-    result = land_surface_loading(land_surfaces, details, context)
+    result = land_surface_loading(land_surfaces, details, context=get_request_context())
 
     assert "ERROR" in result.get("errors", [])[0]
     assert result.get("summary") is not None
