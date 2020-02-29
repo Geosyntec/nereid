@@ -104,7 +104,7 @@ def contexts():
     cx7["project_reference_data"]["land_surface_table"] = [r"¯\_(ツ)_/¯"]
 
     cx8 = deepcopy(cx1)
-    cx8["project_reference_data"]["land_surface_table"].pop("expand_fields")
+    cx8["project_reference_data"]["land_surface_table"].pop("preprocess")
 
     cx9 = deepcopy(cx1)
     cx9["project_reference_data"]["land_surface_emc_table"]["file"] = r"¯\_(ツ)_/¯"
@@ -113,29 +113,34 @@ def contexts():
     cx10["project_reference_data"]["land_surface_emc_table"].pop("parameters")
 
     cx11 = deepcopy(cx1)
-    cx11["api_recognize"]["land_surfaces"].pop("joins")
+    del cx11["api_recognize"]["land_surfaces"]["preprocess"][0]  # no joins
 
     cx12 = deepcopy(cx1)
-    cx12["api_recognize"]["land_surfaces"].pop("remaps")
+    del cx12["api_recognize"]["land_surfaces"]["preprocess"][1]  # no remaps
 
     cx13 = deepcopy(cx11)
-    cx13["api_recognize"]["land_surfaces"].pop("remaps")
+    del cx13["api_recognize"]["land_surfaces"]["preprocess"][0]  # no joins or remaps
 
     cx14 = deepcopy(cx11)
-    cx14["api_recognize"]["land_surfaces"]["joins"] = [
+    cx14["api_recognize"]["land_surfaces"]["preprocess"].insert(
+        0,
         {
-            "other": "land_surface_table",
-            "how": "left",
-            "left_on": "surface_key",
-            "right_on": "surface_id",
-        }
-    ]
+            "joins": [
+                {
+                    "other": "land_surface_table",
+                    "how": "left",
+                    "left_on": "surface_key",
+                    "right_on": "surface_id",
+                }
+            ]
+        },
+    )
 
     cx15 = deepcopy(cx1)
-    cx15["api_recognize"]["treatment_facility"].pop("joins")
+    del cx15["api_recognize"]["treatment_facility"]["preprocess"][0]  # no joins
 
     cx16 = deepcopy(cx1)
-    cx16["api_recognize"]["land_surfaces"]["joins"] = [
+    cx16["api_recognize"]["land_surfaces"]["preprocess"][0]["joins"] = [
         {
             "other": r"¯\_(ツ)_/¯",
             "how": "left",
@@ -145,7 +150,7 @@ def contexts():
     ]
 
     cx17 = deepcopy(cx1)
-    cx17["api_recognize"]["land_surfaces"]["remaps"] = [
+    cx17["api_recognize"]["land_surfaces"]["preprocess"][1]["remaps"] = [
         {
             "left": r"¯\_(ツ)_/¯",
             "right": "imp_pct",
@@ -161,7 +166,7 @@ def contexts():
     ]
 
     cx18 = deepcopy(cx1)
-    cx18["api_recognize"]["land_surfaces"]["remaps"] = [
+    cx18["api_recognize"]["land_surfaces"]["preprocess"][1]["remaps"] = [
         {
             "left": "land_use",
             "right": "imp_pct",
@@ -177,7 +182,7 @@ def contexts():
     ]
 
     cx19 = deepcopy(cx1)
-    cx19["api_recognize"]["land_surfaces"]["remaps"] = [
+    cx19["api_recognize"]["land_surfaces"]["preprocess"][1]["remaps"] = [
         {
             "left": "land_use",
             "right": r"¯\_(ツ)_/¯",
@@ -193,9 +198,9 @@ def contexts():
     ]
 
     cx20 = deepcopy(cx1)
-    cx20["project_reference_data"]["land_surface_table"]["expand_fields"] = [
-        {"field": r"¯\_(ツ)_/¯", "sep": "-", "new_column_names": [1, 2, 3]}
-    ]
+    cx20["project_reference_data"]["land_surface_table"]["preprocess"][0][
+        "expand_fields"
+    ] = [{"field": r"¯\_(ツ)_/¯", "sep": "-", "new_column_names": [1, 2, 3]}]
 
     keys = [  # these are easier to copy into tests
         "default",
