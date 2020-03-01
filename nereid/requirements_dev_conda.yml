@@ -15,7 +15,6 @@ dependencies:
 # web
   - ujson=1.35
   - uvicorn=0.11.*  
-  - starlette=0.12.*
   - aiofiles=0.4.*
   - redis
   - redis-py
@@ -26,8 +25,8 @@ dependencies:
 
 # viz
   - matplotlib=3.1.*
-  - graphviz=2.38.*
-  - pydot=1.4.*
+  - graphviz
+  - pydot
 
 # tests
   - pytest
@@ -42,4 +41,4 @@ dependencies:
 
 # pip
   - pip:
-    - fastapi=0.49.*
+    - fastapi=0.50.*
