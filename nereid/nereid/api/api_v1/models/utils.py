@@ -22,14 +22,18 @@ def validate_models_with_discriminator(
         fallback = fallback_mapping.get(attr, NullModel)
 
         if model is None:
-            e = f"the key '{attr}' is not in `model_mapping`. Using `fallback` value: {fallback.schema()['title']}"
-            dct["errors"] = [str(e)]
+            e = (
+                f"ERROR: the key '{attr}' is not in `model_mapping`. "
+                f"Using `fallback` value: {fallback.schema()['title']}"
+            )
+
+            dct["errors"] = str(e) + "  \n"
             model = fallback
         try:
             valid = model(valid_model=model.schema()["title"], **dct)
 
         except ValidationError as e:
-            dct["errors"] = [str(e)]
+            dct["errors"] = "ERROR: " + str(e) + "  \n"
             model = fallback
             valid = model(valid_model=model.schema()["title"], **dct)
 

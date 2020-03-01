@@ -65,6 +65,6 @@ def test_build_treatment_facility_nodes_errors(contexts, ctxt_key, err, data_dic
     vm_dict = valid_models[0].dict()
 
     if err:
-        assert any([err in e for e in vm_dict["errors"]])
+        assert err in vm_dict["errors"]
     else:
         assert vm_dict.get("errors") is None

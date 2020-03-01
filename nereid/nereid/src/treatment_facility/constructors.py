@@ -6,12 +6,12 @@ import pandas
 
 def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]:
 
-    _treatment_facility_list:List[Dict[str, Any]] = [
+    _treatment_facility_list: List[Dict[str, Any]] = [
         {k: v for k, v in m.items() if pandas.notnull(v)}
         for m in df.to_dict(orient="records")
     ]
 
-    treatment_facility_list:List[Dict[str, Any]] = list(
+    treatment_facility_list: List[Dict[str, Any]] = list(
         map(construct_treatment_facility_node_context, _treatment_facility_list)
     )
 
