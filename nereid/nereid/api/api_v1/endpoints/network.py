@@ -2,10 +2,9 @@ from typing import List, Dict, Optional, Any, Union
 
 from fastapi import APIRouter, Body, Query, HTTPException
 from fastapi.encoders import jsonable_encoder
-
-from starlette.requests import Request
-from starlette.responses import FileResponse
-from starlette.templating import Jinja2Templates
+from fastapi.responses import ORJSONResponse, FileResponse
+from fastapi.requests import Request
+from fastapi.templating import Jinja2Templates
 
 from celery.result import AsyncResult
 
@@ -28,6 +27,7 @@ templates = Jinja2Templates(directory=r"nereid/api/templates")
     "/network/validate",
     tags=["network", "validate"],
     response_model=network_models.NetworkValidationResponse,
+    response_class=ORJSONResponse,
 )
 async def validate_network(
     graph: network_models.Graph = Body(
@@ -48,6 +48,7 @@ async def validate_network(
     "/network/validate/{task_id}",
     tags=["network", "validate"],
     response_model=network_models.NetworkValidationResponse,
+    response_class=ORJSONResponse,
 )
 async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
 
@@ -59,6 +60,7 @@ async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
     "/network/subgraph",
     tags=["network", "subgraph"],
     response_model=network_models.SubgraphResponse,
+    response_class=ORJSONResponse,
 )
 async def subgraph_network(
     graph: network_models.Graph = Body(
@@ -113,6 +115,7 @@ async def subgraph_network(
     "/network/subgraph/{task_id}",
     tags=["network", "subgraph"],
     response_model=network_models.SubgraphResponse,
+    response_class=ORJSONResponse,
 )
 async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
 
@@ -124,6 +127,7 @@ async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
     "/network/subgraph/{task_id}/img",
     tags=["network", "visualize"],
     response_model=network_models.SubgraphResponse,
+    response_class=ORJSONResponse,
 )
 async def get_subgraph_network_as_img(
     request: Request,
@@ -166,6 +170,7 @@ async def get_subgraph_network_as_img(
     "/network/solution_sequence",
     tags=["network", "sequence"],
     response_model=network_models.SolutionSequenceResponse,
+    response_class=ORJSONResponse,
 )
 async def network_solution_sequence(
     graph: network_models.Graph = Body(
@@ -218,6 +223,7 @@ async def network_solution_sequence(
     "/network/solution_sequence/{task_id}",
     tags=["network", "sequence"],
     response_model=network_models.SolutionSequenceResponse,
+    response_class=ORJSONResponse,
 )
 async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
 
@@ -229,6 +235,7 @@ async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
     "/network/solution_sequence/{task_id}/img",
     tags=["network", "sequence", "visualize"],
     response_model=network_models.SolutionSequenceResponse,
+    response_class=ORJSONResponse,
 )
 async def get_network_solution_sequence_as_img(
     request: Request,

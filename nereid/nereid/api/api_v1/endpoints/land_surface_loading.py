@@ -2,6 +2,7 @@ from typing import Dict, Any
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
 from nereid.api.api_v1.utils import standard_json_response, run_task, get_valid_context
@@ -18,6 +19,7 @@ router = APIRouter()
     "/land_surface/loading",
     tags=["land_surface", "loading"],
     response_model=LandSurfaceResponse,
+    response_class=ORJSONResponse,
 )
 async def calculate_loading(
     land_surfaces: LandSurfaces = Body(
@@ -76,6 +78,7 @@ async def calculate_loading(
     "/land_surface/loading/{task_id}",
     tags=["land_surface", "loading"],
     response_model=LandSurfaceResponse,
+    response_class=ORJSONResponse,
 )
 async def get_land_surface_loading_result(task_id: str) -> Dict[str, Any]:
     task = bg.background_land_surface_loading.AsyncResult(task_id, app=router)

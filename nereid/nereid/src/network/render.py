@@ -5,7 +5,7 @@ from itertools import cycle
 
 import numpy
 import networkx as nx
-import ujson as json
+import orjson as json
 
 import matplotlib as mpl
 from matplotlib import pyplot as plt

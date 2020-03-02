@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Union
 from pathlib import Path
 from copy import deepcopy
-import json
+import orjson as json
 from io import StringIO
 
 import yaml
