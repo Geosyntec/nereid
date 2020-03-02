@@ -1,5 +1,4 @@
 import pytest
-import ujson as json
 
 from nereid.api.api_v1.models import network_models
 from nereid.core import config

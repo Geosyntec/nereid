@@ -3,7 +3,7 @@ import time
 from itertools import product
 
 import pytest
-from starlette.testclient import TestClient
+from fastapi.testclient import TestClient
 import networkx as nx
 
 from nereid.main import app

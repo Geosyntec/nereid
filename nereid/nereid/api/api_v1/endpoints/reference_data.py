@@ -1,7 +1,7 @@
-import ujson as json
 from typing import Dict, Any
 
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import ORJSONResponse
 
 from nereid.api.api_v1.models.reference_models import ReferenceDataResponse
 from nereid.api.api_v1.utils import get_valid_context
@@ -11,7 +11,10 @@ router = APIRouter()
 
 
 @router.get(
-    "/reference_data", tags=["reference_data"], response_model=ReferenceDataResponse
+    "/reference_data",
+    tags=["reference_data"],
+    response_model=ReferenceDataResponse,
+    response_class=ORJSONResponse,
 )
 async def get_reference_data_json(
     context: dict = Depends(get_valid_context), filename: str = ""

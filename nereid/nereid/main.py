@@ -4,7 +4,7 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
-from starlette.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 
 from nereid.api.api_v1.api import api_router
 from nereid.api.api_v1.utils import get_valid_context

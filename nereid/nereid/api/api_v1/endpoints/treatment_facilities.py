@@ -2,6 +2,7 @@ from typing import Dict, Any, List, Tuple
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
 from nereid.api.api_v1.utils import standard_json_response, run_task, get_valid_context
@@ -111,6 +112,7 @@ def validate_facility_request(
     "/treatment_facility/validate",
     tags=["treatment_facility", "validate"],
     response_model=TreatmentFacilitiesResponse,
+    response_class=ORJSONResponse,
 )
 async def initialize_treatment_facility_parameters(
     tmnt_facility_req: Tuple[TreatmentFacilities, Dict[str, Any]] = Depends(
@@ -132,6 +134,7 @@ async def initialize_treatment_facility_parameters(
     "/treatment_facility/validate/{task_id}",
     tags=["treatment_facility", "validate"],
     response_model=TreatmentFacilitiesResponse,
+    response_class=ORJSONResponse,
 )
 async def get_treatment_facility_parameters(task_id: str) -> Dict[str, Any]:
     task = bg.background_initialize_treatment_facilities.AsyncResult(
