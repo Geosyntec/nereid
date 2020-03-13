@@ -10,7 +10,9 @@ from nereid.core.units import ureg
 
 
 def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
-
+    """ Prepare dataframe to include columns describing the imperviousness,
+    which is not provided by OCSurvey's API
+    """
     df["imp_pct"] = df["imp_pct"].clip(0, 100)
     df["imp_area_acres"] = df["area_acres"] * (df["imp_pct"] / 100)
 
@@ -78,7 +80,7 @@ def summary_loading_results(
     detailed_results: pandas.DataFrame, parameters: List[Dict[str, str]]
 ) -> pandas.DataFrame:
 
-    groupby_cols = ["node_id"]
+    GROUPBY_COLS = ["node_id"]
     load_cols = [
         "_".join([dct["short_name"], "load", dct["load_unit"]]) for dct in parameters
     ]
@@ -99,13 +101,13 @@ def summary_loading_results(
     ]
 
     df = (
-        detailed_results.reindex(columns=groupby_cols + output_columns_summable)
-        .groupby(groupby_cols)
+        detailed_results.reindex(columns=GROUPBY_COLS + output_columns_summable)
+        .groupby(GROUPBY_COLS)
         .agg({k: v for d in agg_list for k, v in d.items()})
     )
 
     #  'area_acres' is just a dummy here, any column would do
-    df["land_surfaces_count"] = detailed_results.groupby(groupby_cols)[
+    df["land_surfaces_count"] = detailed_results.groupby(GROUPBY_COLS)[
         "area_acres"
     ].count()
 
