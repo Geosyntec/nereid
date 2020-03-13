@@ -10,6 +10,9 @@ from nereid.src.land_surface.loading import (
 )
 
 
+## PMH: what are the `details` here? Does it toggle the verbosity?
+##      what sort of info would we expect to get out of it?
+##      docs would be nice to explain
 @update_unit_registry
 def land_surface_loading(
     land_surfaces: Dict[str, Any], details: bool, context: Dict[str, Any]

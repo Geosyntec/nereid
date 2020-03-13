@@ -3,6 +3,7 @@ from typing import Union, Sequence, Mapping
 import numpy
 
 
+## PMH: AFAICT, this isn't used outside of conftest. Is that right?
 def make_fake_land_surface_requests(
     n_rows: int,
     n_nodes: int,

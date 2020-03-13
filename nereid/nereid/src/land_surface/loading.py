@@ -9,6 +9,7 @@ from nereid.core.units import ureg
 # in case ref data is missing.
 
 
+## PMH: is the land clean or the dataframe?
 def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
     """ Prepare dataframe to include columns describing the imperviousness,
     which is not provided by OCSurvey's API
@@ -38,6 +39,8 @@ def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
     return df
 
 
+## PMH: Docs with examples would be nice (specifically for the `parameters`
+##      parameter)
 def detailed_pollutant_loading_results(
     df: pandas.DataFrame, parameters: Optional[List[Dict[str, str]]] = None
 ) -> pandas.DataFrame:
@@ -52,6 +55,8 @@ def detailed_pollutant_loading_results(
         emc_col = "_".join([poc, "conc", conc_unit.lower().replace("_", "")])
         load_col = "_".join([poc, "load", load_unit.lower().replace("_", "")])
 
+        # EMC's aren't required as runoff volume might be the only thing
+        # of interest
         if emc_col in df:
             factor = (ureg("cubic_feet") * ureg(conc_unit)).to(load_unit).magnitude
             df[load_col] = df["runoff_volume_cuft"] * df[emc_col] * factor
@@ -95,6 +100,9 @@ def summary_loading_results(
         "eff_area_acres",
     ] + load_cols
 
+    ## PMH suggestion for simplifcation
+    # other_agg_reqs = {}
+    # agg_dict = dict(**{col: "sum" for col in output_columns_summable}, **other_agg_reqs)
     agg_list = [
         {col: "sum" for col in output_columns_summable},
         # add other aggregation requirements for other columns here
