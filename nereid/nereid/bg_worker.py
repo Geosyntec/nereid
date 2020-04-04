@@ -10,6 +10,7 @@ from nereid.src.network.tasks import (
 )
 from nereid.src.land_surface.tasks import land_surface_loading
 from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
+from nereid.src.watershed.tasks import solve_watershed
 
 
 @celery_app.task(acks_late=True, track_started=True)
@@ -51,7 +52,20 @@ def background_land_surface_loading(land_surfaces, details, context):
 
 
 @celery_app.task(acks_late=True, track_started=True)
-def background_initialize_treatment_facilities(treatment_facilities, context):
+def background_initialize_treatment_facilities(
+    treatment_facilities, pre_validated, context
+):
     return initialize_treatment_facilities(  # pragma: no cover
-        treatment_facilities=treatment_facilities, context=context
+        treatment_facilities=treatment_facilities,
+        pre_validated=pre_validated,
+        context=context,
+    )
+
+
+@celery_app.task(acks_late=True, track_started=True)
+def background_solve_watershed(watershed, treatment_pre_validated, context):
+    return solve_watershed(  # pragma: no cover
+        watershed=watershed,
+        treatment_pre_validated=treatment_pre_validated,
+        context=context,
     )

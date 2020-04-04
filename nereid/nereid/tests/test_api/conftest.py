@@ -2,14 +2,14 @@ import json
 import time
 from itertools import product
 
+import networkx as nx
 import pytest
 from fastapi.testclient import TestClient
-import networkx as nx
 
-from nereid.main import app
 from nereid.core.config import API_LATEST
+from nereid.main import app
 from nereid.src.network.utils import clean_graph_dict
-from nereid.tests.utils import get_payload, generate_n_random_valid_watershed_graphs
+from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_payload
 
 
 @pytest.fixture(scope="module")
@@ -131,6 +131,36 @@ def treatment_facility_responses(client, valid_treatment_facility_dicts):
 
         payload = json.dumps({"treatment_facilities": [dct]})
         route = API_LATEST + "/treatment_facility/validate"
+        response = client.post(route, data=payload)
+        responses[name] = response
+
+    yield responses
+
+
+@pytest.fixture(scope="module")
+def treatment_site_responses(client, valid_treatment_site_requests):
+
+    responses = {}
+
+    for name, dct in valid_treatment_site_requests.items():
+
+        payload = json.dumps(dct)
+        route = API_LATEST + "/treatment_site/validate"
+        response = client.post(route, data=payload)
+        responses[name] = response
+
+    yield responses
+
+
+@pytest.fixture(scope="module")
+def watershed_responses(client, watershed_requests):
+
+    responses = {}
+
+    for name, dct in watershed_requests.items():
+
+        payload = json.dumps(dct)
+        route = API_LATEST + "/watershed/solve"
         response = client.post(route, data=payload)
         responses[name] = response
 

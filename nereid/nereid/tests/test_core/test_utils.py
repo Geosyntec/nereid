@@ -54,3 +54,9 @@ def test_validate_request_context(contexts, key):
     else:
         assert isvalid
         assert msg == "valid"
+
+
+@pytest.mark.parametrize("x, y, exp", [(5, 5, 1), (5, 0, 0), (25, 5, 5)])
+def test_safe_divide(x, y, exp):
+    result = utils.safe_divide(x, y)
+    assert result == exp

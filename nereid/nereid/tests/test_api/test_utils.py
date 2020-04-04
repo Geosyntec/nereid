@@ -1,8 +1,8 @@
-from fastapi import HTTPException
 import pytest
+from fastapi import HTTPException
 
-from nereid.api.api_v1 import utils
 import nereid.bg_worker as bg
+from nereid.api.api_v1 import utils
 
 
 @pytest.mark.parametrize(

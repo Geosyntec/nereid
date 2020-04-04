@@ -28,31 +28,31 @@ async def calculate_loading(
             "land_surfaces": [
                 {
                     "node_id": "1",
-                    "surface_key": "10101200-RESMF-C-5",
+                    "surface_key": "10101100-RESMF-A-5",
                     "area_acres": 1.834347898661638,
                     "imp_area_acres": 1.430224547955745,
                 },
                 {
                     "node_id": "0",
-                    "surface_key": "10101200-OSDEV-A-0",
+                    "surface_key": "10101100-OSDEV-A-0",
                     "area_acres": 4.458327528535912,
                     "imp_area_acres": 0.4457209193544626,
                 },
                 {
                     "node_id": "0",
-                    "surface_key": "10102000-IND-A-10",
+                    "surface_key": "10101000-IND-A-10",
                     "area_acres": 3.337086111390218,
                     "imp_area_acres": 0.47675887386582366,
                 },
                 {
                     "node_id": "0",
-                    "surface_key": "10101200-COMM-C-0",
+                    "surface_key": "10101100-COMM-C-0",
                     "area_acres": 0.5641157902710026,
                     "imp_area_acres": 0.40729090799199347,
                 },
                 {
                     "node_id": "1",
-                    "surface_key": "20101000-TRANS-C-5",
+                    "surface_key": "10101200-TRANS-C-5",
                     "area_acres": 0.007787658410143283,
                     "imp_area_acres": 0.007727004694355631,
                 },
