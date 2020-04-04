@@ -3,7 +3,7 @@ from functools import partial
 import numpy
 import pandas
 
-from nereid.core.units import ureg
+from nereid.core.units import conversion_factor_from_to
 
 
 def effluent_conc(
@@ -50,7 +50,7 @@ def effluent_conc(
     if unit is None:
         unit = inf_unit
 
-    inf_conc = inf_conc * ureg(inf_unit).to(unit).magnitude
+    inf_conc = inf_conc * conversion_factor_from_to(from_unit=inf_unit, to_unit=unit)
 
     eff = inf_conc  # assume no treatment
 
@@ -62,8 +62,8 @@ def effluent_conc(
     if any([A, B, C, D, E]):
         eff = numpy.nansum([A, B * inf_conc, _C, e1, D * (inf_conc ** E) * e2])
 
-    result: float = numpy.nanmax([dl, numpy.nanmin([eff, inf_conc])])
-    result *= ureg(unit).to(inf_unit).magnitude
+    result = float(numpy.nanmax([dl, numpy.nanmin([eff, inf_conc])]))
+    result *= conversion_factor_from_to(from_unit=unit, to_unit=inf_unit)
 
     return result
 

@@ -7,14 +7,12 @@ from nereid.core.units import update_unit_registry
 
 @update_unit_registry
 def effluent_function_map(
-    context: Dict[str, Any]
+    tablename: str, context: Dict[str, Any]
 ) -> Mapping[Tuple[str, str], Callable]:
 
-    df, msg = io.load_ref_data("tmnt_performance_table", context)
+    df, msg = io.load_ref_data(tablename, context)
 
-    tmnt_context = (
-        context.get("project_reference_data", {}).get("tmnt_performance_table") or {}
-    )
+    tmnt_context = context.get("project_reference_data", {}).get(tablename, {})
 
     facility_column = tmnt_context.get("facility_column", "facility_type")
     pollutant_column = tmnt_context.get("pollutant_column", "pollutant")

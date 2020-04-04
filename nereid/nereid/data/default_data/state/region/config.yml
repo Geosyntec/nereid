@@ -22,16 +22,33 @@ api_recognize:
           validate: many_to_one
           indicator: True
 
+        - other: dry_weather_land_surface_emc_table
+          how: left
+          left_on: land_use
+          right_on: land_use
+          validate: many_to_one
+          indicator: True
+
+        - other: met_table
+          how: left
+          left_on: subbasin
+          right_on: subbasin
+          # validate: many_to_one
+          # indicator: True
+
+        - other: dry_weather_flow_table
+          how: left
+          left_on: rain_gauge
+          right_on: rain_gauge
+          # validate: many_to_one
+          # indicator: True
+
       - remaps:
-        - left: land_use
+        - left: soil
           right: imp_pct
           how: addend  # interpreted as 'right' = 'right' + mapping['left']
           mapping:
-            COMM: 10
-            RESMF: 15
-            RESSFH: 20
-            TRANS: 30
-            WATER: 100        
+            water: 100
   
   treatment_facility:
     preprocess:
@@ -53,6 +70,7 @@ api_recognize:
             b: 0.8
             c: 0.24
             d: 0.024
+            lined: 0
 
     facility_type:
       no_treatment:
@@ -90,18 +108,91 @@ api_recognize:
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Sand Filter
 
+      swale: 
+        validator: FlowAndRetFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: Vegetated Swale
+
+      hydrodynamic_separator: 
+        validator: FlowFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: Hydrodynamic Separator
+
+      dry_well:
+        validator: DryWellFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯
+      
+      cistern:
+        validator: CisternFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯
+
+      dry_weather_diversion:
+        validator: LowFlowFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯
+
 project_reference_data:
+  dry_weather_flow_table:
+    file: dry_weather_flow.json
+    seasons:
+      winter:
+        - oct
+        - nov
+        - dec
+        - jan
+        - feb
+        - mar
+      summer:
+        - apr
+        - may
+        - jun
+        - jul
+        - aug
+        - sep
+    
   met_table:
     file: met_data.json
+    volume_nomo:
+      x_col: size_fraction
+      t_col: ddt_hr
+      y_col: capture_fraction
+    flow_nomo:
+      x_col: intensity_inhr
+      t_col: tc_minutes
+      y_col: performance_frac
+
     preprocess:
       - remaps:
         - left: rain_gauge
-          right: nomograph_file
+          right: volume_nomograph
           how: left  # interpreted as 'right' = mapping['left'] if 'left' exists
           mapping:
-            100_LAGUNABEACH: nomographs/clean_nomo.csv
-            1130_LAGUNA_AUDUBON: nomographs/clean_nomo.csv
+            100_LAGUNABEACH: nomographs/100_LAGUNABEACH_volume_nomo.csv
+            1130_LAGUNA_AUDUBON: nomographs/1130_LAGUNA_AUDUBON_volume_nomo.csv
+
+        - left: rain_gauge
+          right: flow_nomograph
+          how: left  # interpreted as 'right' = mapping['left'] if 'left' exists
+          mapping:
+            100_LAGUNABEACH: nomographs/100_LAGUNABEACH_flow_nomo.csv
+            1130_LAGUNA_AUDUBON: nomographs/1130_LAGUNA_AUDUBON_flow_nomo.csv
   
+  dry_weather_tmnt_performance_table:
+    file: dry_weather_bmp_params.json
+    facility_column: facility_type
+    pollutant_column: pollutant
+    preprocess:
+      - remaps:
+        - left: unit
+          right: -- # with how = replace, the right key is not parsed at all.
+          how: replace  # interpreted as 'left' = mapping['left']
+          mapping:
+            # units must be compatible with the `pint` library
+            "MPN/100mL": "MPN/_100ml"
+            "MNN/100 mL": "MPN/_100ml"
+
   tmnt_performance_table: 
     file: bmp_params.json
     facility_column: facility_type
@@ -127,6 +218,42 @@ project_reference_data:
             - land_use
             - soil
             - slope
+
+      - remaps:
+        - left: land_use
+          right: is_developed
+          how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+          fillna: false
+          mapping:
+            COMM: true
+            EDU: true
+            IND: true
+            UTIL: true
+            RESSFH: true
+            RESSFL: true
+            RESMF: true
+            TRFWY: true
+            TRANS: true
+            TROTH: true
+
+  # long names and short names must be unique in the config. e.g., cannot have TSS for two tables, 
+  # you must have a prefix or suffix
+  dry_weather_land_surface_emc_table:
+    file: dry_weather_land_surface_emc.json
+    parameters:
+      # units must be compatible with the `pint` library
+      - long_name: Dry Weather Total Suspended Solids # key must match bmp performance parameters
+        short_name: dwTSS # key must match EMC pollutant prefix e.g., TSS_conc_mg/l
+        concentration_unit: mg/L
+        load_unit: lbs
+      - long_name: Dry Weather Total Copper
+        short_name: dwTCu
+        concentration_unit: ug/L
+        load_unit: lbs
+      - long_name: Dry Weather Fecal Coliform
+        short_name: dwFC
+        concentration_unit: MPN/_100mL
+        load_unit: mpn
 
   land_surface_emc_table:
     file: land_surface_emc.json
