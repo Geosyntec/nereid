@@ -163,7 +163,7 @@ def parse_remaps(
             elif how == "left":
                 right = remap["right"]
                 if right not in df:
-                    df["right"] = None
+                    df[right] = None
                 df.loc[pandas.notnull(df[left]), right] = (
                     df[left].map(mapping).fillna(fillna)
                 )
