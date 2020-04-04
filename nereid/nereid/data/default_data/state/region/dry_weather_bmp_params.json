@@ -75,7 +75,7 @@
   "data": [
     {
       "facility_type": "Biofiltration",
-      "pollutant": "Total Suspended Solids",
+      "pollutant": "Dry Weather Total Suspended Solids",
       "unit": "mg/L",
       "N": 391,
       "ND_infl": 0,
@@ -94,7 +94,7 @@
     },
     {
       "facility_type": "Detention Basin",
-      "pollutant": "Total Suspended Solids",
+      "pollutant": "Dry Weather Total Suspended Solids",
       "unit": "mg/L",
       "N": 379,
       "ND_infl": 1,
@@ -113,7 +113,7 @@
     },
     {
       "facility_type": "Hydrodynamic Separator",
-      "pollutant": "Total Suspended Solids",
+      "pollutant": "Dry Weather Total Suspended Solids",
       "unit": "mg/L",
       "N": 108,
       "ND_infl": 0,
@@ -132,7 +132,7 @@
     },
     {
       "facility_type": "Sand Filter",
-      "pollutant": "Total Suspended Solids",
+      "pollutant": "Dry Weather Total Suspended Solids",
       "unit": "mg/L",
       "N": 318,
       "ND_infl": 1,
@@ -151,7 +151,7 @@
     },
     {
       "facility_type": "Vegetated Swale",
-      "pollutant": "Total Suspended Solids",
+      "pollutant": "Dry Weather Total Suspended Solids",
       "unit": "mg/L",
       "N": 215,
       "ND_infl": 1,
@@ -170,7 +170,7 @@
     },
     {
       "facility_type": "Wet Pond",
-      "pollutant": "Total Suspended Solids",
+      "pollutant": "Dry Weather Total Suspended Solids",
       "unit": "mg/L",
       "N": 727,
       "ND_infl": 3,
@@ -189,7 +189,7 @@
     },
     {
       "facility_type": "Biofiltration",
-      "pollutant": "Total Copper",
+      "pollutant": "Dry Weather Total Copper",
       "unit": "ug/L",
       "N": 195,
       "ND_infl": 2,
@@ -208,7 +208,7 @@
     },
     {
       "facility_type": "Detention Basin",
-      "pollutant": "Total Copper",
+      "pollutant": "Dry Weather Total Copper",
       "unit": "ug/L",
       "N": 167,
       "ND_infl": 15,
@@ -227,7 +227,7 @@
     },
     {
       "facility_type": "Hydrodynamic Separator",
-      "pollutant": "Total Copper",
+      "pollutant": "Dry Weather Total Copper",
       "unit": "ug/L",
       "N": 32,
       "ND_infl": 0,
@@ -246,7 +246,7 @@
     },
     {
       "facility_type": "Sand Filter",
-      "pollutant": "Total Copper",
+      "pollutant": "Dry Weather Total Copper",
       "unit": "ug/L",
       "N": 235,
       "ND_infl": 18,
@@ -265,7 +265,7 @@
     },
     {
       "facility_type": "Vegetated Swale",
-      "pollutant": "Total Copper",
+      "pollutant": "Dry Weather Total Copper",
       "unit": "ug/L",
       "N": 233,
       "ND_infl": 27,
@@ -284,7 +284,7 @@
     },
     {
       "facility_type": "Wet Pond",
-      "pollutant": "Total Copper",
+      "pollutant": "Dry Weather Total Copper",
       "unit": "ug/L",
       "N": 492,
       "ND_infl": 52,
@@ -303,7 +303,7 @@
     },
     {
       "facility_type": "Biofiltration",
-      "pollutant": "Fecal Coliform",
+      "pollutant": "Dry Weather Fecal Coliform",
       "unit": "MPN/100mL",
       "N": 27,
       "ND_infl": 3,
@@ -322,7 +322,7 @@
     },
     {
       "facility_type": "Detention Basin",
-      "pollutant": "Fecal Coliform",
+      "pollutant": "Dry Weather Fecal Coliform",
       "unit": "MPN/100mL",
       "N": 104,
       "ND_infl": 1,
@@ -341,7 +341,7 @@
     },
     {
       "facility_type": "Sand Filter",
-      "pollutant": "Fecal Coliform",
+      "pollutant": "Dry Weather Fecal Coliform",
       "unit": "MPN/100mL",
       "N": 100,
       "ND_infl": 3,
@@ -360,7 +360,7 @@
     },
     {
       "facility_type": "Vegetated Swale",
-      "pollutant": "Fecal Coliform",
+      "pollutant": "Dry Weather Fecal Coliform",
       "unit": "MPN/100mL",
       "N": 64,
       "ND_infl": 12,
@@ -379,7 +379,7 @@
     },
     {
       "facility_type": "Wet Pond",
-      "pollutant": "Fecal Coliform",
+      "pollutant": "Dry Weather Fecal Coliform",
       "unit": "MPN/100mL",
       "N": 90,
       "ND_infl": 0,
