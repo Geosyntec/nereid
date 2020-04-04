@@ -7,6 +7,7 @@ if /i %1 == develop goto :develop
 if /i %1 == typecheck goto :typecheck
 if /i %1 == coverage goto :coverage
 if /i %1 == dev-server goto :dev-server
+if /i %1 == restart goto :restart
 
 :help
 echo Commands:
@@ -23,11 +24,11 @@ goto :eof
 
 :test
 call make clean
-docker-compose exec nereid-tests pytest -xvv
+call make restart
+docker-compose exec nereid-tests pytest %2 %3 %4 %5 %6
 goto :eof
 
 :typecheck
-call make clean
 mypy --config-file=nereid/mypy.ini nereid/nereid
 goto :eof
 
@@ -38,7 +39,7 @@ goto :eof
 
 :coverage
 call make clean
-docker-compose restart redis celeryworker
+call make restart
 docker-compose exec nereid-tests coverage run -m pytest -x
 docker-compose exec nereid-tests coverage report -m
 goto :eof
@@ -49,4 +50,8 @@ goto :eof
 
 :dev-server
 docker-compose run -e NEREID_FORCE_FOREGROUND=1 -p 8080:80 nereid bash /start-reload.sh
+goto :eof
+
+:restart
+docker-compose restart redis celeryworker
 goto :eof
