@@ -6,8 +6,6 @@ from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
 from nereid.api.api_v1.utils import standard_json_response, run_task, get_valid_context
-from nereid.api.api_v1.models.utils import validate_models_with_discriminator
-from nereid.api.api_v1.models import treatment_facility_models
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,
@@ -123,7 +121,9 @@ async def initialize_treatment_facility_parameters(
     treatment_facilities, context = tmnt_facility_req
 
     task = bg.background_initialize_treatment_facilities.s(
-        treatment_facilities=treatment_facilities.dict(), context=context
+        treatment_facilities=treatment_facilities.dict(),
+        pre_validated=True,
+        context=context,
     )
     return run_task(
         task=task, router=router, get_route="get_treatment_facility_parameters"

@@ -3,7 +3,6 @@ import pytest
 from nereid.api.api_v1.models import treatment_facility_models
 from nereid.core import config
 
-
 names = [
     i.schema()["title"] for i in treatment_facility_models.TREATMENT_FACILITY_MODELS
 ]

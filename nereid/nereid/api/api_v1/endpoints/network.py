@@ -100,7 +100,7 @@ async def subgraph_network(
         },
     ),
     nodes: List[network_models.Node] = Body(
-        ..., example=[{"id": "3"}, {"id": "29"}, {"id": "18"}]
+        ..., example=[{"id": "3"}, {"id": "29"}, {"id": "18"}],
     ),
 ) -> Dict[str, Any]:
 
