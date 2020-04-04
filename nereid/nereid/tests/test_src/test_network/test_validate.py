@@ -1,5 +1,5 @@
-import pytest
 import networkx as nx
+import pytest
 
 from nereid.src.network.validate import is_valid, validate_network
 

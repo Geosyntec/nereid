@@ -3,7 +3,8 @@ from copy import deepcopy
 
 import pandas
 
-from nereid.core.units import ureg
+from nereid.core.utils import safe_divide
+from nereid.core.units import Constants
 
 # TODO: implement fallback to e.g., "TRANS-B-10" rather than "401070-TRANS-B-10"
 # in case ref data is missing.
@@ -32,34 +33,74 @@ def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
     df["imp_eff_area_acres"] = df["imp_ro_coeff"] * df["imp_area_acres"]
     df["perv_eff_area_acres"] = df["perv_ro_coeff"] * df["perv_area_acres"]
     df["eff_area_acres"] = df["imp_eff_area_acres"] + df["perv_eff_area_acres"]
+    df["ro_coeff"] = df["eff_area_acres"] / df["area_acres"]
+    df["developed_area_acres"] = df["area_acres"].mask(
+        ~df["is_developed"].fillna(False), other=0
+    )
+
+    return df
+
+
+def detailed_dry_weather_volume_loading_results(
+    df: pandas.DataFrame, seasons: Dict[str, Optional[List[str]]]
+) -> pandas.DataFrame:
+
+    developed_area_acres = df.get("developed_area_acres", 0.0)
+
+    for season, months in seasons.items():
+        if months is not None:
+            dwf_cfs_ac = df.get(f"{season}_dry_weather_flow_cuft_psecond_pacre", 0.0)
+
+            dwf_cfs = dwf_cfs_ac * developed_area_acres
+            df[f"{season}_dry_weather_flow_cuft_psecond"] = dwf_cfs
+
+            dwf_cuft_pday_pacre = dwf_cfs_ac * 3600 * 24
+
+            dwf_pseason_pacre = sum(
+                [df.get(f"n_dry_days_{m}", 0.0) * dwf_cuft_pday_pacre for m in months]
+            )
+            df[f"{season}_dry_weather_flow_cuft"] = (
+                dwf_pseason_pacre * developed_area_acres
+            )
 
     return df
 
 
 def detailed_pollutant_loading_results(
-    df: pandas.DataFrame, parameters: Optional[List[Dict[str, str]]] = None
+    df: pandas.DataFrame,
+    wet_weather_parameters: List[Dict[str, str]],
+    dry_weather_parameters: List[Dict[str, str]],
+    season_names: List[str],
 ) -> pandas.DataFrame:
 
-    if parameters is None or len(parameters) == 0:
-        return df
+    for param in wet_weather_parameters:
+        conc_col = param["conc_col"]
+        load_col = param["load_col"]
+        factor = param["conc_to_load_factor"]
 
-    for param in parameters:
-        conc_unit = param["concentration_unit"]
-        load_unit = param["load_unit"]
-        poc = param["short_name"]
-        emc_col = "_".join([poc, "conc", conc_unit.lower().replace("_", "")])
-        load_col = "_".join([poc, "load", load_unit.lower().replace("_", "")])
+        if conc_col in df:
+            df[load_col] = df["runoff_volume_cuft"] * df[conc_col] * factor
 
-        if emc_col in df:
-            factor = (ureg("cubic_feet") * ureg(conc_unit)).to(load_unit).magnitude
-            df[load_col] = df["runoff_volume_cuft"] * df[emc_col] * factor
+    for param in dry_weather_parameters:
+        conc_col = param["conc_col"]
+        load_col = param["load_col"]
+        factor = param["conc_to_load_factor"]
+
+        if conc_col in df:
+            for season in season_names:
+                dw_vol_month_col = f"{season}_dry_weather_flow_cuft"
+                df[season + "_" + load_col] = (
+                    df.get(dw_vol_month_col, 0.0) * df[conc_col] * factor
+                )
 
     return df
 
 
 def detailed_loading_results(
     land_surfaces_df: pandas.DataFrame,
-    parameters: Optional[List[Dict[str, str]]] = None,
+    wet_weather_parameters: List[Dict[str, str]],
+    dry_weather_parameters: List[Dict[str, str]],
+    seasons: Dict[str, List[str]],
 ) -> pandas.DataFrame:
 
     # fmt: off
@@ -67,7 +108,13 @@ def detailed_loading_results(
         land_surfaces_df
         .pipe(clean_land_surface_dataframe)
         .pipe(detailed_volume_loading_results)
-        .pipe(detailed_pollutant_loading_results, parameters)
+        .pipe(detailed_dry_weather_volume_loading_results, seasons)
+        .pipe(
+            detailed_pollutant_loading_results,
+            wet_weather_parameters,
+            dry_weather_parameters,
+            season_names=seasons.keys()
+        )
     )
     # fmt: on
 
@@ -75,23 +122,41 @@ def detailed_loading_results(
 
 
 def summary_loading_results(
-    detailed_results: pandas.DataFrame, parameters: List[Dict[str, str]]
+    detailed_results: pandas.DataFrame,
+    wet_weather_parameters: List[Dict[str, str]],
+    dry_weather_parameters: List[Dict[str, str]],
+    season_names: List[str],
 ) -> pandas.DataFrame:
 
     groupby_cols = ["node_id"]
-    load_cols = [
-        "_".join([dct["short_name"], "load", dct["load_unit"]]) for dct in parameters
+    wet_load_cols = [dct["load_col"] for dct in wet_weather_parameters]
+    dry_load_cols = [
+        s + "_" + dct["load_col"]
+        for dct in dry_weather_parameters
+        for s in season_names
     ]
 
-    output_columns_summable = [
-        "area_acres",
-        "imp_area_acres",
-        "perv_area_acres",
-        "imp_ro_volume_cuft",
-        "perv_ro_volume_cuft",
-        "runoff_volume_cuft",
-        "eff_area_acres",
-    ] + load_cols
+    dwf_cols = [
+        c
+        for c in detailed_results.columns
+        if "dry_weather_flow_cuft" in c and not "_pacre" in c
+    ]
+
+    output_columns_summable = (
+        [
+            "area_acres",
+            "imp_area_acres",
+            "perv_area_acres",
+            "imp_ro_volume_cuft",
+            "perv_ro_volume_cuft",
+            "runoff_volume_cuft",
+            "eff_area_acres",
+            "developed_area_acres",
+        ]
+        + wet_load_cols
+        + dry_load_cols
+        + dwf_cols
+    )
 
     agg_list = [
         {col: "sum" for col in output_columns_summable},
@@ -114,15 +179,22 @@ def summary_loading_results(
 
     df.reset_index(inplace=True)
 
-    for param in parameters:
-        conc_unit = param["concentration_unit"]
-        load_unit = param["load_unit"]
-
-        poc = param["short_name"]
-        load_col = "_".join([poc, "load", load_unit.lower().replace("_", "")])
-        conc_col = "_".join([poc, "conc", conc_unit.lower().replace("_", "")])
-        factor = (ureg(load_unit) / ureg("cubic_feet")).to(conc_unit).magnitude
+    for param in wet_weather_parameters:
+        conc_col = param["conc_col"]
+        load_col = param["load_col"]
+        factor = param["load_to_conc_factor"]
 
         df[conc_col] = (df[load_col] / df["runoff_volume_cuft"]) * factor
+
+    for season in season_names:
+        dw_vol_col = f"{season}_dry_weather_flow_cuft"
+        dw_cfs_col = f"{season}_dry_weather_flow_cuft_psecond"
+
+        for param in dry_weather_parameters:
+            conc_col = season + "_" + param["conc_col"]
+            load_col = season + "_" + param["load_col"]
+            factor = param["load_to_conc_factor"]
+
+            df[conc_col] = (df[load_col] / df[dw_vol_col]).fillna(0) * factor
 
     return df

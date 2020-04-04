@@ -1,9 +1,9 @@
+import copy
 import itertools
 import string
-import copy
 
-import pytest
 import networkx as nx
+import pytest
 
 
 def _construct_graph_objs():

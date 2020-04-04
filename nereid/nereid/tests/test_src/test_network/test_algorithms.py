@@ -1,13 +1,13 @@
-import pytest
 import networkx as nx
+import pytest
 
 from nereid.src.network.algorithms import (
+    find_leafy_branch_larger_than_size,
     get_all_predecessors,
     get_all_successors,
     get_subset,
-    find_leafy_branch_larger_than_size,
-    sequential_subgraph_nodes,
     parallel_sequential_subgraph_nodes,
+    sequential_subgraph_nodes,
 )
 
 

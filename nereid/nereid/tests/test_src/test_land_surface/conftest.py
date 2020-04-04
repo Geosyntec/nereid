@@ -8,9 +8,9 @@ import pytest
 def known_land_surface_volume_loading_result():
     known = StringIO(
         """
-   area_acres  imp_area_acres  perv_ro_depth_inches  imp_ro_depth_inches  perv_ro_coeff  imp_ro_coeff  imp_pct  perv_area_acres  imp_area_sqft  perv_area_sqft  imp_ro_depth_feet  perv_ro_depth_feet  imp_ro_volume_cuft  perv_ro_volume_cuft  runoff_volume_cuft  imp_eff_area_acres  perv_eff_area_acres  eff_area_acres
-0           6             5.7                     4                    8            0.4           0.8    95.00              0.3       248292.0         13068.0               0.67                0.33            165528.0               4356.0            169884.0                4.56                 0.12            4.68
-1           3             2.2                     4                    8            0.4           0.8    73.33              0.8        95832.0         34848.0               0.67                0.33             63888.0              11616.0             75504.0                1.76                 0.32            2.08
+   area_acres  imp_area_acres  is_developed  perv_ro_depth_inches  imp_ro_depth_inches  perv_ro_coeff  imp_ro_coeff  imp_pct  perv_area_acres  imp_area_sqft  perv_area_sqft  imp_ro_depth_feet  perv_ro_depth_feet  imp_ro_volume_cuft  perv_ro_volume_cuft  runoff_volume_cuft  imp_eff_area_acres  perv_eff_area_acres  eff_area_acres  ro_coeff  developed_area_acres
+0           6             5.7          True                     4                    8            0.4           0.8    95.00              0.3       248292.0         13068.0               0.67                0.33            165528.0               4356.0            169884.0                4.56                 0.12            4.68      0.78                     6
+1           3             2.2          True                     4                    8            0.4           0.8    73.33              0.8        95832.0         34848.0               0.67                0.33             63888.0              11616.0             75504.0                1.76                 0.32            2.08      0.69                     3
 """
     )
     return pandas.read_csv(known, sep=r"\s+")
