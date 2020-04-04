@@ -3,8 +3,8 @@ from typing import Any, Dict, List, Optional, Union
 from fastapi import Depends
 from pydantic import BaseModel, Field, validator
 
+from nereid.core.utils import validate_models_with_discriminator
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
-from nereid.api.api_v1.models.utils import validate_models_with_discriminator
 
 
 class FacilityBase(BaseModel):
@@ -23,25 +23,19 @@ class NTFacility(FacilityBase):
 
 class FlowFacility(FacilityBase):
     treatment_rate_cfs: float
-    tributary_area_tc_min: float
-    constructor: str = "nt_facility_constructor"
+    tributary_area_tc_min: float = Field(5.0, le=60)
+    constructor: str = "flow_facility_constructor"
 
 
-# class LowFlowFacility(FlowFacility): # check with Aaron if this needs tc too.
-#     design_capacity_cfs: float
-#     months_operational: str = DEFAULT_MONTHS_OPERATIONAL
-
-
-class LowFlowFacility(FacilityBase):
-    treatment_rate_cfs: float
+class LowFlowFacility(FlowFacility):
     design_capacity_cfs: float
-    months_operational: str
-    constructor: str = "nt_facility_constructor"
+    months_operational: str = Field("both", regex="summer$|winter$|both$")
+    constructor: str = "dw_and_low_flow_facility_constructor"
 
 
 class OnlineFaciltyBase(FacilityBase):
     is_online: bool = True
-    tributary_area_tc_min: float = 5.0
+    tributary_area_tc_min: float = Field(5.0, le=60)
     offline_diversion_rate_cfs: Optional[float] = None
 
     @validator("offline_diversion_rate_cfs", pre=True, always=True)
@@ -80,7 +74,7 @@ class RetAndTmntFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     retention_volume_cuft: float
     area_sqft: float
-    total_drawdown_time_hr: float
+    treatment_drawdown_time_hr: float
     hsg: str
     constructor: str = "retention_and_treatment_facility_constructor"
 
@@ -104,7 +98,7 @@ class CisternFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     winter_demand_cfs: float
     summer_demand_cfs: float
-    constructor: str = "nt_facility_constructor"
+    constructor: str = "cistern_facility_constructor"
 
 
 class PermPoolFacility(OnlineFaciltyBase):

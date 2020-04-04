@@ -1,8 +1,7 @@
 import numpy
 import pytest
 
-from nereid.src.tmnt_performance import tmnt
-from nereid.src.tmnt_performance import tasks
+from nereid.src.tmnt_performance import tasks, tmnt
 
 
 @pytest.fixture
@@ -75,7 +74,9 @@ def test_tmnt_task(
     contexts, KTRL_curves, pollutant_facilities_map, pollutant_units_map, cxt_key
 ):
     context = contexts[cxt_key]
-    eff_conc_mapping = tasks.effluent_function_map(context=context)
+    eff_conc_mapping = tasks.effluent_function_map(
+        "tmnt_performance_table", context=context
+    )
 
     for (fac_type, poc), eff_fxn in eff_conc_mapping.items():
         check_infs = KTRL_curves[poc]["xhat"]

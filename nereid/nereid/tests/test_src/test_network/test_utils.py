@@ -1,10 +1,7 @@
-import pytest
 import networkx as nx
+import pytest
 
 from nereid.src.network import utils
-
-# import graph_factory, nxGraph_to_dict, thin_graph_dict, clean_graph_dict
-
 from nereid.tests.utils import is_equal_subset
 
 

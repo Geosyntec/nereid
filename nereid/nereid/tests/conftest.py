@@ -1,15 +1,20 @@
-from pathlib import Path
-from itertools import product
 from copy import deepcopy
+from itertools import product
+from pathlib import Path
 
 import numpy
 import pytest
 
-from nereid.core.utils import get_request_context
-from nereid.core.io import load_json
-from nereid.src.land_surface.utils import make_fake_land_surface_requests
-from nereid.api.api_v1.models.utils import create_random_model_dict
 from nereid.api.api_v1.models.treatment_facility_models import TREATMENT_FACILITY_MODELS
+from nereid.core.io import load_ref_data
+from nereid.core.utils import get_request_context
+from nereid.tests.utils import (
+    create_random_model_dict,
+    generate_random_land_surface_request_sliver,
+    generate_random_treatment_facility_request_node,
+    generate_random_treatment_site_request,
+    generate_random_watershed_solve_request,
+)
 
 
 @pytest.fixture
@@ -54,25 +59,33 @@ def subgraph_request_dict():
     return graph
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def land_surface_ids():
 
     context = get_request_context()
-    ls_data = load_json(Path(context["data_path"]) / "land_surface_data.json")["data"]
-    ls_ids = [dct["surface_id"] for dct in ls_data]
+    ls_data, _ = load_ref_data("land_surface_table", context)
+    ls_ids = ls_data["surface_id"].to_list()
 
     yield ls_ids
 
 
 @pytest.fixture(scope="module")
-def land_surface_loading_response_dicts(land_surface_ids):
+def land_surface_loading_response_dicts(contexts, land_surface_ids):
 
     n_rows = [10, 50, 5000]
     n_nodes = [5, 50, 1000]
     responses = {}
+    context = contexts["default"]
 
     for nrows, nnodes in product(n_rows, n_nodes):
-        ls_list = make_fake_land_surface_requests(nrows, nnodes, land_surface_ids)
+        node_list = list(map(str, range(nnodes)))
+        ls_list = [
+            generate_random_land_surface_request_sliver(
+                numpy.random.choice(node_list), numpy.random.choice(land_surface_ids)
+            )
+            for _ in range(nrows)
+        ]
+
         ls_request = dict(land_surfaces=ls_list)
 
         responses[(nrows, nnodes)] = ls_request
@@ -80,7 +93,7 @@ def land_surface_loading_response_dicts(land_surface_ids):
     yield responses
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def contexts():
 
     cx1 = get_request_context()
@@ -202,6 +215,16 @@ def contexts():
         "expand_fields"
     ] = [{"field": r"¯\_(ツ)_/¯", "sep": "-", "new_column_names": [1, 2, 3]}]
 
+    cx21 = deepcopy(cx1)
+    cx21["project_reference_data"]["dry_weather_flow_table"]["seasons"] = {
+        "summer": None
+    }
+
+    cx22 = deepcopy(cx1)
+    cx22["project_reference_data"]["dry_weather_flow_table"]["seasons"] = {
+        r"¯\_(ツ)_/¯": ["these", "are", "months"]
+    }
+
     keys = [  # these are easier to copy into tests
         "default",
         "default_no_data_path_invalid",
@@ -223,6 +246,8 @@ def contexts():
         "default_api_ls_remap_how_dne_valid",
         "default_api_ls_remap_right_dne_valid",
         "default_lst_expand_field_dne_valid",
+        "default_dw_flow_null_months_valid",
+        "default_dw_flow_unknown_season_valid",
     ]
 
     values = [
@@ -246,6 +271,8 @@ def contexts():
         cx18,
         cx19,
         cx20,
+        cx21,
+        cx22,
     ]
 
     return {k: v for k, v in zip(keys, values)}
@@ -257,23 +284,10 @@ def valid_treatment_facility_dicts():
 
     for model in TREATMENT_FACILITY_MODELS:
 
-        name = model.schema()["title"]
-        dct = create_random_model_dict(model=model, can_fail=False)
-
-        dct["facility_type"] = name
-        dct["ref_data_key"] = "10101200"
-        dct["design_storm_depth_inches"] = 1.5 * numpy.random.random()
-
-        dct["tributary_area_tc_min"] = int(numpy.random.choice(range(0, 60, 5)))
-        dct["offline_diversion_rate_cfs"] = 20 * numpy.random.random()
-
-        if "inf_rate_inhr" in dct:
-            dct["inf_rate_inhr"] = 6 * numpy.random.random()
-
-        if "hsg" in dct:
-            dct["hsg"] = numpy.random.choice(["a", "b", "c", "d"])
-
-        responses[name] = dct
+        model_str = model.schema()["title"]
+        responses[model_str] = generate_random_treatment_facility_request_node(
+            model_str, model_str, "10101200", node_id="default"
+        )
 
     yield responses
 
@@ -281,3 +295,29 @@ def valid_treatment_facility_dicts():
 @pytest.fixture(scope="module")
 def valid_treatment_facilities(valid_treatment_facility_dicts):
     yield list(valid_treatment_facility_dicts.values())
+
+
+@pytest.fixture(scope="module")
+def valid_treatment_site_requests(contexts):
+    context = contexts["default"]
+
+    reqs = {}
+    for size in [1, 3, 5]:
+        node_list = list(map(str, range(size)))
+        reqs[size] = generate_random_treatment_site_request(node_list, context)
+
+    return reqs
+
+
+@pytest.fixture(scope="session")
+def watershed_requests(contexts):
+    context = contexts["default"]
+    sizes = [13, 55, 77, 115, 250]
+    pct_tmnts = [0, 0.3, 0.6, 0.8]
+
+    requests = {}
+    numpy.random.seed(42)
+    for n_nodes, pct_tmnt in product(sizes, pct_tmnts):
+        req = generate_random_watershed_solve_request(context, n_nodes, pct_tmnt)
+        requests[(n_nodes, pct_tmnt)] = deepcopy(req)
+    return requests

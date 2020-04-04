@@ -14,7 +14,7 @@ def test_construct_nodes_from_treatment_facility_request(
     context = contexts[ctxt_key]
     tmnt_facilities = {"treatment_facilities": valid_treatment_facilities}
     treatment_facilities = initialize_treatment_facilities(
-        tmnt_facilities, context=context
+        tmnt_facilities, pre_validated=True, context=context
     )
 
     tmnt_lst = treatment_facilities["treatment_facilities"]
@@ -33,7 +33,7 @@ def test_construct_nodes_from_treatment_facility_request(
     [("default", True), ("default_api_no_tf_joins_valid", False)],
 )
 @pytest.mark.parametrize(
-    "model,checkfor",
+    "model, checkfor",
     [
         ("PermPoolFacility", "retention_volume_cuft"),
         ("RetAndTmntFacility", "retention_volume_cuft"),
@@ -41,22 +41,22 @@ def test_construct_nodes_from_treatment_facility_request(
         ("FlowAndRetFacility", "retention_volume_cuft"),
         ("RetentionFacility", "retention_volume_cuft"),
         ("TmntFacility", "treatment_volume_cuft"),
-        ("CisternFacility", "design_storm_depth_inches"),  # TODO
+        ("CisternFacility", "design_storm_depth_inches"),
         ("DryWellFacility", "retention_volume_cuft"),
-        ("LowFlowFacility", "design_storm_depth_inches"),  # TODO
-        ("FlowFacility", "design_storm_depth_inches"),  # TODO
+        ("LowFlowFacility", "design_storm_depth_inches"),
+        ("FlowFacility", "design_storm_depth_inches"),
         ("NTFacility", "design_storm_depth_inches"),
     ],
 )
 def test_construct_nodes_from_treatment_facility_request_checkval(
-    contexts, valid_treatment_facility_dicts, ctxt_key, has_met_data, model, checkfor
+    contexts, valid_treatment_facility_dicts, ctxt_key, has_met_data, model, checkfor,
 ):
 
     context = contexts[ctxt_key]
     tmnt_facilities = {"treatment_facilities": [valid_treatment_facility_dicts[model]]}
 
     treatment_facilities = initialize_treatment_facilities(
-        tmnt_facilities, context=context
+        tmnt_facilities, pre_validated=True, context=context
     )
     tmnt_lst = treatment_facilities["treatment_facilities"][0]
 
@@ -68,3 +68,34 @@ def test_construct_nodes_from_treatment_facility_request_checkval(
         assert tmnt_lst.get("rain_gauge") is not None
     else:
         assert tmnt_lst.get("rain_gauge") is None
+
+
+@pytest.mark.parametrize("pre_validated", [True, False])
+def test_construct_nodes_from_treatment_facility_request_pre_validation(
+    contexts, valid_treatment_facility_dicts, pre_validated
+):
+
+    context = contexts["default"]
+    facilities = context["api_recognize"]["treatment_facility"]["facility_type"]
+    model_map = {k: dct["validator"] for k, dct in facilities.items()}
+    _tmnt_ls = []
+
+    for k, model in model_map.items():
+        dct = valid_treatment_facility_dicts[model]
+        dct["facility_type"] = k
+        _tmnt_ls.append(dct)
+
+    tmnt_facilities = {"treatment_facilities": _tmnt_ls}
+
+    treatment_facilities = initialize_treatment_facilities(
+        tmnt_facilities, pre_validated=pre_validated, context=context
+    )
+    tmnt_lst = treatment_facilities["treatment_facilities"]
+
+    for m in tmnt_lst:
+
+        # check that the joins happened
+        assert m.get("rain_gauge") is not None
+        if not pre_validated:
+            # check that the model got validated
+            assert m.get("valid_model") is not None

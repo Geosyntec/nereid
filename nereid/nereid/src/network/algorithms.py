@@ -3,12 +3,12 @@ from typing import List, Optional, Set, Union
 import networkx as nx
 
 
-def find_cycle(G: nx.Graph, **kwargs: dict) -> List:
+def find_cycle(g: nx.Graph, **kwargs: dict) -> List:
     """Wraps networkx.find_cycle to return empty list
     if no cycle is found.
     """
     try:
-        return list(nx.find_cycle(G, **kwargs))
+        return list(nx.find_cycle(g, **kwargs))
 
     except nx.exception.NetworkXNoCycle:
         return []
@@ -61,29 +61,29 @@ def get_all_successors(
     return subset
 
 
-def find_leafy_branch_larger_than_size(G: nx.DiGraph, size: int = 1) -> nx.DiGraph:
+def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGraph:
     """This algorithm will sort the graph `G` and return the outermost
     contiguous subgraph that is larger than `size`
     """
-    if not nx.is_weakly_connected(G):
+    if not nx.is_weakly_connected(g):
         raise nx.NetworkXUnfeasible("Graphs must be directed and weakly connected.")
 
     # exit early if our graph is already the right size
-    if len(G) <= size:
-        return G
+    if len(g) <= size:
+        return g
 
     # Start at the leaves and work through branches.
     # Return first subgraph larger than or equal to `size`.
-    for node in nx.lexicographical_topological_sort(G):  # pragma: no branch
-        us = get_all_predecessors(G, node)
+    for node in nx.lexicographical_topological_sort(g):  # pragma: no branch
+        us = get_all_predecessors(g, node)
         us.add(node)
         if len(us) >= size:
-            return G.subgraph(us)
+            return g.subgraph(us)
 
 
-def sequential_subgraph_nodes(G: nx.DiGraph, size: int) -> List[List[Union[str, int]]]:
+def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Union[str, int]]]:
 
-    if not nx.is_weakly_connected(G):
+    if not nx.is_weakly_connected(g):
         raise nx.NetworkXUnfeasible(
             "sequential solutions are not possible for disconnected graphs."
         )
@@ -91,7 +91,7 @@ def sequential_subgraph_nodes(G: nx.DiGraph, size: int) -> List[List[Union[str, 
     if size <= 1:
         raise nx.NetworkXUnfeasible("the minimum directed subgraph length is 2 nodes.")
 
-    g = G.copy()  # make a copy because we'll modify the structure
+    g = nx.DiGraph(g.edges())  # make a copy because we'll modify the structure
 
     graphs = []
 
@@ -112,11 +112,10 @@ def sequential_subgraph_nodes(G: nx.DiGraph, size: int) -> List[List[Union[str, 
 
 
 def parallel_sequential_subgraph_nodes(
-    G: nx.DiGraph, size: int
+    g: nx.DiGraph, size: int
 ) -> List[List[List[Union[str, int]]]]:
     # strip the input graph to just the edge info
-    g = nx.DiGraph()
-    g.add_edges_from(G.edges())
+    g = nx.DiGraph(g.edges())
 
     parallel_graphs = []
 

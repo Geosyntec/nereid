@@ -1,15 +1,16 @@
-import pytest
-import pandas
 import numpy
+import pandas
+import pytest
 
 from nereid.core.io import parse_configuration_logic
 from nereid.src.land_surface.loading import (
     clean_land_surface_dataframe,
     detailed_loading_results,
-    detailed_volume_loading_results,
     detailed_pollutant_loading_results,
+    detailed_volume_loading_results,
     summary_loading_results,
 )
+from nereid.src.wq_parameters import init_wq_parameters
 
 
 @pytest.mark.parametrize("n_rows", [10])
@@ -25,7 +26,7 @@ def test_build_land_surface_dataframe(
     land_surfaces_df = clean_land_surface_dataframe(df)
 
     total_area = sum([ls["area_acres"] for ls in land_surfaces_list])
-    assert total_area == land_surfaces_df["area_acres"].sum()
+    numpy.testing.assert_allclose(total_area, land_surfaces_df["area_acres"].sum())
 
 
 @pytest.mark.parametrize("n_rows", [10])
@@ -37,6 +38,8 @@ def test_build_land_surface_dataframe(
         "default_emc_no_params_valid",
         "default_api_no_ls_remaps_valid",
         "default_api_ls_joins_no_merge_no_params_valid",
+        "default_dw_flow_null_months_valid",
+        "default_dw_flow_unknown_season_valid",
     ],
 )
 def test_detailed_land_surface_loading_results(
@@ -58,11 +61,20 @@ def test_detailed_land_surface_loading_results(
 
     land_surfaces_df = clean_land_surface_dataframe(df)
 
-    parameters = context["project_reference_data"]["land_surface_emc_table"].get(
-        "parameters"
+    wet_weather_parameters = init_wq_parameters("land_surface_emc_table", context)
+    dry_weather_parameters = init_wq_parameters(
+        "dry_weather_land_surface_emc_table", context
     )
 
-    t = detailed_loading_results(land_surfaces_df, parameters)
+    seasons = (
+        context.get("project_reference_data", {})
+        .get("dry_weather_flow_table", {})
+        .get("seasons", {})
+    )
+
+    t = detailed_loading_results(
+        land_surfaces_df, wet_weather_parameters, dry_weather_parameters, seasons,
+    )
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
     assert len(t) == len(land_surfaces_list)
     if not "no_joins" in key and not "no_params" in key:
@@ -74,7 +86,12 @@ def test_detailed_land_surface_loading_results(
     assert len(t) == len(land_surfaces_list)
     assert t["runoff_volume_cuft"].sum() > 0
 
-    t = detailed_pollutant_loading_results(land_surfaces_df, parameters)
+    t = detailed_pollutant_loading_results(
+        land_surfaces_df,
+        wet_weather_parameters,
+        dry_weather_parameters,
+        seasons.keys(),
+    )
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
     assert len(t) == len(land_surfaces_list)
     if not "no_joins" in key and not "no_params" in key:
@@ -100,6 +117,7 @@ def test_detailed_land_surface_volume_loading_results(
         dict(
             area_acres=area_acres,
             imp_area_acres=imp_area_acres,
+            is_developed=[True, True],
             perv_ro_depth_inches=perv_ro_depth_inches,
             imp_ro_depth_inches=imp_ro_depth_inches,
             perv_ro_coeff=perv_ro_coeff,
@@ -137,18 +155,30 @@ def test_detailed_land_surface_pollutant_loading_results(
             "short_name": "TSS",
             "concentration_unit": "mg/L",
             "load_unit": "lbs",
+            "load_col": "TSS_load_lbs",
+            "conc_col": "TSS_conc_mg/l",
+            "load_to_conc_factor": 16018.463373960149,
+            "conc_to_load_factor": 6.24279605761446e-05,
         },
         {
             "long_name": "Total Copper",
             "short_name": "TCu",
             "concentration_unit": "ug/L",
             "load_unit": "lbs",
+            "load_col": "TCu_load_lbs",
+            "conc_col": "TCu_conc_ug/l",
+            "load_to_conc_factor": 16018463.373960149,
+            "conc_to_load_factor": 6.242796057614458e-08,
         },
         {
             "long_name": "Fecal Coliform",
             "short_name": "FC",
             "concentration_unit": "MPN/_100mL",
             "load_unit": "mpn",
+            "load_col": "FC_load_mpn",
+            "conc_col": "FC_conc_mpn/100ml",
+            "load_to_conc_factor": 0.00353146667214886,
+            "conc_to_load_factor": 283.1684659199999,
         },
     ]
 
@@ -159,7 +189,7 @@ def test_detailed_land_surface_pollutant_loading_results(
         else:
             return 0
 
-    result = detailed_pollutant_loading_results(input_df, parameters).applymap(
+    result = detailed_pollutant_loading_results(input_df, parameters, [], []).applymap(
         lambda x: sigfigs(x, 4)
     )
     known = known_land_surface_pollutant_loading_result

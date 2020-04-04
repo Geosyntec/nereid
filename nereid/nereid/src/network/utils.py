@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Collection, Dict, Any
 import copy
 import logging
 
@@ -110,5 +110,19 @@ def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
     return result
 
 
-def clean_graph_dict(g):
+def clean_graph_dict(g: nx.Graph) -> Dict[str, Any]:
     return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))
+
+
+def sum_node_attr(g: nx.Graph, nodes: Collection, attr: str) -> float:
+    """Returns sum of one attribute for node's upstream nodes
+
+    Parameters
+    ----------
+
+    g: node network (nx.DiGraph)
+    nodes: nodes to aggregate. This allows predecessors to be computed only
+    once for all attr rather than for each attr
+    attr: name of attribute to return sum of (e.g.  "eff_area_ac")
+    """
+    return sum(g.nodes[n].get(attr, 0) for n in nodes)

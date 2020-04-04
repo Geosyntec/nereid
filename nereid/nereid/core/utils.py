@@ -1,6 +1,9 @@
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, List, Tuple
 from copy import deepcopy
 from pathlib import Path
+
+import pandas
+from pydantic import BaseModel, ValidationError
 
 from nereid.core.io import load_cfg
 from nereid.core.config import APP_CONTEXT
@@ -86,3 +89,66 @@ def get_request_context(
     request_context["data_path"] = str(data_path)
 
     return request_context
+
+
+def validate_models_with_discriminator(
+    unvalidated_data: List[Dict[str, Any]],
+    discriminator: str,
+    model_mapping: Dict[str, Any],
+    fallback_mapping: Dict[str, Any],
+) -> List[Any]:
+    class NullModel(BaseModel):
+        class Config:
+            extra = "allow"
+
+    validated = []
+    for dct in unvalidated_data:
+        attr = dct[discriminator]
+        model = model_mapping.get(attr, None)
+        fallback = fallback_mapping.get(attr, NullModel)
+
+        if model is None:
+            e = (
+                f"ERROR: the key '{attr}' is not in `model_mapping`. "
+                f"Using `fallback` value: {fallback.schema()['title']}"
+            )
+
+            dct["errors"] = str(e) + "  \n"
+            model = fallback
+        try:
+            valid = model(valid_model=model.schema()["title"], **dct)
+
+        except ValidationError as e:
+            dct["errors"] = "ERROR: " + str(e) + "  \n"
+            model = fallback
+            valid = model(valid_model=model.schema()["title"], **dct)
+
+        validated.append(valid)
+
+    return validated
+
+
+def safe_divide(x: float, y: float) -> float:
+    """This returns zero if the denominator is zero
+    """
+    if y == 0.0:
+        return 0.0
+    return x / y
+
+
+def dictlist_to_dict(dictlist, key):
+    """turn a list of dicts with a common key into a dict. values
+    of the key should be unique within the dictlist
+
+    Example
+    -------
+    >>>dict_list = [{"id":"a"}, {"id":"b"}]
+    >>>dictlist_to_dict(dict_list, "id")
+    {'a': {'id': 'a'}, 'b': {'id': 'b'}}
+
+    """
+    result = {}
+    for dct in dictlist:
+        k = dct[key]
+        result[k] = dct
+    return result

@@ -1,8 +1,8 @@
-import pytest
 import pandas
+import pytest
 
-from nereid.src.treatment_facility.constructors import build_treatment_facility_nodes
 from nereid.core.io import parse_configuration_logic
+from nereid.src.treatment_facility.constructors import build_treatment_facility_nodes
 
 
 @pytest.mark.parametrize(
@@ -71,3 +71,33 @@ def test_build_treatment_facility_nodes_from_long_list(
             assert n.get("rain_gauge") is not None
         else:
             assert n.get("rain_gauge") is None
+
+
+@pytest.mark.parametrize(
+    "months_operational, is_zero", [("summer", False), (r"¯\_(ツ)_/¯", True)],
+)
+def test_build_diversion_facility_months_operational(
+    contexts, valid_treatment_facilities, months_operational, is_zero
+):
+
+    context = contexts["default"]
+
+    tmnt_facilities = (
+        pandas.DataFrame(valid_treatment_facilities)
+        .query("facility_type=='LowFlowFacility'")
+        .assign(months_operational=months_operational)
+    )
+
+    df, messages = parse_configuration_logic(
+        df=tmnt_facilities,
+        config_section="api_recognize",
+        config_object="treatment_facility",
+        context=context,
+    )
+    nodes = build_treatment_facility_nodes(df)
+
+    for n in nodes:
+        if is_zero:
+            assert n.get("summer_dry_weather_retention_rate_cfs") == 0.0
+        else:
+            assert n.get("summer_dry_weather_retention_rate_cfs") > 0.0
