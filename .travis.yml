@@ -18,7 +18,7 @@ jobs:
         - pip install -r nereid/requirements_tests.txt
       script:
         - mypy --config-file=nereid/mypy.ini nereid/nereid
-        - coverage run --source=nereid/nereid/src -m pytest nereid/nereid/tests/test_src -xv
+        - coverage run --source=nereid/nereid/src --branch -m pytest nereid/nereid/tests/test_src -xv
         - coverage report -m --omit=*test*
 
     # This checks that the source code all runs on latest versions of python packages.
