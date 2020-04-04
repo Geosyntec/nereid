@@ -1,36 +1,50 @@
 {
-  "schema": {
-    "fields": [
+  "schema":{
+    "fields":[
       {
-        "name": "subbasin",
-        "type": "string"
+        "name":"subbasin",
+        "type":"string"
       },
       {
-        "name": "rain_gauge",
-        "type": "string"
+        "name":"rain_gauge",
+        "type":"string"
       },
       {
-        "name": "et_zone",
-        "type": "string"
+        "name":"et_zone",
+        "type":"string"
+      },
+      {
+        "name":"summer_dry_weather_flow_cuft_psecond_pacre",
+        "type":"number"
+      },
+      {
+        "name":"winter_dry_weather_flow_cuft_psecond_pacre",
+        "type":"number"
       }
     ],
-    "pandas_version": "0.20.0"
+    "pandas_version":"0.20.0"
   },
   "data": [
     {
       "subbasin": "10101000",
-      "rain_gauge": "100_LAGUNABEACH",
-      "et_zone": "Zone4"
+      "rain_gauge":"100_LAGUNABEACH",
+      "et_zone":"Zone4",
+      "summer_dry_weather_flow_cuft_psecond_pacre":0.0003,
+      "winter_dry_weather_flow_cuft_psecond_pacre":0.0003
     },
     {
       "subbasin": "10101200",
-      "rain_gauge": "1130_LAGUNA_AUDUBON",
-      "et_zone": "Zone6"
+      "rain_gauge":"1130_LAGUNA_AUDUBON",
+      "et_zone":"Zone6",
+      "summer_dry_weather_flow_cuft_psecond_pacre":0.0003,
+      "winter_dry_weather_flow_cuft_psecond_pacre":0.0003
     },
     {
       "subbasin": "20101000",
-      "rain_gauge": "100_LAGUNABEACH",
-      "et_zone": "Zone4"
+      "rain_gauge":"100_LAGUNABEACH",
+      "et_zone":"Zone4",
+      "summer_dry_weather_flow_cuft_psecond_pacre":0.0003,
+      "winter_dry_weather_flow_cuft_psecond_pacre":0.0003
     }
   ]
 }
