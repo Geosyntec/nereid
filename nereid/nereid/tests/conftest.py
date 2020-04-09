@@ -309,15 +309,44 @@ def valid_treatment_site_requests(contexts):
     return reqs
 
 
+SIZE = [50, 100]
+PCT_TMNT = [0, 0.3, 0.6]
+
+
 @pytest.fixture(scope="session")
 def watershed_requests(contexts):
     context = contexts["default"]
-    sizes = [13, 55, 77, 115, 250]
-    pct_tmnts = [0, 0.3, 0.6, 0.8]
-
     requests = {}
     numpy.random.seed(42)
-    for n_nodes, pct_tmnt in product(sizes, pct_tmnts):
-        req = generate_random_watershed_solve_request(context, n_nodes, pct_tmnt)
+    for n_nodes, pct_tmnt in product(SIZE, PCT_TMNT):
+        seed = numpy.random.randint(1e6)
+        req = generate_random_watershed_solve_request(
+            context, n_nodes, pct_tmnt, seed=seed
+        )
         requests[(n_nodes, pct_tmnt)] = deepcopy(req)
     return requests
+
+
+def _construct_watershed_test_cases():
+
+    cases = []
+    numpy.random.seed(28)
+    # this is way overkill, but I wanted to be sure all subsets work.
+    for s, n_nodes, pct_tmnt in product(range(2), SIZE, PCT_TMNT):
+        node_ids = list(map(str, range(n_nodes)))
+
+        # max dirty-node length is 50, 4 dirty set-sizes are created
+        n_dirty_nodes = numpy.random.randint(2, min(50, n_nodes - 1), size=4)
+        for n in n_dirty_nodes:
+            # select random dirty nodes for this test case
+            random_dirty_nodes = list(
+                numpy.random.choice(node_ids, size=n, replace=False)
+            )
+            cases.append([n_nodes, pct_tmnt, random_dirty_nodes])
+
+    return cases
+
+
+@pytest.fixture(scope="module", params=_construct_watershed_test_cases())
+def watershed_test_case(request):
+    yield request.param

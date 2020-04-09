@@ -1,9 +1,11 @@
 import string
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence, Set, Union
+import time
 
 import networkx as nx
 import numpy
+import pandas
 from pydantic import BaseModel
 
 import nereid.tests.test_data
@@ -21,6 +23,25 @@ TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
 def get_payload(file):
     path = TEST_PATH / file
     return path.read_text()
+
+
+def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: no cover
+
+    ts = time.time()
+    timer = lambda: time.time() - ts
+    tries = 0
+
+    while timer() < timeout:
+
+        response = testclient.get(url)
+        if response.json()["status"].lower() == "success":
+            if verbose:
+                print(f"\nget request polling tried: {tries} times")
+            return response
+        tries += 1
+        time.sleep(0.1)
+
+    return response
 
 
 def is_equal_subset(
@@ -47,6 +68,8 @@ def is_equal_subset(
 def check_graph_data_equal(g, subg):
     for node, dct in subg.nodes(data=True):
         for k, v in dct.items():
+            if k == "_is_leaf":
+                continue
             og = g.nodes[node][k]
             if isinstance(v, str):
                 err_stmt = f"node: {node}; attr: {k}, orig value: {og}; new value: {v}"
@@ -310,23 +333,19 @@ def generate_random_land_surface_request(
     return {"land_surfaces": nodes}
 
 
-def generate_random_graph_request(n_nodes):  # pragma: no cover
-    g = nx.gnr_graph(n=n_nodes, p=0.0, seed=0)
+def generate_random_graph_request(n_nodes, seed=0):  # pragma: no cover
+    g = nx.gnr_graph(n=n_nodes, p=0.0, seed=seed)
     graph_dict = clean_graph_dict(g)
     return {"graph": graph_dict}
 
 
-def generate_random_watershed_solve_request_from_graph(
-    g, context, pct_tmnt=0.5, seed=42
-):
+def generate_random_watershed_solve_request_from_graph(g, context, pct_tmnt=0.5):
 
     graph_dict = {"graph": clean_graph_dict(g)}
 
     treatment_facility_nodes = []
     treatment_site_nodes = []
     land_surface_nodes = []
-
-    numpy.random.seed(seed)
 
     for n in g:
         if g.in_degree(n) >= 1 and numpy.random.random() < pct_tmnt:
@@ -358,10 +377,10 @@ def generate_random_watershed_solve_request_from_graph(
 
 def generate_random_watershed_solve_request(context, n_nodes=55, pct_tmnt=0.5, seed=42):
 
-    g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=0), lambda x: str(x))
+    g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=seed), lambda x: str(x))
 
     request = generate_random_watershed_solve_request_from_graph(
-        g, context, pct_tmnt=pct_tmnt, seed=seed
+        g, context, pct_tmnt=pct_tmnt
     )
 
     return request
@@ -387,3 +406,53 @@ def minimum_attrs(dct):
 def attrs_to_resubmit(collection: List[Dict[str, Any]]):
 
     return list(set(k for data in collection for k in minimum_attrs(data)))
+
+
+def check_subgraph_response_equal(subgraph_results, original_results):
+
+    for subg_result in subgraph_results:
+        node = subg_result["node_id"]
+        og_result = [n for n in original_results if n["node_id"] == node][0]
+        for k, v in subg_result.items():
+            if k == "_is_leaf":
+                continue
+            og = og_result[k]
+            if isinstance(v, str):
+                err_stmt = f"node: {node}; attr: {k}, orig value: {og}; new value: {v}"
+                assert v == og, err_stmt
+
+            elif "load_mpn" in k and isinstance(v, (int, float)):
+                err_stmt = f"node: {node}; attr: {k}, orig value: {og}; new value: {v}"
+
+                # the MPN load is frequently in the gazillions, so this
+                # tolerance can be a little more forgiving, especially considering
+                # the serialization round-trip. Note that the mpn_conc is not
+                # afforded the same concession.
+                assert abs(og - v) < 1, err_stmt
+
+            elif isinstance(v, (int, float)):
+                err_stmt = f"node: {node}; attr: {k}, orig value: {og}; new value: {v}"
+                # allow floating point errors only
+                if og == 0:
+                    assert v >= 0 and v < 1e-3, (og, v, err_stmt)
+                else:
+                    assert abs(og - v) < 1e-3 or (abs(og - v) / og) < 1e-6, err_stmt
+
+
+def check_results_dataframes(db1, db2):
+    """
+    db1 is being checked
+    db2 is the reference
+    """
+    ignore = [c for c in db2.columns if c[0] == "_"] + ["node_errors", "node_warnings"]
+
+    db = db1[[c for c in db1.columns if c not in ignore]]
+
+    for col in db.select_dtypes(include=[numpy.number]):
+        if "load_mpn" in col:
+            assert abs(numpy.nansum(db[col] - db2[col])) < 1, col
+        else:
+            assert abs(numpy.nansum(db[col] - db2[col])) < 1e-6, col
+
+    for col in db.select_dtypes(exclude=[numpy.number]):
+        pandas.testing.assert_series_equal(db[col], db2[col]), col
