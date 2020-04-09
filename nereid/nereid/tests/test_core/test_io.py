@@ -21,6 +21,7 @@ def test_io_load_multiple_cfgs():
     dct = io.load_multiple_cfgs(files=[cfgbase, cfgdata])
     assert "test" in dct  # from cfgdata
     assert "default_data_directory" in dct  # from cfgbase
+    assert "facility_type" in dct["api_recognize"]["treatment_facility"]
 
 
 @pytest.mark.parametrize(
@@ -93,7 +94,6 @@ def test_parse_api_recognize(
     if recog == "land_surfaces":
         df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
     df, msg = io.parse_configuration_logic(df, "api_recognize", recog, context)
-    print(msg)
     if recog in ["land_surfaces", "treatment_facility"] and not raises_msgs:
         assert len(msg) == 0
     else:

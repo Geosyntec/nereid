@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import networkx as nx
 import numpy
 import pandas
@@ -19,7 +21,7 @@ def test_watershed_solve_scaler_conservation(
     contexts, watershed_graph, initial_node_data
 ):
 
-    g, data = watershed_graph, initial_node_data
+    g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts["default"]
 
     nx.set_node_attributes(g, data)
@@ -52,11 +54,11 @@ def test_watershed_solve_scaler_conservation(
         assert abs(outfall_total - sum_individual) / outfall_total < 1e-15
 
 
-def test_watershed_solve_stable_with_subsets(
+def test_solve_watershed_stable_with_subsets(
     contexts, watershed_graph, initial_node_data
 ):
 
-    g, data = watershed_graph, initial_node_data
+    g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts["default"]
 
     nx.set_node_attributes(g, data)
@@ -453,7 +455,7 @@ def test_nested_treatment_facilities(
     contexts, watershed_graph, initial_node_data, f9, f2, upstream_ret
 ):
 
-    g, data = watershed_graph, initial_node_data
+    g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts["default"]
 
     data["9"] = f9

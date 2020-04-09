@@ -7,14 +7,14 @@ import networkx as nx
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import nxGraph_to_dict, graph_factory
 from nereid.src.watershed.tasks import solve_watershed
-from nereid.tests.utils import attrs_to_resubmit
+from nereid.tests.utils import attrs_to_resubmit, check_subgraph_response_equal
 
 
-@pytest.mark.parametrize("n_nodes", [13, 55, 77, 115])
+@pytest.mark.parametrize("n_nodes", [50, 100])
 def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes):
 
     pct_tmnt = 0
-    watershed_request = watershed_requests[(n_nodes, pct_tmnt)]
+    watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
         watershed=watershed_request, treatment_pre_validated=False, context=context,
@@ -48,13 +48,13 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
         assert abs(outfall_total - sum_individual) / outfall_total < 1e-15
 
 
-@pytest.mark.parametrize("pct_tmnt", [0.3, 0.6, 0.8])
-@pytest.mark.parametrize("n_nodes", [13, 55, 77, 115])
+@pytest.mark.parametrize("pct_tmnt", [0.3, 0.6,])
+@pytest.mark.parametrize("n_nodes", [50, 100])
 def test_solve_watershed_with_treatment(
     contexts, watershed_requests, n_nodes, pct_tmnt
 ):
 
-    watershed_request = watershed_requests[(n_nodes, pct_tmnt)]
+    watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
         watershed=watershed_request, treatment_pre_validated=False, context=context,
@@ -103,13 +103,12 @@ def test_solve_watershed_with_treatment(
         assert outfall_results[load_type] > 0
 
 
-@pytest.mark.parametrize("pct_tmnt", [0, 0.3, 0.6, 0.8])
-@pytest.mark.parametrize("n_nodes", [13, 55, 77, 115])
-def test_stable_watershed_subgraph_solutions(
-    contexts, watershed_requests, n_nodes, pct_tmnt
+def test_stable_watershed_stable_subgraph_solutions(
+    contexts, watershed_requests, watershed_test_case
 ):
 
-    watershed_request = watershed_requests[(n_nodes, pct_tmnt)]
+    n_nodes, pct_tmnt, dirty_nodes = watershed_test_case
+    watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
         watershed=watershed_request, treatment_pre_validated=False, context=context,
@@ -126,42 +125,17 @@ def test_stable_watershed_subgraph_solutions(
 
     g = graph_factory(watershed_request["graph"])
 
-    numpy.random.seed(42)
-    for cyc in range(3):
-        n_dirty_nodes = numpy.random.randint(2, len(g) - 1, size=4)
-        for dirty_nodes in [
-            numpy.random.choice(g.nodes(), size=size, replace=False)
-            for size in n_dirty_nodes
-        ]:
+    # this subgraph is empty, has no data.
+    subg = nx.DiGraph(g.subgraph(get_subset(g, nodes=dirty_nodes)).edges)
+    subgraph = {"graph": nxGraph_to_dict(subg)}
 
-            # this subgraph is empty, has no data.
-            subg = nx.DiGraph(g.subgraph(get_subset(g, nodes=dirty_nodes)).edges)
-            subgraph = {"graph": nxGraph_to_dict(subg)}
+    new_request = deepcopy(watershed_request)
+    new_request.update(subgraph)
+    new_request.update(previous_results)
 
-            new_request = deepcopy(watershed_request)
-            new_request.update(subgraph)
-            new_request.update(previous_results)
+    subgraph_response_dict = solve_watershed(
+        watershed=new_request, treatment_pre_validated=False, context=context,
+    )
+    subgraph_results = subgraph_response_dict["results"]
 
-            subgraph_response_dict = solve_watershed(
-                watershed=new_request, treatment_pre_validated=False, context=context,
-            )
-            subgraph_results = subgraph_response_dict["results"]
-
-            for subg_result in subgraph_results:
-                node = subg_result["node_id"]
-                og_result = [n for n in results if n["node_id"] == node][0]
-                subg_node_degree = subg.in_degree(node)
-                for k, v in subg_result.items():
-                    og = og_result[k]
-                    if isinstance(v, str):
-                        err_stmt = f"node: {node}; degree: {subg_node_degree}, attr: {k}, orig value: {og}; new value: {v}"
-                        assert v == og, err_stmt
-                    elif isinstance(v, (int, float)):
-                        err_stmt = f"node: {node}; degree: {subg_node_degree}, attr: {k}, orig value: {og}; new value: {v}"
-                        # allow floating point errors only
-                        if og == 0:
-                            assert v >= 0 and v < 1e-3, (type(og), type(v), err_stmt)
-                        else:
-                            assert (
-                                abs(og - v) < 1e-3 or (abs(og - v) / og) < 1e-6
-                            ), err_stmt
+    check_subgraph_response_equal(subgraph_results, results)
