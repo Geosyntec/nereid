@@ -21,8 +21,8 @@ def effluent_conc(
     **kwargs: Dict
 ) -> float:
     """
-    This function applies the NCHRP formula for computing bmp performance using
-    a compound curve fitting function defined as:
+    This function applies the NCHRP formula for computing stormwater treatment facility
+    performance usinga compound curve fitting function defined as:
 
     effluent = min(inf_conc, max(A + B*inf_conc + C*ln(inf_conc) + D*(inf_conc**E)*e2, dl))
 
@@ -72,16 +72,16 @@ def build_effluent_function_map(
     df: pandas.DataFrame, facility_column: str, pollutant_column: str
 ) -> Mapping[Tuple[str, str], Callable]:
     # this is close to what we want, but it has a lot of nans.
-    _bmp_dict = df.set_index([facility_column, pollutant_column]).to_dict("index")
+    _facility_dict = df.set_index([facility_column, pollutant_column]).to_dict("index")
 
-    # this gives a lookup table in the form {(bmp, pollutant) : **args}
+    # this gives a lookup table in the form {(facility, pollutant) : **args}
     # with no nans.
-    bmp_dict = {
+    facility_dict = {
         k: {ki: vi for ki, vi in v.items() if pandas.notnull(vi)}
-        for k, v in _bmp_dict.items()
+        for k, v in _facility_dict.items()
     }
 
-    # this gives a lookup table in the form {(bmp, pollutant) : fxn(inf_conc, inf_conc_units)}
-    function_map = {k: partial(effluent_conc, **v) for k, v in bmp_dict.items()}
+    # this gives a lookup table in the form {(facility, pollutant) : fxn(inf_conc, inf_conc_units)}
+    function_map = {k: partial(effluent_conc, **v) for k, v in facility_dict.items()}
 
     return function_map

@@ -15,6 +15,12 @@ from nereid.src.land_surface.loading import (
 def land_surface_loading(
     land_surfaces: Dict[str, Any], details: bool, context: Dict[str, Any]
 ) -> Dict[str, List]:
+    """computes loading for volume runoff and pollutants for each land
+    surface 'sliver' and aggregates values for each node. Returning results
+    for the slivers is toggled by the `details` kwarg. if 'true' the resonse
+    includes a 'details' key with the sliver loading. the 'summary' values
+    aggregate the load to each node_id, and are always returned.
+    """
 
     df = pandas.DataFrame(land_surfaces["land_surfaces"])
     df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]

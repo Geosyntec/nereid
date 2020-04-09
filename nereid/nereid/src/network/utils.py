@@ -93,6 +93,36 @@ def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
+    """Convert a networkx garph object into a dictionary
+    suitable for serialization.
+
+    Example:
+
+    g = nx.gnr_graph(n=7, p=0, seed=0)
+    nxGraph_to_dict(g)
+    >>>{
+        'directed': True,
+        'multigraph': False,
+        'graph': {},
+        'nodes': [
+            {'metadata': {}, 'id': 0},
+            {'metadata': {}, 'id': 1},
+            {'metadata': {}, 'id': 2},
+            {'metadata': {}, 'id': 3},
+            {'metadata': {}, 'id': 4},
+            {'metadata': {}, 'id': 5},
+            {'metadata': {}, 'id': 6}
+        ],
+        'edges': [
+            {'metadata': {}, 'source': 1, 'target': 0},
+            {'metadata': {}, 'source': 2, 'target': 1},
+            {'metadata': {}, 'source': 3, 'target': 2},
+            {'metadata': {}, 'source': 4, 'target': 2},
+            {'metadata': {}, 'source': 5, 'target': 2},
+            {'metadata': {}, 'source': 6, 'target': 1}
+        ]
+    }
+    """
     result: Dict[str, Any] = nx.node_link_data(g, {"link": "edges"})
     for dct in result["nodes"]:
         id_ = dct.pop("id")

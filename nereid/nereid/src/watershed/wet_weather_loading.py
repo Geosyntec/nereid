@@ -18,12 +18,27 @@ def accumulate_wet_weather_loading(
     predecessors: List[str],
     wet_weather_parameters: List[Dict[str, Any]],
 ) -> Dict[str, Any]:
-    """Gather information from upstream nodes
+    """This function helps aggregate the state of the watershed upstream of
+    the current node for wet weather conditions.
+
+    This function is only called by `nereid.src.watershed.solve_watershed.solve_node`
 
     Parameters
     ----------
     g : nx.DiGraph
+        graph object used to fetch upstream information.
     data : dict
+        information about the current node. this may be a land surface node, a treatment facility,
+        or a treatment site.
+    predecessors : list
+        set of nodes immediately upstream of current node. These are used to aggregate flow
+        volume and pollutant load.
+    wet_weather_parameters : list of dicts
+        this contains information aabout each parameter, like long_name, short_name and
+        conversion factor information. see the *land_surface_emc_tables in the config file.
+        these dicts are pre-processed to cache some helpful unit conversions prior to
+        being passed to this function.
+        Reference: `nereid.src.wq_parameters.init_wq_parameters`
 
     IMPORTANT NOTE: land surface nodes do not drain to themselves. Flow 'introduced'
     by an in-line land surface node is counted as 'direct' flow into then next
@@ -52,8 +67,6 @@ def accumulate_wet_weather_loading(
             this does not include the contribution of the current node.
         "effective_area_total_cumul" : this is the total inflow + contribution from
             the current node. This *cannot* be used to accumulate, just to report.
-
-
 
     """
 
@@ -109,14 +122,6 @@ def accumulate_wet_weather_loading(
         data.get("retention_volume_cuft", 0.0) + data["retention_volume_cuft_upstream"]
     )
 
-    # data["treatment_volume_cuft_upstream"] = sum_node_attr(
-    #     g, predecessors, "treatment_volume_cuft_cumul"
-    # )
-
-    # data["treatment_volume_cuft_cumul"] = (
-    #     data.get("treatment_volume_cuft", 0.0) + data["treatment_volume_cuft_upstream"]
-    # )
-
     # calculate design intensity
     data["design_intensity_inhr"] = design_intensity_inhr(
         data.get("treatment_rate_cfs", 0.0), data["eff_area_acres_cumul"]
@@ -152,7 +157,7 @@ def accumulate_wet_weather_loading(
         (
             data["design_volume_cuft_upstream"]
             - data["retention_volume_cuft_upstream"]
-            # this is calculated if the node is a bmp
+            # this is calculated if the node is a treatment facility
             - data["during_storm_det_volume_cuft_upstream"]
         ),
         0,
@@ -205,6 +210,17 @@ def accumulate_wet_weather_loading(
 
 
 def compute_wet_weather_volume_discharge(data: Dict[str, Any]) -> Dict[str, Any]:
+    """this function aggregates wet weather volume results to prepare them for summarization
+    and to prepare the effects of the current node to influence the input to downstream nodes.
+
+    This function is only called by `nereid.src.watershed.solve_watershed.solve_node`
+
+    This function must always be called after `accumulate_wet_weather_loading`
+    If the current node performs wet weather volume reduction this function must
+    be alled after `.treatment_facility_capture.compute_volume_capture_with_nomograph` so that
+    the performance is included in the result passed downstream.
+
+    """
     inflow = data.get("runoff_volume_cuft_inflow", 0.0)
 
     retained_pct = data.get("retained_pct", 0.0)
@@ -249,56 +265,37 @@ def compute_wet_weather_volume_discharge(data: Dict[str, Any]) -> Dict[str, Any]
     return data
 
 
-def check_node_results_close(data: Dict[str, Any]) -> Dict[str, Any]:
-    """Run a few mass balance checks on the node.
-
-    Parameters
-    ----------
-    data : dict
-
-    """
-    check1 = safe_divide(
-        (
-            data["runoff_volume_cuft_inflow"]
-            - data.get("runoff_volume_cuft_retained", 0.0)
-            - data.get("runoff_volume_cuft_treated", 0.0)
-            - data.get("runoff_volume_cuft_bypassed", data["runoff_volume_cuft_inflow"])
-        ),
-        data["runoff_volume_cuft_inflow"],
-    )
-
-    if abs(check1) > 0.01:  # pragma: no cover
-        data["node_errors"].append(
-            f"inflow did not close within 1%. difference is: {check1:%}"
-        )
-
-    check2 = safe_divide(
-        abs(
-            data["runoff_volume_cuft_discharged"]
-            - data.get("runoff_volume_cuft_treated", 0.0)
-            - data.get("runoff_volume_cuft_bypassed", data["runoff_volume_cuft_inflow"])
-        ),
-        data["runoff_volume_cuft_discharged"],
-    )
-
-    if abs(check2) > 0.01:  # pragma: no cover
-        data["node_errors"].append(
-            f"discharge did not close within 1 %. difference is: {check2:%}"
-        )
-
-    return data
-
-
 def compute_wet_weather_load_reduction(
     data: Dict[str, Any],
     wet_weather_parameters: List[Dict[str, Any]],
     wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
-    """
-    Depends on `accumulate_upstream_loading` & a completed volume capture solution via
-    either:
-        `compute_volume_routing` & `deliver_volume_downstream`
-        OR `compute_site_volume_capture` for site based treatment
+    """this function relies on the volume treated and volume retained to be set by
+    other functions before computing the whole facility load reduction by considering
+    influent->effluent concentration transformation, volume capture, and volume reduction
+    to compute total load reduction for this node.
+
+    This function is only called by `.solve_watershed.solve_node`
+
+    This function must be called after all of the following have been called:
+        `accumulate_upstream_loading`
+        `compute_wet_weather_volume_discharge`
+
+    Parameters
+    ----------
+    data : dict
+        information about current node, including facility sizing information and inflow characteristics.
+    wet_weather_parameters: list of dicts
+        this contains information aabout each parameter, like long_name, short_name and
+        conversion factor information. see the *land_surface_emc_tables in the config file.
+        these dicts are pre-processed to cache some helpful unit conversions too prior to
+        being passed to this function.
+        Reference: `nereid.src.wq_parameters.init_wq_parameters`
+    wet_weather_facility_performance_map : mapping
+        this mapping uses a facility type and a pollutant as the keys to retrieve a function
+        that returns effluent concentration as output when given influent concentration as input.
+        Reference: `nereid.src.tmnt_performance.tmnt.effluent_conc`
+        Reference: `nereid.src.tmnt_performance.tasks.effluent_function_map`
 
     """
 
@@ -331,6 +328,42 @@ def compute_wet_weather_load_reduction(
             conc_to_load_factor,
             inflow_load,
             influent_conc,
+        )
+
+    return data
+
+
+def check_node_results_close(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Run a few mass balance checks on the node.
+
+    """
+    check1 = safe_divide(
+        (
+            data["runoff_volume_cuft_inflow"]
+            - data.get("runoff_volume_cuft_retained", 0.0)
+            - data.get("runoff_volume_cuft_treated", 0.0)
+            - data.get("runoff_volume_cuft_bypassed", data["runoff_volume_cuft_inflow"])
+        ),
+        data["runoff_volume_cuft_inflow"],
+    )
+
+    if abs(check1) > 0.01:  # pragma: no cover
+        data["node_errors"].append(
+            f"inflow did not close within 1%. difference is: {check1:%}"
+        )
+
+    check2 = safe_divide(
+        abs(
+            data["runoff_volume_cuft_discharged"]
+            - data.get("runoff_volume_cuft_treated", 0.0)
+            - data.get("runoff_volume_cuft_bypassed", data["runoff_volume_cuft_inflow"])
+        ),
+        data["runoff_volume_cuft_discharged"],
+    )
+
+    if abs(check2) > 0.01:  # pragma: no cover
+        data["node_errors"].append(
+            f"discharge did not close within 1 %. difference is: {check2:%}"
         )
 
     return data

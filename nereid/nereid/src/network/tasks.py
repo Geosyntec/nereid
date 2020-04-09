@@ -14,6 +14,20 @@ from nereid.src.network.render import (
 
 
 def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
+    """
+
+    Parameters
+    ----------
+    graph : dict
+        graph in graph-dict format.
+        For example:
+        graph = {
+            "directed": True,
+            "nodes": [{"id": "A"}, {"id": "B"}],
+            "edges": [{"source": "A", "target": "B"}],
+        }
+
+    """
 
     _graph = thin_graph_dict(graph)
     G = graph_factory(_graph)

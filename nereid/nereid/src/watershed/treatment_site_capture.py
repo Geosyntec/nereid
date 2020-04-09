@@ -13,6 +13,38 @@ def solve_treatment_site(
     wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
     dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
+    """This function computes the volume reduction/capture performance and the
+    load reduction for each individual facility of a treatment site. Treatment sites
+    are a list of facility types on the site, and for each the user has specified
+    the % site area treated, % inflow volume captured, and % inflow volume retained
+    by the facility. This function solves each facility individually, and then aggregates
+    the suite of facilities into a single 'node' of volume and load transformed by the
+    site activities.
+
+    This function is only called by `.solve_watershed.solve_node`
+    This function must be called after all of the following have been called:
+        `.dry_weather_loading.accumulate_dry_weather_loading`
+        `.wet_weather_loading.accumulate_wet_weather_loading`
+
+
+    Parameters
+    ----------
+    *_parameters: list of dicts
+        this contains information aabout each parameter, like long_name, short_name and
+        conversion factor information. see the *land_surface_emc_tables in the config file.
+        these dicts are pre-processed to cache some helpful unit conversions too prior to
+        being passed to this function.
+        This is needed for both wet weather and dry weather.
+        Reference: `nereid.src.wq_parameters.init_wq_parameters`
+
+    *_facility_performance_map : mapping
+        this mapping uses a facility type and a pollutant as the keys to retrieve a function
+        that returns effluent concentration as output when given influent concentration as input.
+        This is needed for both wet weather and dry weather.
+        Reference: `nereid.src.tmnt_performance.tmnt.effluent_conc`
+        Reference: `nereid.src.tmnt_performance.tasks.effluent_function_map`
+
+    """
 
     compute_site_volume_capture(data)
     compute_site_wet_weather_load_reduction(

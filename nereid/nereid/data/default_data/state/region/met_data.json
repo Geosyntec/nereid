@@ -33,14 +33,14 @@
       "winter_dry_weather_flow_cuft_psecond_pacre":0.0003
     },
     {
-      "subbasin": "10101200",
+      "subbasin": "10101100",
       "rain_gauge":"1130_LAGUNA_AUDUBON",
       "et_zone":"Zone6",
       "summer_dry_weather_flow_cuft_psecond_pacre":0.0003,
       "winter_dry_weather_flow_cuft_psecond_pacre":0.0003
     },
     {
-      "subbasin": "20101000",
+      "subbasin": "10101200",
       "rain_gauge":"100_LAGUNABEACH",
       "et_zone":"Zone4",
       "summer_dry_weather_flow_cuft_psecond_pacre":0.0003,

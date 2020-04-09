@@ -41,7 +41,9 @@ def update_reg_from_context(context: Dict[str, Any]) -> None:
 def update_unit_registry(fxn: Callable) -> Callable:
     @wraps(fxn)
     def ureg_wrapper(*args, **kwargs):
-        context = kwargs["context"]
+        context = kwargs.get("context")
+        if not context:  # pragma: no cover
+            raise ValueError("Context is required as a named keyword argument")
         update_reg_from_context(context=context)
         for cached_fxn in [
             conversion_factor_load_to_conc,

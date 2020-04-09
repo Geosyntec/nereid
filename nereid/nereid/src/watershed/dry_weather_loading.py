@@ -14,6 +14,30 @@ def accumulate_dry_weather_loading(
     predecessors: List[str],
     dry_weather_parameters: List[Dict[str, Any]],
 ) -> Dict[str, Any]:
+    """This function helps aggregate the state of the watershed upstream of
+    the current node for dry weather conditions. This function considers dry weather
+    for two seasons per year, summer and winter.
+
+    This function is only called by `nereid.src.watershed.solve_watershed.solve_node`
+
+    Parameters
+    ----------
+    g : nx.DiGraph
+        graph object used to fetch upstream information.
+    data : dict
+        information about the current node. this may be a land surface node, a treatment facility,
+        or a treatment site.
+    predecessors : list
+        set of nodes immediately upstream of current node. These are used to aggregate flow
+        volume and pollutant load.
+    dry_weather_parameters : list of dicts
+        this contains information aabout each parameter, like long_name, short_name and
+        conversion factor information. see the *land_surface_emc_tables in the config file.
+        these dicts are pre-processed to cache some helpful unit conversions prior to
+        being passed to this function.
+        Reference: `nereid.src.wq_parameters.init_wq_parameters`
+
+    """
 
     seasons = ["summer", "winter"]
 
@@ -30,6 +54,17 @@ def accumulate_dry_weather_loading(
 def accumulate_dry_weather_volume_by_season(
     g: nx.DiGraph, data: Dict[str, Any], predecessors: List[str], season: str,
 ) -> Dict[str, Any]:
+    """aggregate dry weather volume for a single season
+
+    This function is called only by `accumulate_dry_weather_loading`
+
+    Parameters
+    ----------
+    * : see `accumulate_dry_weather_loading`
+    season : string
+        the season we want to aggregate.
+
+    """
 
     for suffix in ["", "_psecond"]:
 
@@ -63,6 +98,17 @@ def accumulate_dry_weather_pollutant_loading_by_season(
     dry_weather_parameters: List[Dict[str, Any]],
     season: str,
 ) -> Dict[str, Any]:
+    """aggregate dry weather pollutant load for a single season
+
+    This function is called only by `accumulate_dry_weather_loading`
+
+    Parameters
+    ----------
+    * : see `accumulate_dry_weather_loading`
+    season : string
+        the season we want to aggregate.
+
+    """
 
     for param in dry_weather_parameters:
 
@@ -99,6 +145,12 @@ def accumulate_dry_weather_pollutant_loading_by_season(
 
 
 def compute_dry_weather_volume_performance(data):
+    """
+    This function is only called by `nereid.src.watershed.solve_watershed.solve_node`
+    This function must be called after:
+        `accumulate_dry_weather_loading`
+
+    """
     seasons = ["summer", "winter"]
 
     for season in seasons:
@@ -111,6 +163,15 @@ def compute_dry_weather_volume_performance(data):
 def init_dry_weather_tmnt_rate_by_season(
     data: Dict[str, Any], season: str
 ) -> Dict[str, Any]:
+    """This function helps normalize how the treatment rate for dry weather flow
+    is credited, particularly for facilities that are volume-based and so have
+    no treatment-rate type attributes. This function will consider the rate of
+    treatment for each compartment of a volume based facility so that it's available
+    to later calculations regarding dry weather volume reduction.
+
+    This function is only called by `compute_dry_weather_volume_performance`
+
+    """
 
     dw_retention_rate_cfs = data.get(f"{season}_dry_weather_retention_rate_cfs")
     if dw_retention_rate_cfs is None:
@@ -145,6 +206,18 @@ def init_dry_weather_tmnt_rate_by_season(
 def compute_dry_weather_volume_performance_by_season(
     data: Dict[str, Any], season: str
 ) -> Dict[str, Any]:
+    """This function checks to see if the dry weather flow rate can be eliminated
+    by the retention rate, and if not, applies treatment to the discharge volume
+    up to the treatment rate capacity. discharge rates higher than the treatment
+    rate are considered bypassed flow.
+
+    All performance is based on flow rate, and assume completely steaady state.
+    Thus volume reduced and volume treated are computed ad stored based upon the
+    flow rate performance.
+
+    This function is only called by `compute_dry_weather_volume_performance`
+
+    """
 
     dw_retention_rate_cfs = data.get(f"{season}_dry_weather_retention_rate_cfs", 0.0)
     dw_treatment_rate_cfs = data.get(f"{season}_dry_weather_treatment_rate_cfs", 0.0)
@@ -220,8 +293,35 @@ def compute_dry_weather_load_reduction(
     dry_weather_parameters: List[Dict[str, Any]],
     dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
+    """This function computes how load reduction is effected by the volume reduced
+    and/or treated by the current facility. This function requires that the volume
+    balance is already computed.
 
-    tmnt_facility_type = data.get("tmnt_performance_facility_type", "¯\\_(ツ)_/¯")
+    This function is only called by `nereid.src.watershed.solve_watershed.solve_node`
+    This function must be called after all of the following have been called:
+        `accumulate_dry_weather_loading`
+        `compute_dry_weather_volume_performance`
+
+    Parameters
+    ----------
+    data : dict
+        information about current node, including facility sizing information and
+        inflow characteristics.
+    dry_weather_parameters: list of dicts
+        this contains information aabout each parameter, like long_name, short_name and
+        conversion factor information. see the *land_surface_emc_tables in the config file.
+        these dicts are pre-processed to cache some helpful unit conversions too prior to
+        being passed to this function.
+        Reference: `nereid.src.wq_parameters.init_wq_parameters`
+    dry_weather_facility_performance_map : mapping
+        this mapping uses a facility type and a pollutant as the keys to retrieve a function
+        that returns effluent concentration as output when given influent concentration as input.
+        Reference: `nereid.src.tmnt_performance.tmnt.effluent_conc`
+        Reference: `nereid.src.tmnt_performance.tasks.effluent_function_map`
+
+    """
+
+    tmnt_facility_type = data.get("tmnt_performance_facility_type", r"¯\_(ツ)_/¯")
 
     seasons = ["summer", "winter"]
     for season in seasons:
