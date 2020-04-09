@@ -91,7 +91,7 @@ class NomographBase(object):
         y: Sequence[float],
         interp_kwargs: Dict[str, Any] = None,
     ) -> None:
-        """This class manages 2D interpolations of BMP performance
+        """This class manages 2D interpolations of stormwater treatment facility performance
         across the size, drawdown time, and long term capture.
 
         Inputs for `size`, `ddt`, and `performance` should all have the same shape.
@@ -103,7 +103,7 @@ class NomographBase(object):
         instead of having portions of the searchspace undefined (numpy.nan).
 
         x : 1D, listlike
-            indicates BMP size, typically either design intensity or volume
+            indicates stormwater treatment facility size, typically either design intensity or volume
 
         t : 1D, listlike
             indicates the 'trace' of the nomograph, typically drawdown time or

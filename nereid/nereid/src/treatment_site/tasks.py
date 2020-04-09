@@ -12,7 +12,7 @@ def initialize_treatment_sites(
 
     sites = treatment_sites["treatment_sites"]
 
-    # tmnt_map is connects the bmp name with the treatment
+    # tmnt_map is connects the facility name with the treatment
     # key for the influent-> effluent concentration transformation
     # e.g. {"bioretention": "Biofiltration"}
     tmnt_map = {

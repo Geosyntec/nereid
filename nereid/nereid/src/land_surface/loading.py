@@ -11,6 +11,10 @@ from nereid.core.units import Constants
 
 
 def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
+    """this function cleans up the imperviousness passed by the client and uses
+    the new value to recompute the impervious area in acres. This is used in case
+    imperviousness has been remapped in the config file.
+    """
 
     df["imp_pct"] = df["imp_pct"].clip(0, 100)
     df["imp_area_acres"] = df["area_acres"] * (df["imp_pct"] / 100)
@@ -44,6 +48,9 @@ def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
 def detailed_dry_weather_volume_loading_results(
     df: pandas.DataFrame, seasons: Dict[str, Optional[List[str]]]
 ) -> pandas.DataFrame:
+    """This function aggregates the dry weather flowrate by season according
+    to the config file spec.
+    """
 
     developed_area_acres = df.get("developed_area_acres", 0.0)
 
@@ -72,6 +79,17 @@ def detailed_pollutant_loading_results(
     dry_weather_parameters: List[Dict[str, str]],
     season_names: List[str],
 ) -> pandas.DataFrame:
+    """convert the washoff concentration to load for both wet and dry seasons.
+
+    parameters is a dictionary like:
+
+    long_name: Total Suspended Solids
+    short_name: TSS
+    concentration_unit: mg/L
+    load_unit: lbs
+
+    It also contains derived values from 'src.wq_parameters.init_wq_paramters'
+    """
 
     for param in wet_weather_parameters:
         conc_col = param["conc_col"]
@@ -158,15 +176,15 @@ def summary_loading_results(
         + dwf_cols
     )
 
-    agg_list = [
-        {col: "sum" for col in output_columns_summable},
+    agg_dict = {
+        **{col: "sum" for col in output_columns_summable},
         # add other aggregation requirements for other columns here
-    ]
+    }
 
     df = (
         detailed_results.reindex(columns=groupby_cols + output_columns_summable)
         .groupby(groupby_cols)
-        .agg({k: v for d in agg_list for k, v in d.items()})
+        .agg(agg_dict)
     )
 
     #  'area_acres' is just a dummy here, any column would do

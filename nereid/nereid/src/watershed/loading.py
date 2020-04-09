@@ -17,6 +17,35 @@ def compute_pollutant_load_reduction(
     inflow_load: float,
     influent_conc: float,
 ) -> Dict[str, Any]:
+    """This function takes an irritating number of parameters, but helps to make the following
+    recipe for calculating the loads given the volume and the concentration much more
+    reusable, if verbose.
+
+    This function is called by:
+        .dry_weather_loading.compute_dry_weather_load_reduction
+        .treatment_site_capture.compute_site_wet_weather_load_reduction
+        .treatment_site_capture.compute_site_dry_weather_load_reduction
+        .wet_weather_loading.compute_wet_weather_load_reduction
+
+    Parameters
+    ----------
+    data : dict
+        information about the current node, especially treatment performance (if any), and
+        incoming flow volume and concentraiton
+    effluent_function_map : mapping
+        This mapping uses a facility type and a pollutant as the keys to retrieve a function
+        that returns effluent concentration as output when given influent concentration as input.
+        This is needed for both wet weather and dry weather.
+        Reference: `nereid.src.tmnt_performance.tmnt.effluent_conc`
+        Reference: `nereid.src.tmnt_performance.tasks.effluent_function_map`
+    tmnt_facility_type : string
+        string matching one of the facility types in the reference data file which defines the
+        influent -> effluent transformation curves.
+        Reference: config.yml::project_reference_data::tmnt_performance_table
+    ** : strings and floats
+        named and documented in function definition.
+
+    """
 
     tmnt_fxn = effluent_function_map.get((tmnt_facility_type, poc_long), None)
 

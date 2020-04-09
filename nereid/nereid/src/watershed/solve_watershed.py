@@ -137,9 +137,31 @@ def solve_node(
     ----------
     g : nx.DiGraph
         directed and acyclic graph data structure with nodes
-        representing bmps or tributary areas
+        representing facilities or tributary areas
     node : str or int
         the node id to be analyzed
+    *_parameters: list of dicts
+        this contains information aabout each parameter, like long_name, short_name and
+        conversion factor information. see the *land_surface_emc_tables in the config file.
+        these dicts are pre-processed to cache some helpful unit conversions too prior to
+        being passed to this function.
+        This is needed for both wet weather and dry weather.
+        Reference: `nereid.src.wq_parameters.init_wq_parameters`
+    *_facility_performance_map : mapping
+        this mapping uses a facility type and a pollutant as the keys to retrieve a function
+        that returns effluent concentration as output when given influent concentration as input.
+        This is needed for both wet weather and dry weather.
+        Reference: `nereid.src.tmnt_performance.tmnt.effluent_conc`
+        Reference: `nereid.src.tmnt_performance.tasks.effluent_function_map`
+    nomograph_map : mapping
+        this mapping uses the nomograph data filepath as the key to return a 2d nomograph
+        interpolator function. this is not 1:1 with facility types because some facility types,
+        like swales, require us to traverse both a flow-based nomograph and a volume based
+        nomograph in order to solve for the volume capture, e.g., swales. The necessary information
+        for each facility, e.g., which nomograph files to refer to when needed, is joined to the facility
+        information from the config.yml::project_reference_data::met_table
+        Reference: `nereid.src.nomograph.nomo.load_nomograph_mapping`
+
 
     Returns
     -------
@@ -153,9 +175,11 @@ def solve_node(
     data["_visited"] = True
     data["node_errors"] = []
     data["node_warnings"] = []
+    data["_is_leaf"] = False
 
     # leaf nodes are read only
     if g.in_degree(node) < 1:
+        data["_is_leaf"] = True
         return
 
     node_type = data.get("node_type", "")
@@ -167,9 +191,16 @@ def solve_node(
     )
 
     if "site_based" in node_type:
-
-        # this does volume capture, load reductions, and delivers
+        # This sequence handles volume capture, load reductions, and also delivers
         # downstream loads.
+        # Note that site-based treatment can _never_ be a centralized facility and so
+        # certain parameters like 'upstream vol reduction' that are important for
+        # computing nested volume capture are not passed through this node type.
+        # This means that downstream nodes that are solved via nested volume based
+        # treatment will be aware of volume reduction capacity of site-based nodes,
+        # but not of volume reducing activities upstream of them. This is fine because
+        # the only node type that should ever drain to a site-based treatment facility
+        # is a raw land surface, and not an upstream standalone facility.
         solve_treatment_site(
             data,
             wet_weather_parameters,
@@ -187,7 +218,7 @@ def solve_node(
             )
 
         else:
-            # this catches diversions that don't do wet weather tmnt.
+            # This catches diversions that don't do wet weather tmnt.
             compute_wet_weather_volume_discharge(data)
 
         compute_dry_weather_volume_performance(data)
@@ -196,7 +227,7 @@ def solve_node(
         )
 
     else:
-        # this is a null node or a land surface node. Just aggregate necessary
+        # This is a null node or a land surface node. Just aggregate necessary
         # pass-along values and continue.
         compute_wet_weather_volume_discharge(data)
 

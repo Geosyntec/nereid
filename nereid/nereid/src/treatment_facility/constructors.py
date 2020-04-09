@@ -92,7 +92,7 @@ class TreatmentFacilityConstructor:
         inf_rate_inhr: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-        """This bmp has incidental infiltration and a raised underdrain.
+        """This facility has incidental infiltration and a raised underdrain.
         """
 
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
