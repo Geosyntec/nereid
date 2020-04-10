@@ -177,8 +177,6 @@ def render_solution_sequence(
 
             color = cmap(color_frac)
             font_color = "k"
-            if numpy.mean(color[:3]) < 0.45:
-                font_color = "w"
 
             sg = G.subgraph(g)
 
@@ -189,7 +187,8 @@ def render_solution_sequence(
                 node_color=[color for _ in sg.nodes()],
                 edge_color=(51 / 255, 51 / 255, 51 / 255),
                 width=1.5,
-                linewidths=0,
+                linewidths=0.5,
+                edgecolors=(51 / 255, 51 / 255, 51 / 255),
                 node_size=group_size,
                 arrows=True,
                 with_labels=True,

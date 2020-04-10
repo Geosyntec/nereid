@@ -143,11 +143,19 @@ async def get_subgraph_network_as_img(
 
         result = task.result
         response["data"] = task.result
+        render_task_id = task.task_id + f"-{media_type}-{npi}"
 
         if media_type == "svg":
-
-            render_task = bg.background_render_subgraph_svg.delay(result, npi)
-            _ = wait_a_sec_and_see_if_we_can_return_some_data(render_task, timeout=0.2)
+            render_task = bg.background_render_subgraph_svg.AsyncResult(
+                render_task_id, app=router
+            )
+            if render_task.status.lower() != "started":  # pragma: no branch
+                render_task = bg.background_render_subgraph_svg.apply_async(
+                    args=(result, npi), task_id=render_task_id
+                )
+                _ = wait_a_sec_and_see_if_we_can_return_some_data(
+                    render_task, timeout=0.2
+                )
 
             svgresponse = dict(task_id=render_task.task_id, status=render_task.status)
 
@@ -251,11 +259,20 @@ async def get_network_solution_sequence_as_img(
 
         result = task.result
         response["data"] = task.result
+        render_task_id = task.task_id + f"-{media_type}-{npi}"
 
         if media_type == "svg":
 
-            render_task = bg.background_render_solution_sequence_svg.delay(result, npi)
-            _ = wait_a_sec_and_see_if_we_can_return_some_data(render_task, timeout=0.2)
+            render_task = bg.background_render_solution_sequence_svg.AsyncResult(
+                render_task_id, app=router
+            )
+            if render_task.status.lower() != "started":  # pragma: no branch
+                render_task = bg.background_render_solution_sequence_svg.apply_async(
+                    args=(result, npi), task_id=render_task_id
+                )
+                _ = wait_a_sec_and_see_if_we_can_return_some_data(
+                    render_task, timeout=0.2
+                )
 
             svgresponse = dict(task_id=render_task.task_id, status=render_task.status)
 
