@@ -1,5 +1,5 @@
-pytest==5.3.5
-coverage==5.0.3
-codecov==2.0.15
+pytest==5.4.1
+coverage==5.0.4
+codecov==2.0.22
 requests==2.23.0
-mypy==0.761
+mypy==0.770
