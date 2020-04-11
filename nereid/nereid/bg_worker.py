@@ -1,5 +1,7 @@
 import networkx as nx
+
 from nereid.core.celery_app import celery_app
+from nereid.core.utils import validate_request_context
 
 from nereid.src.network.tasks import (
     validate_network,
@@ -11,6 +13,11 @@ from nereid.src.network.tasks import (
 from nereid.src.land_surface.tasks import land_surface_loading
 from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
 from nereid.src.watershed.tasks import solve_watershed
+
+
+@celery_app.task(acks_late=True, track_started=True)
+def background_validate_request_context(context):
+    return validate_request_context(context)  # pragma: no cover
 
 
 @celery_app.task(acks_late=True, track_started=True)
