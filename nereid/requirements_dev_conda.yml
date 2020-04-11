@@ -19,11 +19,11 @@ dependencies:
   - redis-py
   - celery=4.4.*
   - pydantic=1.*
-  - jinja2=2.10.*
+  - jinja2=2.11.*
   - requests
 
 # viz
-  - matplotlib=3.1.*
+  - matplotlib=3.2.*
   - graphviz
   - pydot
 
@@ -40,5 +40,5 @@ dependencies:
 
 # pip
   - pip:
-    - fastapi=0.52.*
-    - orjson=2.5.1
+    - fastapi=0.54.*
+    - orjson=2.6.5
