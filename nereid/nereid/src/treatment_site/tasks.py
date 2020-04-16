@@ -30,10 +30,10 @@ def initialize_treatment_sites(
 
         _df = pandas.DataFrame(sites)
 
-        remaider_data = []
+        remainder_data = []
         for node, g in _df.groupby("node_id"):
             remainder = 100 - g["area_pct"].sum()
-            remaider_data.append(
+            remainder_data.append(
                 {
                     "node_id": node,
                     "area_pct": remainder,
@@ -42,7 +42,7 @@ def initialize_treatment_sites(
             )
 
         df = (
-            _df.append(remaider_data)
+            _df.append(remainder_data)
             .fillna(0)
             .assign(
                 tmnt_performance_facility_type=lambda df: df["facility_type"].replace(
