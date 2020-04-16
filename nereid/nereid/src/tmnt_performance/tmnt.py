@@ -23,7 +23,7 @@ def effluent_conc(
 ) -> float:
     """
     This function applies the NCHRP formula for computing stormwater treatment facility
-    performance usinga compound curve fitting function defined as:
+    performance using a compound curve fitting function defined as:
 
     effluent = min(inf_conc, max(A + B*inf_conc + C*ln(inf_conc) + D*(inf_conc**E)*e2, dl))
 
