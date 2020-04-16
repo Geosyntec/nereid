@@ -7,8 +7,7 @@ def initialize_treatment_sites(
     treatment_sites: Dict[str, List[Dict[str, Any]]], context: Dict[str, Any]
 ) -> Dict[str, Any]:
 
-    response: Dict[str, Any] = {}
-    response["errors"] = []
+    response: Dict[str, Any] = {"errors": []}
 
     sites = treatment_sites["treatment_sites"]
 
