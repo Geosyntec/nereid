@@ -54,6 +54,49 @@ from nereid.api.api_v1.models.treatment_facility_models import (
                 "offline_diversion_rate_cfs": None,
             },
         ),
+        (
+            False,
+            {
+                "node_id": "1",
+                "facility_type": "dry_weather_diversion",
+                "ref_data_key": "10101000",
+                "design_storm_depth_inches": 0.85,
+                "tributary_area_tc_min": 5.0,
+                "treatment_rate_cfs": 2.5,
+            },
+        ),
+        (
+            False,
+            {
+                "node_id": "1",
+                "facility_type": "dry_weather_diversion",
+                "ref_data_key": "10101000",
+                "design_storm_depth_inches": 0.85,
+                "tributary_area_tc_min": 5.0,
+                "design_capacity_cfs": 2.5,
+            },
+        ),
+        (
+            "validation error",
+            {
+                "node_id": "1",
+                "facility_type": "dry_weather_diversion",
+                "ref_data_key": "10101000",
+                "design_storm_depth_inches": 0.85,
+            },
+        ),
+        (
+            "validation error",
+            {
+                "node_id": "1",
+                "facility_type": "dry_weather_diversion",
+                "ref_data_key": "10101000",
+                "design_storm_depth_inches": 0.85,
+                "tributary_area_tc_min": None,
+                "tributary_area_tc_min": None,
+                "design_capacity_cfs": None,
+            },
+        ),
     ],
 )
 def test_build_treatment_facility_nodes_errors(contexts, ctxt_key, err, data_dict):
