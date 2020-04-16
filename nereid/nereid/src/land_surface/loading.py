@@ -48,7 +48,7 @@ def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
 def detailed_dry_weather_volume_loading_results(
     df: pandas.DataFrame, seasons: Dict[str, Optional[List[str]]]
 ) -> pandas.DataFrame:
-    """This function aggregates the dry weather flowrate by season according
+    """This function aggregates the dry weather flowrate (dwf) by season according
     to the config file spec.
     """
 
@@ -81,12 +81,13 @@ def detailed_pollutant_loading_results(
 ) -> pandas.DataFrame:
     """convert the washoff concentration to load for both wet and dry seasons.
 
-    parameters is a dictionary like:
+    Each parameter element in the lists is a dictionary like:
 
-    long_name: Total Suspended Solids
-    short_name: TSS
-    concentration_unit: mg/L
-    load_unit: lbs
+        long_name: Total Suspended Solids
+        short_name: TSS
+        concentration_unit: mg/L
+        load_unit: lbs
+        conc_to_load_factor: <some float>
 
     It also contains derived values from 'src.wq_parameters.init_wq_paramters'
     """

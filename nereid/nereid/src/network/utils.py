@@ -141,6 +141,10 @@ def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
 
 
 def clean_graph_dict(g: nx.Graph) -> Dict[str, Any]:
+    """ 
+    Converts a graph to a dictionary, ensuring all node labels
+    are converted to strings
+    """
     return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))
 
 
