@@ -1,5 +1,5 @@
 MAKEFLAGS += --silent
-.PHONY: clean clean-test clean-pyc clean-build restart test develop dev-server help
+.PHONY: clean clean-test clean-pyc clean-build restart test develop up down dev-server help
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -66,7 +66,12 @@ typecheck: clean ## run static type checker
 
 develop: clean ## build the development environment and launch containers in background
 	bash scripts/build_dev.sh
+	
+up: ## bring up the containers in '-d' mode 
 	docker-compose up -d
+
+down: ## bring down the containers and detach volumes
+	docker-compose down -v
 
 dev-server: ## start a development server that runs all tasks in foreground
 	docker-compose run -e NEREID_FORCE_FOREGROUND=1 -p 8080:80 nereid bash /start-reload.sh
