@@ -11,8 +11,8 @@ from nereid.src.watershed.solve_watershed import (
     solve_watershed_loading,
 )
 from nereid.tests.utils import (
-    check_graph_data_equal,
     attrs_to_resubmit,
+    check_graph_data_equal,
     generate_random_watershed_solve_request_from_graph,
 )
 

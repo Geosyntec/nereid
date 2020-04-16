@@ -1,7 +1,7 @@
 import string
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence, Set, Union
-import time
 
 import networkx as nx
 import numpy
@@ -9,11 +9,11 @@ import pandas
 from pydantic import BaseModel
 
 import nereid.tests.test_data
-from nereid.core.io import load_ref_data
 from nereid.api.api_v1.models import treatment_facility_models
 from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
+from nereid.core.io import load_ref_data
 from nereid.src.network.utils import clean_graph_dict, graph_factory
 from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
 

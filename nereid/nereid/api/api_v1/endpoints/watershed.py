@@ -1,15 +1,15 @@
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.utils import get_valid_context, run_task, standard_json_response
-from nereid.api.api_v1.models.watershed_models import Watershed, WatershedResponse
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
     validate_treatment_facility_models,
 )
+from nereid.api.api_v1.models.watershed_models import Watershed, WatershedResponse
+from nereid.api.api_v1.utils import get_valid_context, run_task, standard_json_response
 from nereid.src.watershed.tasks import solve_watershed
 
 router = APIRouter()

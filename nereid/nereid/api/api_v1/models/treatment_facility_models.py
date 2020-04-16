@@ -3,8 +3,8 @@ from typing import Any, Dict, List, Optional, Union
 from fastapi import Depends
 from pydantic import BaseModel, Field, validator
 
-from nereid.core.utils import validate_models_with_discriminator
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
+from nereid.core.utils import validate_models_with_discriminator
 
 
 class FacilityBase(BaseModel):

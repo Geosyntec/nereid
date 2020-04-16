@@ -1,13 +1,13 @@
-from typing import Any, Dict, Optional, Tuple
 import os
+from typing import Any, Dict, Optional, Tuple
 
-from fastapi import APIRouter, HTTPException
 from celery.exceptions import TimeoutError
 from celery.result import AsyncResult
 from celery.task import Task
+from fastapi import APIRouter, HTTPException
 
-from nereid.core import config, utils
 import nereid.bg_worker as bg
+from nereid.core import config, utils
 
 
 def wait_a_sec_and_see_if_we_can_return_some_data(

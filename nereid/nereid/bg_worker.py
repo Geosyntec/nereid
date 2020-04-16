@@ -2,15 +2,14 @@ import networkx as nx
 
 from nereid.core.celery_app import celery_app
 from nereid.core.utils import validate_request_context
-
+from nereid.src.land_surface.tasks import land_surface_loading
 from nereid.src.network.tasks import (
-    validate_network,
     network_subgraphs,
+    render_solution_sequence_svg,
     render_subgraph_svg,
     solution_sequence,
-    render_solution_sequence_svg,
+    validate_network,
 )
-from nereid.src.land_surface.tasks import land_surface_loading
 from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
 from nereid.src.watershed.tasks import solve_watershed
 

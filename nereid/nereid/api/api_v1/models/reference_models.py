@@ -1,4 +1,5 @@
-from typing import Optional, Any
+from typing import Any, Optional
+
 from pydantic import BaseModel
 
 from nereid.api.api_v1.models.response_models import JSONAPIResponse

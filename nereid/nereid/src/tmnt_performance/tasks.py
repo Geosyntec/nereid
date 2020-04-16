@@ -1,8 +1,8 @@
-from typing import Dict, Any, Mapping, Tuple, Callable
+from typing import Any, Callable, Dict, Mapping, Tuple
 
 from nereid.core import io
-from nereid.src.tmnt_performance.tmnt import build_effluent_function_map
 from nereid.core.units import update_unit_registry
+from nereid.src.tmnt_performance.tmnt import build_effluent_function_map
 
 
 @update_unit_registry

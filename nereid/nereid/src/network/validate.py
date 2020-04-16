@@ -1,6 +1,6 @@
-from typing import List, Tuple, Callable
 from collections import deque
 from functools import partial
+from typing import Callable, List, Tuple
 
 import networkx as nx
 

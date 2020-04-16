@@ -1,22 +1,20 @@
-from typing import List, Dict, Optional, Any, Union
-
-from fastapi import APIRouter, Body, Query, HTTPException
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import ORJSONResponse, FileResponse
-from fastapi.requests import Request
-from fastapi.templating import Jinja2Templates
+from typing import Any, Dict, List, Optional, Union
 
 from celery.result import AsyncResult
+from fastapi import APIRouter, Body, HTTPException, Query
+from fastapi.encoders import jsonable_encoder
+from fastapi.requests import Request
+from fastapi.responses import FileResponse, ORJSONResponse
+from fastapi.templating import Jinja2Templates
 
+import nereid.bg_worker as bg
+from nereid.api.api_v1.models import network_models
 from nereid.api.api_v1.utils import (
-    standard_json_response,
     run_task,
+    standard_json_response,
     wait_a_sec_and_see_if_we_can_return_some_data,
 )
 from nereid.core import config
-from nereid.api.api_v1.models import network_models
-import nereid.bg_worker as bg
-
 
 router = APIRouter()
 

@@ -1,8 +1,8 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
-
 
 ## Land Surface Request Models
 

@@ -1,10 +1,10 @@
-from typing import Dict, Any, List, Optional, Tuple
 from copy import deepcopy
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas
 
-from nereid.core.utils import safe_divide
 from nereid.core.units import Constants
+from nereid.core.utils import safe_divide
 
 # TODO: implement fallback to e.g., "TRANS-B-10" rather than "401070-TRANS-B-10"
 # in case ref data is missing.

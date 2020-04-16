@@ -1,6 +1,6 @@
 import networkx as nx
-import pandas
 import numpy
+import pandas
 import pytest
 
 from nereid.core.io import load_ref_data
