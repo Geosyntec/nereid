@@ -3,3 +3,5 @@ coverage==5.0.4
 codecov==2.0.22
 requests==2.23.0
 mypy==0.770
+black==19.10b0
+isort==4.3.21

@@ -1,5 +1,5 @@
-from typing import Any, Dict, List, Optional, Union
 from copy import deepcopy
+from typing import Any, Dict, List, Optional, Union
 
 import pandas
 

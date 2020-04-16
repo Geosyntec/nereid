@@ -1,16 +1,16 @@
-from typing import Dict, List, Any, Union, Optional, IO
+from typing import IO, Any, Dict, List, Optional, Union
 
 import networkx as nx
 
 from nereid.core.cache import cache_decorator
 from nereid.src.network import validate
-from nereid.src.network.utils import graph_factory, thin_graph_dict
 from nereid.src.network.algorithms import get_subset, parallel_sequential_subgraph_nodes
 from nereid.src.network.render import (
-    render_subgraphs,
-    render_solution_sequence,
     fig_to_image,
+    render_solution_sequence,
+    render_subgraphs,
 )
+from nereid.src.network.utils import graph_factory, thin_graph_dict
 
 
 def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:

@@ -1,13 +1,13 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 import pandas
 
-from nereid.core.units import update_unit_registry
-from nereid.core.io import parse_configuration_logic
-from nereid.src.treatment_facility.constructors import build_treatment_facility_nodes
 from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
+from nereid.core.io import parse_configuration_logic
+from nereid.core.units import update_unit_registry
+from nereid.src.treatment_facility.constructors import build_treatment_facility_nodes
 
 
 @update_unit_registry

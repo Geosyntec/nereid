@@ -1,13 +1,12 @@
-from typing import Optional, IO, Dict, Union, Tuple, List
-from io import BytesIO
 from functools import lru_cache, partial
+from io import BytesIO
 from itertools import cycle
-
-import numpy
-import networkx as nx
-import orjson as json
+from typing import IO, Dict, List, Optional, Tuple, Union
 
 import matplotlib as mpl
+import networkx as nx
+import numpy
+import orjson as json
 from matplotlib import pyplot as plt
 
 

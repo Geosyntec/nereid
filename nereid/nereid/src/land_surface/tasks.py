@@ -1,14 +1,14 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 import pandas
 
 from nereid.core.io import parse_configuration_logic
 from nereid.core.units import update_unit_registry
-from nereid.src.wq_parameters import init_wq_parameters
 from nereid.src.land_surface.loading import (
     detailed_loading_results,
     summary_loading_results,
 )
+from nereid.src.wq_parameters import init_wq_parameters
 
 
 @update_unit_registry

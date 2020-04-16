@@ -1,14 +1,14 @@
-from copy import deepcopy
 import json
+from copy import deepcopy
 
-import pytest
-import numpy
 import networkx as nx
+import numpy
+import pytest
 
 from nereid.api.api_v1.models import watershed_models
 from nereid.core import config
 from nereid.src.network.algorithms import get_subset
-from nereid.src.network.utils import nxGraph_to_dict, graph_factory
+from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.tests.utils import attrs_to_resubmit, check_subgraph_response_equal
 
 

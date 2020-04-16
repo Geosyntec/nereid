@@ -2,7 +2,6 @@ from typing import Any, Dict
 
 from nereid.core.units import update_unit_registry
 from nereid.src.nomograph.nomo import build_nomo
-
 from nereid.src.watershed.solve_watershed import (
     initialize_graph,
     solve_watershed_loading,
