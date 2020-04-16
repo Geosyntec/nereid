@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 
 from fastapi import Depends
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, root_validator, validator
 
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_models_with_discriminator
@@ -27,10 +27,24 @@ class FlowFacility(FacilityBase):
     constructor: str = "flow_facility_constructor"
 
 
-class LowFlowFacility(FlowFacility):
-    design_capacity_cfs: float
+class LowFlowFacility(FacilityBase):
+    treatment_rate_cfs: Optional[float] = None
+    design_capacity_cfs: Optional[float] = None
+    tributary_area_tc_min: float = Field(5.0, le=60)
     months_operational: str = Field("both", regex="summer$|winter$|both$")
     constructor: str = "dw_and_low_flow_facility_constructor"
+
+    @root_validator(pre=True)
+    def one_or_both(cls, values):
+        _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
+        if all([values.get(v) is None for v in _fields]):
+            raise ValueError(
+                "One or both of 'treatment_rate_cfs' and 'design_capacity_cfs' are required."
+            )
+        else:
+            values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
+            values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
+        return values
 
 
 class OnlineFaciltyBase(FacilityBase):
