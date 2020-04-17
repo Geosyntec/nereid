@@ -81,7 +81,7 @@ def solution_sequence_response(client):
 
     min_branch_size = [2, 6, 10, 50]
     n_graphs = [1, 3, 5, 10]
-    min_max = [(10, 11), (20, 40)]
+    min_max = [(3, 4), (10, 11), (20, 40)]
 
     responses = {}
 

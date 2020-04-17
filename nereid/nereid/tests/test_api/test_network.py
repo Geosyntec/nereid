@@ -230,8 +230,8 @@ def test_get_solution_sequence(
 
 @pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("min_branch_size", [6])
-@pytest.mark.parametrize("n_graphs", [3])
-@pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
+@pytest.mark.parametrize("n_graphs", [1, 3])
+@pytest.mark.parametrize("min_max", [(3, 4), (10, 11), (20, 40)])
 def test_get_render_solution_sequence(
     client, solution_sequence_response, min_branch_size, n_graphs, min_max
 ):
