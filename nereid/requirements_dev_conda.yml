@@ -1,0 +1,44 @@
+name: nereid_dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7.*
+  - pip=20.*
+
+# business logic
+  - networkx=2.4.*
+  - numpy=1.18.*
+  - pandas=1.0.*
+  - scipy=1.4.*
+
+# web
+  - uvicorn=0.11.*  
+  - aiofiles=0.4.*
+  - redis
+  - redis-py
+  - celery=4.4.*
+  - pydantic=1.*
+  - jinja2=2.11.*
+  - requests
+
+# viz
+  - matplotlib=3.2.*
+  - graphviz
+  - pydot
+
+# tests
+  - pytest
+  - coverage
+  - codecov
+  - mypy
+  - black
+
+# dev
+  - jupyter
+  - tqdm
+
+# pip
+  - pip:
+    - fastapi=0.54.*
+    - orjson=2.6.5

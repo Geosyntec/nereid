@@ -1,0 +1,17 @@
+{
+  "directed": true,
+  "edges": [
+    {
+      "source": "A",
+      "target": "B"
+    },
+    {
+      "source": "B",
+      "target": "C"
+    },
+    {
+      "source": "C",
+      "target": "A"
+    }
+  ]
+}

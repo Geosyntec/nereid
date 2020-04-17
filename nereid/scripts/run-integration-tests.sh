@@ -1,0 +1,1 @@
+pytest -xvv nereid/data

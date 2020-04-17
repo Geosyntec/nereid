@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  nereid:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: nereid
+  celeryworker:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: celeryworker-edge
+  nereid-tests:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: nereid-edge-tests
+  redis:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: redis
+  flower:
+    build:
+      context: ./nereid
+      dockerfile: Dockerfile.multi
+      target: flower
