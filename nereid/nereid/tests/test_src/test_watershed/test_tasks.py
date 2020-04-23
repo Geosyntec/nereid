@@ -19,7 +19,7 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
     response_dict = solve_watershed(
         watershed=watershed_request, treatment_pre_validated=False, context=context,
     )
-    result = response_dict["results"]
+    result = response_dict["results"] + response_dict["leaf_results"]
     outfall_results = [n for n in result if n["node_id"] == "0"][0]
     assert len(result) == len(watershed_request["graph"]["nodes"])
     assert all([len(n["node_errors"]) == 0 for n in result])
@@ -60,7 +60,7 @@ def test_solve_watershed_with_treatment(
         watershed=watershed_request, treatment_pre_validated=False, context=context,
     )
 
-    result = response_dict["results"]
+    result = response_dict["results"] + response_dict["leaf_results"]
     outfall_results = [n for n in result if n["node_id"] == "0"][0]
     assert len(result) == len(watershed_request["graph"]["nodes"])
     assert all([len(n["node_errors"]) == 0 for n in result])

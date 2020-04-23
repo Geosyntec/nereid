@@ -52,15 +52,13 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
         subgraph_response_dict = solve_watershed(subg_request, False, context=context,)
         subgraph_results = subgraph_response_dict["results"]
 
-        _batch = [res for res in subgraph_results if not res["_is_leaf"]]
-        presults.extend(_batch)
-
-        db = db.combine_first(pandas.DataFrame(_batch).set_index("node_id"))
+        presults.extend(subgraph_results)
+        db = db.combine_first(pandas.DataFrame(subgraph_results).set_index("node_id"))
 
     response_dict = solve_watershed(
         watershed=watershed_request, treatment_pre_validated=False, context=context,
     )
-    results = response_dict["results"]
+    results = response_dict["results"] + response_dict["leaf_results"]
 
     check_db = pandas.DataFrame(results).set_index("node_id").sort_index(0)
     check_results_dataframes(db.sort_index(0), check_db)

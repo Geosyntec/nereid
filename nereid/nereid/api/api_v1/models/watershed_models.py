@@ -409,7 +409,9 @@ class Watershed(BaseModel):
 
 class WatershedResults(BaseModel):
     results: List[Result]
+    leaf_results: List[Result]
     errors: Optional[List[str]] = None
+    warnings: Optional[List[str]] = None
 
 
 class WatershedResponse(JSONAPIResponse):
