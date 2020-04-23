@@ -44,7 +44,8 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
     assert grjson["status"].lower() != "failure"
 
     if grjson["status"].lower() == "success":  # pragma: no branch
-        assert len(grjson["data"]["results"]) == size
+        grlen = len(grjson["data"]["results"]) + len(grjson["data"]["leaf_results"])
+        assert grlen == size, (grlen, size)
 
 
 def test_post_solve_watershed_stable(
