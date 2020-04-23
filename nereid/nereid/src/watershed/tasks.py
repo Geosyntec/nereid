@@ -30,12 +30,18 @@ def solve_watershed(
 
     build_nomo.cache_clear()
 
-    g, errors = initialize_graph(watershed, treatment_pre_validated, context,)
-    response["errors"] = errors
+    g, msgs = initialize_graph(watershed, treatment_pre_validated, context,)
+    response["errors"] = [e for e in msgs if "error" in e.lower()]
+    response["warnings"] = [w for w in msgs if "warning" in w.lower()]
 
-    solve_watershed_loading(g, context=context)
-    results = [dct for n, dct in g.nodes(data=True)]
+    if len(response["errors"]) == 0:  # pragma: no branch
+        solve_watershed_loading(g, context=context)
 
-    response["results"] = results
+        all_results = [dct for n, dct in g.nodes(data=True)]
+        results = [dct for dct in all_results if not dct["_is_leaf"]]
+        leafs = [dct for dct in all_results if dct["_is_leaf"]]
+
+        response["results"] = results
+        response["leaf_results"] = leafs
 
     return response
