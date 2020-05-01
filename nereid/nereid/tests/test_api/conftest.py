@@ -117,6 +117,8 @@ def land_surface_loading_responses(client, land_surface_loading_response_dicts):
         payload = json.dumps(ls_request)
         route = API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
         response = client.post(route, data=payload)
+        assert response.status_code == 200, (response, detail_tf, nrows, nnodes)
+
         responses[(detail_tf, nrows, nnodes)] = response
 
     yield responses

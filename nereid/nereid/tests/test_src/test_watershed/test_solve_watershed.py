@@ -10,8 +10,8 @@ from nereid.src.watershed.solve_watershed import (
     initialize_graph,
     solve_watershed_loading,
 )
+from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import (
-    attrs_to_resubmit,
     check_graph_data_equal,
     generate_random_watershed_solve_request_from_graph,
 )

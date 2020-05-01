@@ -408,8 +408,9 @@ class Watershed(BaseModel):
 
 
 class WatershedResults(BaseModel):
-    results: List[Result]
-    leaf_results: List[Result]
+    results: Optional[List[Result]] = None
+    leaf_results: Optional[List[Result]] = None
+    previous_results_keys: Optional[List[str]] = None
     errors: Optional[List[str]] = None
     warnings: Optional[List[str]] = None
 

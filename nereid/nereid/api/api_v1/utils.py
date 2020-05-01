@@ -65,9 +65,13 @@ def get_valid_context(state: str = "state", region: str = "region") -> Dict[str,
     if not isvalid:
         raise HTTPException(status_code=400, detail=msg)
 
-    task = bg.background_validate_request_context.s(context=context).apply_async()
-    isvalid, msg = task.get()
-    if not isvalid:  # pragma: no cover
-        raise HTTPException(status_code=400, detail="Error in celery worker: " + msg)
+    if not config.NEREID_FORCE_FOREGROUND:  # pragma: no branch
+
+        task = bg.background_validate_request_context.s(context=context).apply_async()
+        isvalid, msg = task.get()
+        if not isvalid:  # pragma: no cover
+            raise HTTPException(
+                status_code=400, detail="Error in celery worker: " + msg
+            )
 
     return context

@@ -6,6 +6,7 @@ from nereid.src.watershed.solve_watershed import (
     initialize_graph,
     solve_watershed_loading,
 )
+from nereid.src.watershed.utils import attrs_to_resubmit
 
 
 @update_unit_registry
@@ -40,8 +41,10 @@ def solve_watershed(
         all_results = [dct for n, dct in g.nodes(data=True)]
         results = [dct for dct in all_results if not dct["_is_leaf"]]
         leafs = [dct for dct in all_results if dct["_is_leaf"]]
+        previous_results_keys = attrs_to_resubmit(all_results)
 
         response["results"] = results
         response["leaf_results"] = leafs
+        response["previous_results_keys"] = previous_results_keys
 
     return response
