@@ -7,7 +7,8 @@ import pytest
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.src.watershed.tasks import solve_watershed
-from nereid.tests.utils import attrs_to_resubmit, check_subgraph_response_equal
+from nereid.src.watershed.utils import attrs_to_resubmit
+from nereid.tests.utils import check_subgraph_response_equal
 
 
 @pytest.mark.parametrize("n_nodes", [50, 100])

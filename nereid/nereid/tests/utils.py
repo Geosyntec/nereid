@@ -386,28 +386,6 @@ def generate_random_watershed_solve_request(context, n_nodes=55, pct_tmnt=0.5, s
     return request
 
 
-def minimum_attrs(dct):
-    INCLUDE_TAGS = [
-        "_cumul",
-        "_discharged",
-        "_total_retained",
-        "_total_removed",
-    ]
-
-    EXCLUDE_TAGS = ["_total_discharged"]
-
-    f = lambda x: (
-        any([i in x for i in INCLUDE_TAGS]) and not any([i in x for i in EXCLUDE_TAGS])
-    )
-
-    return list(filter(f, dct.keys()))
-
-
-def attrs_to_resubmit(collection: List[Dict[str, Any]]):
-
-    return list(set(k for data in collection for k in minimum_attrs(data)))
-
-
 def check_subgraph_response_equal(subgraph_results, original_results):
 
     for subg_result in subgraph_results:
