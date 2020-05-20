@@ -177,6 +177,12 @@ def solve_node(
     data["node_warnings"] = []
     data["_is_leaf"] = False
 
+    if data.get("node_id") is None:
+        data["node_id"] = node
+        data["node_warnings"].append(
+            "WARNING: This node is missing from all input tables."
+        )
+
     # leaf nodes are read only
     if g.in_degree(node) < 1:
         data["_is_leaf"] = True
