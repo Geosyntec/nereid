@@ -375,6 +375,7 @@ def test_facility_load_reduction(contexts, tmnt_facility):
     solve_watershed_loading(g, context)
 
     assert all([len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True)])
+    assert len(g.nodes["0"]["node_warnings"]) >= 1  # there is no node_id for this node.
 
     sum_ret = sum(nx.get_node_attributes(g, "runoff_volume_cuft_retained").values())
     sum_inflow = sum(nx.get_node_attributes(g, "runoff_volume_cuft").values())
