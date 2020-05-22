@@ -35,7 +35,7 @@ def solve_watershed(
     response["errors"] = [e for e in msgs if "error" in e.lower()]
     response["warnings"] = [w for w in msgs if "warning" in w.lower()]
 
-    if len(response["errors"]) == 0:  # pragma: no branch
+    try:  # pragma: no branch
         solve_watershed_loading(g, context=context)
 
         all_results = [dct for n, dct in g.nodes(data=True)]
@@ -46,5 +46,8 @@ def solve_watershed(
         response["results"] = results
         response["leaf_results"] = leafs
         response["previous_results_keys"] = previous_results_keys
+
+    except Exception as e:  # pragma: no cover
+        response["errors"].append(str(e))
 
     return response
