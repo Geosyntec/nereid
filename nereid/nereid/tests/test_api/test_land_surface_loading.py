@@ -22,7 +22,6 @@ def test_post_land_surface_loading(
     assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("details", ["true", "false"])
 @pytest.mark.parametrize("n_rows", [10, 50, 5000])
 @pytest.mark.parametrize("n_nodes", [5, 50, 1000])
@@ -34,12 +33,15 @@ def test_get_land_surface_loading(
     post_response = land_surface_loading_responses[key]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
+    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+        grjson = prjson
+    else:
+        result_route = prjson["result_route"]
 
-    get_response = client.get(result_route)
-    assert get_response.status_code == 200
+        get_response = client.get(result_route)
+        assert get_response.status_code == 200
 
-    grjson = get_response.json()
+        grjson = get_response.json()
     assert land_surface_models.LandSurfaceResponse(**prjson)
     assert grjson["task_id"] == prjson["task_id"]
     assert grjson["result_route"] == prjson["result_route"]

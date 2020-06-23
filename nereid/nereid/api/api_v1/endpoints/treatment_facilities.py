@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.encoders import jsonable_encoder
@@ -8,6 +8,7 @@ import nereid.bg_worker as bg
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,
+    TreatmentFacilitiesStrict,
     validate_treatment_facility_models,
 )
 from nereid.api.api_v1.utils import get_valid_context, run_task, standard_json_response
@@ -16,7 +17,7 @@ router = APIRouter()
 
 
 def validate_facility_request(
-    treatment_facilities: TreatmentFacilities = Body(
+    treatment_facilities: Union[TreatmentFacilities, TreatmentFacilitiesStrict] = Body(
         ...,
         example={
             "treatment_facilities": [
@@ -97,13 +98,16 @@ def validate_facility_request(
         },
     ),
     context: dict = Depends(get_valid_context),
-) -> Tuple[TreatmentFacilities, Dict[str, Any]]:
+) -> Tuple[TreatmentFacilitiesStrict, Dict[str, Any]]:
 
     unvalidated_data = treatment_facilities.dict()["treatment_facilities"]
 
     valid_models = validate_treatment_facility_models(unvalidated_data, context)
 
-    return TreatmentFacilities.construct(treatment_facilities=valid_models), context
+    return (
+        TreatmentFacilitiesStrict.construct(treatment_facilities=valid_models),
+        context,
+    )
 
 
 @router.post(
@@ -113,7 +117,7 @@ def validate_facility_request(
     response_class=ORJSONResponse,
 )
 async def initialize_treatment_facility_parameters(
-    tmnt_facility_req: Tuple[TreatmentFacilities, Dict[str, Any]] = Depends(
+    tmnt_facility_req: Tuple[TreatmentFacilitiesStrict, Dict[str, Any]] = Depends(
         validate_facility_request
     )
 ) -> Dict[str, Any]:
