@@ -140,6 +140,23 @@ def treatment_facility_responses(client, valid_treatment_facility_dicts):
 
 
 @pytest.fixture(scope="module")
+def default_context_treatment_facility_responses(
+    client, default_context_treatment_facility_dicts
+):
+
+    responses = {}
+
+    for name, dct in default_context_treatment_facility_dicts.items():
+
+        payload = json.dumps({"treatment_facilities": [dct]})
+        route = API_LATEST + "/treatment_facility/validate"
+        response = client.post(route, data=payload)
+        responses[name] = response
+
+    yield responses
+
+
+@pytest.fixture(scope="module")
 def treatment_site_responses(client, valid_treatment_site_requests):
 
     responses = {}

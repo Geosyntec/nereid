@@ -293,6 +293,27 @@ def valid_treatment_facility_dicts():
 
 
 @pytest.fixture(scope="module")
+def default_context_treatment_facility_dicts(contexts):
+    facility_type_dict = contexts["default"]["api_recognize"]["treatment_facility"][
+        "facility_type"
+    ]
+
+    responses = {}
+
+    for facility_type, dct in facility_type_dict.items():
+
+        model_str = dct["validator"]
+        req_dct = generate_random_treatment_facility_request_node(
+            model_str, facility_type, "10101200", node_id="default"
+        )
+        _ = req_dct.pop("constructor")
+
+        responses[facility_type] = req_dct
+
+    yield responses
+
+
+@pytest.fixture(scope="module")
 def valid_treatment_facilities(valid_treatment_facility_dicts):
     yield list(valid_treatment_facility_dicts.values())
 
