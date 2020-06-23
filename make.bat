@@ -10,6 +10,7 @@ if /i %1 == typecheck goto :typecheck
 if /i %1 == coverage goto :coverage
 if /i %1 == dev-server goto :dev-server
 if /i %1 == restart goto :restart
+if /i %1 == lint goto :lint
 
 :help
 echo Commands:
@@ -21,6 +22,7 @@ echo   - down        : stops containers and dismounts volumes
 echo   - typecheck   : runs mypy typechecker
 echo   - coverage    : calculates code coverage of tests within docker
 echo   - dev-server  : starts a local development server with 'reload' and 'foreground' tasks
+echo   - restart     : restarts worker and broker processes
 echo.
 echo Usage:
 echo $make [command]
@@ -68,4 +70,8 @@ goto :eof
 
 :restart
 docker-compose restart redis celeryworker
+goto :eof
+
+:lint
+bash scripts/lint.sh
 goto :eof

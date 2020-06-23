@@ -9,7 +9,7 @@ jobs:
     # from the docker images. This doesn't require services like redis or celeryworkers.
     - name: python_tests
       language: python
-      python: 3.7.6
+      python: 3.8
       before_install:
         - sudo apt-get install graphviz
         - pip install --upgrade pip
@@ -24,7 +24,7 @@ jobs:
     # This checks that the source code all runs on latest versions of python packages.
     - name: python_edge
       language: python
-      python: 3.7.6
+      python: 3.8
       before_install:
         - sudo apt-get install graphviz
         - pip install --upgrade pip
@@ -39,7 +39,7 @@ jobs:
     - name: docker_tests
       env: 
         - BUILD_SCRIPT_PATH=./scripts/build_dev.sh
-        - DOCKER_COMPOSE_VERSION=1.25.4
+        - DOCKER_COMPOSE_VERSION=1.25.5
         - COMPOSE_FILE=docker-stack.yml
       before_install:
         - sudo rm /usr/local/bin/docker-compose

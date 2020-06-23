@@ -1,7 +1,7 @@
 pytest==5.4.1
-coverage==5.0.4
-codecov==2.0.22
-requests==2.23.0
-mypy==0.770
+coverage==5.1
+codecov==2.1.7
+requests==2.24.0
+mypy==0.782
 black==19.10b0
 isort==4.3.21
