@@ -10,12 +10,12 @@ dependencies:
   - networkx=2.4.*
   - numpy=1.18.*
   - pandas=1.0.*
-  - scipy=1.4.*
+  - scipy=1.5.*
   - typing-extensions=3.7.4.*
 
 # web
   - uvicorn=0.11.*  
-  - aiofiles=0.4.*
+  - aiofiles=0.5.*
   - redis
   - redis-py
   - celery=4.4.*
@@ -38,8 +38,11 @@ dependencies:
 # dev
   - jupyter
   - tqdm
+  - xlrd
 
 # pip
   - pip:
-    - fastapi=0.54.*
-    - orjson=2.6.5
+    - fastapi==0.58.*
+    - orjson==3.1.*
+    - pint==0.13
+    - isort==4.3.*
