@@ -31,7 +31,6 @@ def test_post_network_validate(
         assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize(
     "post_response_name, isfast, isvalid",
     [
@@ -47,12 +46,15 @@ def test_get_network_validate(
     post_response = named_validation_responses[post_response_name]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
+    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+        grjson = prjson
+    else:
+        result_route = prjson["result_route"]
 
-    get_response = client.get(result_route)
-    assert get_response.status_code == 200
+        get_response = client.get(result_route)
+        assert get_response.status_code == 200
 
-    grjson = get_response.json()
+        grjson = get_response.json()
     assert network_models.NetworkValidationResponse(**grjson)
 
     assert grjson["task_id"] == prjson["task_id"]
@@ -65,7 +67,6 @@ def test_get_network_validate(
         assert grjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize(
     "post_response_name, exp",
     [
@@ -111,12 +112,15 @@ def test_get_finished_network_subgraph(
     post_response = named_subgraph_responses[post_response_name]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
+    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+        grjson = prjson
+    else:
+        result_route = prjson["result_route"]
 
-    get_response = client.get(result_route)
-    assert get_response.status_code == 200
+        get_response = client.get(result_route)
+        assert get_response.status_code == 200
 
-    grjson = get_response.json()
+        grjson = get_response.json()
     assert network_models.SubgraphResponse(**prjson)
 
     assert grjson["status"].lower() == "success"
@@ -202,7 +206,6 @@ def test_post_solution_sequence(
     assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
 @pytest.mark.parametrize("n_graphs", [1, 3, 5, 10])
 @pytest.mark.parametrize("min_max", [(10, 11), (20, 40)])
@@ -214,12 +217,15 @@ def test_get_solution_sequence(
     post_response = solution_sequence_response[key]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
+    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+        grjson = prjson
+    else:
+        result_route = prjson["result_route"]
 
-    get_response = client.get(result_route)
-    assert get_response.status_code == 200
+        get_response = client.get(result_route)
+        assert get_response.status_code == 200
 
-    grjson = get_response.json()
+        grjson = get_response.json()
     assert network_models.SolutionSequenceResponse(**prjson)
 
     assert grjson["status"].lower() == "success"

@@ -24,7 +24,6 @@ def test_post_solve_watershed(watershed_responses, size, pct_tmnt):
     assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("size", [50, 100])
 @pytest.mark.parametrize("pct_tmnt", [0, 0.3, 0.6])
 def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
@@ -33,12 +32,15 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
     post_response = watershed_responses[key]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
+    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+        grjson = prjson
+    else:
+        result_route = prjson["result_route"]
 
-    get_response = client.get(result_route)
-    assert get_response.status_code == 200
+        get_response = client.get(result_route)
+        assert get_response.status_code == 200
 
-    grjson = get_response.json()
+        grjson = get_response.json()
     assert watershed_models.WatershedResponse(**prjson)
     assert grjson["task_id"] == prjson["task_id"]
     assert grjson["result_route"] == prjson["result_route"]

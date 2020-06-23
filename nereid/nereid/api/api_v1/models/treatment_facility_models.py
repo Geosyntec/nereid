@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from fastapi import Depends
 from pydantic import BaseModel, Field, root_validator, validator
+from typing_extensions import Literal
 
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_models_with_discriminator
@@ -24,7 +25,9 @@ class NTFacility(FacilityBase):
 class FlowFacility(FacilityBase):
     treatment_rate_cfs: float
     tributary_area_tc_min: float = Field(5.0, le=60)
-    constructor: str = "flow_facility_constructor"
+    constructor: Optional[
+        Literal["flow_facility_constructor"]
+    ] = "flow_facility_constructor"
 
 
 class LowFlowFacility(FacilityBase):
@@ -32,7 +35,9 @@ class LowFlowFacility(FacilityBase):
     design_capacity_cfs: Optional[float] = None
     tributary_area_tc_min: float = Field(5.0, le=60)
     months_operational: str = Field("both", regex="summer$|winter$|both$")
-    constructor: str = "dw_and_low_flow_facility_constructor"
+    constructor: Optional[
+        Literal["dw_and_low_flow_facility_constructor"]
+    ] = "dw_and_low_flow_facility_constructor"
 
     @root_validator(pre=True)
     def one_or_both(cls, values):
@@ -66,13 +71,17 @@ class RetentionFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     area_sqft: float
     inf_rate_inhr: float
-    constructor: str = "retention_facility_constructor"
+    constructor: Optional[
+        Literal["retention_facility_constructor"]
+    ] = "retention_facility_constructor"
 
 
 class DryWellFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     treatment_rate_cfs: float
-    constructor: str = "dry_well_facility_constructor"
+    constructor: Optional[
+        Literal["dry_well_facility_constructor"]
+    ] = "dry_well_facility_constructor"
 
 
 class BioInfFacility(OnlineFaciltyBase):
@@ -81,7 +90,9 @@ class BioInfFacility(OnlineFaciltyBase):
     area_sqft: float
     media_filtration_rate_inhr: float
     hsg: str
-    constructor: str = "bioinfiltration_facility_constructor"
+    constructor: Optional[
+        Literal["bioinfiltration_facility_constructor"]
+    ] = "bioinfiltration_facility_constructor"
 
 
 class RetAndTmntFacility(OnlineFaciltyBase):
@@ -90,14 +101,18 @@ class RetAndTmntFacility(OnlineFaciltyBase):
     area_sqft: float
     treatment_drawdown_time_hr: float
     hsg: str
-    constructor: str = "retention_and_treatment_facility_constructor"
+    constructor: Optional[
+        Literal["retention_and_treatment_facility_constructor"]
+    ] = "retention_and_treatment_facility_constructor"
 
 
 class TmntFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     area_sqft: float
     media_filtration_rate_inhr: float
-    constructor: str = "treatment_facility_constructor"
+    constructor: Optional[
+        Literal["treatment_facility_constructor"]
+    ] = "treatment_facility_constructor"
 
 
 class FlowAndRetFacility(OnlineFaciltyBase):
@@ -105,14 +120,18 @@ class FlowAndRetFacility(OnlineFaciltyBase):
     area_sqft: float
     depth_ft: float
     hsg: str
-    constructor: str = "flow_and_retention_facility_constructor"
+    constructor: Optional[
+        Literal["flow_and_retention_facility_constructor"]
+    ] = "flow_and_retention_facility_constructor"
 
 
 class CisternFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     winter_demand_cfs: float
     summer_demand_cfs: float
-    constructor: str = "cistern_facility_constructor"
+    constructor: Optional[
+        Literal["cistern_facility_constructor"]
+    ] = "cistern_facility_constructor"
 
 
 class PermPoolFacility(OnlineFaciltyBase):
@@ -122,7 +141,9 @@ class PermPoolFacility(OnlineFaciltyBase):
     treatment_drawdown_time_hr: float
     winter_demand_cfs: float
     summer_demand_cfs: float
-    constructor: str = "perm_pool_facility_constructor"
+    constructor: Optional[
+        Literal["perm_pool_facility_constructor"]
+    ] = "perm_pool_facility_constructor"
 
 
 STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for validation
@@ -155,6 +176,11 @@ TREATMENT_FACILITY_MODELS = [
 
 
 class TreatmentFacilities(BaseModel):
+    treatment_facilities: List[Dict[str, Any]]
+    errors: Optional[List[str]] = None
+
+
+class TreatmentFacilitiesStrict(BaseModel):
     treatment_facilities: List[STRUCTURAL_FACILITY_TYPE]
     errors: Optional[List[str]] = None
 
