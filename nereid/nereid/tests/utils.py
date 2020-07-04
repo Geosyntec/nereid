@@ -186,18 +186,9 @@ def generate_random_treatment_site_request(node_list, context):
 def generate_random_treatment_facility_request_node(
     model_str, facility_type, ref_data_key, node_id="default"
 ):
-    # if subbasins is None:  # pragma: no cover
-    #     ls_data, _ = load_ref_data("land_surface_table", context)
-    #     subbasins = ls_data["subbasin"]
-
-    # mapping = context["api_recognize"]["treatment_facility"]["facility_type"]
-    # facility_types = list(mapping.keys())
-    # facility_type = numpy.random.choice(facility_types)
-
-    # model_str = mapping[facility_type]["validator"]
     model = getattr(treatment_facility_models, model_str)
-    name = model.schema()["title"]
     dct = create_random_model_dict(model=model, can_fail=False)
+    _ = dct.pop("constructor")
 
     dct["node_id"] = node_id
     dct["facility_type"] = facility_type
@@ -341,7 +332,7 @@ def generate_random_graph_request(n_nodes, seed=0):  # pragma: no cover
 
 def generate_random_watershed_solve_request_from_graph(g, context, pct_tmnt=0.5):
 
-    graph_dict = {"graph": clean_graph_dict(g)}
+    request = {"graph": clean_graph_dict(g)}
 
     treatment_facility_nodes = []
     treatment_site_nodes = []
@@ -355,22 +346,20 @@ def generate_random_watershed_solve_request_from_graph(g, context, pct_tmnt=0.5)
         else:
             land_surface_nodes.append(n)
 
-    treatment_facility_dict = generate_random_treatment_facility_request(
-        treatment_facility_nodes, context
-    )
-    treatment_site_dict = generate_random_treatment_site_request(
-        treatment_site_nodes, context
-    )
-    land_surface_dict = generate_random_land_surface_request(
-        land_surface_nodes, context
-    )
-
-    request = {
-        **graph_dict,
-        **treatment_facility_dict,
-        **treatment_site_dict,
-        **land_surface_dict,
-    }
+    if treatment_facility_nodes:
+        request.update(
+            generate_random_treatment_facility_request(
+                treatment_facility_nodes, context
+            )
+        )
+    if treatment_site_nodes:
+        request.update(
+            generate_random_treatment_site_request(treatment_site_nodes, context)
+        )
+    if land_surface_nodes:  # pragma: no branch
+        request.update(
+            generate_random_land_surface_request(land_surface_nodes, context)
+        )
 
     return request
 

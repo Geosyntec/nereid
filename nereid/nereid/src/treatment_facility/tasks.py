@@ -17,7 +17,7 @@ def initialize_treatment_facilities(
     context: Dict[str, Any],
 ) -> Dict[str, Any]:
 
-    treatment_facility_list = treatment_facilities["treatment_facilities"]
+    treatment_facility_list = treatment_facilities.get("treatment_facilities") or []
     if not pre_validated:
         tmnt_model = validate_treatment_facility_models(
             treatment_facility_list, context
