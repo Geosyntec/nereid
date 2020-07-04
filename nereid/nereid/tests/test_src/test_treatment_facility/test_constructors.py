@@ -30,6 +30,7 @@ def test_build_treatment_facility_nodes(
 ):
 
     context = contexts[ctxt_key]
+    print(valid_treatment_facility_dicts[model])
     tmnt_facilities = pandas.DataFrame([valid_treatment_facility_dicts[model]])
     df, messages = parse_configuration_logic(
         df=pandas.DataFrame(tmnt_facilities),

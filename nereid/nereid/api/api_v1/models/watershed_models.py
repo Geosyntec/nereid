@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
@@ -15,9 +15,11 @@ from nereid.api.api_v1.models.treatment_site_models import TreatmentSite
 class Watershed(BaseModel):
     graph: Graph
     land_surfaces: List[LandSurface]
-    treatment_facilities: Optional[List[STRUCTURAL_FACILITY_TYPE]] = []
-    treatment_sites: Optional[List[TreatmentSite]] = []
-    previous_results: Optional[List[PreviousResult]] = []
+    treatment_facilities: Optional[
+        Union[List[Dict[str, Any]], List[STRUCTURAL_FACILITY_TYPE]]
+    ] = None
+    treatment_sites: Optional[List[TreatmentSite]] = None
+    previous_results: Optional[List[PreviousResult]] = None
 
     class Config:
         schema_extra = {

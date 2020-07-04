@@ -12,6 +12,7 @@ dependencies:
   - pandas=1.0.*
   - scipy=1.5.*
   - typing-extensions=3.7.4.*
+  - pyyaml=5.3.*
 
 # web
   - uvicorn=0.11.*  

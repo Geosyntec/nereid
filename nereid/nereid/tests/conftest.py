@@ -285,9 +285,10 @@ def valid_treatment_facility_dicts():
     for model in TREATMENT_FACILITY_MODELS:
 
         model_str = model.schema()["title"]
-        responses[model_str] = generate_random_treatment_facility_request_node(
+        dct = generate_random_treatment_facility_request_node(
             model_str, model_str, "10101200", node_id="default"
         )
+        responses[model_str] = model(**dct).dict()
 
     yield responses
 
@@ -306,7 +307,6 @@ def default_context_treatment_facility_dicts(contexts):
         req_dct = generate_random_treatment_facility_request_node(
             model_str, facility_type, "10101200", node_id="default"
         )
-        _ = req_dct.pop("constructor")
 
         responses[facility_type] = req_dct
 

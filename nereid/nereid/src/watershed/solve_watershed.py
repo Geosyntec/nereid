@@ -59,10 +59,10 @@ def initialize_graph(
 
     data: Dict[str, Any] = {}
     for dictlist in [
-        watershed.get("previous_results", []),
-        land_surface.get("summary", []),
-        treatment_facilities.get("treatment_facilities", []),
-        treatment_sites.get("treatment_sites", []),
+        watershed.get("previous_results") or [],
+        land_surface.get("summary") or [],
+        treatment_facilities.get("treatment_facilities") or [],
+        treatment_sites.get("treatment_sites") or [],
     ]:
         node_data = dictlist_to_dict(dictlist, "node_id")
         for n, _data in node_data.items():

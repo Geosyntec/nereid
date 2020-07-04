@@ -22,46 +22,51 @@ def land_surface_loading(
     aggregate the load to each node_id, and are always returned.
     """
 
-    df = pandas.DataFrame(land_surfaces["land_surfaces"])
-    df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
-
     response: Dict[str, Any] = {}
     response["errors"] = []
 
-    df, messages = parse_configuration_logic(
-        df=df,
-        config_section="api_recognize",
-        config_object="land_surfaces",
-        context=context,
-    )
+    land_surface_list = land_surfaces.get("land_surfaces") or []
 
-    if len(messages) > 0:
-        response["errors"].extend(messages)
+    if land_surface_list:  # pragma: no branch
+        df = pandas.DataFrame(land_surface_list)
+        df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
 
-    wet_weather_parameters = init_wq_parameters("land_surface_emc_table", context)
-    dry_weather_parameters = init_wq_parameters(
-        "dry_weather_land_surface_emc_table", context
-    )
+        df, messages = parse_configuration_logic(
+            df=df,
+            config_section="api_recognize",
+            config_object="land_surfaces",
+            context=context,
+        )
 
-    seasons = (
-        context.get("project_reference_data", {})
-        .get("dry_weather_flow_table", {})
-        .get("seasons", {})
-    )
+        if len(messages) > 0:
+            response["errors"].extend(messages)
 
-    detailed_results = detailed_loading_results(
-        df, wet_weather_parameters, dry_weather_parameters, seasons,
-    )
-    summary_results = summary_loading_results(
-        detailed_results,
-        wet_weather_parameters,
-        dry_weather_parameters,
-        season_names=seasons.keys(),
-    )
+        wet_weather_parameters = init_wq_parameters("land_surface_emc_table", context)
+        dry_weather_parameters = init_wq_parameters(
+            "dry_weather_land_surface_emc_table", context
+        )
 
-    response["summary"] = summary_results.fillna(0).to_dict(orient="records")
+        seasons = (
+            context.get("project_reference_data", {})
+            .get("dry_weather_flow_table", {})
+            .get("seasons", {})
+        )
 
-    if details:
-        response["details"] = detailed_results.fillna(0).to_dict(orient="records")
+        detailed_results = detailed_loading_results(
+            df, wet_weather_parameters, dry_weather_parameters, seasons,
+        )
+        summary_results = summary_loading_results(
+            detailed_results,
+            wet_weather_parameters,
+            dry_weather_parameters,
+            season_names=seasons.keys(),
+        )
+
+        response["summary"] = summary_results.fillna(0).to_dict(orient="records")
+
+        if details:
+            response["details"] = detailed_results.fillna(0).to_dict(orient="records")
+    else:  # pragma: no cover
+        response["errors"].append("ERROR: no land surface input data provided.")
 
     return response

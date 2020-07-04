@@ -5,7 +5,7 @@ from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
 from nereid.api.api_v1.models.treatment_facility_models import (
-    TreatmentFacilities,
+    TreatmentFacilitiesStrict,
     validate_treatment_facility_models,
 )
 from nereid.api.api_v1.models.watershed_models import Watershed, WatershedResponse
@@ -21,16 +21,17 @@ def validate_watershed_request(
 
     watershed: Dict[str, Any] = watershed_req.dict(by_alias=True)
 
-    unvalidated_treatment_facilities = watershed["treatment_facilities"]
-    valid_models = validate_treatment_facility_models(
-        unvalidated_treatment_facilities, context
-    )
-    validated_treatment_facilities = TreatmentFacilities.construct(
-        treatment_facilities=valid_models
-    )
-    watershed["treatment_facilities"] = validated_treatment_facilities.dict()[
-        "treatment_facilities"
-    ]
+    unvalidated_treatment_facilities = watershed.get("treatment_facilities")
+    if unvalidated_treatment_facilities is not None:
+        valid_models = validate_treatment_facility_models(
+            unvalidated_treatment_facilities, context
+        )
+        validated_treatment_facilities = TreatmentFacilitiesStrict.construct(
+            treatment_facilities=valid_models
+        )
+        watershed["treatment_facilities"] = validated_treatment_facilities.dict()[
+            "treatment_facilities"
+        ]
 
     return watershed, context
 

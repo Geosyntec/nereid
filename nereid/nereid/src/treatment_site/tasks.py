@@ -9,7 +9,7 @@ def initialize_treatment_sites(
 
     response: Dict[str, Any] = {"errors": []}
 
-    sites = treatment_sites["treatment_sites"]
+    sites = treatment_sites.get("treatment_sites") or []
 
     # tmnt_map is connects the facility name with the treatment
     # key for the influent-> effluent concentration transformation
