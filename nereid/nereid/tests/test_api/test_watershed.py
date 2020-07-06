@@ -53,6 +53,8 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
             errors = res.get("errors", "")
             assert "error" not in errors.lower()
 
+            assert res.get('_version') is not None
+
 
 def test_post_solve_watershed_stable(
     client, watershed_requests, watershed_responses, watershed_test_case
