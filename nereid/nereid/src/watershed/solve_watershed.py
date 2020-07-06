@@ -93,8 +93,8 @@ def solve_watershed_loading(g: nx.DiGraph, context: Dict[str, Any]) -> None:
 
     nomograph_map = load_nomograph_mapping(context=context)
 
-    nereid_version = context.get('version', 'error: no version info')
-    cfg_version = context.get('config_date', 'error: no config version info')
+    nereid_version = context.get("version", "error: no version info")
+    cfg_version = context.get("config_date", "error: no config version info")
 
     for node in nx.lexicographical_topological_sort(g):
         g.nodes[node]["_version"] = nereid_version
