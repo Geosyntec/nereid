@@ -13,6 +13,7 @@ class FacilityBase(BaseModel):
     facility_type: str
     ref_data_key: str
     design_storm_depth_inches: float = Field(..., gt=0)
+    eliminates_all_dry_weather_flow: bool = False
 
     class Config:
         extra = "allow"

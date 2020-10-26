@@ -13,6 +13,7 @@ class TreatmentSite(BaseModel):
     area_pct: float
     captured_pct: float
     retained_pct: float
+    eliminates_all_dry_weather_flow: bool = False
 
 
 class TreatmentSites(BaseModel):
