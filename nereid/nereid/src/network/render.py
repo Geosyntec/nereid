@@ -108,7 +108,6 @@ def render_subgraphs(
         node_shape="o",
         node_color="none",
         node_size=node_size * 2,
-        with_labels=False,
         label="requested nodes",
     )
 
@@ -122,7 +121,6 @@ def render_subgraphs(
             pos=layout,
             node_size=node_size,
             node_color=f"C{i}",
-            with_labels=True,
             label=f"subgraph {i+1}",
         )
 

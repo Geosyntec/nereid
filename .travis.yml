@@ -1,6 +1,10 @@
 language: shell
 os: linux
 dist: xenial
+env:
+  global:
+    - DOCKER_COMPOSE_VERSION=1.27.4
+    - COMPOSE_FILE=docker-stack.yml
 
 jobs:
   include:
@@ -39,8 +43,6 @@ jobs:
     - name: docker_tests
       env: 
         - BUILD_SCRIPT_PATH=./scripts/build_dev.sh
-        - DOCKER_COMPOSE_VERSION=1.25.5
-        - COMPOSE_FILE=docker-stack.yml
       before_install:
         - sudo rm /usr/local/bin/docker-compose
         - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -53,7 +55,6 @@ jobs:
         - docker-compose up -d
         - docker-compose ps
       script:
-        - docker-compose exec nereid-tests mypy -p nereid
         - docker-compose exec nereid-tests coverage run -m pytest -xv
       after_success:
         - docker-compose exec nereid-tests coverage report -m
@@ -67,12 +68,18 @@ jobs:
     - name: docker_edge
       env: 
         - BUILD_SCRIPT_PATH=./scripts/build_edge.sh
-        - COMPOSE_FILE=docker-stack.yml
       before_install:
+        # update docker
         - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
         - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
         - sudo apt-get update
         - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+        - docker --version
+        # update docker-compose
+        - sudo rm /usr/local/bin/docker-compose
+        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+        - chmod +x docker-compose
+        - sudo mv docker-compose /usr/local/bin
         - docker-compose --version
       install: 
         - chmod +x ${BUILD_SCRIPT_PATH}

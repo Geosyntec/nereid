@@ -5,71 +5,82 @@
 # time to build and is considerably more complex for scipy and pandas.
 
 
-From redis:6.0.5-alpine3.12 as redis
+FROM redis:6.0.8-alpine3.12 as redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:3.8-alpine3.12 as flower
+FROM python:3.8.6-alpine3.12 as flower
 RUN apk add --no-cache ca-certificates && update-ca-certificates
-RUN pip install --no-cache-dir redis==3.5.3 flower==0.9.4
+RUN pip install --no-cache-dir redis==3.5.3 flower==0.9.5 celery==4.4.7
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
 EXPOSE 5555
 USER nobody
 ENTRYPOINT ["flower"]
 
 
-FROM python:3.8-buster as builder
+FROM python:3.8.6-buster as builder
 COPY requirements.txt /requirements.txt
 COPY requirements_tests.txt /requirements_tests.txt
 COPY requirements_server.txt /requirements_server.txt
 RUN mkdir /core && \
   pip wheel \
-    --wheel-dir=/core \
-    -r /requirements.txt
+  --wheel-dir=/core \
+  -r /requirements.txt
 RUN mkdir /tsts && \
   pip wheel \
-    --wheel-dir=/tsts \
-    -r /requirements_tests.txt
+  --wheel-dir=/tsts \
+  -r /requirements_tests.txt
 RUN mkdir /serve && \
   pip wheel \
-    --wheel-dir=/serve \
-    -r /requirements_server.txt
+  --wheel-dir=/serve \
+  -r /requirements_server.txt
 
 
-FROM python:3.8-slim-buster as core
-COPY --from=builder /core /core
-COPY requirements.txt /requirements.txt
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends graphviz=2.40.1-6 && \ 
-  rm -rf /var/lib/apt/lists/* && \ 
-  pip install \
-    --no-index \
-    --no-cache-dir \
-    --find-links=/core \
-    -r /requirements.txt && \
-    rm -rf /core/* 
+FROM python:3.8.6-slim-buster as core-runtime
+RUN apt-get update -y \
+  && apt-get install -y --no-install-recommends graphviz=2.40.1-6 \ 
+  && rm -rf /var/lib/apt/lists/*
 COPY ./nereid /nereid/nereid
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
+ENV PATH=/root/.local/bin:$PATH
 
 
-FROM core as celeryworker
+FROM python:3.8.6-slim-buster as core-env
+COPY --from=builder /core /core
+COPY requirements.txt /requirements.txt
+RUN pip install \
+  --user \
+  --no-index \
+  --no-cache-dir \
+  --find-links=/core \
+  -r /requirements.txt \
+  && rm -rf /core/*
+
+
+FROM core-runtime as celeryworker
 ENV C_FORCE_ROOT=1
+COPY --from=core-env /root/.local /root/.local
 COPY ./scripts/run-worker.sh /run-worker.sh
 RUN chmod +x /run-worker.sh
 CMD ["bash", "/run-worker.sh"]
 
 
-FROM core as nereid
-COPY --from=builder /serve /serve
+FROM core-env as server-env
 COPY requirements_server.txt /requirements_server.txt
+COPY --from=builder /serve /serve
 RUN pip install \
+  --user \
   --no-index \
   --no-cache-dir \
   --find-links=/serve \
-  -r /requirements_server.txt && \
-  rm -rf /serve/*
+  -r /requirements_server.txt \
+  && rm -rf /serve/*
+
+
+FROM core-runtime as nereid
+COPY --from=server-env /root/.local /root/.local
 COPY gunicorn_conf.py /gunicorn_conf.py
 COPY ./scripts/start.sh /start.sh
 RUN chmod +x /start.sh
@@ -79,19 +90,21 @@ EXPOSE 8888
 EXPOSE 80
 
 
-FROM core as nereid-tests
+FROM core-env as test-env
 COPY requirements_tests.txt /requirements_tests.txt
 COPY --from=builder /tsts /tsts
 RUN pip install \
+  --user \
   --no-index \
   --no-cache-dir \
   --find-links=/tsts \
-  -r /requirements_tests.txt && \
-  rm -rf /tsts/*
-COPY ./scripts/run-tests.sh /run-tests.sh
+  -r /requirements_tests.txt \
+  && rm -rf /tsts/*
+
+
+FROM core-runtime as nereid-tests
+COPY --from=test-env /root/.local /root/.local
 COPY .coveragerc /nereid/.coveragerc
-COPY mypy.ini /nereid/mypy.ini
-RUN chmod +x /run-tests.sh
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 EXPOSE 8888
@@ -111,7 +124,6 @@ ENV PYTHONPATH=/nereid
 
 
 FROM nereid-edge as nereid-edge-tests
-COPY mypy.ini /nereid/mypy.ini
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 

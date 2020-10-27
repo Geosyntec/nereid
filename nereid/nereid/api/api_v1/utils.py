@@ -1,9 +1,9 @@
 import os
 from typing import Any, Dict, Optional, Tuple
 
+from celery import Task
 from celery.exceptions import TimeoutError
 from celery.result import AsyncResult
-from celery.task import Task
 from fastapi import APIRouter, HTTPException
 
 import nereid.bg_worker as bg

@@ -1,5 +1,6 @@
 
 set COMPOSE_FILE=docker-stack.yml
+set COMPOSE_DOCKER_CLI_BUILD=1
 
 call docker-compose ^
 -f docker-compose.shared.depends.yml ^

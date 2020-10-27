@@ -65,7 +65,7 @@ scripts\clean.bat
 goto :eof
 
 :dev-server
-docker-compose run -e NEREID_FORCE_FOREGROUND=1 -p 8080:80 nereid bash /start-reload.sh
+docker-compose run -p 8080:80 nereid bash /start-reload.sh
 goto :eof
 
 :restart

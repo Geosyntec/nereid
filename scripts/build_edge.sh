@@ -8,7 +8,6 @@ docker-compose \
 -f docker-compose.shared.ports.yml \
 -f docker-compose.edge.build.yml \
 -f docker-compose.dev.volumes.yml \
--f docker-compose.dev.env.yml \
 -f docker-compose.dev.ports.yml \
 config > docker-stack.yml
 
