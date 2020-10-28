@@ -1,5 +1,6 @@
 _no_git*
 _project_data/*
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,1 +1,1 @@
-celery worker --app nereid.bg_worker -l info -c 4 -O fair -B
+celery --app nereid.bg_worker worker -l INFO -c 4 -O fair -B
