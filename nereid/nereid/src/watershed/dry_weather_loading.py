@@ -174,6 +174,18 @@ def init_dry_weather_tmnt_rate_by_season(
     """
 
     dw_retention_rate_cfs = data.get(f"{season}_dry_weather_retention_rate_cfs")
+    months_operational = data.get("months_operational") or "both"
+    is_operational = months_operational in [season, "both"]
+    dwf_override = data.get("eliminate_all_dry_weather_flow_override") or False
+
+    if is_operational and dwf_override:
+        # This override will set the retention capacity to be equal to the inflow rate.
+        dw_inflow_cfs = (
+            data.get(f"{season}_dry_weather_flow_cuft_psecond_inflow") or 0.0
+        )
+        dw_retention_rate_cfs = dw_inflow_cfs
+        data[f"{season}_dry_weather_retention_rate_cfs"] = dw_retention_rate_cfs
+
     if dw_retention_rate_cfs is None:
         retention_vol = data.get("retention_volume_cuft", 0.0)
         retention_ddt_seconds = data.get("retention_ddt_hr", 0.0) * 3600
@@ -263,6 +275,10 @@ def compute_dry_weather_volume_performance_by_season(
     data[cfs_col + "_total_retained"] = data[cfs_col + "_retained"] + data.get(
         cfs_col + "_retained_upstream", 0.0
     )
+    # for symmetry with non-treatment nodes.
+    data[f"{cfs_col}_total_discharged"] = (
+        data.get(cfs_col, 0) + data[f"{cfs_col}_discharged"]
+    )
 
     data[vol_col + "_retained"] = vol_retained
     data[vol_col + "_retained_pct"] = 100 * safe_divide(vol_retained, dw_inflow_vol)
@@ -283,6 +299,10 @@ def compute_dry_weather_volume_performance_by_season(
     data[vol_col + "_discharged"] = dw_inflow_vol - vol_retained
     data[vol_col + "_total_retained"] = data[vol_col + "_retained"] + data.get(
         vol_col + "_retained_upstream", 0.0
+    )
+    # for symmetry with non-treatment nodes.
+    data[f"{vol_col}_total_discharged"] = (
+        data.get(vol_col, 0) + data[f"{vol_col}_discharged"]
     )
 
     return data

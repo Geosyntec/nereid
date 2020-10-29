@@ -64,7 +64,9 @@ def compute_site_volume_capture(data):
         data[f"{attr}_pct"] = data[f"runoff_volume_cuft_{attr}_pct"]
 
     seasons = ["summer", "winter"]
-    vol_cols = [f"{s}_dry_weather_flow_cuft" for s in seasons]
+    vol_cols = [f"{s}_dry_weather_flow_cuft" for s in seasons] + [
+        f"{s}_dry_weather_flow_cuft_psecond" for s in seasons
+    ]
 
     for vol_col in vol_cols:
         _compute_site_volume_capture(data, vol_col)
@@ -81,9 +83,19 @@ def _compute_site_volume_capture(data: Dict[str, Any], vol_col: str) -> Dict[str
         facility_data["node_errors"] = []
         facility_data["node_warnings"] = []
 
+        # check if we are solving for dry weather water balance, and if so, is there
+        # an override condition
+        dwf_override = facility_data.get("eliminate_all_dry_weather_flow_override")
+        is_dwf = any([s in vol_col for s in ["summer", "winter"]])
+
         site_fraction = facility_data["area_pct"] / 100
-        captured_fraction = facility_data["captured_pct"] / 100
-        retained_fraction = facility_data["retained_pct"] / 100
+
+        if is_dwf and dwf_override:
+            captured_fraction = retained_fraction = 1
+        else:
+            captured_fraction = facility_data["captured_pct"] / 100
+            retained_fraction = facility_data["retained_pct"] / 100
+
         treated_fraction = max(0, captured_fraction - retained_fraction)
 
         facility_inflow_volume = facility_data[f"{vol_col}_inflow"] = (
