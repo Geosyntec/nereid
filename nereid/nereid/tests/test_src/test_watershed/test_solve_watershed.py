@@ -2,7 +2,6 @@ from copy import deepcopy
 
 import networkx as nx
 import numpy
-import pandas
 import pytest
 
 from nereid.src.network.algorithms import get_subset
@@ -184,7 +183,7 @@ tmnt_facilities = [
         "et_zone": "Zone6",
         "volume_nomograph": "nomographs/1130_LAGUNA_AUDUBON_volume_nomo.csv",
         "flow_nomograph": "nomographs/1130_LAGUNA_AUDUBON_flow_nomo.csv",
-        "retention_volume_cuft": 0.0,
+        "retention_volume_cuft": 0.0,  # zero retention
         "retention_depth_ft": 0.0,
         "retention_ddt_hr": 40.00000000000001,
         "node_type": "flow_based_facility",
@@ -326,7 +325,8 @@ tmnt_facilities = [
 
 
 @pytest.mark.parametrize("tmnt_facility", tmnt_facilities)
-def test_facility_load_reduction(contexts, tmnt_facility):
+@pytest.mark.parametrize("dwf_override", [False, True])  # default is false.
+def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
 
     context = contexts["default"]
 
@@ -369,6 +369,12 @@ def test_facility_load_reduction(contexts, tmnt_facility):
         },
     }
 
+    if "site" not in tmnt_facility.get("node_type"):
+        tmnt_facility["eliminate_all_dry_weather_flow_override"] = dwf_override
+    else:
+        for dct in tmnt_facility.get("treatment_facilities") or []:
+            dct["eliminate_all_dry_weather_flow_override"] = dwf_override
+
     data["1"] = tmnt_facility
 
     nx.set_node_attributes(g, data)
@@ -403,9 +409,56 @@ def test_facility_load_reduction(contexts, tmnt_facility):
         assert abs(sum_individual - outfall_total) < 1e-6, (s, t)
 
     tmnt_node = g.nodes["1"]
+    outfall_node = g.nodes["0"]
+
+    m_op = tmnt_node.get("months_operational") or "both"
+    if m_op == "both":
+        seasons = ["summer", "winter"]
+    else:
+        seasons = [m_op]
+
     params = [
         ("summer_dwTSS_load_lbs", "summer_dwTSS_load_lbs_total_discharged"),
     ]
+
+    if dwf_override:
+
+        for s in ["summer", "winter"]:
+            if s in seasons:  # this means the facility will retain all dw flow
+                for k, v in outfall_node.items():
+                    if all(c in k for c in [s, "inflow"]):
+                        assert v == 0
+                    if all(c in k for c in [s, "discharged"]):
+                        assert v == 0
+                    if all(c in k for c in [s, "conc", "influent"]):
+                        assert v == 0
+                    if all(c in k for c in [s, "conc", "effluent"]):
+                        assert v == 0
+
+                assert tmnt_node[f"{s}_dry_weather_flow_cuft_retained_pct"] > 99.9999
+                assert tmnt_node[f"{s}_dry_weather_flow_cuft_captured_pct"] > 99.9999
+                assert tmnt_node[f"{s}_dry_weather_flow_cuft_treated_pct"] < 0.00001
+
+                if "site" not in tmnt_facility.get("node_type"):
+                    assert (
+                        tmnt_node[f"{s}_dry_weather_flow_cuft_psecond_retained_pct"]
+                        > 99.9999
+                    )
+                    assert (
+                        tmnt_node[f"{s}_dry_weather_flow_cuft_psecond_treated_pct"]
+                        < 0.00001
+                    )
+
+            else:  # this means that the facility is not treating dw flow for this season
+                for k, v in outfall_node.items():
+                    if all(c in k for c in [s, "inflow"]):
+                        assert v > 0
+                    if all(c in k for c in [s, "discharged"]):
+                        assert v > 0
+                    if all(c in k for c in [s, "conc", "influent"]):
+                        assert v > 0
+                    if all(c in k for c in [s, "conc", "effluent"]):
+                        assert v > 0
 
     if "diversion" not in tmnt_facility.get("facility_type", ""):
         assert tmnt_node["captured_pct"] > 0
@@ -425,7 +478,7 @@ def test_facility_load_reduction(contexts, tmnt_facility):
 
     for s, t in params:
 
-        outfall_total = g.nodes["0"][t]
+        outfall_total = outfall_node[t]
         sum_individual = sum(nx.get_node_attributes(g, s).values())
 
         # assert that load reduction occurred
