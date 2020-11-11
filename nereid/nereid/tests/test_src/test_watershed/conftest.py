@@ -1,11 +1,8 @@
 import networkx as nx
 import numpy
-import pandas
 import pytest
 
-from nereid.core.io import load_ref_data
 from nereid.src.land_surface.tasks import land_surface_loading
-from nereid.src.watershed.solve_watershed import solve_watershed_loading
 from nereid.tests.utils import generate_random_land_surface_request
 
 

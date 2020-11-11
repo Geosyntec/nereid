@@ -1,7 +1,6 @@
 import pytest
 
 from nereid.api.api_v1.models import treatment_site_models
-from nereid.core import config
 
 
 @pytest.mark.parametrize("size", [1, 3, 5])
