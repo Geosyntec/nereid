@@ -2,7 +2,6 @@ import json
 from copy import deepcopy
 
 import networkx as nx
-import numpy
 import pytest
 
 from nereid.api.api_v1.models import watershed_models

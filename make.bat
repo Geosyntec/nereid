@@ -28,6 +28,8 @@ echo Usage:
 echo $make [command]
 goto :eof
 
+set COMPOSE_DOCKER_CLI_BUILD=1
+
 :test
 call make clean
 call make restart

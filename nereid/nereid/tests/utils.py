@@ -1,7 +1,7 @@
 import string
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Sequence, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 import networkx as nx
 import numpy
@@ -14,8 +14,7 @@ from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
 from nereid.core.io import load_ref_data
-from nereid.src.network.utils import clean_graph_dict, graph_factory
-from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
+from nereid.src.network.utils import clean_graph_dict
 
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
 
@@ -41,7 +40,7 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
         tries += 1
         time.sleep(0.1)
 
-    return response
+    return
 
 
 def is_equal_subset(
@@ -292,7 +291,7 @@ def generate_random_land_surface_request_sliver(
 
 
 def generate_random_land_surface_request_node(
-    node_id="default", surface_keys=None, sliver_min=5, sliver_max=25, **kwargs
+    context, node_id="default", surface_keys=None, sliver_min=5, sliver_max=25, **kwargs
 ):
     if surface_keys is None:  # pragma: no cover
         ls_data, _ = load_ref_data("land_surface_table", context)
@@ -317,7 +316,7 @@ def generate_random_land_surface_request(
     nodes = []
     for node_id in node_list:
         node = generate_random_land_surface_request_node(
-            node_id, surface_keys, sliver_min, sliver_max, **kwargs
+            context, node_id, surface_keys, sliver_min, sliver_max, **kwargs
         )
         nodes.extend(node)
 
