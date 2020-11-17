@@ -91,6 +91,33 @@ def parse_expand_fields(
     return df, messages
 
 
+def parse_collapse_fields(
+    df: pandas.DataFrame,
+    params: List[Dict[str, Any]],
+    config_section: str,
+    config_object: str,
+    context: Dict[str, Any],
+    messages: List[str],
+) -> Tuple[pandas.DataFrame, List[str]]:
+
+    for f in deepcopy(params):
+        try:
+            field = f.get("new_column_name")
+            sep = f.get("sep", "_")
+            cols = f.get("fields", [])
+
+            df[field] = df[cols[0]].astype(str)
+            for col in cols[1:]:
+                df[field] = df[field] + sep + df[col].astype(str)
+        except:
+            messages.append(
+                f"unable to expand fields in {config_section}:{config_object} "
+                f"for instructions {f}"
+            )
+
+    return df, messages
+
+
 def parse_joins(
     df: pandas.DataFrame,
     params: List[Dict[str, Any]],
@@ -100,31 +127,66 @@ def parse_joins(
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
 
+    df_input = df.copy()
+
     for j in deepcopy(params):
+        tablename = j.pop("other", "ERROR: key 'other' is required")
+        fuzzy_on = j.pop("fuzzy_on", None)
 
         try:
-            tablename = j.pop("other")
             table, msg = load_ref_data(tablename, context)
             messages.extend(msg)
             df = df.merge(table, **j)
+
+            if (fuzzy_on is not None) and (not all(df["_merge"] == "both")):
+                matched = df.loc[df["_merge"] == "both"].copy()
+                matched["_on"] = j.get("left_on")
+
+                missing = (
+                    df_input.loc[df["_merge"] != "both"].copy().reset_index(drop=True)
+                )
+
+                patches = [matched]
+                for fuzzy_key in fuzzy_on:
+                    table, msg = load_ref_data(tablename, context)
+                    messages.extend(msg)
+                    fuzzy_j = deepcopy(j)
+                    fuzzy_j["left_on"] = fuzzy_key
+                    fuzzy_df = missing.merge(table, **fuzzy_j)
+
+                    found = fuzzy_df.loc[fuzzy_df["_merge"] == "both"].copy()
+                    found["_on"] = fuzzy_key
+
+                    missing = (
+                        missing.loc[fuzzy_df["_merge"] != "both"]
+                        .copy()
+                        .reset_index(drop=True)
+                    )
+
+                    patches.append(found)
+
+                patches.append(missing)
+                df = pandas.concat(patches, ignore_index=True)
+
+            if "_merge" in df:
+                if not all(df["_merge"] == "both"):
+                    messages.append(
+                        f"ERROR: Some data from {tablename} failed the requested join '{j}' to "
+                        f"reference data in {config_section}:{config_object}."
+                    )
+                    if not "errors" in df:
+                        df["errors"] = ""
+                    df.loc[df["_merge"] != "both", "errors"] += (
+                        f"ERROR: unable join '{j['left_on']}' from {tablename} to '{j['right_on']}' "
+                        f"for reference data in {config_section}:{config_object}.\n"
+                    )
+                df = df.drop(columns="_merge")
         except Exception as e:
             messages.append(
                 f"unable to merge {tablename} in {config_section}:{config_object}\n{e}"
             )
 
-        if "_merge" in df:
-            if not all(df["_merge"] == "both"):
-                messages.append(
-                    f"ERROR: Some data failed the requested join '{j}' to "
-                    f"reference data in {config_section}:{config_object}."
-                )
-                if not "errors" in df:
-                    df["errors"] = ""
-                df.loc[df["_merge"] != "both", "errors"] += (
-                    f"ERROR: unable join '{j['left_on']}' to '{j['right_on']}' for "
-                    f"reference data in {config_section}:{config_object}.  \n"
-                )
-            df = df.drop(columns="_merge")
+    assert len(df) == len(df_input)
 
     return df, messages
 
@@ -226,6 +288,11 @@ def parse_configuration_logic(
 
             if directive == "expand_fields":
                 df, msg = parse_expand_fields(
+                    df, params, config_section, config_object, context, msg
+                )
+
+            if directive == "collapse_fields":
+                df, msg = parse_collapse_fields(
                     df, params, config_section, config_object, context, msg
                 )
 

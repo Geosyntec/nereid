@@ -224,6 +224,24 @@ def contexts():
         r"¯\_(ツ)_/¯": ["these", "are", "months"]
     }
 
+    cx23 = deepcopy(cx1)  # TODO : you are here
+    cx23["project_reference_data"]["land_surface_table"]["preprocess"][0][
+        "collapse_fields"
+    ] = [{"new_column_name": "some_name", "sep": "-", "fields": [1, 2, 3]}]
+
+    cx24 = deepcopy(cx1)  # TODO : you are here
+    cx24["project_reference_data"]["land_surface_table"]["preprocess"].append(
+        {
+            "collapse_fields": [
+                {
+                    "new_column_name": "some_name",
+                    "sep": "-",
+                    "fields": ["soil", "slope"],
+                }
+            ]
+        }
+    )
+
     keys = [  # these are easier to copy into tests
         "default",
         "default_no_data_path_invalid",
@@ -247,6 +265,8 @@ def contexts():
         "default_lst_expand_field_dne_valid",
         "default_dw_flow_null_months_valid",
         "default_dw_flow_unknown_season_valid",
+        "default_lst_no_collapse_fields_valid",
+        "default_lst_collapse_fields_valid",
     ]
 
     values = [
@@ -272,6 +292,8 @@ def contexts():
         cx20,
         cx21,
         cx22,
+        cx23,
+        cx24,
     ]
 
     return {k: v for k, v in zip(keys, values)}

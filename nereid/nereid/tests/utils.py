@@ -240,10 +240,11 @@ def generate_random_treatment_facility_request_node(
     return dct
 
 
-def generate_random_treatment_facility_request(node_list, context):
+def generate_random_treatment_facility_request(node_list, context, ref_data_keys=None):
 
-    ls_data, _ = load_ref_data("land_surface_table", context)
-    subbasins = ls_data["subbasin"]
+    if ref_data_keys is None:
+        ls_data, _ = load_ref_data("land_surface_table", context)
+        ref_data_keys = ls_data["subbasin"].unique()
 
     mapping = context["api_recognize"]["treatment_facility"]["facility_type"]
     facility_types = list(mapping.keys())
@@ -252,9 +253,9 @@ def generate_random_treatment_facility_request(node_list, context):
     for node_id in node_list:
         facility_type = numpy.random.choice(facility_types)
         model_str = mapping[facility_type]["validator"]
-        subbasin = numpy.random.choice(subbasins)
+        ref_data_key = numpy.random.choice(ref_data_keys)
         node = generate_random_treatment_facility_request_node(
-            model_str, facility_type, ref_data_key=subbasin, node_id=node_id
+            model_str, facility_type, ref_data_key=ref_data_key, node_id=node_id
         )
         nodes.append(node)
 
@@ -308,10 +309,11 @@ def generate_random_land_surface_request_node(
 
 
 def generate_random_land_surface_request(
-    node_list, context, sliver_min=5, sliver_max=25, **kwargs
+    node_list, context, sliver_min=5, sliver_max=25, surface_keys=None, **kwargs
 ):
-    ls_data, _ = load_ref_data("land_surface_table", context)
-    surface_keys = ls_data["surface_id"]
+    if surface_keys is None:
+        ls_data, _ = load_ref_data("land_surface_table", context)
+        surface_keys = ls_data["surface_id"]
 
     nodes = []
     for node_id in node_list:
@@ -329,7 +331,9 @@ def generate_random_graph_request(n_nodes, seed=0):  # pragma: no cover
     return {"graph": graph_dict}
 
 
-def generate_random_watershed_solve_request_from_graph(g, context, pct_tmnt=0.5):
+def generate_random_watershed_solve_request_from_graph(
+    g, context, pct_tmnt=0.5, ref_data_keys=None, surface_keys=None
+):
 
     request = {"graph": clean_graph_dict(g)}
 
@@ -348,7 +352,7 @@ def generate_random_watershed_solve_request_from_graph(g, context, pct_tmnt=0.5)
     if treatment_facility_nodes:
         request.update(
             generate_random_treatment_facility_request(
-                treatment_facility_nodes, context
+                treatment_facility_nodes, context, ref_data_keys=ref_data_keys
             )
         )
     if treatment_site_nodes:
@@ -357,18 +361,26 @@ def generate_random_watershed_solve_request_from_graph(g, context, pct_tmnt=0.5)
         )
     if land_surface_nodes:  # pragma: no branch
         request.update(
-            generate_random_land_surface_request(land_surface_nodes, context)
+            generate_random_land_surface_request(
+                land_surface_nodes, context, surface_keys=surface_keys
+            )
         )
 
     return request
 
 
-def generate_random_watershed_solve_request(context, n_nodes=55, pct_tmnt=0.5, seed=42):
+def generate_random_watershed_solve_request(
+    context, n_nodes=55, pct_tmnt=0.5, seed=42, ref_data_keys=None, surface_keys=None
+):
 
     g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=seed), lambda x: str(x))
 
     request = generate_random_watershed_solve_request_from_graph(
-        g, context, pct_tmnt=pct_tmnt
+        g,
+        context,
+        pct_tmnt=pct_tmnt,
+        ref_data_keys=ref_data_keys,
+        surface_keys=surface_keys,
     )
 
     return request
