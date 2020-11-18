@@ -7,6 +7,21 @@ pint_unit_registry:
 api_recognize:
   land_surfaces:
     preprocess:
+      - expand_fields: 
+        - field: surface_key
+          sep: "-"
+          new_column_names:
+            - subbasin
+            - land_use
+            - soil
+            - slope
+
+      - collapse_fields: 
+        - new_column_name: fuzzy_key
+          sep: "-"
+          fields:
+            - land_use
+
       - joins: # joins are passed to pandas.DataFrame.merge()
         - other: land_surface_table
           how: left
@@ -14,6 +29,8 @@ api_recognize:
           right_on: surface_id
           validate: many_to_one
           indicator: True
+          fuzzy_on: # this is a sequence of fall-back keys to try to join on.
+            - fuzzy_key
 
         - other: land_surface_emc_table
           how: left
@@ -49,6 +66,22 @@ api_recognize:
           how: addend  # interpreted as 'right' = 'right' + mapping['left']
           mapping:
             water: 100
+
+        - left: land_use
+          right: is_developed
+          how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+          fillna: false
+          mapping:
+            COMM: true
+            EDU: true
+            IND: true
+            UTIL: true
+            RESSFH: true
+            RESSFL: true
+            RESMF: true
+            TRFWY: true
+            TRANS: true
+            TROTH: true
   
   treatment_facility:
     preprocess:
@@ -209,32 +242,32 @@ project_reference_data:
 
   land_surface_table: 
     file: land_surface_data.json
-    preprocess:
-      - expand_fields: 
-        - field: surface_id
-          sep: "-"
-          new_column_names:
-            - subbasin
-            - land_use
-            - soil
-            - slope
+    # preprocess:
+      # - expand_fields: 
+      #   - field: surface_id
+      #     sep: "-"
+      #     new_column_names:
+      #       - subbasin
+      #       - land_use
+      #       - soil
+      #       - slope
 
-      - remaps:
-        - left: land_use
-          right: is_developed
-          how: left # interpreted as 'right' = mapping['left'] if 'left' exists
-          fillna: false
-          mapping:
-            COMM: true
-            EDU: true
-            IND: true
-            UTIL: true
-            RESSFH: true
-            RESSFL: true
-            RESMF: true
-            TRFWY: true
-            TRANS: true
-            TROTH: true
+      # - remaps:
+      #   - left: land_use
+      #     right: is_developed
+      #     how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+      #     fillna: false
+      #     mapping:
+      #       COMM: true
+      #       EDU: true
+      #       IND: true
+      #       UTIL: true
+      #       RESSFH: true
+      #       RESSFL: true
+      #       RESMF: true
+      #       TRFWY: true
+      #       TRANS: true
+      #       TROTH: true
 
   # long names and short names must be unique in the config. e.g., cannot have TSS for two tables, 
   # you must have a prefix or suffix

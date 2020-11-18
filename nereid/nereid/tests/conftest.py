@@ -5,10 +5,8 @@ import numpy
 import pytest
 
 from nereid.api.api_v1.models.treatment_facility_models import TREATMENT_FACILITY_MODELS
-from nereid.core.io import load_ref_data
 from nereid.core.utils import get_request_context
 from nereid.tests.utils import (
-    create_random_model_dict,
     generate_random_land_surface_request_sliver,
     generate_random_treatment_facility_request_node,
     generate_random_treatment_site_request,
@@ -58,18 +56,8 @@ def subgraph_request_dict():
     return graph
 
 
-@pytest.fixture(scope="session")
-def land_surface_ids():
-
-    context = get_request_context()
-    ls_data, _ = load_ref_data("land_surface_table", context)
-    ls_ids = ls_data["surface_id"].to_list()
-
-    yield ls_ids
-
-
 @pytest.fixture(scope="module")
-def land_surface_loading_response_dicts(contexts, land_surface_ids):
+def land_surface_loading_response_dicts(contexts, land_surface_permutations):
 
     n_rows = [10, 50, 5000]
     n_nodes = [5, 50, 1000]
@@ -80,7 +68,8 @@ def land_surface_loading_response_dicts(contexts, land_surface_ids):
         node_list = list(map(str, range(nnodes)))
         ls_list = [
             generate_random_land_surface_request_sliver(
-                numpy.random.choice(node_list), numpy.random.choice(land_surface_ids)
+                numpy.random.choice(node_list),
+                numpy.random.choice(land_surface_permutations),
             )
             for _ in range(nrows)
         ]
@@ -116,7 +105,7 @@ def contexts():
     cx7["project_reference_data"]["land_surface_table"] = [r"¯\_(ツ)_/¯"]
 
     cx8 = deepcopy(cx1)
-    cx8["project_reference_data"]["land_surface_table"].pop("preprocess")
+    cx8["project_reference_data"]["land_surface_table"].pop("preprocess", None)
 
     cx9 = deepcopy(cx1)
     cx9["project_reference_data"]["land_surface_emc_table"]["file"] = r"¯\_(ツ)_/¯"
@@ -125,17 +114,17 @@ def contexts():
     cx10["project_reference_data"]["land_surface_emc_table"].pop("parameters")
 
     cx11 = deepcopy(cx1)
-    del cx11["api_recognize"]["land_surfaces"]["preprocess"][0]  # no joins
+    del cx11["api_recognize"]["land_surfaces"]["preprocess"][2]  # no joins
 
     cx12 = deepcopy(cx1)
-    del cx12["api_recognize"]["land_surfaces"]["preprocess"][1]  # no remaps
+    del cx12["api_recognize"]["land_surfaces"]["preprocess"][3]  # no remaps
 
     cx13 = deepcopy(cx11)
-    del cx13["api_recognize"]["land_surfaces"]["preprocess"][0]  # no joins or remaps
+    del cx13["api_recognize"]["land_surfaces"]["preprocess"][2]  # no joins or remaps
 
     cx14 = deepcopy(cx11)
     cx14["api_recognize"]["land_surfaces"]["preprocess"].insert(
-        0,
+        1,
         {
             "joins": [
                 {
@@ -152,7 +141,7 @@ def contexts():
     del cx15["api_recognize"]["treatment_facility"]["preprocess"][0]  # no joins
 
     cx16 = deepcopy(cx1)
-    cx16["api_recognize"]["land_surfaces"]["preprocess"][0]["joins"] = [
+    cx16["api_recognize"]["land_surfaces"]["preprocess"][1]["joins"] = [
         {
             "other": r"¯\_(ツ)_/¯",
             "how": "left",
@@ -162,7 +151,7 @@ def contexts():
     ]
 
     cx17 = deepcopy(cx1)
-    cx17["api_recognize"]["land_surfaces"]["preprocess"][1]["remaps"] = [
+    cx17["api_recognize"]["land_surfaces"]["preprocess"][2]["remaps"] = [
         {
             "left": r"¯\_(ツ)_/¯",
             "right": "imp_pct",
@@ -178,7 +167,7 @@ def contexts():
     ]
 
     cx18 = deepcopy(cx1)
-    cx18["api_recognize"]["land_surfaces"]["preprocess"][1]["remaps"] = [
+    cx18["api_recognize"]["land_surfaces"]["preprocess"][2]["remaps"] = [
         {
             "left": "land_use",
             "right": "imp_pct",
@@ -194,7 +183,7 @@ def contexts():
     ]
 
     cx19 = deepcopy(cx1)
-    cx19["api_recognize"]["land_surfaces"]["preprocess"][1]["remaps"] = [
+    cx19["api_recognize"]["land_surfaces"]["preprocess"][2]["remaps"] = [
         {
             "left": "land_use",
             "right": r"¯\_(ツ)_/¯",
@@ -210,9 +199,13 @@ def contexts():
     ]
 
     cx20 = deepcopy(cx1)
-    cx20["project_reference_data"]["land_surface_table"]["preprocess"][0][
-        "expand_fields"
-    ] = [{"field": r"¯\_(ツ)_/¯", "sep": "-", "new_column_names": [1, 2, 3]}]
+    cx20["project_reference_data"]["land_surface_table"]["preprocess"] = [
+        {
+            "expand_fields": [
+                {"field": r"¯\_(ツ)_/¯", "sep": "-", "new_column_names": [1, 2, 3]}
+            ]
+        },
+    ]
 
     cx21 = deepcopy(cx1)
     cx21["project_reference_data"]["dry_weather_flow_table"]["seasons"] = {
@@ -224,23 +217,36 @@ def contexts():
         r"¯\_(ツ)_/¯": ["these", "are", "months"]
     }
 
-    cx23 = deepcopy(cx1)  # TODO : you are here
-    cx23["project_reference_data"]["land_surface_table"]["preprocess"][0][
-        "collapse_fields"
-    ] = [{"new_column_name": "some_name", "sep": "-", "fields": [1, 2, 3]}]
+    cx23 = deepcopy(cx1)  # collapse fields don't exist
+    cx23["project_reference_data"]["land_surface_table"]["preprocess"] = [
+        {
+            "collapse_fields": [
+                {"new_column_name": "some_name", "sep": "-", "fields": [1, 2, 3]}
+            ]
+        },
+    ]
 
-    cx24 = deepcopy(cx1)  # TODO : you are here
-    cx24["project_reference_data"]["land_surface_table"]["preprocess"].append(
+    cx24 = deepcopy(cx1)  # collapse should work
+    cx24["project_reference_data"]["land_surface_table"]["preprocess"] = [
+        {
+            "expand_fields": [
+                {
+                    "field": "surface_id",
+                    "sep": "-",
+                    "new_column_names": ["_subbasin", "_land_use", "_soil", "_slope"],
+                }
+            ]
+        },
         {
             "collapse_fields": [
                 {
                     "new_column_name": "some_name",
                     "sep": "-",
-                    "fields": ["soil", "slope"],
+                    "fields": ["_soil", "_slope"],
                 }
             ]
-        }
-    )
+        },
+    ]
 
     keys = [  # these are easier to copy into tests
         "default",
@@ -356,14 +362,14 @@ PCT_TMNT = [0, 0.3, 0.6]
 
 
 @pytest.fixture(scope="session")
-def watershed_requests(contexts):
+def watershed_requests(contexts, subbasins, land_surface_permutations):
     context = contexts["default"]
     requests = {}
     numpy.random.seed(42)
     for n_nodes, pct_tmnt in product(SIZE, PCT_TMNT):
         seed = numpy.random.randint(1e6)
         req = generate_random_watershed_solve_request(
-            context, n_nodes, pct_tmnt, seed=seed
+            context, subbasins, land_surface_permutations, n_nodes, pct_tmnt, seed=seed,
         )
         requests[(n_nodes, pct_tmnt)] = deepcopy(req)
     return requests
@@ -392,3 +398,37 @@ def _construct_watershed_test_cases():
 @pytest.fixture(scope="module", params=_construct_watershed_test_cases())
 def watershed_test_case(request):
     yield request.param
+
+
+@pytest.fixture(scope="session")
+def subbasins():
+    yield ["10101200", "10101100", "10101000"]
+
+
+@pytest.fixture(scope="session")
+def land_surface_permutations(subbasins):
+    land_use = [
+        "COMM",
+        "EDU",
+        "IND",
+        "UTIL",
+        "RESSFH",
+        "RESSFL",
+        "RESMF",
+        "TRFWY",
+        "TRANS",
+        "TROTH",
+        "OSAGIR",
+        "OSAGNI",
+        "OSDEV",
+        "OSIRR",
+        "OSLOW",
+        "OSFOR",
+        "OSWET",
+        "OSVAC",
+        "WATER",
+    ]
+    soil = ["A", "B", "C", "D", "rock", "water"]
+    slope = ["0", "10", "5"]
+
+    yield ["-".join(l) for l in product(subbasins, land_use, soil, slope)]
