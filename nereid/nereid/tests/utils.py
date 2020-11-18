@@ -13,7 +13,6 @@ from nereid.api.api_v1.models import treatment_facility_models
 from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
-from nereid.core.io import load_ref_data
 from nereid.src.network.utils import clean_graph_dict
 
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
