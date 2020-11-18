@@ -17,8 +17,8 @@ setup(
     author_email=author_email,
     install_requires=[
         "python-dotenv>=0.14,<0.15",
-        "scipy>=1.5",
-        "pandas>=1.1>1.2",
+        "scipy>=1.5,<1.6",
+        "pandas>=1.1,<1.2",
         "networkx>=2.5,<2.6",
         "pydot>=1.4,<1.5",
         "graphviz>=0.14,<0.15",
