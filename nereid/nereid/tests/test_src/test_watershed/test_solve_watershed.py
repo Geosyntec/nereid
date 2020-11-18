@@ -525,11 +525,13 @@ def test_nested_treatment_facilities(
     assert abs(sum_inflow - sum_ret - outflow) / sum_inflow < 1e-15
 
 
-def test_invalid_graph(contexts):
+def test_invalid_graph(contexts, subbasins, land_surface_permutations):
     context = contexts["default"]
 
     g = nx.gnc_graph(10)
-    data = generate_random_watershed_solve_request_from_graph(g, context,)
+    data = generate_random_watershed_solve_request_from_graph(
+        g, context, ref_data_keys=subbasins, surface_keys=land_surface_permutations
+    )
 
     g, err = initialize_graph(data, False, context)
 

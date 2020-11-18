@@ -47,6 +47,8 @@ def test_io_load_multiple_cfgs():
         "default_api_ls_remap_left_dne_valid",
         "default_api_ls_remap_how_dne_valid",
         "default_api_ls_remap_right_dne_valid",
+        "default_lst_no_collapse_fields_valid",
+        "default_lst_collapse_fields_valid",
     ],
 )
 def test_load_ref_data(contexts, table, key):
@@ -66,13 +68,15 @@ def test_load_ref_data(contexts, table, key):
         ("default_api_no_ls_remaps_valid", False),
         ("default_api_no_ls_joins_or_remaps_valid", False),
         ("default_api_ls_joins_no_merge_no_params_valid", False),
-        ("default_lst_no_expanded_fields_valid", True),
-        ("default_api_no_ls_joins_valid", True),
+        ("default_lst_no_expanded_fields_valid", False),
+        ("default_api_no_ls_joins_valid", False),
         ("default_api_ls_joins_other_dne_valid", True),
         ("default_api_ls_remap_left_dne_valid", True),
         ("default_api_ls_remap_how_dne_valid", True),
         ("default_api_ls_remap_right_dne_valid", True),
         ("default_lst_expand_field_dne_valid", True),
+        ("default_lst_no_collapse_fields_valid", True),
+        ("default_lst_collapse_fields_valid", False),
     ],
 )
 def test_parse_api_recognize(
@@ -95,6 +99,6 @@ def test_parse_api_recognize(
         df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
     df, msg = io.parse_configuration_logic(df, "api_recognize", recog, context)
     if recog in ["land_surfaces", "treatment_facility"] and not raises_msgs:
-        assert len(msg) == 0
+        assert len(msg) == 0, msg
     else:
-        assert len(msg) > 0
+        assert len(msg) > 0, msg

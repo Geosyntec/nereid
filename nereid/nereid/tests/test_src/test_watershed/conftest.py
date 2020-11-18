@@ -15,11 +15,13 @@ def watershed_graph():
 
 
 @pytest.fixture
-def initial_node_data(contexts, watershed_graph):
+def initial_node_data(contexts, watershed_graph, land_surface_permutations):
 
     context = contexts["default"]
     numpy.random.seed(42)
-    ls_req = generate_random_land_surface_request(watershed_graph.nodes(), context)
+    ls_req = generate_random_land_surface_request(
+        watershed_graph.nodes(), land_surface_permutations
+    )
     ls_attrs = land_surface_loading(ls_req, details=False, context=context)["summary"]
 
     return {dct["node_id"]: dct for dct in ls_attrs}
