@@ -128,6 +128,39 @@ def validate_models_with_discriminator(
     return validated
 
 
+def validate_with_discriminator(
+    unvalidated_data: Dict[str, Any],
+    discriminator: str,
+    model_mapping: Dict[str, Any],
+    fallback_mapping: Dict[str, Any],
+) -> Any:
+    class NullModel(BaseModel):
+        class Config:
+            extra = "allow"
+
+    attr = unvalidated_data[discriminator]
+    model = model_mapping.get(attr, None)
+    fallback = fallback_mapping.get(attr, NullModel)
+
+    if model is None:
+        e = (
+            f"ERROR: the key '{attr}' is not in `model_mapping`. "
+            f"Using `fallback` value: {fallback.schema()['title']}"
+        )
+
+        unvalidated_data["errors"] = str(e) + "  \n"
+        model = fallback
+    try:
+        valid = model(**unvalidated_data)
+
+    except ValidationError as e:
+        unvalidated_data["errors"] = "ERROR: " + str(e) + "  \n"
+        model = fallback
+        valid = model(**unvalidated_data)
+
+    return valid
+
+
 def safe_divide(x: float, y: float) -> float:
     """This returns zero if the denominator is zero
     """
