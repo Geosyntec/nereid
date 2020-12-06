@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, root_validator, validator
 from typing_extensions import Literal
 
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
-from nereid.core.utils import validate_models_with_discriminator
+from nereid.core.utils import validate_with_discriminator
 
 
 class FacilityBase(BaseModel):
@@ -15,12 +15,12 @@ class FacilityBase(BaseModel):
     design_storm_depth_inches: float = Field(..., gt=0)
     eliminate_all_dry_weather_flow_override: bool = False
 
-    class Config:
-        extra = "allow"
-
 
 class NTFacility(FacilityBase):
     constructor: str = "nt_facility_constructor"
+
+    class Config:
+        extra = "allow"
 
 
 class FlowFacility(FacilityBase):
@@ -201,22 +201,29 @@ def validate_treatment_facility_models(
         k: v.get("tmnt_performance_facility_type") for k, v in mapping.items()
     }
 
-    for dct in unvalidated_data:
-        facility_type = dct["facility_type"]
-        dct["validator"] = model_map_str.get(facility_type)
-        dct["validation_fallback"] = fallback_map_str.get(facility_type)
-        dct["tmnt_performance_facility_type"] = tmnt_performance_map_str.get(
-            facility_type
-        )
-
     model_map = {k: globals().get(v) for k, v in model_map_str.items()}
     fallback_map = {k: globals().get(v) for k, v in fallback_map_str.items()}
 
-    valid_models = validate_models_with_discriminator(
-        unvalidated_data=unvalidated_data,
-        discriminator="facility_type",
-        model_mapping=model_map,
-        fallback_mapping=fallback_map,
-    )
+    valid_models = []
+
+    for dct in unvalidated_data:
+        facility_type = dct["facility_type"]
+        model = validate_with_discriminator(
+            unvalidated_data=dct,
+            discriminator="facility_type",
+            model_mapping=model_map,
+            fallback_mapping=fallback_map,
+        )
+
+        valid_dct = model.dict()
+        # valid_dct["constructor"] = getattr(model, "_constructor", "nt_facility_constructor")
+        valid_dct["valid_model"] = model.schema()["title"]
+        valid_dct["validator"] = model_map_str.get(facility_type)
+        valid_dct["validation_fallback"] = fallback_map_str.get(facility_type)
+        valid_dct["tmnt_performance_facility_type"] = tmnt_performance_map_str.get(
+            facility_type
+        )
+
+        valid_models.append(valid_dct)
 
     return valid_models

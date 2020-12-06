@@ -27,6 +27,7 @@ def construct_treatment_facility_node_context(
     n_cxt: Dict[str, Any] = deepcopy(node_context)
 
     constructor_str = n_cxt.get("constructor", "nt_facility_constructor")
+    # constructor_str = n_cxt.get("constructor") or "nt_facility_constructor" # TODO doubletap
     fxn = getattr(TreatmentFacilityConstructor, constructor_str)
 
     result = fxn(**n_cxt)
