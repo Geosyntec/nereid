@@ -105,7 +105,7 @@ def test_build_treatment_facility_nodes_errors(contexts, ctxt_key, err, data_dic
     tmnt_facilities = [data_dict]
     valid_models = validate_treatment_facility_models(tmnt_facilities, context)
 
-    vm_dict = valid_models[0].dict()
+    vm_dict = valid_models[0]
 
     if err:
         assert err in vm_dict["errors"]

@@ -72,7 +72,7 @@ def test_construct_nodes_from_treatment_facility_request_checkval(
 
 @pytest.mark.parametrize("pre_validated", [True, False])
 def test_construct_nodes_from_treatment_facility_request_pre_validation(
-    contexts, valid_treatment_facility_dicts, pre_validated
+    contexts, treatment_facility_dicts, valid_treatment_facility_dicts, pre_validated
 ):
 
     context = contexts["default"]
@@ -80,8 +80,13 @@ def test_construct_nodes_from_treatment_facility_request_pre_validation(
     model_map = {k: dct["validator"] for k, dct in facilities.items()}
     _tmnt_ls = []
 
+    if pre_validated:
+        facility_dicts = valid_treatment_facility_dicts
+    else:
+        facility_dicts = treatment_facility_dicts
+
     for k, model in model_map.items():
-        dct = valid_treatment_facility_dicts[model]
+        dct = facility_dicts[model]
         dct["facility_type"] = k
         _tmnt_ls.append(dct)
 

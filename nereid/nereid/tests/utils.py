@@ -186,7 +186,6 @@ def generate_random_treatment_facility_request_node(
 ):
     model = getattr(treatment_facility_models, model_str)
     dct = create_random_model_dict(model=model, can_fail=False)
-    _ = dct.pop("constructor")
 
     dct["node_id"] = node_id
     dct["facility_type"] = facility_type
@@ -264,7 +263,7 @@ def generate_random_validated_treatment_facility_node(context,):  # pragma: no c
         [facility], context=context
     )[0]
 
-    return validated_facility_model.dict()
+    return validated_facility_model
 
 
 def generate_random_land_surface_request_sliver(

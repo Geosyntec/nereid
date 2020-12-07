@@ -19,10 +19,9 @@ def initialize_treatment_facilities(
 
     treatment_facility_list = treatment_facilities.get("treatment_facilities") or []
     if not pre_validated:
-        tmnt_model = validate_treatment_facility_models(
+        treatment_facility_list = validate_treatment_facility_models(
             treatment_facility_list, context
         )
-        treatment_facility_list = [m.dict() for m in tmnt_model]
 
     df, messages = parse_configuration_logic(
         df=pandas.DataFrame(treatment_facility_list),
