@@ -125,11 +125,11 @@ def land_surface_loading_responses(client, land_surface_loading_response_dicts):
 
 
 @pytest.fixture(scope="module")
-def treatment_facility_responses(client, valid_treatment_facility_dicts):
+def treatment_facility_responses(client, treatment_facility_dicts):
 
     responses = {}
 
-    for name, dct in valid_treatment_facility_dicts.items():
+    for name, dct in treatment_facility_dicts.items():
 
         payload = json.dumps({"treatment_facilities": [dct]})
         route = API_LATEST + "/treatment_facility/validate"

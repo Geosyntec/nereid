@@ -30,7 +30,6 @@ def test_build_treatment_facility_nodes(
 ):
 
     context = contexts[ctxt_key]
-    print(valid_treatment_facility_dicts[model])
     tmnt_facilities = pandas.DataFrame([valid_treatment_facility_dicts[model]])
     df, messages = parse_configuration_logic(
         df=pandas.DataFrame(tmnt_facilities),
@@ -41,12 +40,12 @@ def test_build_treatment_facility_nodes(
     node = build_treatment_facility_nodes(df)[0]
 
     check_val = node.get(checkfor)
-    assert isinstance(check_val, float)
+    assert isinstance(check_val, (int, float)), (node, model, checkfor)
 
     if has_met_data:
-        assert node.get("rain_gauge") is not None
+        assert node.get("rain_gauge") is not None, (node, model, checkfor)
     else:
-        assert node.get("rain_gauge") is None
+        assert node.get("rain_gauge") is None, (node, model, checkfor)
 
 
 @pytest.mark.parametrize(
@@ -85,7 +84,7 @@ def test_build_diversion_facility_months_operational(
 
     tmnt_facilities = (
         pandas.DataFrame(valid_treatment_facilities)
-        .query("facility_type=='LowFlowFacility'")
+        .query("valid_model=='LowFlowFacility'")
         .assign(months_operational=months_operational)
     )
 
@@ -98,7 +97,8 @@ def test_build_diversion_facility_months_operational(
     nodes = build_treatment_facility_nodes(df)
 
     for n in nodes:
+        assert n, "error: no data created"
         if is_zero:
-            assert n.get("summer_dry_weather_retention_rate_cfs") == 0.0
+            assert n.get("summer_dry_weather_retention_rate_cfs") == 0.0, n
         else:
-            assert n.get("summer_dry_weather_retention_rate_cfs") > 0.0
+            assert n.get("summer_dry_weather_retention_rate_cfs") > 0.0, n

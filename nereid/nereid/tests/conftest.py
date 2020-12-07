@@ -4,7 +4,10 @@ from itertools import product
 import numpy
 import pytest
 
-from nereid.api.api_v1.models.treatment_facility_models import TREATMENT_FACILITY_MODELS
+from nereid.api.api_v1.models.treatment_facility_models import (
+    TREATMENT_FACILITY_MODELS,
+    validate_treatment_facility_models,
+)
 from nereid.core.utils import get_request_context
 from nereid.tests.utils import (
     generate_random_land_surface_request_sliver,
@@ -306,7 +309,7 @@ def contexts():
 
 
 @pytest.fixture(scope="module")
-def valid_treatment_facility_dicts():
+def treatment_facility_dicts():
     responses = {}
 
     for model in TREATMENT_FACILITY_MODELS:
@@ -315,7 +318,34 @@ def valid_treatment_facility_dicts():
         dct = generate_random_treatment_facility_request_node(
             model_str, model_str, "10101200", node_id="default"
         )
-        responses[model_str] = model(**dct).dict()
+        responses[model_str] = dct
+
+    yield responses
+
+
+@pytest.fixture(scope="module")
+def valid_treatment_facility_dicts(contexts):
+    context = contexts["default"]
+
+    facility_type_dict = contexts["default"]["api_recognize"]["treatment_facility"][
+        "facility_type"
+    ]
+
+    responses = {}
+
+    for model in TREATMENT_FACILITY_MODELS:
+
+        model_str = model.schema()["title"]
+        facility_type = [
+            ft
+            for ft, dct in facility_type_dict.items()
+            if dct["validator"] == model_str
+        ][0]
+
+        dct = generate_random_treatment_facility_request_node(
+            model_str, facility_type, "10101200", node_id="default"
+        )
+        responses[model_str] = validate_treatment_facility_models([dct], context)[0]
 
     yield responses
 
