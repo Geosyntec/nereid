@@ -42,7 +42,7 @@ jobs:
     # Uses pinned versions of docker-compose and all python dependencies.
     - name: docker_tests
       env: 
-        - BUILD_SCRIPT_PATH=./scripts/build_dev.sh
+        - BUILD_SCRIPT_PATH=./scripts/build_deploy.sh
       before_install:
         - sudo rm /usr/local/bin/docker-compose
         - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
