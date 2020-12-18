@@ -36,7 +36,7 @@ def validate_facility_request(
                     "total_volume_cuft": 5500,
                     "retention_volume_cuft": 4400,
                     "area_sqft": 1600,
-                    "total_drawdown_time_hr": 24 * 3,
+                    "treatment_drawdown_time_hr": 24 * 3,
                     "hsg": "d",
                     "offline_diversion_rate_cfs": 2.9,
                 },
