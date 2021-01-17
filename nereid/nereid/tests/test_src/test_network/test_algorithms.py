@@ -157,6 +157,7 @@ def check_sequential(seqs, ls):
     ls_ix_of_prev_seq_root = -1
 
     results = []
+    last_ele = None
     for seq in seqs:
         last_ele = seq[-1]
 
@@ -175,7 +176,7 @@ def check_sequential(seqs, ls):
 def test_sequential_subgraph_nodes(graph, size):
 
     with pytest.raises(nx.NetworkXUnfeasible):
-        seq = sequential_subgraph_nodes(graph, size)
+        _ = sequential_subgraph_nodes(graph, size)
 
     for components in nx.weakly_connected_components(graph):
         c_graph = graph.subgraph(components)
