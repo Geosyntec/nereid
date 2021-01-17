@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 import networkx as nx
-import numpy
 import pytest
 
 from nereid.src.network.algorithms import get_subset

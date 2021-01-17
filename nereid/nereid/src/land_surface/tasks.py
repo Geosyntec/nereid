@@ -38,6 +38,8 @@ def land_surface_loading(
             context=context,
         )
 
+        # TODO: add validator function to ensure config & request are complete.
+
         if len(messages) > 0:
             response["errors"].extend(messages)
 

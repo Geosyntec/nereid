@@ -1,4 +1,3 @@
-from itertools import product
 from typing import Any, Callable, Dict, List, Mapping, Tuple
 
 import networkx as nx
