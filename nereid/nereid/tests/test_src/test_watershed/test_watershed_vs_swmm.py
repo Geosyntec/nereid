@@ -305,5 +305,5 @@ def test_watershed_vs_swmm(contexts, realistic_graph, swmm_results):
         .assign(ret_diff=lambda df: df["retained_pct_x"] - df["retained_pct_y"])
     )
 
-    assert all(results.cap_diff.abs() < 5)
-    assert all(results.ret_diff.abs() < 4)
+    assert all(results.cap_diff.abs().round(0) <= 5), results.cap_diff.abs()
+    assert all(results.ret_diff.abs().round(0) <= 4), results.ret_diff.abs()
