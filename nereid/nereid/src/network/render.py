@@ -202,11 +202,11 @@ def render_solution_sequence(
 
 
 def fig_to_image(fig: mpl.figure.Figure, **kwargs: dict) -> IO:
-    bbox_inches = kwargs.pop("bbox_inches", "tight")
-    format_ = "svg"
+    _kwargs = dict(bbox_inches="tight", format="svg", dpi=300)
+    _kwargs.update(kwargs)
 
     img = BytesIO()
-    fig.savefig(img, bbox_inches=bbox_inches, format=format_, **kwargs)
+    fig.savefig(img, **_kwargs)
     img.seek(0)
 
     return img
