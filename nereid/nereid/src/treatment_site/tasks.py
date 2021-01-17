@@ -38,6 +38,7 @@ def initialize_treatment_sites(
                     "node_id": node,
                     "area_pct": remainder,
                     "facility_type": "no_treatment",
+                    "eliminate_all_dry_weather_flow_override": False,
                 }
             )
 
