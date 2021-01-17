@@ -74,17 +74,25 @@ def test_build_treatment_facility_nodes_from_long_list(
 
 
 @pytest.mark.parametrize(
-    "months_operational, is_zero", [("summer", False), (r"¯\_(ツ)_/¯", True)],
+    "months_operational", ["summer", "winter", "both", r"¯\_(ツ)_/¯"]
+)
+@pytest.mark.parametrize(
+    "facility_type",
+    [
+        "LowFlowFacility",
+        "DryWeatherDiversionLowFlowFacility",
+        "DryWeatherTreatmentLowFlowFacility",
+    ],
 )
 def test_build_diversion_facility_months_operational(
-    contexts, valid_treatment_facilities, months_operational, is_zero
+    contexts, valid_treatment_facilities, months_operational, facility_type
 ):
 
     context = contexts["default"]
 
     tmnt_facilities = (
         pandas.DataFrame(valid_treatment_facilities)
-        .query("valid_model=='LowFlowFacility'")
+        .query("valid_model == @facility_type")
         .assign(months_operational=months_operational)
     )
 
@@ -96,9 +104,26 @@ def test_build_diversion_facility_months_operational(
     )
     nodes = build_treatment_facility_nodes(df)
 
+    if "treatment" in facility_type.lower():
+        reduction_type, no_reduction_type = "treatment", "retention"
+    else:
+        reduction_type, no_reduction_type = "retention", "treatment"
+
+    summer_reduction = months_operational in ["summer", "both"]
+    winter_reduction = months_operational in ["winter", "both"]
+
     for n in nodes:
         assert n, "error: no data created"
-        if is_zero:
-            assert n.get("summer_dry_weather_retention_rate_cfs") == 0.0, n
+        if summer_reduction:
+            assert n.get(f"summer_dry_weather_{reduction_type}_rate_cfs") > 0.0, n
+            assert n.get(f"summer_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n
         else:
-            assert n.get("summer_dry_weather_retention_rate_cfs") > 0.0, n
+            assert n.get(f"summer_dry_weather_{reduction_type}_rate_cfs") == 0.0, n
+            assert n.get(f"summer_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n
+
+        if winter_reduction:
+            assert n.get(f"winter_dry_weather_{reduction_type}_rate_cfs") > 0.0, n
+            assert n.get(f"winter_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n
+        else:
+            assert n.get(f"winter_dry_weather_{reduction_type}_rate_cfs") == 0.0, n
+            assert n.get(f"winter_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n

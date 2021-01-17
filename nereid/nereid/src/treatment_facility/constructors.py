@@ -199,6 +199,76 @@ class TreatmentFacilityConstructor:
         return result
 
     @staticmethod
+    def dry_weather_diversion_low_flow_facility_constructor(
+        *,
+        treatment_rate_cfs: float,
+        design_capacity_cfs: float,
+        months_operational: str,
+        **kwargs: dict,
+    ) -> Dict[str, Any]:
+        """These are diversions, so their 'treatment' eliminates volume from the system.
+        """
+
+        modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
+
+        summer_dry_weather_retention_rate_cfs = 0.0
+        winter_dry_weather_retention_rate_cfs = 0.0
+
+        if months_operational in ["summer", "both"]:
+            summer_dry_weather_retention_rate_cfs = modeled_tmnt_rate
+
+        if months_operational in ["winter", "both"]:
+            winter_dry_weather_retention_rate_cfs = modeled_tmnt_rate
+
+        result = dict(
+            ini_treatment_rate_cfs=treatment_rate_cfs,
+            # diversions 'retain' their diverted volume, so we use it for the retention rate
+            # and set the treatment rate to 0 since none of the discharge is treated.
+            summer_dry_weather_retention_rate_cfs=summer_dry_weather_retention_rate_cfs,
+            summer_dry_weather_treatment_rate_cfs=0.0,
+            winter_dry_weather_retention_rate_cfs=winter_dry_weather_retention_rate_cfs,
+            winter_dry_weather_treatment_rate_cfs=0.0,
+            node_type="dry_weather_only_facility",  # this node type has no influence on wet weather.
+        )
+
+        return result
+
+    @staticmethod
+    def dry_weather_treatment_low_flow_facility_constructor(
+        *,
+        treatment_rate_cfs: float,
+        design_capacity_cfs: float,
+        months_operational: str,
+        **kwargs: dict,
+    ) -> Dict[str, Any]:
+        """These are treat and discharge facilities.
+        """
+
+        modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
+
+        summer_dry_weather_treatment_rate_cfs = 0.0
+        winter_dry_weather_treatment_rate_cfs = 0.0
+
+        if months_operational in ["summer", "both"]:
+            summer_dry_weather_treatment_rate_cfs = modeled_tmnt_rate
+
+        if months_operational in ["winter", "both"]:
+            winter_dry_weather_treatment_rate_cfs = modeled_tmnt_rate
+
+        result = dict(
+            ini_treatment_rate_cfs=treatment_rate_cfs,
+            # treatment systems 'treat and discharge' their inflow volume, so we use it for the
+            # teatment rate and set the retention rate to 0 since none of the discharge is retained.
+            summer_dry_weather_retention_rate_cfs=0.0,
+            summer_dry_weather_treatment_rate_cfs=summer_dry_weather_treatment_rate_cfs,
+            winter_dry_weather_retention_rate_cfs=0.0,
+            winter_dry_weather_treatment_rate_cfs=winter_dry_weather_treatment_rate_cfs,
+            node_type="dry_weather_only_facility",  # this node type has no influence on wet weather.
+        )
+
+        return result
+
+    @staticmethod
     def dw_and_low_flow_facility_constructor(
         *,
         treatment_rate_cfs: float,
