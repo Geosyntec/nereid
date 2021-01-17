@@ -47,6 +47,14 @@ class LowFlowFacility(FacilityBase):
         return values
 
 
+class DryWeatherDiversionLowFlowFacility(LowFlowFacility):
+    _constructor: str = "dry_weather_diversion_low_flow_facility_constructor"
+
+
+class DryWeatherTreatmentLowFlowFacility(LowFlowFacility):
+    _constructor: str = "dry_weather_treatment_low_flow_facility_constructor"
+
+
 class OnlineFaciltyBase(FacilityBase):
     is_online: bool = True
     tributary_area_tc_min: float = Field(5.0, le=60)
@@ -134,6 +142,8 @@ STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for val
     TmntFacility,
     CisternFacility,
     DryWellFacility,
+    DryWeatherTreatmentLowFlowFacility,
+    DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
     FlowFacility,
     NTFacility,
@@ -148,6 +158,8 @@ TREATMENT_FACILITY_MODELS = [
     TmntFacility,
     CisternFacility,
     DryWellFacility,
+    DryWeatherTreatmentLowFlowFacility,
+    DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
     FlowFacility,
     NTFacility,

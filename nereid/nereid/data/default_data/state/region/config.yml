@@ -162,6 +162,16 @@ api_recognize:
         tmnt_performance_facility_type: ¯\_(ツ)_/¯
 
       dry_weather_diversion:
+        validator: DryWeatherDiversionLowFlowFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯
+
+      dry_weather_treatment:
+        validator: DryWeatherTreatmentLowFlowFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: Sand Filter # this will do treatment on dry weather flow volume
+
+      low_flow_facility:
         validator: LowFlowFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: ¯\_(ツ)_/¯
