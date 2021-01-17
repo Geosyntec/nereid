@@ -1,5 +1,4 @@
 import copy
-import logging
 from typing import Any, Collection, Dict
 
 import networkx as nx

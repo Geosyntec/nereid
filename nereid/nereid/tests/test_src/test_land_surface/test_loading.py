@@ -8,7 +8,6 @@ from nereid.src.land_surface.loading import (
     detailed_loading_results,
     detailed_pollutant_loading_results,
     detailed_volume_loading_results,
-    summary_loading_results,
 )
 from nereid.src.wq_parameters import init_wq_parameters
 

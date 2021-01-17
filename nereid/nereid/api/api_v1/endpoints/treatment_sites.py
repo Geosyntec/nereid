@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
@@ -7,7 +7,7 @@ from nereid.api.api_v1.models.treatment_site_models import (
     TreatmentSiteResponse,
     TreatmentSites,
 )
-from nereid.api.api_v1.utils import get_valid_context, run_task, standard_json_response
+from nereid.api.api_v1.utils import get_valid_context
 from nereid.src.treatment_site.tasks import initialize_treatment_sites
 
 router = APIRouter()

@@ -1,5 +1,3 @@
-import networkx as nx
-
 from nereid.core.celery_app import celery_app
 from nereid.core.utils import validate_request_context
 from nereid.src.land_surface.tasks import land_surface_loading
