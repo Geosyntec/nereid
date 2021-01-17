@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 from fastapi import APIRouter, Body, Depends
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg

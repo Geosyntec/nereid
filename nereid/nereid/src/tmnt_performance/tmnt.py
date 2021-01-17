@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple
+from typing import Callable, Dict, Mapping, Optional, Tuple
 
 import numpy
 import pandas

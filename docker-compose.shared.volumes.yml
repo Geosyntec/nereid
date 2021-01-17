@@ -2,10 +2,10 @@ version: '3.7'
 services:
   nereid:
     volumes:
-      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data
+      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data:ro
   celeryworker:
     volumes:
-      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data
+      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data:ro
   nereid-tests:
     volumes:
-      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data
+      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data:ro

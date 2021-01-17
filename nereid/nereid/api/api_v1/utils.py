@@ -1,5 +1,4 @@
-import os
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 from celery import Task
 from celery.exceptions import TimeoutError

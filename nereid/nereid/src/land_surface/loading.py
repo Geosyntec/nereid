@@ -1,13 +1,6 @@
-from copy import deepcopy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import pandas
-
-from nereid.core.units import Constants
-from nereid.core.utils import safe_divide
-
-# TODO: implement fallback to e.g., "TRANS-B-10" rather than "401070-TRANS-B-10"
-# in case ref data is missing.
 
 
 def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
@@ -23,6 +16,17 @@ def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
 
 
 def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
+    """
+    df must contain:
+        area_acres: float
+        imp_area_acres: float
+        imp_ro_depth_inches: float
+        perv_ro_depth_inches: float
+        imp_ro_coeff: float
+        perv_ro_coeff: float
+        is_developed: bool
+
+    """
 
     # method chaining with 'df.assign' looks better, but it's much less memory efficient
     df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
@@ -122,20 +126,17 @@ def detailed_loading_results(
     seasons: Dict[str, List[str]],
 ) -> pandas.DataFrame:
 
-    # fmt: off
     results = (
-        land_surfaces_df
-        .pipe(clean_land_surface_dataframe)
+        land_surfaces_df.pipe(clean_land_surface_dataframe)
         .pipe(detailed_volume_loading_results)
         .pipe(detailed_dry_weather_volume_loading_results, seasons)
         .pipe(
             detailed_pollutant_loading_results,
             wet_weather_parameters,
             dry_weather_parameters,
-            season_names=seasons.keys()
+            season_names=seasons.keys(),
         )
     )
-    # fmt: on
 
     return results
 

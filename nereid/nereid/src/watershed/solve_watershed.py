@@ -1,8 +1,6 @@
-from copy import deepcopy
 from typing import Any, Callable, Dict, List, Mapping, Tuple, Union
 
 import networkx as nx
-import numpy
 
 from nereid.core.utils import dictlist_to_dict
 from nereid.src.land_surface.tasks import land_surface_loading

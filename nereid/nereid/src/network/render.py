@@ -1,11 +1,10 @@
-from functools import lru_cache, partial
+from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
 from typing import IO, Dict, List, Optional, Tuple, Union
 
 import matplotlib as mpl
 import networkx as nx
-import numpy
 import orjson as json
 from matplotlib import pyplot as plt
 
