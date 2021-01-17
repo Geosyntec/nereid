@@ -62,11 +62,9 @@ def bisection_search(
         check = function(guess)
 
         if numpy.isnan(check):  # pragma: no cover
-
             check = 1e6
 
         diff = check - seek_value
-        # print(f"{old_result:.3f}, {guess:.3f}, {check:.3f}, {diff:.3f}")
 
         if abs(diff) < atol:
             converged = True
@@ -161,7 +159,7 @@ class NomographBase(object):
     @property
     def interp_kwargs(self) -> Dict[str, Any]:  # pragma: no cover
         if self._interp_kwargs is None:
-            self._interp_kwargs = {"rescale": True}
+            self._interp_kwargs = {"rescale": False}
         return self._interp_kwargs
 
     @property
@@ -270,12 +268,10 @@ class NomographBase(object):
         else:
             raise ValueError("must call with `t` and either `x` or `y`")
 
-    def _baseplot(
-        self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]
-    ) -> Axes:  # pragma: no cover
+    def _baseplot(self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]) -> Axes:
 
-        if ax is None:
-            ax = plt.gca()
+        if ax is None:  # pragma: no branch
+            fig, ax = plt.subplots()
 
         xmin, xmax = numpy.nanmin(self.x_data), numpy.nanmax(self.x_data)
         xline = numpy.linspace(xmin, xmax, 100)
@@ -306,8 +302,27 @@ class NomographBase(object):
 
         return ax
 
+    def _basesurface(self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]) -> Axes:
+
+        if ax is None:  # pragma: no branch
+            fig, ax = plt.subplots()
+
+        ax.tricontourf(self.x_data, self.t_data, self.y_data, levels=255)
+
+        t = numpy.linspace(1, numpy.max(self.t_data), 100)
+        for i, perf in enumerate([0.6, 0.8, 0.9, 0.95, 0.97]):
+            x = [self(t=_t, y=perf) for _t in t]
+            ax.plot(x, t, c=f"C{i}", label=f"{perf:.0%}")
+
+        return ax
+
     def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:  # pragma: no cover
         return self._baseplot(*args, **kwargs)
+
+    def surfaceplot(
+        self, *args: Tuple, **kwargs: Dict[str, Any]
+    ) -> Axes:  # pragma: no cover
+        return self._basesurface(*args, **kwargs)
 
 
 class VolumeNomograph(object):
@@ -329,13 +344,6 @@ class VolumeNomograph(object):
         self.performance = self.nomo.y_data
         self.source_data = source_data
 
-    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:  # pragma: no cover
-        ax = self.nomo._baseplot(*args, **kwargs)
-        ax.set_xlabel("size")
-        ax.set_ylabel("performance")
-        ax.legend(ncol=2, title="ddt")
-        return ax
-
     def __call__(
         self,
         *,
@@ -344,6 +352,20 @@ class VolumeNomograph(object):
         performance: Optional[Any] = None,
     ) -> Any:
         return self.nomo(x=size, t=ddt, y=performance)
+
+    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+        ax = self.nomo._baseplot(*args, **kwargs)
+        ax.set_xlabel("size")
+        ax.set_ylabel("performance")
+        ax.legend(ncol=2, title="ddt")
+        return ax
+
+    def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+        ax = self.nomo._basesurface(*args, **kwargs)
+        ax.set_xlabel("size")
+        ax.set_ylabel("ddt")
+        ax.legend(loc=6, bbox_to_anchor=(1.01, 0.5))
+        return ax
 
 
 class FlowNomograph(object):
@@ -365,13 +387,6 @@ class FlowNomograph(object):
         self.performance = self.nomo.y_data
         self.source_data = source_data
 
-    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:  # pragma: no cover
-        ax = self.nomo._baseplot(*args, **kwargs)
-        ax.set_xlabel("intensity")
-        ax.set_ylabel("performance")
-        ax.legend(ncol=2, title="tc")
-        return ax
-
     def __call__(
         self,
         *,
@@ -380,3 +395,17 @@ class FlowNomograph(object):
         performance: Optional[Any] = None,
     ) -> Any:
         return self.nomo(x=intensity, t=tc, y=performance)
+
+    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+        ax = self.nomo._baseplot(*args, **kwargs)
+        ax.set_xlabel("intensity")
+        ax.set_ylabel("performance")
+        ax.legend(ncol=2, title="tc")
+        return ax
+
+    def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+        ax = self.nomo._basesurface(*args, **kwargs)
+        ax.set_xlabel("intensity")
+        ax.set_ylabel("tc")
+        ax.legend(loc=6, bbox_to_anchor=(1.01, 0.5))
+        return ax

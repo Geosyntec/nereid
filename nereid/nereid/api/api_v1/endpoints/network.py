@@ -18,7 +18,7 @@ from nereid.core import config
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory=r"nereid/api/templates")
+templates = Jinja2Templates(directory="nereid/api/templates")
 
 
 @router.post(
@@ -162,7 +162,7 @@ async def get_subgraph_network_as_img(
                 svg = render_task.result
 
                 return templates.TemplateResponse(
-                    "network.html", {"request": request, "svg": svg}
+                    "display_svg.html", {"request": request, "svg": svg}
                 )
             return svgresponse
 
@@ -279,7 +279,7 @@ async def get_network_solution_sequence_as_img(
                 svg = render_task.result
 
                 return templates.TemplateResponse(
-                    "network.html", {"request": request, "svg": svg}
+                    "display_svg.html", {"request": request, "svg": svg}
                 )
             return svgresponse
 

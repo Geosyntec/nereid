@@ -104,9 +104,9 @@ def construct_flow_nomo():
     return nomo
 
 
-# @pytest.fixture
-# def flow_nomo():
-#     return construct_flow_nomo()
+@pytest.fixture
+def flow_nomo():
+    return construct_flow_nomo()
 
 
 def construct_flow_nomos():
@@ -216,3 +216,13 @@ def test_nomo_single_list_roundtrip(vol_nomo, size, ddt, performance, exp):
 )
 def test_nomo_raises(vol_nomo, s, t, y, exception):
     pytest.raises(exception, vol_nomo, size=s, ddt=t, performance=y)
+
+
+def test_nomo_plots(vol_nomo, flow_nomo):
+    _ = vol_nomo.plot()
+    _ = vol_nomo.surface_plot()
+
+    _ = flow_nomo.plot()
+    _ = flow_nomo.surface_plot()
+
+    return
