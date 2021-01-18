@@ -9,8 +9,6 @@ from nereid.api.api_v1.models.results_models import PreviousResult, Result
 from nereid.api.api_v1.models.treatment_facility_models import STRUCTURAL_FACILITY_TYPE
 from nereid.api.api_v1.models.treatment_site_models import TreatmentSite
 
-
-## Request Model
 EXAMPLE_WATERSHED = {
     "graph": {
         "directed": True,
@@ -391,6 +389,8 @@ EXAMPLE_WATERSHED = {
         },
     ],
 }
+
+## Request Models
 
 
 class Watershed(BaseModel):
