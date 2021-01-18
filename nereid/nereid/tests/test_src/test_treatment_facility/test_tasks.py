@@ -35,16 +35,16 @@ def test_construct_nodes_from_treatment_facility_request(
 @pytest.mark.parametrize(
     "model, checkfor",
     [
-        ("PermPoolFacility", "retention_volume_cuft"),
+        ("PermPoolFacility", "treatment_volume_cuft"),
         ("RetAndTmntFacility", "retention_volume_cuft"),
         ("BioInfFacility", "retention_volume_cuft"),
         ("FlowAndRetFacility", "retention_volume_cuft"),
         ("RetentionFacility", "retention_volume_cuft"),
         ("TmntFacility", "treatment_volume_cuft"),
-        ("CisternFacility", "design_storm_depth_inches"),
+        ("CisternFacility", "retention_volume_cuft"),
         ("DryWellFacility", "retention_volume_cuft"),
-        ("LowFlowFacility", "design_storm_depth_inches"),
-        ("FlowFacility", "design_storm_depth_inches"),
+        ("LowFlowFacility", "ini_treatment_rate_cfs"),
+        ("FlowFacility", "treatment_rate_cfs"),
         ("NTFacility", "design_storm_depth_inches"),
     ],
 )

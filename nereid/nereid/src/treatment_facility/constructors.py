@@ -331,8 +331,8 @@ class TreatmentFacilityConstructor:
     @staticmethod
     def perm_pool_facility_constructor(
         *,
-        pool_volume_cuft: float,
-        pool_drawdown_time_hr: float,
+        # pool_volume_cuft: float,
+        # pool_drawdown_time_hr: float,
         treatment_volume_cuft: float,
         treatment_drawdown_time_hr: float,
         winter_demand_cfs: float,
@@ -340,16 +340,23 @@ class TreatmentFacilityConstructor:
         **kwargs: dict,
     ) -> Dict[str, Any]:
 
-        retention_volume_cuft = pool_volume_cuft
-        winter_demand_cfhr = winter_demand_cfs * 3600
-        winter_pool_ddrate_cfhr = retention_volume_cuft / pool_drawdown_time_hr
-        winter_total_ddrate_cfhr = winter_pool_ddrate_cfhr + winter_demand_cfhr
-        retention_ddt_hr = safe_divide(retention_volume_cuft, winter_total_ddrate_cfhr)
+        # TODO: wetponds are lined, thus they do not perform retention
+        # during wet weather. The perm pool volume is treated during the hrt and
+        # discharged. Therefore a future release will need to handle two nomograph
+        # traversals with the same fate; in this case both traversals yield
+        # % treated + % treated, rather than the typical % retained + % treated.
+        # reference issue: https://github.com/Geosyntec/nereid/issues/99
+
+        # retention_volume_cuft = pool_volume_cuft
+        # winter_demand_cfhr = winter_demand_cfs * 3600
+        # winter_pool_ddrate_cfhr = retention_volume_cuft / pool_drawdown_time_hr
+        # winter_total_ddrate_cfhr = winter_pool_ddrate_cfhr + winter_demand_cfhr
+        # retention_ddt_hr = safe_divide(retention_volume_cuft, winter_total_ddrate_cfhr)
         treatment_ddt_hr = treatment_drawdown_time_hr
 
         result = dict(
-            retention_volume_cuft=retention_volume_cuft,
-            retention_ddt_hr=retention_ddt_hr,
+            # retention_volume_cuft=retention_volume_cuft,
+            # retention_ddt_hr=retention_ddt_hr,
             treatment_volume_cuft=treatment_volume_cuft,
             treatment_ddt_hr=treatment_ddt_hr,
             summer_dry_weather_retention_rate_cfs=summer_demand_cfs,

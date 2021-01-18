@@ -536,3 +536,26 @@ def test_invalid_graph(contexts, subbasins, land_surface_permutations):
     g, err = initialize_graph(data, False, context)
 
     assert len(err) > 0
+
+
+def test_watershed_graph_land_surface_only(
+    contexts, watershed_graph, initial_node_data
+):
+
+    g, data = watershed_graph, deepcopy(initial_node_data)
+    context = contexts["default"]
+
+    nx.set_node_attributes(g, data)
+    solve_watershed_loading(g, context)
+
+    surface_discharges = nx.get_node_attributes(g, "runoff_volume_cuft")
+    sum_inflow = sum(surface_discharges.values())
+    outflow = g.nodes["0"]["runoff_volume_cuft_total_discharged"]
+
+    assert sum_inflow > 0, f"error, no runoff generated: {surface_discharges}"
+    assert outflow > 0, "error, no runoff observed at outfall"
+    assert (
+        abs(sum_inflow - outflow) / sum_inflow < 1e-15
+    ), f"sum inflow: {sum_inflow:.2f}; outfall: {outflow:.2f}"
+
+    return
