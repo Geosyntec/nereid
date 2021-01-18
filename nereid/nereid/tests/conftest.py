@@ -536,4 +536,3 @@ def treatment_facilities_dict():
         dct["facility_type"]: dct
         for dct in EXAMPLE_TREATMENT_FACILITIES["treatment_facilities"]
     }
-
