@@ -5,6 +5,7 @@ import numpy
 import pytest
 
 from nereid.api.api_v1.models.treatment_facility_models import (
+    EXAMPLE_TREATMENT_FACILITIES,
     TREATMENT_FACILITY_MODELS,
     validate_treatment_facility_models,
 )
@@ -462,3 +463,77 @@ def land_surface_permutations(subbasins):
     slope = ["0", "10", "5"]
 
     yield ["-".join(l) for l in product(subbasins, land_use, soil, slope)]
+
+
+@pytest.fixture()
+def simple_3_node_watershed():
+    req = {
+        "graph": {
+            "directed": True,
+            "multigraph": False,
+            "graph": {},
+            "edges": [
+                {"metadata": {}, "source": "1", "target": "0"},
+                {"metadata": {}, "source": "2", "target": "1"},
+            ],
+        },
+        "treatment_facilities": [
+            {
+                "node_id": "1",
+                "facility_type": "bioretention",
+                "ref_data_key": "10101000",
+                "design_storm_depth_inches": 0.85,
+                "total_volume_cuft": 5000,
+                "retention_volume_cuft": 3000,
+                "area_sqft": 2500,
+                "media_filtration_rate_inhr": 10,
+                "hsg": "a",
+                "constructor": "bioinfiltration_facility_constructor",
+                "tributary_area_tc_min": 5,
+                "is_online": True,
+            }
+        ],
+        "land_surfaces": [
+            {
+                "node_id": "2",
+                "surface_key": "10101000-RESSFH-C-0",
+                "area_acres": 0.4,
+                "imp_area_acres": 0.38,
+            },
+            {
+                "node_id": "2",
+                "surface_key": "10101100-RESSFH-D-0",
+                "area_acres": 8.0,
+                "imp_area_acres": 4.1,
+            },
+            {
+                "node_id": "2",
+                "surface_key": "10101100-EDU-D-5",
+                "area_acres": 2.58,
+                "imp_area_acres": 2.55,
+            },
+            {
+                "node_id": "2",
+                "surface_key": "10101100-UTIL-A-5",
+                "area_acres": 4.31,
+                "imp_area_acres": 4.1,
+            },
+            {
+                "node_id": "2",
+                "surface_key": "10101200-RESSFL-D-5",
+                "area_acres": 3.93,
+                "imp_area_acres": 1.5,
+            },
+        ],
+    }
+
+    return req
+
+
+@pytest.fixture()
+def treatment_facilities_dict():
+    yield {
+        dct["facility_type"]: dct
+        for dct in EXAMPLE_TREATMENT_FACILITIES["treatment_facilities"]
+    }
+

@@ -139,3 +139,60 @@ def test_stable_watershed_stable_subgraph_solutions(
     subgraph_results = subgraph_response_dict["results"]
 
     check_subgraph_response_equal(subgraph_results, results)
+
+
+@pytest.mark.parametrize(
+    "facility_type, eliminates_wet_volume, treats_wet_volume, captures_dwf",
+    [
+        ("no_treatment", False, False, False),
+        ("dry_extended_detention", True, True, True),
+        ("infiltration", True, False, True),
+        ("bioretention", True, True, True),
+        ("biofiltration", False, True, True),
+        ("wet_detention", False, True, True),
+        ("sand_filter", False, True, True),
+        ("swale", True, True, True),
+        ("hydrodynamic_separator", False, True, True),
+        ("dry_well", True, False, True),
+        ("cistern", True, False, True),
+        ("dry_weather_diversion", False, False, True),
+        ("dry_weather_treatment", False, False, True),
+        ("low_flow_facility", False, False, True),
+    ],
+)
+def test_treatment_facility_waterbalance(
+    contexts,
+    simple_3_node_watershed,
+    treatment_facilities_dict,
+    facility_type,
+    eliminates_wet_volume,
+    treats_wet_volume,
+    captures_dwf,
+):
+
+    context = contexts["default"]
+    facility = treatment_facilities_dict[facility_type]
+    facility["node_id"] = "1"
+    watershed_request = simple_3_node_watershed
+
+    watershed_request["treatment_facilities"] = [facility]
+
+    response_dict = solve_watershed(
+        watershed=watershed_request, treatment_pre_validated=False, context=context,
+    )
+
+    results = response_dict["results"]
+
+    treatment_results = [res for res in results if res.get("node_id") == "1"][0]
+
+    ret_pct = treatment_results.get("retained_pct") or 0
+    tmnt_pct = treatment_results.get("treated_pct") or 0
+    dwf_captured = (
+        treatment_results.get("summer_dry_weather_flow_cuft_captured_pct") or 0
+    ) + (treatment_results.get("winter_dry_weather_flow_cuft_captured_pct") or 0)
+
+    assert eliminates_wet_volume == (ret_pct > 1), treatment_results
+    assert treats_wet_volume == (tmnt_pct > 1), treatment_results
+    assert captures_dwf == (dwf_captured > 1), treatment_results
+
+    return
