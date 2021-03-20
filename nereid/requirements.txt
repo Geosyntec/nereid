@@ -8,7 +8,7 @@ fastapi==0.61.2
 pydantic==1.7.2
 aiofiles==0.6.0
 celery==5.0.2
-jinja2==2.11.2
+jinja2==2.11.3
 redis==3.5.3
 orjson==3.4.3
 pyyaml==5.3.1
