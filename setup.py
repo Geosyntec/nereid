@@ -28,7 +28,7 @@ setup(
         "jinja2>=2.11,<2.12",
         "redis>=3.5,<3.6",
         "orjson>=3.4,<3.5",
-        "pyyaml>=5.3,<5.4",
+        "pyyaml>=5.3,<5.5",
         "pint>=0.16,<0.17",
         "typing-extensions>=3.7,<3.8",
     ],
