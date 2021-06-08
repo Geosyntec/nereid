@@ -19,7 +19,7 @@ setup(
         "pandas>=1.1,<1.2",
         "networkx>=2.5,<2.6",
         "pydot>=1.4,<1.5",
-        "graphviz>=0.14,<0.15",
+        "graphviz",
         "matplotlib>=3.3,<3.4",
         "fastapi>=0.61,<0.62",
         "pydantic>=1.7,<1.8",
