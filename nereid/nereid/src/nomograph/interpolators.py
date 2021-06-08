@@ -84,9 +84,9 @@ class NomographBase(object):
     def __init__(
         self,
         *,
-        x: Sequence[float],
-        t: Sequence[float],
-        y: Sequence[float],
+        x: Union[Sequence[float], pandas.Series, numpy.ndarray],
+        t: Union[Sequence[float], pandas.Series, numpy.ndarray],
+        y: Union[Sequence[float], pandas.Series, numpy.ndarray],
         interp_kwargs: Dict[str, Any] = None,
     ) -> None:
         """This class manages 2D interpolations of stormwater treatment facility performance
@@ -189,8 +189,8 @@ class NomographBase(object):
         if at_y <= 1e-3:  # pragma: no cover
             return 0.0, False
 
-        at_y = numpy.clip(at_y, numpy.nanmin(self.y_data), numpy.nanmax(self.y_data))
-        t = numpy.clip(t, numpy.nanmin(self.t_data), numpy.nanmax(self.t_data))
+        at_y = numpy.clip(at_y, numpy.nanmin(self.y_data), numpy.nanmax(self.y_data))  # type: ignore
+        t = numpy.clip(t, numpy.nanmin(self.t_data), numpy.nanmax(self.t_data))  # type: ignore
 
         _nomo: Callable[[float, float], float] = self.nomo
 
@@ -253,7 +253,7 @@ class NomographBase(object):
                             at_y=_y, t=_t, atol=atol, max_iters=max_iters
                         )
                         res.append(guess)
-                    arr_result: Sequence[float] = numpy.array(res)
+                    arr_result: numpy.ndarray = numpy.array(res)
 
                     return arr_result
                 else:
