@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install Linters
-        run: pip install -r nereid/requirements.txt -r nereid/requirements_test.txt
+        run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
       - name: Run Linters
         continue-on-error: true
         run: bash scripts/lint.sh
