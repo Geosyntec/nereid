@@ -189,8 +189,8 @@ class NomographBase(object):
         if at_y <= 1e-3:  # pragma: no cover
             return 0.0, False
 
-        at_y = numpy.clip(at_y, numpy.nanmin(self.y_data), numpy.nanmax(self.y_data))  # type: ignore
-        t = numpy.clip(t, numpy.nanmin(self.t_data), numpy.nanmax(self.t_data))  # type: ignore
+        at_y = numpy.clip(at_y, numpy.nanmin(self.y_data), numpy.nanmax(self.y_data))
+        t = numpy.clip(t, numpy.nanmin(self.t_data), numpy.nanmax(self.t_data))
 
         _nomo: Callable[[float, float], float] = self.nomo
 
