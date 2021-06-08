@@ -1,0 +1,45 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install graphviz
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Linters
+        run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
+      - name: Run Linters
+        run: bash scripts/lint.sh
+
+  lint-edge:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - run: sudo apt-get install graphviz
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Deps
+        run: |
+          pip install --upgrade pip
+          awk -F"==" '{print $1}' nereid/requirements.txt nereid/requirements_tests.txt > nereid/requirements_edge.txt
+          pip install -r nereid/requirements_edge.txt
+      - name: Run Edge Linters
+        continue-on-error: true
+        run: bash scripts/lint.sh
+      - name: Exit
+        run: exit 0
