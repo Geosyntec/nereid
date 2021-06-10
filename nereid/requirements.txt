@@ -4,7 +4,7 @@ networkx==2.5
 pydot==1.4.1
 graphviz==0.14.2
 matplotlib==3.3.3
-fastapi==0.61.2
+fastapi==0.65.2
 pydantic==1.7.2
 aiofiles==0.6.0
 celery==5.0.2
