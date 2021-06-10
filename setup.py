@@ -21,7 +21,7 @@ setup(
         "pydot>=1.4,<1.5",
         "graphviz",
         "matplotlib>=3.3,<3.4",
-        "fastapi>=0.61,<0.62",
+        "fastapi>=0.61,<0.66",
         "pydantic>=1.7,<1.8",
         "aiofiles>=0.6,<0.7",
         "celery>=5.0,<5.1",
