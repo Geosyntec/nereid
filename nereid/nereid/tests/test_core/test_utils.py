@@ -29,7 +29,7 @@ def test_get_request_context(state, region, dirname, context, exp):
         "default_no_data_path_invalid",
         "default_dne_data_path_invalid",
         "default_no_ref_data_invalid",
-        "default_no_lst_file_invalid",
+        "default_no_lst_file_valid",
         "default_lst_file_dne_invalid",
         "default_lst_not_dict_invalid",
         "default_lst_no_expanded_fields_valid",
