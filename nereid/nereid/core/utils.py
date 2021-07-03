@@ -30,20 +30,14 @@ def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
     for tablename, attrs in context.get("project_reference_data", {}).items():
         try:
             filename = attrs.get("file")
-            if not filename:
+            if filename:
 
-                message = (
-                    "Section 'project_reference_data' > "
-                    f"'{tablename}' has no 'file' specified"
-                )
-                return False, message
-
-            filepath = data_path / filename
-            if not filepath.exists():
-                message = (
-                    f"Requested path to reference file: {filepath} does not exist."
-                )
-                return False, message
+                filepath = data_path / filename
+                if not filepath.exists():
+                    message = (
+                        f"Requested path to reference file: {filepath} does not exist."
+                    )
+                    return False, message
 
         except Exception as e:
             message = (
