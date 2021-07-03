@@ -21,7 +21,7 @@ class Edge(BaseModel):
 class Graph(BaseModel):
     edges: List[Edge]
     nodes: Optional[List[Node]]
-    directed: Optional[bool] = False
+    directed: Optional[bool] = True
     multigraph: Optional[bool] = True
     type_: Optional[str] = Field(None, alias="type")
     label: Optional[str]

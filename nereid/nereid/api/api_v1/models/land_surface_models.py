@@ -50,10 +50,6 @@ class LandSurfaceDetails(LandSurfaceBase):
     imp_ro_depth_inches: float
     perv_ro_coeff: float
     imp_ro_coeff: float
-    subbasin: str
-    land_use: str
-    soil: str
-    slope: str
     perv_area_acres: float
     imp_area_sqft: float
     perv_area_sqft: float
