@@ -103,7 +103,7 @@ api_recognize:
             b: 0.8
             c: 0.24
             d: 0.024
-            lined: 0
+            lined: 1.0e-6
 
     facility_type:
       no_treatment:
