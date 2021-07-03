@@ -39,7 +39,7 @@ RUN mkdir /serve && \
 
 FROM python:3.8.6-slim-buster as core-runtime
 RUN apt-get update -y \
-  && apt-get install -y --no-install-recommends graphviz=2.40.1-6 \ 
+  && apt-get install -y --no-install-recommends graphviz \ 
   && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
