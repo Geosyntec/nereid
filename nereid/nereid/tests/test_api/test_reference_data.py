@@ -1,6 +1,6 @@
 import pytest
 
-from nereid.core.config import API_LATEST
+from nereid.core.config import settings
 
 
 @pytest.mark.parametrize(
@@ -19,7 +19,7 @@ from nereid.core.config import API_LATEST
     ],
 )
 def test_ref_data(client, query, isvalid):
-    url = API_LATEST + "/reference_data" + query
+    url = settings.API_LATEST + "/reference_data" + query
 
     response = client.get(url)
 
@@ -42,7 +42,7 @@ def test_ref_data(client, query, isvalid):
     "table, isvalid", [("", False), ("met_table", True), ("met_tables", False),],
 )
 def test_ref_data_table(client, table, isvalid):
-    url = API_LATEST + f"/reference_data/{table}"
+    url = settings.API_LATEST + f"/reference_data/{table}"
 
     response = client.get(url)
 
@@ -72,6 +72,6 @@ def test_ref_data_table(client, table, isvalid):
     ],
 )
 def test_ref_data_nomograph(client, nomo, type, status_code):
-    url = API_LATEST + f"/reference_data/nomograph?filename={nomo}&type={type}"
+    url = settings.API_LATEST + f"/reference_data/nomograph?filename={nomo}&type={type}"
     response = client.get(url)
     assert response.status_code == status_code
