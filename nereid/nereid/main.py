@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 
@@ -50,4 +51,16 @@ async def check_config(state="state", region="region"):
     return context
 
 
-app.include_router(api_router, prefix=API_V1_STR)
+app.include_router(api_router, prefix=settings.API_V1_STR)
+# origins = [
+#     "http://localhost:8000",
+#     "http://localhost:5500",
+# ]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOW_CORS_ORIGINS,
+    allow_origin_regex=settings.ALLOW_CORS_ORIGIN_REGEX,
+    allow_credentials=False,
+    allow_methods=["GET", "OPTIONS", "POST"],
+    allow_headers=["*"],
+)
