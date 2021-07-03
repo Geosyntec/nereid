@@ -5,7 +5,7 @@ import networkx as nx
 import pytest
 
 from nereid.api.api_v1.models import watershed_models
-from nereid.core import config
+from nereid.core.config import settings
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.src.watershed.utils import attrs_to_resubmit
@@ -31,7 +31,7 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
     post_response = watershed_responses[key]
 
     prjson = post_response.json()
-    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+    if settings.FORCE_FOREGROUND:  # pragma: no cover
         grjson = prjson
     else:
         result_route = prjson["result_route"]
@@ -83,7 +83,7 @@ def test_post_solve_watershed_stable(
     new_request.update(previous_results)
 
     payload = json.dumps(new_request)
-    route = config.API_LATEST + "/watershed/solve"
+    route = settings.API_LATEST + "/watershed/solve"
     response = client.post(route, data=payload)
 
     subgraph_results = response.json()["data"]["results"]

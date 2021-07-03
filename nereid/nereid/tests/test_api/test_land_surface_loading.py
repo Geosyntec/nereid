@@ -1,7 +1,7 @@
 import pytest
 
 from nereid.api.api_v1.models import land_surface_models
-from nereid.core import config
+from nereid.core.config import settings
 
 
 @pytest.mark.parametrize("details", ["true", "false"])
@@ -31,7 +31,7 @@ def test_get_land_surface_loading(
     post_response = land_surface_loading_responses[key]
 
     prjson = post_response.json()
-    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+    if settings.FORCE_FOREGROUND:  # pragma: no cover
         grjson = prjson
     else:
         result_route = prjson["result_route"]

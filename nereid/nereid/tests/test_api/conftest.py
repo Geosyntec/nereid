@@ -6,7 +6,7 @@ import networkx as nx
 import pytest
 from fastapi.testclient import TestClient
 
-from nereid.core.config import API_LATEST
+from nereid.core.config import settings
 from nereid.main import app
 from nereid.src.network.utils import clean_graph_dict
 from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_payload
@@ -21,7 +21,7 @@ def client():
 @pytest.fixture(scope="module")
 def named_validation_responses(client):
 
-    route = API_LATEST + "/network/validate"
+    route = settings.API_LATEST + "/network/validate"
     responses = {}
     slow_valid = json.dumps(clean_graph_dict(nx.gnr_graph(15000, p=0.05, seed=42)))
     slow_invalid = json.dumps(clean_graph_dict(nx.gnc_graph(15000, seed=42)))
@@ -46,7 +46,7 @@ def named_validation_responses(client):
 @pytest.fixture(scope="module")
 def named_subgraph_responses(client):
 
-    route = API_LATEST + "/network/subgraph"
+    route = settings.API_LATEST + "/network/subgraph"
     responses = {}
 
     slow_graph = clean_graph_dict(nx.gnr_graph(200, p=0.05, seed=42))
@@ -90,7 +90,7 @@ def solution_sequence_response(client):
         g = generate_n_random_valid_watershed_graphs(ngraph, *minmax)
         payload = json.dumps(clean_graph_dict(g))
 
-        route = API_LATEST + "/network/solution_sequence"
+        route = settings.API_LATEST + "/network/solution_sequence"
 
         response = client.post(route + f"?min_branch_size={bs}", data=payload)
 
@@ -115,7 +115,7 @@ def land_surface_loading_responses(client, land_surface_loading_response_dicts):
     ):
 
         payload = json.dumps(ls_request)
-        route = API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
+        route = settings.API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
         response = client.post(route, data=payload)
         assert response.status_code == 200, (response, detail_tf, nrows, nnodes)
 
@@ -132,7 +132,7 @@ def treatment_facility_responses(client, treatment_facility_dicts):
     for name, dct in treatment_facility_dicts.items():
 
         payload = json.dumps({"treatment_facilities": [dct]})
-        route = API_LATEST + "/treatment_facility/validate"
+        route = settings.API_LATEST + "/treatment_facility/validate"
         response = client.post(route, data=payload)
         responses[name] = response
 
@@ -149,7 +149,7 @@ def default_context_treatment_facility_responses(
     for name, dct in default_context_treatment_facility_dicts.items():
 
         payload = json.dumps({"treatment_facilities": [dct]})
-        route = API_LATEST + "/treatment_facility/validate"
+        route = settings.API_LATEST + "/treatment_facility/validate"
         response = client.post(route, data=payload)
         responses[name] = response
 
@@ -164,7 +164,7 @@ def treatment_site_responses(client, valid_treatment_site_requests):
     for name, dct in valid_treatment_site_requests.items():
 
         payload = json.dumps(dct)
-        route = API_LATEST + "/treatment_site/validate"
+        route = settings.API_LATEST + "/treatment_site/validate"
         response = client.post(route, data=payload)
         responses[name] = response
 
@@ -179,7 +179,7 @@ def watershed_responses(client, watershed_requests):
     for name, dct in watershed_requests.items():
 
         payload = json.dumps(dct)
-        route = API_LATEST + "/watershed/solve"
+        route = settings.API_LATEST + "/watershed/solve"
         response = client.post(route, data=payload)
         responses[name] = response
 

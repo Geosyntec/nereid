@@ -6,7 +6,8 @@ from celery.result import AsyncResult
 from fastapi import APIRouter, HTTPException
 
 import nereid.bg_worker as bg
-from nereid.core import config, utils
+from nereid.core import utils
+from nereid.core.config import settings
 
 
 def wait_a_sec_and_see_if_we_can_return_some_data(
@@ -28,7 +29,7 @@ def run_task(
     force_foreground: Optional[bool] = False,
 ) -> Dict[str, Any]:
 
-    if force_foreground or config.NEREID_FORCE_FOREGROUND:
+    if force_foreground or settings.FORCE_FOREGROUND:
         response = dict(data=task(), task_id="foreground", result_route="foreground")
 
     else:
@@ -42,7 +43,7 @@ def standard_json_response(
     router: APIRouter,
     get_route: str,
     timeout: float = 0.2,
-    api_version: str = config.API_LATEST,
+    api_version: str = settings.API_LATEST,
 ) -> Dict[str, Any]:
     router_path = router.url_path_for(get_route, task_id=task.id)
 
@@ -64,7 +65,7 @@ def get_valid_context(state: str = "state", region: str = "region") -> Dict[str,
     if not isvalid:
         raise HTTPException(status_code=400, detail=msg)
 
-    if not config.NEREID_FORCE_FOREGROUND:  # pragma: no branch
+    if not settings.FORCE_FOREGROUND:  # pragma: no branch
 
         task = bg.background_validate_request_context.s(context=context).apply_async()
         isvalid, msg = task.get()

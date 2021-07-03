@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from pydantic import BaseModel, ValidationError
 
-from nereid.core.config import APP_CONTEXT
+from nereid.core.config import settings
 from nereid.core.io import load_cfg
 
 
@@ -63,7 +63,7 @@ def get_request_context(
 ) -> Dict[str, Any]:
 
     if context is None:
-        context = APP_CONTEXT
+        context = settings.APP_CONTEXT
 
     context["state"] = state
     context["region"] = region

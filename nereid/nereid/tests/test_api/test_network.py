@@ -1,7 +1,7 @@
 import pytest
 
 from nereid.api.api_v1.models import network_models
-from nereid.core import config
+from nereid.core.config import settings
 
 
 @pytest.mark.parametrize(
@@ -46,7 +46,7 @@ def test_get_network_validate(
     post_response = named_validation_responses[post_response_name]
 
     prjson = post_response.json()
-    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+    if settings.FORCE_FOREGROUND:  # pragma: no cover
         grjson = prjson
     else:
         result_route = prjson["result_route"]
@@ -112,7 +112,7 @@ def test_get_finished_network_subgraph(
     post_response = named_subgraph_responses[post_response_name]
 
     prjson = post_response.json()
-    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+    if settings.FORCE_FOREGROUND:  # pragma: no cover
         grjson = prjson
     else:
         result_route = prjson["result_route"]
@@ -142,7 +142,7 @@ def test_post_network_subgraph(client, named_subgraph_responses, post_response_n
     assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
+@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize(
     "post_response_name, isfast",
     [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
@@ -171,7 +171,7 @@ def test_get_render_subgraph_svg(
         assert svg_response.status_code == 200
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
+@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize(
     "post_response_name, isfast",
     [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
@@ -217,7 +217,7 @@ def test_get_solution_sequence(
     post_response = solution_sequence_response[key]
 
     prjson = post_response.json()
-    if config.NEREID_FORCE_FOREGROUND:  # pragma: no cover
+    if settings.FORCE_FOREGROUND:  # pragma: no cover
         grjson = prjson
     else:
         result_route = prjson["result_route"]
@@ -234,7 +234,7 @@ def test_get_solution_sequence(
     assert grjson["data"] is not None
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
+@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("min_branch_size", [6])
 @pytest.mark.parametrize("n_graphs", [1, 3])
 @pytest.mark.parametrize("min_max", [(3, 4), (10, 11), (20, 40)])
@@ -262,7 +262,7 @@ def test_get_render_solution_sequence(
         assert srjson["task_id"] is not None
 
 
-@pytest.mark.skipif(config.NEREID_FORCE_FOREGROUND, reason="tasks ran in foreground")
+@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 def test_get_render_solution_sequence_bad_media_type(
     client, solution_sequence_response
 ):
