@@ -82,4 +82,5 @@ jobs:
           bash ./scripts/build_edge.sh
           docker-compose up -d nereid-tests
       - name: run edge tests
+        continue-on-error: true
         run: docker-compose exec -T nereid-tests pytest -xv
