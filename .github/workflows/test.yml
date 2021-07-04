@@ -24,6 +24,22 @@ jobs:
           coverage run --source=nereid/nereid/src --branch -m pytest nereid/nereid/tests/test_src -xv
           coverage report -m --omit=*test*
 
+  python-test-install:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install graphviz
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install nereid as library
+        run: |
+          pip install . 
+          pip install -r nereid/requirements_tests.txt
+      - name: Run Tests
+        run: pytest nereid/nereid/tests/test_src -xv
+
   python-edge-test:
     runs-on: ubuntu-latest
     strategy:
