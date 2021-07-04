@@ -3,6 +3,6 @@
 set -e
 set -x
 
-mypy nereid/nereid
+mypy nereid/nereid --install-types --non-interactive
 black nereid --check
 isort nereid --check --diff 
