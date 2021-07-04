@@ -36,6 +36,11 @@ class SubgraphNodes(BaseModel):
     subgraph_nodes: List[Nodes]
 
 
+class SubgraphRequest(BaseModel):
+    graph: Graph
+    nodes: List[Node]
+
+
 class SeriesSequence(BaseModel):
     series: List[Nodes]
 
