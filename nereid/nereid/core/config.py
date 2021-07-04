@@ -30,13 +30,13 @@ class Settings(BaseSettings):
 
     @validator("ALLOW_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
-        if isinstance(v, str) and not v.startswith("["):
+        if isinstance(v, str) and not v.startswith("["):  # pragma: no branch
             return [i.strip() for i in v.split(",")]
         elif isinstance(v, (list, str)):
             return v
-        raise ValueError(v)
+        raise ValueError(v)  # pragma: no cover
 
-    class Config:
+    class Config:  # pragma: no cover
         env_prefix = "NEREID_"
         try:
             with pkg_resources.path("nereid", ".env") as p:
@@ -45,7 +45,7 @@ class Settings(BaseSettings):
             pass
         extra = "allow"
 
-    def update(self, other: dict) -> None:
+    def update(self, other: dict) -> None:  # pragma: no cover
         for key, value in other.items():
             setattr(self, key, value)
 
