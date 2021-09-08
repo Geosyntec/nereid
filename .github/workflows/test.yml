@@ -100,3 +100,5 @@ jobs:
       - name: run edge tests
         continue-on-error: true
         run: docker-compose exec -T nereid-tests pytest -xv
+      - name: Exit
+        run: exit 0
