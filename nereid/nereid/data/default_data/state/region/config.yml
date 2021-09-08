@@ -7,103 +7,103 @@ pint_unit_registry:
 api_recognize:
   land_surfaces:
     preprocess:
-      - expand_fields: 
-        - field: surface_key
-          sep: "-"
-          new_column_names:
-            - subbasin
-            - land_use
-            - soil
-            - slope
+      - expand_fields:
+          - field: surface_key
+            sep: "-"
+            new_column_names:
+              - subbasin
+              - land_use
+              - soil
+              - slope
 
-      - collapse_fields: 
-        - new_column_name: fuzzy_key
-          sep: "-"
-          fields:
-            - land_use
+      - collapse_fields:
+          - new_column_name: fuzzy_key
+            sep: "-"
+            fields:
+              - land_use
 
       - joins: # joins are passed to pandas.DataFrame.merge()
-        - other: land_surface_table
-          how: left
-          left_on: surface_key
-          right_on: surface_id
-          validate: many_to_one
-          indicator: True
-          fuzzy_on: # this is a sequence of fall-back keys to try to join on.
-            - fuzzy_key
+          - other: land_surface_table
+            how: left
+            left_on: surface_key
+            right_on: surface_id
+            validate: many_to_one
+            indicator: True
+            fuzzy_on: # this is a sequence of fall-back keys to try to join on.
+              - fuzzy_key
 
-        - other: land_surface_emc_table
-          how: left
-          left_on: land_use
-          right_on: land_use
-          validate: many_to_one
-          indicator: True
+          - other: land_surface_emc_table
+            how: left
+            left_on: land_use
+            right_on: land_use
+            validate: many_to_one
+            indicator: True
 
-        - other: dry_weather_land_surface_emc_table
-          how: left
-          left_on: land_use
-          right_on: land_use
-          validate: many_to_one
-          indicator: True
+          - other: dry_weather_land_surface_emc_table
+            how: left
+            left_on: land_use
+            right_on: land_use
+            validate: many_to_one
+            indicator: True
 
-        - other: met_table
-          how: left
-          left_on: subbasin
-          right_on: subbasin
-          validate: many_to_one
-          indicator: True
+          - other: met_table
+            how: left
+            left_on: subbasin
+            right_on: subbasin
+            validate: many_to_one
+            indicator: True
 
-        - other: dry_weather_flow_table
-          how: left
-          left_on: rain_gauge
-          right_on: rain_gauge
-          validate: many_to_one
-          indicator: True
+          - other: dry_weather_flow_table
+            how: left
+            left_on: rain_gauge
+            right_on: rain_gauge
+            validate: many_to_one
+            indicator: True
 
       - remaps:
-        - left: soil
-          right: imp_pct
-          how: addend  # interpreted as 'right' = 'right' + mapping['left']
-          mapping:
-            water: 100
+          - left: soil
+            right: imp_pct
+            how: addend # interpreted as 'right' = 'right' + mapping['left']
+            mapping:
+              water: 100
 
-        - left: land_use
-          right: is_developed
-          how: left # interpreted as 'right' = mapping['left'] if 'left' exists
-          fillna: false
-          mapping:
-            COMM: true
-            EDU: true
-            IND: true
-            UTIL: true
-            RESSFH: true
-            RESSFL: true
-            RESMF: true
-            TRFWY: true
-            TRANS: true
-            TROTH: true
-  
+          - left: land_use
+            right: is_developed
+            how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+            fillna: false
+            mapping:
+              COMM: true
+              EDU: true
+              IND: true
+              UTIL: true
+              RESSFH: true
+              RESSFL: true
+              RESMF: true
+              TRFWY: true
+              TRANS: true
+              TROTH: true
+
   treatment_facility:
     preprocess:
-      - joins:     
-        - other: met_table
-          how: left
-          left_on: ref_data_key
-          right_on: subbasin
-          validate: many_to_one
-          indicator: True
-    
+      - joins:
+          - other: met_table
+            how: left
+            left_on: ref_data_key
+            right_on: subbasin
+            validate: many_to_one
+            indicator: True
+
       - remaps:
-        - left: hsg
-          right: inf_rate_inhr
-          how: left  # interpreted as 'right' = mapping['left'] if 'left' exists
-          fillna: 1.0e-6
-          mapping:
-            a: 2.5
-            b: 0.8
-            c: 0.24
-            d: 0.024
-            lined: 1.0e-6
+          - left: hsg
+            right: inf_rate_inhr
+            how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+            fillna: 1.0e-6
+            mapping:
+              a: 2.5
+              b: 0.8
+              c: 0.24
+              d: 0.024
+              lined: 1.0e-6
 
     facility_type:
       no_treatment:
@@ -115,18 +115,18 @@ api_recognize:
         validator: RetAndTmntFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Detention Basin
-        
-      infiltration: 
+
+      infiltration:
         validator: RetentionFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: ¯\_(ツ)_/¯ # wq improvement via retention only
-      
-      bioretention: 
+
+      bioretention:
         validator: BioInfFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Biofiltration
 
-      biofiltration: 
+      biofiltration:
         validator: TmntFacilityWithRetentionOverride
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Biofiltration
@@ -141,12 +141,12 @@ api_recognize:
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Sand Filter
 
-      swale: 
+      swale:
         validator: FlowAndRetFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Vegetated Swale
 
-      hydrodynamic_separator: 
+      hydrodynamic_separator:
         validator: FlowFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Hydrodynamic Separator
@@ -155,7 +155,7 @@ api_recognize:
         validator: DryWellFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: ¯\_(ツ)_/¯
-      
+
       cistern:
         validator: CisternFacility
         validation_fallback: NTFacility
@@ -194,7 +194,7 @@ project_reference_data:
         - jul
         - aug
         - sep
-    
+
   met_table:
     file: met_data.json
     nomographs:
@@ -221,15 +221,19 @@ project_reference_data:
 
     preprocess:
       - remaps:
-        - left: rain_gauge
-          right: volume_nomograph
-          how: left  # interpreted as 'right' = mapping['left'] if 'left' exists
-          mapping:
-            100_LAGUNABEACH: nomographs/100_LAGUNABEACH_volume_nomo.csv
-            1130_LAGUNA_AUDUBON: nomographs/1130_LAGUNA_AUDUBON_volume_nomo.csv
+          - left: rain_gauge
+            right: volume_nomograph
+            how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+            mapping:
+              100_LAGUNABEACH: nomographs/100_LAGUNABEACH_volume_nomo.csv
+              1130_LAGUNA_AUDUBON: nomographs/1130_LAGUNA_AUDUBON_volume_nomo.csv
 
-        - left: rain_gauge
-          right: flow_nomograph
+          - left: rain_gauge
+            right: flow_nomograph
+            how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+            mapping:
+              100_LAGUNABEACH: nomographs/100_LAGUNABEACH_flow_nomo.csv
+              1130_LAGUNA_AUDUBON: nomographs/1130_LAGUNA_AUDUBON_flow_nomo.csv
 
           - left: rain_gauge
             right: peak_nomograph
@@ -244,58 +248,32 @@ project_reference_data:
     pollutant_column: pollutant
     preprocess:
       - remaps:
-        - left: unit
-          right: -- # with how = replace, the right key is not parsed at all.
-          how: replace  # interpreted as 'left' = mapping['left']
-          mapping:
-            # units must be compatible with the `pint` library
-            "MPN/100mL": "MPN/_100ml"
-            "MPN/100 mL": "MPN/_100ml"
+          - left: unit
+            right: -- # with how = replace, the right key is not parsed at all.
+            how: replace # interpreted as 'left' = mapping['left']
+            mapping:
+              # units must be compatible with the `pint` library
+              "MPN/100mL": "MPN/_100ml"
+              "MPN/100 mL": "MPN/_100ml"
 
-  tmnt_performance_table: 
+  tmnt_performance_table:
     file: bmp_params.json
     facility_column: facility_type
     pollutant_column: pollutant
     preprocess:
       - remaps:
-        - left: unit
-          right: -- # with how = replace, the right key is not parsed at all.
-          how: replace  # interpreted as 'left' = mapping['left']
-          mapping:
-            # units must be compatible with the `pint` library
-            "MPN/100mL": "MPN/_100ml"
-            "MPN/100 mL": "MPN/_100ml"
+          - left: unit
+            right: -- # with how = replace, the right key is not parsed at all.
+            how: replace # interpreted as 'left' = mapping['left']
+            mapping:
+              # units must be compatible with the `pint` library
+              "MPN/100mL": "MPN/_100ml"
+              "MPN/100 mL": "MPN/_100ml"
 
-  land_surface_table: 
+  land_surface_table:
     file: land_surface_data.json
-    # preprocess:
-      # - expand_fields: 
-      #   - field: surface_id
-      #     sep: "-"
-      #     new_column_names:
-      #       - subbasin
-      #       - land_use
-      #       - soil
-      #       - slope
 
-      # - remaps:
-      #   - left: land_use
-      #     right: is_developed
-      #     how: left # interpreted as 'right' = mapping['left'] if 'left' exists
-      #     fillna: false
-      #     mapping:
-      #       COMM: true
-      #       EDU: true
-      #       IND: true
-      #       UTIL: true
-      #       RESSFH: true
-      #       RESSFL: true
-      #       RESMF: true
-      #       TRFWY: true
-      #       TRANS: true
-      #       TROTH: true
-
-  # long names and short names must be unique in the config. e.g., cannot have TSS for two tables, 
+  # long names and short names must be unique in the config. e.g., cannot have TSS for two tables,
   # you must have a prefix or suffix
   land_surface_emc_table:
     file: land_surface_emc.json
@@ -318,8 +296,8 @@ project_reference_data:
     file: dry_weather_land_surface_emc.json
     parameters:
       # units must be compatible with the `pint` library
-      - long_name: Dry Weather Total Suspended Solids 
-        short_name: dwTSS 
+      - long_name: Dry Weather Total Suspended Solids
+        short_name: dwTSS
         concentration_unit: mg/L
         load_unit: lbs
       - long_name: Dry Weather Total Copper
