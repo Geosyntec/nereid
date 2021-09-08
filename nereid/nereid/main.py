@@ -52,10 +52,7 @@ async def check_config(state="state", region="region"):
 
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
-# origins = [
-#     "http://localhost:8000",
-#     "http://localhost:5500",
-# ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOW_CORS_ORIGINS,
