@@ -10,7 +10,12 @@ from nereid.src.nomograph.interpolators import FlowNomograph, VolumeNomograph
 
 @lru_cache()
 def build_nomo(
-    nomo_type: str, path: Union[Path, str], x_col: str, t_col: str, y_col: str
+    nomo_type: str,
+    path: Union[Path, str],
+    x_col: str,
+    t_col: str,
+    y_col: str,
+    **kwargs: dict,
 ) -> Any:
 
     df = pandas.read_csv(path)
@@ -32,9 +37,10 @@ def get_volume_nomograph(context: Dict[str, Any], nomo_path: str) -> VolumeNomog
     met_context = context.get("project_reference_data", {}).get("met_table")
     data_path = Path(context["data_path"])
     fpath = (data_path / nomo_path).resolve()
-    nomo: VolumeNomograph = build_nomo(
-        "VolumeNomograph", path=fpath, **met_context["volume_nomo"]
+    nomo_params = next(
+        filter(lambda n: n["file_key"] == "volume_nomograph", met_context["nomographs"])
     )
+    nomo: VolumeNomograph = build_nomo("VolumeNomograph", path=fpath, **nomo_params)
     return nomo
 
 
@@ -42,9 +48,10 @@ def get_flow_nomograph(context: Dict[str, Any], nomo_path: str) -> FlowNomograph
     met_context = context.get("project_reference_data", {}).get("met_table")
     data_path = Path(context["data_path"])
     fpath = (data_path / nomo_path).resolve()
-    nomo: FlowNomograph = build_nomo(
-        "FlowNomograph", path=fpath, **met_context["flow_nomo"]
+    nomo_params = next(
+        filter(lambda n: n["file_key"] == "flow_nomograph", met_context["nomographs"])
     )
+    nomo: FlowNomograph = build_nomo("FlowNomograph", path=fpath, **nomo_params)
     return nomo
 
 
@@ -56,20 +63,15 @@ def load_nomograph_mapping(context: Dict[str, Any]) -> Dict[str, Callable]:
 
     met_context = context.get("project_reference_data", {}).get("met_table")
 
-    vol_nomo_context = met_context["volume_nomo"]
-    flow_nomo_context = met_context["flow_nomo"]
-
-    vol_nomos = [
-        ("VolumeNomograph", file, vol_nomo_context)
-        for file in met_table["volume_nomograph"].unique()
-    ]
-    flow_nomos = [
-        ("FlowNomograph", file, flow_nomo_context)
-        for file in met_table["flow_nomograph"].unique()
-    ]
+    nomos = met_context["nomographs"]
 
     nomo_map = {}
-    for obj_name, file, nomo_context in vol_nomos + flow_nomos:
-        nomo_map[file] = build_nomo(obj_name, data_path / file, **nomo_context)
+    for nomo in nomos:
+        file_key = nomo["file_key"]
+        obj_name = nomo["constructor"]
+        files = met_table[file_key].unique()
+
+        for file in files:
+            nomo_map[file] = build_nomo(obj_name, data_path / file, **nomo)
 
     return nomo_map

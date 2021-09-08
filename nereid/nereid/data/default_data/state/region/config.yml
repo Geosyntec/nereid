@@ -197,14 +197,27 @@ project_reference_data:
     
   met_table:
     file: met_data.json
-    volume_nomo:
-      x_col: size_fraction
-      t_col: ddt_hr
-      y_col: capture_fraction
-    flow_nomo:
-      x_col: intensity_inhr
-      t_col: tc_minutes
-      y_col: performance_frac
+    nomographs:
+      - file_key: volume_nomograph
+        type: volume_capture
+        constructor: VolumeNomograph
+        x_col: size_fraction
+        t_col: ddt_hr
+        y_col: capture_fraction
+
+      - file_key: flow_nomograph
+        type: volume_capture
+        constructor: FlowNomograph
+        x_col: intensity_inhr
+        t_col: tc_minutes
+        y_col: performance_frac
+
+      - file_key: peak_nomograph
+        type: peak_mitigation
+        constructor: VolumeNomograph
+        x_col: size_fraction
+        t_col: ddt_hr
+        y_col: capture_fraction
 
     preprocess:
       - remaps:
@@ -217,11 +230,14 @@ project_reference_data:
 
         - left: rain_gauge
           right: flow_nomograph
-          how: left  # interpreted as 'right' = mapping['left'] if 'left' exists
-          mapping:
-            100_LAGUNABEACH: nomographs/100_LAGUNABEACH_flow_nomo.csv
-            1130_LAGUNA_AUDUBON: nomographs/1130_LAGUNA_AUDUBON_flow_nomo.csv
-  
+
+          - left: rain_gauge
+            right: peak_nomograph
+            how: left # interpreted as 'right' = mapping['left'] if 'left' exists
+            mapping:
+              100_LAGUNABEACH: nomographs/Anywhere_peak_nomo.csv
+              1130_LAGUNA_AUDUBON: nomographs/Anywhere_peak_nomo.csv
+
   dry_weather_tmnt_performance_table:
     file: dry_weather_bmp_params.json
     facility_column: facility_type

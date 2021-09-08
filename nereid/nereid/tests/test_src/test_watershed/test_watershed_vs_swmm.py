@@ -263,9 +263,11 @@ def test_watershed_vs_swmm(contexts, realistic_graph, swmm_results):
     # this means that by doing the interpolation on the nomographs 'depth_inches' column we can
     # correct for this scaler offset.
     # double check this size_factor -> depth_inches value.
-    context["project_reference_data"]["met_table"]["volume_nomo"][
-        "x_col"
-    ] = "depth_inches"
+    met_context = context.get("project_reference_data", {}).get("met_table")
+    nomo = next(
+        filter(lambda n: n["file_key"] == "volume_nomograph", met_context["nomographs"])
+    )
+    nomo["x_col"] = "depth_inches"
 
     wet_weather_parameters = init_wq_parameters(
         "land_surface_emc_table", context=context
