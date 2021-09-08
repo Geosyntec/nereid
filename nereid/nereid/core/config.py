@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # ALLOW_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-    ALLOW_CORS_ORIGINS: List[Union[AnyHttpUrl, Literal["*"]]] = []
+    ALLOW_CORS_ORIGINS: List[Union[AnyHttpUrl, Literal["*"]]] = ["*"]
     ALLOW_CORS_ORIGIN_REGEX: Optional[str] = None
 
     @validator("ALLOW_CORS_ORIGINS", pre=True)
