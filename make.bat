@@ -8,6 +8,7 @@ if /i %1 == up goto :up
 if /i %1 == down goto :down
 if /i %1 == typecheck goto :typecheck
 if /i %1 == coverage goto :coverage
+if /i %1 == cover-src goto :cover-src
 if /i %1 == dev-server goto :dev-server
 if /i %1 == restart goto :restart
 if /i %1 == lint goto :lint
@@ -33,7 +34,7 @@ set COMPOSE_DOCKER_CLI_BUILD=1
 :test
 call make clean
 call make restart
-docker-compose exec nereid-tests pytest %2 %3 %4 %5 %6
+docker compose exec nereid-tests pytest %2 %3 %4 %5 %6
 goto :eof
 
 :typecheck
@@ -48,18 +49,25 @@ call scripts\build_dev.bat
 goto :eof
 
 :up
-docker-compose up -d
+docker compose up -d
 goto :eof
 
 :down
-docker-compose down -v
+docker compose down -v
 goto :eof
 
 :coverage
 call make clean
 call make restart
-docker-compose exec nereid-tests coverage run -m pytest -x
-docker-compose exec nereid-tests coverage report -m
+docker compose exec nereid-tests coverage run -m pytest -x
+docker compose exec nereid-tests coverage report -m
+goto :eof
+
+:cover-src
+call make clean
+call make restart
+docker compose exec nereid-tests coverage run --source=nereid/src --branch -m pytest nereid/tests/test_src -xv
+docker compose exec nereid-tests coverage report -m --omit=*test*
 goto :eof
 
 :clean
@@ -67,11 +75,11 @@ scripts\clean.bat
 goto :eof
 
 :dev-server
-docker-compose run -p 8080:80 nereid bash /start-reload.sh
+docker compose run -p 8080:80 nereid bash /start-reload.sh
 goto :eof
 
 :restart
-docker-compose restart redis celeryworker
+docker compose restart redis celeryworker
 goto :eof
 
 :lint
