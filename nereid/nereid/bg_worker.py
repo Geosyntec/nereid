@@ -1,3 +1,5 @@
+import logging
+
 from nereid.core.celery_app import celery_app
 from nereid.core.utils import validate_request_context
 from nereid.src.land_surface.tasks import land_surface_loading
@@ -10,6 +12,15 @@ from nereid.src.network.tasks import (
 )
 from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
 from nereid.src.watershed.tasks import solve_watershed
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@celery_app.task(acks_late=True, track_started=True)
+def background_ping():  # pragma: no cover
+    logger.info("background pinged")
+    return True
 
 
 @celery_app.task(acks_late=True, track_started=True)
