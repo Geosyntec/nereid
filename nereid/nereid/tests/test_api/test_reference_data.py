@@ -39,6 +39,32 @@ def test_ref_data(client, query, isvalid):
 
 
 @pytest.mark.parametrize(
+    "query, isvalid",
+    [
+        ("", False),
+        ("?filename=bmp_params.json", True),
+        ("?state=state&region=region&filename=bmp_params.json", True),
+        (
+            "?state=state&region=region&filename=nomographs/100_LAGUNABEACH_volume_nomo.csv",
+            True,
+        ),
+        ("?state=state&filename=bmp_params.json", True),
+        ("?state=state&region=sea", False),
+        ("?state=wa&region=sea", False),
+    ],
+)
+def test_ref_data_file(client, query, isvalid):
+    url = settings.API_LATEST + "/reference_data_file" + query
+
+    response = client.get(url)
+
+    if isvalid:
+        assert response.status_code == 200
+    else:
+        assert response.status_code == 400
+
+
+@pytest.mark.parametrize(
     "table, isvalid", [("", False), ("met_table", True), ("met_tables", False),],
 )
 def test_ref_data_table(client, table, isvalid):
