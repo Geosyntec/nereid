@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.requests import Request
-from fastapi.responses import ORJSONResponse
+from fastapi.responses import FileResponse, ORJSONResponse
 from fastapi.templating import Jinja2Templates
 
 from nereid.api.api_v1.models.reference_models import ReferenceDataResponse
@@ -16,6 +16,22 @@ from nereid.src.nomograph.nomo import load_nomograph_mapping
 router = APIRouter()
 
 templates = Jinja2Templates(directory="nereid/api/templates")
+
+
+@router.get("/reference_data_file", tags=["reference_data"])
+async def get_reference_data_file(
+    context: dict = Depends(get_valid_context), filename: str = ""
+) -> FileResponse:
+
+    filepath = Path(context.get("data_path", "")) / filename
+    state, region = context["state"], context["region"]
+
+    if filepath.is_file():
+        return FileResponse(filepath)
+
+    else:
+        detail = f"state '{state}', region '{region}', or filename '{filename}' not found. {filepath}"
+        raise HTTPException(status_code=400, detail=detail)
 
 
 @router.get(
