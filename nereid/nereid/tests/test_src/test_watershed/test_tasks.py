@@ -142,22 +142,22 @@ def test_stable_watershed_stable_subgraph_solutions(
 
 
 @pytest.mark.parametrize(
-    "facility_type, eliminates_wet_volume, treats_wet_volume, captures_dwf",
+    "facility_type, eliminates_wet_volume, treats_wet_volume, captures_dwf, mitigates_peak_flow",
     [
-        ("no_treatment", False, False, False),
-        ("dry_extended_detention", True, True, True),
-        ("infiltration", True, False, True),
-        ("bioretention", True, True, True),
-        ("biofiltration", False, True, True),
-        ("wet_detention", False, True, True),
-        ("sand_filter", False, True, True),
-        ("swale", True, True, True),
-        ("hydrodynamic_separator", False, True, True),
-        ("dry_well", True, False, True),
-        ("cistern", True, False, True),
-        ("dry_weather_diversion", False, False, True),
-        ("dry_weather_treatment", False, False, True),
-        ("low_flow_facility", False, False, True),
+        ("no_treatment", False, False, False, False),
+        ("dry_extended_detention", True, True, True, True),
+        ("infiltration", True, False, True, True),
+        ("bioretention", True, True, True, True),
+        ("biofiltration", False, True, True, True),
+        ("wet_detention", False, True, True, True),
+        ("sand_filter", False, True, True, True),
+        ("swale", True, True, True, False),
+        ("hydrodynamic_separator", False, True, True, False),
+        ("dry_well", True, False, True, True),
+        ("cistern", True, False, True, True),
+        ("dry_weather_diversion", False, False, True, False),
+        ("dry_weather_treatment", False, False, True, False),
+        ("low_flow_facility", False, False, True, False),
     ],
 )
 def test_treatment_facility_waterbalance(
@@ -168,6 +168,7 @@ def test_treatment_facility_waterbalance(
     eliminates_wet_volume,
     treats_wet_volume,
     captures_dwf,
+    mitigates_peak_flow,
 ):
 
     context = contexts["default"]
@@ -190,9 +191,11 @@ def test_treatment_facility_waterbalance(
     dwf_captured = (
         treatment_results.get("summer_dry_weather_flow_cuft_captured_pct") or 0
     ) + (treatment_results.get("winter_dry_weather_flow_cuft_captured_pct") or 0)
+    peak_pct = treatment_results.get("peak_flow_mitigated_pct") or 0
 
     assert eliminates_wet_volume == (ret_pct > 1), treatment_results
     assert treats_wet_volume == (tmnt_pct > 1), treatment_results
     assert captures_dwf == (dwf_captured > 1), treatment_results
+    assert mitigates_peak_flow == (peak_pct > 1e-3), (peak_pct, treatment_results)
 
     return

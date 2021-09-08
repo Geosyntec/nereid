@@ -33,14 +33,22 @@ def compute_volume_capture_with_nomograph(
     node_type = data.get("node_type", "none")
 
     vol_nomo_file = data.get("volume_nomograph", "")
-    volume_nomo = nomograph_map.get(vol_nomo_file)
-    if volume_nomo is None:  # pragma: no cover
-        volume_nomo = lambda size=None, ddt=None, performance=None: 0.0
+    default_volume_nomo = (  # pragma: no branch
+        lambda size=None, ddt=None, performance=None: 0.0
+    )
+    volume_nomo = nomograph_map.get(vol_nomo_file, default_volume_nomo)
 
     flow_nomo_file = data.get("flow_nomograph", "")
-    flow_nomo = nomograph_map.get(flow_nomo_file)
-    if flow_nomo is None:  # pragma: no cover
-        flow_nomo = lambda intensity=None, tc=None, performance=None: 0.0
+    default_flow_nomo = (  # pragma: no branch
+        lambda intensity=None, tc=None, performance=None: 0.0
+    )
+    flow_nomo = nomograph_map.get(flow_nomo_file, default_flow_nomo)
+
+    peak_nomo_file = data.get("peak_nomograph", "")
+    default_peak_nomo = (  # pragma: no branch
+        lambda size=None, ddt=None, performance=None: 0.0
+    )
+    peak_nomo = nomograph_map.get(peak_nomo_file, default_peak_nomo)
 
     data["retention_volume_cuft"] = data.get("retention_volume_cuft", 0.0)
     data["retention_ddt_hr"] = data.get("retention_ddt_hr", 0.0)
@@ -68,6 +76,9 @@ def compute_volume_capture_with_nomograph(
             ret_vol=data["retention_volume_cuft"],
             tmnt_vol=data["treatment_volume_cuft"],
         )
+
+        if peak_nomo_file:
+            data = compute_peak_flow_reduction(data, peak_nomo)
 
     elif "flow_based_facility" in node_type:
         data = compute_flow_based_facility(data, flow_nomo, volume_nomo)
@@ -393,5 +404,37 @@ def compute_flow_based_facility(
     data["captured_pct"] = captured_fraction * 100
     data["treated_pct"] = treated_fraction * 100
     data["_nomograph_solution_status"] = "successful; flow based"
+
+    return data
+
+
+def compute_peak_flow_reduction(
+    data: Dict[str, Any], peak_nomo: Callable
+) -> Dict[str, Any]:
+
+    ret_vol_cuft = data["retention_volume_cuft"]
+    trt_vol_cuft = data["treatment_volume_cuft"]
+
+    ret_ddt_hr = data.get("retention_ddt_hr", 0.0)
+    trt_ddt_hr = data.get("treatment_ddt_hr", 0.0)
+
+    design_volume = data["design_volume_cuft_cumul"]
+
+    retention_vol_frac = safe_divide(ret_vol_cuft, design_volume)
+    treatment_vol_frac = safe_divide(trt_vol_cuft, design_volume)
+
+    data["peak_flow_mitigated_pct"] = 0.0
+
+    size = treatment_vol_frac
+    ddt = trt_ddt_hr
+    if trt_vol_cuft <= 1e-2:
+        size = retention_vol_frac
+        ddt = ret_ddt_hr
+    if size <= 1e-2:
+        return data  # Early exit. No peak mitigation
+
+    performance_fraction = float(peak_nomo(size=size, ddt=ddt))
+
+    data["peak_flow_mitigated_pct"] = performance_fraction * 100
 
     return data
