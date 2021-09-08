@@ -108,6 +108,21 @@ class TmntFacility(OnlineFaciltyBase):
     _constructor: str = "treatment_facility_constructor"
 
 
+class TmntFacilityWithRetentionOverride(TmntFacility):
+    # min retention pct is meant to estimate incidental retention performance of
+    # vegetated tmnt-only BMPs.
+    minimum_retention_pct_override: float = Field(
+        0,
+        le=100,
+        description=(
+            "This parameter can be used to set the long term retention "
+            "performance to a fixed percentage of the long-term inflow volume. "
+            "This is useful for taking retention credit for ET in a "
+            "vegetated sytem that is lined. "
+        ),
+    )
+
+
 class FlowAndRetFacility(OnlineFaciltyBase):
     treatment_rate_cfs: float
     area_sqft: float
@@ -140,6 +155,7 @@ STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for val
     FlowAndRetFacility,
     RetentionFacility,
     TmntFacility,
+    TmntFacilityWithRetentionOverride,
     CisternFacility,
     DryWellFacility,
     DryWeatherTreatmentLowFlowFacility,
@@ -156,6 +172,7 @@ TREATMENT_FACILITY_MODELS = [
     FlowAndRetFacility,
     RetentionFacility,
     TmntFacility,
+    TmntFacilityWithRetentionOverride,
     CisternFacility,
     DryWellFacility,
     DryWeatherTreatmentLowFlowFacility,

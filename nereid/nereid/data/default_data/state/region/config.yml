@@ -127,7 +127,7 @@ api_recognize:
         tmnt_performance_facility_type: Biofiltration
 
       biofiltration: 
-        validator: TmntFacility
+        validator: TmntFacilityWithRetentionOverride
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Biofiltration
 
