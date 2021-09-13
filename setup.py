@@ -13,6 +13,8 @@ setup(
     version=version,
     author=author,
     author_email=author_email,
+    include_package_data=True,
+    package_data={"nereid": ["static/*", "config/*", "data/*"]},
     install_requires=[
         "python-dotenv>=0.14,<0.19",
         "scipy>=1.5,<1.8",
