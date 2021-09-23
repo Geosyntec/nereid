@@ -9,9 +9,24 @@ from nereid.core.utils import validate_with_discriminator
 class FacilityBase(BaseModel):
     node_id: str
     facility_type: str
-    ref_data_key: str
-    design_storm_depth_inches: float = Field(..., gt=0)
-    eliminate_all_dry_weather_flow_override: bool = False
+    ref_data_key: str = Field(
+        ...,
+        description=(
+            """This attribute is used to determine which nomographs 
+to reference in order to compute the long-term volume 
+capture performance of the facility."""
+        ),
+    )
+    design_storm_depth_inches: float = Field(
+        ..., gt=0, description="""85th percentile design storm depth in inches"""
+    )
+    eliminate_all_dry_weather_flow_override: bool = Field(
+        False,
+        description=(
+            """Whether to override the dr weather flow capture calculation 
+and set the performance to 'fully elimates all dry weather flow'. (default=False)"""
+        ),
+    )
 
 
 class NTFacility(FacilityBase):
