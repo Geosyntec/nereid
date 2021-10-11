@@ -7,6 +7,6 @@ services:
   nereid-tests:
     image: ${ACR_SERVER}/nereid/nereid-tests:${NEREID_IMAGE_TAG:-latest}
   redis:
-    image: ${ACR_SERVER}/nereid/edis:${NEREID_IMAGE_TAG:-latest}
+    image: ${ACR_SERVER}/nereid/redis:${NEREID_IMAGE_TAG:-latest}
   flower:
     image: ${ACR_SERVER}/nereid/flower:${NEREID_IMAGE_TAG:-latest}
