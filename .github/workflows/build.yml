@@ -20,6 +20,6 @@ jobs:
       - name: build stack
         run: |
           docker --version
-
           bash ./scripts/build_deploy.sh
-          docker-compose -e ACR_SERVER=${{ secrets.ACR_SERVER }} -f docker-stack.yml push
+          export ACR_SERVER=${{ secrets.ACR_SERVER }}
+          docker-compose -f docker-stack.yml push
