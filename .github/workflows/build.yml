@@ -45,9 +45,9 @@ jobs:
       
       - name: Login to Azure
         if: github.event_name != 'pull_request'
-        uses: azure/docker-login@v1
+        uses: docker/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_SERVER }}
+          registry: ${{ secrets.ACR_SERVER }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       
@@ -59,10 +59,10 @@ jobs:
           context: ./nereid
           file: ./nereid/Dockerfile.multi
           target: ${{ matrix.image }}
-          push: false # ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
-#           cache-from: type=gha
-#           cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
