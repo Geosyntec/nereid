@@ -18,8 +18,9 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       - name: build stack
+        env:
+          ACR_SERVER: ${{ secrets.ACR_SERVER }}
         run: |
           docker --version
-          export ACR_SERVER=${{ secrets.ACR_SERVER }}
           bash ./scripts/build_deploy.sh
           docker-compose -f docker-stack.yml push
