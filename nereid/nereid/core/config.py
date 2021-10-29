@@ -7,6 +7,9 @@ from pydantic import AnyHttpUrl, BaseSettings, validator
 import nereid
 from nereid.core.io import load_cfg
 
+with pkg_resources.path("nereid", "__init__.py") as file:
+    nereid_path = file.parent
+
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"

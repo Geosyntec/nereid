@@ -7,10 +7,10 @@ import nereid
 from nereid.api.api_v1.api import api_router
 from nereid.api.api_v1.utils import get_valid_context
 from nereid.core.cache import redis_cache
-from nereid.core.config import settings
+from nereid.core.config import settings, nereid_path
 
 app = FastAPI(title="nereid", version=nereid.__version__, docs_url=None, redoc_url=None)
-app.mount("/static", StaticFiles(directory="nereid/static"), name="static")
+app.mount("/static", StaticFiles(directory=str(nereid_path / "static")), name="static")
 
 
 @app.get("/docs", include_in_schema=False)
