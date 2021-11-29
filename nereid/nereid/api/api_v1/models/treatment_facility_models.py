@@ -92,10 +92,23 @@ class RetentionFacility(OnlineFaciltyBase):
     _constructor: str = "retention_facility_constructor"
 
 
+class RetentionFacilityHSG(OnlineFaciltyBase):
+    total_volume_cuft: float
+    area_sqft: float
+    hsg: str
+    _constructor: str = "retention_facility_constructor"
+
+
 class DryWellFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     treatment_rate_cfs: float
     _constructor: str = "dry_well_facility_constructor"
+
+
+class DryWellFacilityFlowOrVolume(OnlineFaciltyBase):
+    total_volume_cuft: float
+    treatment_rate_cfs: float
+    _constructor: str = "dry_well_facility_flow_or_volume_constructor"
 
 
 class BioInfFacility(OnlineFaciltyBase):
@@ -169,10 +182,12 @@ STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for val
     BioInfFacility,
     FlowAndRetFacility,
     RetentionFacility,
+    RetentionFacilityHSG,
     TmntFacility,
     TmntFacilityWithRetentionOverride,
     CisternFacility,
     DryWellFacility,
+    DryWellFacilityFlowOrVolume,
     DryWeatherTreatmentLowFlowFacility,
     DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
@@ -186,10 +201,12 @@ TREATMENT_FACILITY_MODELS = [
     BioInfFacility,
     FlowAndRetFacility,
     RetentionFacility,
+    RetentionFacilityHSG,
     TmntFacility,
     TmntFacilityWithRetentionOverride,
     CisternFacility,
     DryWellFacility,
+    DryWellFacilityFlowOrVolume,
     DryWeatherTreatmentLowFlowFacility,
     DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,

@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, Mapping
 
 from nereid.core.utils import safe_divide
+from nereid.src.watershed.design_functions import design_intensity_inhr
 
 
 def compute_volume_capture_with_nomograph(
@@ -17,7 +18,7 @@ def compute_volume_capture_with_nomograph(
     Parameters
     ----------
     data : dict
-        information about the node, inclding treatment facility sizing and inflow
+        information about the node, including treatment facility sizing and inflow
         characteristics
     nomograph_map : mapping
         this mapping uses the nomograph data filepath as the key to return a 2d nomograph
@@ -82,6 +83,9 @@ def compute_volume_capture_with_nomograph(
 
     elif "flow_based_facility" in node_type:
         data = compute_flow_based_facility(data, flow_nomo, volume_nomo)
+
+    elif "dry_well_facility" in node_type:
+        data = compute_dry_well_facility(data, flow_nomo, volume_nomo)
 
     else:  # pragma: no cover
         # this should be impossible to reach since this function is called within the
@@ -383,10 +387,11 @@ def compute_flow_based_facility(
         msg = f"overriding tributary_area_tc_min from '{tc}' to 5 minutes."
         data["node_warnings"].append(msg)
 
-    captured_fraction = float(
-        flow_nomo(intensity=data.get("design_intensity_inhr", 0.0), tc=tc) or 0.0
+    intensity = data["design_intensity_inhr"] = design_intensity_inhr(
+        data.get("treatment_rate_cfs", 0.0), data["eff_area_acres_cumul"]
     )
 
+    captured_fraction = float(flow_nomo(intensity=intensity, tc=tc) or 0.0)
     size_fraction = safe_divide(
         data.get("retention_volume_cuft", 0.0), data["design_volume_cuft_cumul"]
     )
@@ -404,6 +409,64 @@ def compute_flow_based_facility(
     data["captured_pct"] = captured_fraction * 100
     data["treated_pct"] = treated_fraction * 100
     data["_nomograph_solution_status"] = "successful; flow based"
+
+    return data
+
+
+def compute_dry_well_facility(
+    data: Dict[str, Any], flow_nomo: Callable, volume_nomo: Callable
+) -> Dict[str, Any]:
+    """best of flow-based and volume based nomographs for bmp volume and treatment rate.
+
+    the fate of all of the treatment for a drywell is _always_ retention.
+
+    Parameters
+    ----------
+    data : dict
+        all the current node's information. this will be treatment facilily size
+        information and characteristics of incoming upstream flow.
+    *_nomo : thinly wrapped 2D CloughTocher Interpolators
+        Reference: `nereid.src.nomograph.nomo`
+
+    """
+
+    tc = data.get("tributary_area_tc_min")
+    if tc is None or tc < 5:
+        tc = 5
+        msg = f"overriding tributary_area_tc_min from '{tc}' to 5 minutes."
+        data["node_warnings"].append(msg)
+
+    # check flow nomo
+    intensity = data["design_intensity_inhr"] = design_intensity_inhr(
+        data.get("retention_rate_cfs", 0.0), data["eff_area_acres_cumul"]
+    )
+
+    flow_based_captured_fraction = float(flow_nomo(intensity=intensity, tc=tc) or 0.0)
+
+    # check volume nomo
+    size_fraction = safe_divide(
+        data.get("retention_volume_cuft", 0.0), data["design_volume_cuft_cumul"]
+    )
+    ret_ddt_hr = data.get("retention_ddt_hr", 0.0)
+
+    volume_based_captured_fraction = float(
+        volume_nomo(size=size_fraction, ddt=ret_ddt_hr) or 0.0
+    )
+
+    # check which is best capture
+    solution_type = "flow based"
+    if volume_based_captured_fraction > flow_based_captured_fraction:
+        solution_type = "volume based"
+
+    captured_pct = (
+        max(flow_based_captured_fraction, volume_based_captured_fraction) * 100
+    )
+
+    # for dry wells, all capture is retention.
+    data["retained_pct"] = captured_pct
+    data["captured_pct"] = captured_pct
+    data["treated_pct"] = 0.0
+    data["_nomograph_solution_status"] = f"successful; dry well {solution_type}"
 
     return data
 

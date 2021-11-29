@@ -121,6 +121,16 @@ api_recognize:
         validation_fallback: NTFacility
         tmnt_performance_facility_type: ¯\_(ツ)_/¯ # wq improvement via retention only
 
+      permeable_pavement:
+        validator: RetentionFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯ # wq improvement via retention only
+
+      permeable_pavement_hsg:
+        validator: RetentionFacilityHSG
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯ # wq improvement via retention only
+
       bioretention:
         validator: BioInfFacility
         validation_fallback: NTFacility
@@ -153,6 +163,11 @@ api_recognize:
 
       dry_well:
         validator: DryWellFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯
+
+      dry_well_flow_or_volume:
+        validator: DryWellFacilityFlowOrVolume
         validation_fallback: NTFacility
         tmnt_performance_facility_type: ¯\_(ツ)_/¯
 

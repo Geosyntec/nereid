@@ -83,6 +83,26 @@ class TreatmentFacilityConstructor:
         return result
 
     @staticmethod
+    def dry_well_facility_flow_or_volume_constructor(
+        *, total_volume_cuft: float, treatment_rate_cfs: float, **kwargs: dict
+    ) -> Dict[str, Any]:
+
+        retention_volume_cuft = total_volume_cuft
+        retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
+
+        result = dict(
+            retention_volume_cuft=retention_volume_cuft,
+            retention_ddt_hr=retention_ddt_hr,
+            # We need to override this because dry wells don't perform treatment
+            # in either wet weather or dry weather, only retention/volume reduction.
+            # ini_treatment_rate_cfs=treatment_rate_cfs,
+            retention_rate_cfs=treatment_rate_cfs,
+            node_type="dry_well_facility",
+        )
+
+        return result
+
+    @staticmethod
     def bioinfiltration_facility_constructor(
         *,
         total_volume_cuft: float,

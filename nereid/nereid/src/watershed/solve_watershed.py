@@ -219,7 +219,9 @@ def solve_node(
         )
 
     elif "facility" in node_type:
-        if any([_type in node_type for _type in ["volume_based", "flow_based",]]):
+        if any(
+            [_type in node_type for _type in ["volume_based", "flow_based", "dry_well"]]
+        ):
             compute_volume_capture_with_nomograph(data, nomograph_map)
             compute_wet_weather_volume_discharge(data)
             compute_wet_weather_load_reduction(
