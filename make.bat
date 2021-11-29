@@ -12,6 +12,7 @@ if /i %1 == cover-src goto :cover-src
 if /i %1 == dev-server goto :dev-server
 if /i %1 == restart goto :restart
 if /i %1 == lint goto :lint
+if /i %1 == login goto :login
 
 :help
 echo Commands:
@@ -30,6 +31,10 @@ echo $make [command]
 goto :eof
 
 set COMPOSE_DOCKER_CLI_BUILD=1
+
+:login
+bash scripts/az-login.sh
+goto :eof
 
 :test
 call make clean
