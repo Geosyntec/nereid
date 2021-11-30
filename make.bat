@@ -64,7 +64,7 @@ goto :eof
 :coverage
 call make clean
 call make restart
-docker compose exec nereid-tests coverage run -m pytest -x
+docker compose exec nereid-tests coverage run --branch -m pytest -x
 docker compose exec nereid-tests coverage report -m
 goto :eof
 
