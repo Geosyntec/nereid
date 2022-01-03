@@ -25,14 +25,15 @@ def get_payload(file):
 
 def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: no cover
 
-    ts = time.time()
-    timer = lambda: time.time() - ts
+    ts = time.perf_counter()
+    timer = lambda: time.perf_counter() - ts
     tries = 0
 
     while timer() < timeout:
 
         response = testclient.get(url)
-        if response.json()["status"].lower() == "success":
+        status = response.json()["status"]
+        if status.lower() == "success":
             if verbose:
                 print(f"\nget request polling tried: {tries} times")
             return response

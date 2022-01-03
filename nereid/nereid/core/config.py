@@ -7,14 +7,15 @@ from pydantic import AnyHttpUrl, BaseSettings, validator
 import nereid
 from nereid.core.io import load_cfg
 
-with pkg_resources.path("nereid", "__init__.py") as file:
-    nereid_path = file.parent
-
 
 class Settings(BaseSettings):
+
+    with pkg_resources.path("nereid", "__init__.py") as file:
+        _nereid_path = file.parent
+
     API_V1_STR: str = "/api/v1"
     API_LATEST: str = API_V1_STR
-    APP_CONTEXT: Dict[str, Any] = load_cfg(Path(__file__).parent / "base_config.yml")
+    APP_CONTEXT: Dict[str, Any] = load_cfg(_nereid_path / "core" / "base_config.yml")
     APP_CONTEXT.update(
         {
             "version": nereid.__version__,
@@ -22,6 +23,7 @@ class Settings(BaseSettings):
             "contact": nereid.__email__,
         }
     )
+    VERSION: str = nereid.__version__
 
     FORCE_FOREGROUND: bool = False
 

@@ -1,14 +1,13 @@
 from typing import Any, Dict, Tuple
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import ORJSONResponse
 
-import nereid.bg_worker as bg
 from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
 from nereid.api.api_v1.models.watershed_models import Watershed, WatershedResponse
-from nereid.api.api_v1.utils import get_valid_context, run_task, standard_json_response
+from nereid.api.api_v1.utils import get_valid_context
 
 router = APIRouter()
 
@@ -37,24 +36,14 @@ def validate_watershed_request(
     response_class=ORJSONResponse,
 )
 async def post_solve_watershed(
+    request: Request,
     watershed_pkg: Tuple[Dict[str, Any], Dict[str, Any]] = Depends(
         validate_watershed_request
     ),
 ) -> Dict[str, Any]:
     watershed, context = watershed_pkg
 
-    task = bg.solve_watershed.s(
+    data = request.app.tasks.solve_watershed(
         watershed=watershed, treatment_pre_validated=True, context=context
     )
-    return run_task(task=task, router=router, get_route="get_watershed_result")
-
-
-@router.get(
-    "/watershed/solve/{task_id}",
-    tags=["watershed", "main"],
-    response_model=WatershedResponse,
-    response_class=ORJSONResponse,
-)
-async def get_watershed_result(task_id: str) -> Dict[str, Any]:
-    task = bg.solve_watershed.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_watershed_result")
+    return {"data": data}

@@ -118,8 +118,7 @@ def validate_with_discriminator(
 
 
 def safe_divide(x: float, y: float) -> float:
-    """This returns zero if the denominator is zero
-    """
+    """This returns zero if the denominator is zero"""
     if y == 0.0:
         return 0.0
     return x / y
@@ -131,9 +130,11 @@ def dictlist_to_dict(dictlist, key):
 
     Example
     -------
-    >>>dict_list = [{"id":"a"}, {"id":"b"}]
-    >>>dictlist_to_dict(dict_list, "id")
+    ```python
+    dict_list = [{"id":"a"}, {"id":"b"}]
+    dictlist_to_dict(dict_list, "id")
     {'a': {'id': 'a'}, 'b': {'id': 'b'}}
+    ```
 
     """
     result = {}

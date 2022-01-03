@@ -4,10 +4,10 @@ import networkx as nx
 import pandas
 import pytest
 
-from nereid.src.land_surface.tasks import land_surface_loading
-from nereid.src.network.tasks import solution_sequence
+from nereid.src.tasks import land_surface_loading
+from nereid.src.tasks import solution_sequence
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
-from nereid.src.watershed.tasks import solve_watershed
+from nereid.src.tasks import solve_watershed
 from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import check_results_dataframes
 
@@ -61,5 +61,5 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
     )
     results = response_dict["results"] + response_dict["leaf_results"]
 
-    check_db = pandas.DataFrame(results).set_index("node_id").sort_index(0)
-    check_results_dataframes(db.sort_index(0), check_db)
+    check_db = pandas.DataFrame(results).set_index("node_id").sort_index(axis=0)
+    check_results_dataframes(db.sort_index(axis=0), check_db)

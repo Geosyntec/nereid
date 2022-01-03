@@ -1,6 +1,6 @@
 import pytest
 
-from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
+from nereid.src.tasks import initialize_treatment_facilities
 
 
 @pytest.mark.parametrize(
