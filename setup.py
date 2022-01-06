@@ -23,7 +23,7 @@ setup(
         "matplotlib>=3.3,<3.5",
         "fastapi>=0.65.3,<0.66",
         "aiofiles>=0.6,<0.8",
-        "celery>=5.0,<5.2",
+        "celery>=5.0,<5.3",
         "jinja2>=2.11,<3.1",
         "redis>=3.5,<3.6",
         "orjson>=3.4,<3.6",
