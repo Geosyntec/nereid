@@ -12,14 +12,15 @@ PathType = Union[Path, str]
 
 
 @cache_decorator(ex=3600 * 24)  # expires in 24 hours
-def _load_file(filepath: PathType) -> str:
+def _load_file(filepath: PathType) -> bytes:
+    """returns bytes for redis cache compatability"""
     fp = Path(filepath)
-    return fp.read_text(encoding="utf-8")
+    return fp.read_bytes()
 
 
 def load_file(filepath: PathType) -> str:
     """wrapper to ensure the cache is called with an absolute path"""
-    contents: str = _load_file(Path(filepath).resolve())
+    contents: str = _load_file(Path(filepath).resolve()).decode()
     return contents
 
 
@@ -293,5 +294,4 @@ def parse_configuration_logic(
                 df, msg = parse_collapse_fields(
                     df, params, config_section, config_object, context, msg
                 )
-
     return df, msg
