@@ -61,7 +61,7 @@ def effluent_conc(
         _C = C * numpy.log(inf_conc)
 
     if any([A, B, C, D, E]):
-        eff = numpy.nansum([A, B * inf_conc, _C, e1, D * (inf_conc ** E) * e2])
+        eff = numpy.nansum([A, B * inf_conc, _C, e1, D * (inf_conc**E) * e2])
 
     result = float(numpy.nanmax([dl, numpy.nanmin([eff, inf_conc])]))
     result *= conversion_factor_from_to(from_unit=unit, to_unit=inf_unit)

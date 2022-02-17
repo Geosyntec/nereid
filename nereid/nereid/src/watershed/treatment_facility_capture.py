@@ -5,7 +5,8 @@ from nereid.src.watershed.design_functions import design_intensity_inhr
 
 
 def compute_volume_capture_with_nomograph(
-    data: Dict[str, Any], nomograph_map: Mapping[str, Callable],
+    data: Dict[str, Any],
+    nomograph_map: Mapping[str, Callable],
 ) -> Dict[str, Any]:
     """Compute volume captured by a treatment facility if it treats wet weather flow
     via either volume or flow-based calculation strategies.
@@ -110,7 +111,8 @@ def compute_volume_capture_with_nomograph(
 
 
 def compute_volume_based_standalone_facility(
-    data: Dict[str, Any], volume_nomo: Callable
+    data: Dict[str, Any],
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """Calculate treatment and retention volume for a standalone volume-based
     treatment facility. Standalone means that there are not volume-based facilities
@@ -182,7 +184,8 @@ def compute_volume_based_standalone_facility(
 
 
 def solve_volume_based_compartments(
-    compartments: List[Dict[str, float]], volume_nomo: Callable
+    compartments: List[Dict[str, float]],
+    volume_nomo: Callable,
 ) -> List[Dict[str, float]]:
     """Traverse a series of volume-based nomographs from the bottom compartment (retention)
     to the top compartment (treatment). This function accumulates the x-offset from
@@ -218,7 +221,8 @@ def solve_volume_based_compartments(
 
 
 def compute_volume_based_nested_facility(
-    data: Dict[str, Any], volume_nomo: Callable
+    data: Dict[str, Any],
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """Process a volume based treatment facility whose performance
     is influenced by upstream volume based facilities.
@@ -337,7 +341,10 @@ def compute_volume_based_nested_facility(
 
 
 def detention_vol(
-    tmnt_ddt: float, cumul_within_storm_vol: float, ret_vol: float, tmnt_vol: float
+    tmnt_ddt: float,
+    cumul_within_storm_vol: float,
+    ret_vol: float,
+    tmnt_vol: float,
 ) -> float:
     """This is a helper function for calculating the volume that is detained (delayed)
     by a treatment facility.
@@ -360,7 +367,9 @@ def detention_vol(
 
 
 def compute_flow_based_facility(
-    data: Dict[str, Any], flow_nomo: Callable, volume_nomo: Callable
+    data: Dict[str, Any],
+    flow_nomo: Callable,
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """Solves volume balance for flow based treatment. these facilities *can* perform both
     treatment via treatment rate nomographs to reduce the effluent concentration and/or
@@ -414,7 +423,9 @@ def compute_flow_based_facility(
 
 
 def compute_dry_well_facility(
-    data: Dict[str, Any], flow_nomo: Callable, volume_nomo: Callable
+    data: Dict[str, Any],
+    flow_nomo: Callable,
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """best of flow-based and volume based nomographs for bmp volume and treatment rate.
 
@@ -472,7 +483,8 @@ def compute_dry_well_facility(
 
 
 def compute_peak_flow_reduction(
-    data: Dict[str, Any], peak_nomo: Callable
+    data: Dict[str, Any],
+    peak_nomo: Callable,
 ) -> Dict[str, Any]:
 
     ret_vol_cuft = data["retention_volume_cuft"]

@@ -400,7 +400,12 @@ def watershed_requests(contexts, subbasins, land_surface_permutations):
     for n_nodes, pct_tmnt in product(SIZE, PCT_TMNT):
         seed = numpy.random.randint(1e6)
         req = generate_random_watershed_solve_request(
-            context, subbasins, land_surface_permutations, n_nodes, pct_tmnt, seed=seed,
+            context,
+            subbasins,
+            land_surface_permutations,
+            n_nodes,
+            pct_tmnt,
+            seed=seed,
         )
         requests[(n_nodes, pct_tmnt)] = deepcopy(req)
     return requests

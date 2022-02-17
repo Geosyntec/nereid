@@ -11,7 +11,9 @@ from nereid.src.watershed.utils import attrs_to_resubmit
 
 @update_unit_registry
 def solve_watershed(
-    watershed: Dict[str, Any], treatment_pre_validated: bool, context: Dict[str, Any],
+    watershed: Dict[str, Any],
+    treatment_pre_validated: bool,
+    context: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Main program function. This function builds the network and solves for water quality
     at each node in the input graph.
@@ -31,7 +33,11 @@ def solve_watershed(
 
     build_nomo.cache_clear()
 
-    g, msgs = initialize_graph(watershed, treatment_pre_validated, context,)
+    g, msgs = initialize_graph(
+        watershed,
+        treatment_pre_validated,
+        context,
+    )
     response["errors"] = [e for e in msgs if "error" in e.lower()]
     response["warnings"] = [w for w in msgs if "warning" in w.lower()]
 

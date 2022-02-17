@@ -51,7 +51,10 @@ def accumulate_dry_weather_loading(
 
 
 def accumulate_dry_weather_volume_by_season(
-    g: nx.DiGraph, data: Dict[str, Any], predecessors: List[str], season: str,
+    g: nx.DiGraph,
+    data: Dict[str, Any],
+    predecessors: List[str],
+    season: str,
 ) -> Dict[str, Any]:
     """aggregate dry weather volume for a single season
 

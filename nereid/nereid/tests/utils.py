@@ -256,7 +256,7 @@ def generate_random_treatment_facility_request(node_list, context, ref_data_keys
     return {"treatment_facilities": nodes}
 
 
-def generate_random_validated_treatment_facility_node(context,):  # pragma: no cover
+def generate_random_validated_treatment_facility_node(context):  # pragma: no cover
 
     facility = generate_random_treatment_facility_request_node(context)
     validated_facility_model = validate_treatment_facility_models(
@@ -320,7 +320,11 @@ def generate_random_graph_request(n_nodes, seed=0):  # pragma: no cover
 
 
 def generate_random_watershed_solve_request_from_graph(
-    g, context, ref_data_keys, surface_keys, pct_tmnt=0.5,
+    g,
+    context,
+    ref_data_keys,
+    surface_keys,
+    pct_tmnt=0.5,
 ):
 
     request = {"graph": clean_graph_dict(g)}
@@ -356,7 +360,12 @@ def generate_random_watershed_solve_request_from_graph(
 
 
 def generate_random_watershed_solve_request(
-    context, ref_data_keys, surface_keys, n_nodes=55, pct_tmnt=0.5, seed=42,
+    context,
+    ref_data_keys,
+    surface_keys,
+    n_nodes=55,
+    pct_tmnt=0.5,
+    seed=42,
 ):
 
     g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=seed), lambda x: str(x))

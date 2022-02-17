@@ -108,7 +108,9 @@ async def get_nomograph(
 
 
 @router.get(
-    "/reference_data/{table}", tags=["reference_data"], response_class=ORJSONResponse,
+    "/reference_data/{table}",
+    tags=["reference_data"],
+    response_class=ORJSONResponse,
 )
 async def get_reference_data_table(
     table: str, context: dict = Depends(get_valid_context)

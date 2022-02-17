@@ -328,9 +328,7 @@ def compute_wet_weather_load_reduction(
 
 
 def check_node_results_close(data: Dict[str, Any]) -> Dict[str, Any]:
-    """Run a few mass balance checks on the node.
-
-    """
+    """Run a few mass balance checks on the node."""
     check1 = safe_divide(
         (
             data["runoff_volume_cuft_inflow"]

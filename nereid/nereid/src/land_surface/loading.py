@@ -15,7 +15,7 @@ def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
     return df
 
 
-def detailed_volume_loading_results(df: pandas.DataFrame,) -> pandas.DataFrame:
+def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
     """
     df must contain:
         area_acres: float

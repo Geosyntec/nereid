@@ -118,8 +118,7 @@ def validate_with_discriminator(
 
 
 def safe_divide(x: float, y: float) -> float:
-    """This returns zero if the denominator is zero
-    """
+    """This returns zero if the denominator is zero"""
     if y == 0.0:
         return 0.0
     return x / y

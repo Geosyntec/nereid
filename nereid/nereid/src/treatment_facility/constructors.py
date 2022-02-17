@@ -112,8 +112,7 @@ class TreatmentFacilityConstructor:
         inf_rate_inhr: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-        """This facility has incidental infiltration and a raised underdrain.
-        """
+        """This facility has incidental infiltration and a raised underdrain."""
 
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
@@ -212,7 +211,7 @@ class TreatmentFacilityConstructor:
         return result
 
     @staticmethod
-    def flow_facility_constructor(**kwargs: dict,) -> Dict[str, Any]:
+    def flow_facility_constructor(**kwargs: dict) -> Dict[str, Any]:
 
         result = dict(node_type="flow_based_facility")
 
@@ -226,8 +225,7 @@ class TreatmentFacilityConstructor:
         months_operational: str,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-        """These are diversions, so their 'treatment' eliminates volume from the system.
-        """
+        """These are diversions, so their 'treatment' eliminates volume from the system."""
 
         modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
 
@@ -261,8 +259,7 @@ class TreatmentFacilityConstructor:
         months_operational: str,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-        """These are treat and discharge facilities.
-        """
+        """These are treat and discharge facilities."""
 
         modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
 
@@ -296,8 +293,7 @@ class TreatmentFacilityConstructor:
         months_operational: str,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-        """These are diversions, so their 'treatment' eliminates volume from the system.
-        """
+        """These are diversions, so their 'treatment' eliminates volume from the system."""
 
         modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
 
