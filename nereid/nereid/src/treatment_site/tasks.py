@@ -43,7 +43,7 @@ def initialize_treatment_sites(
             )
 
         df = (
-            _df.append(remainder_data)
+            pandas.concat([_df, pandas.DataFrame(remainder_data)])
             .fillna(0)
             .assign(
                 tmnt_performance_facility_type=lambda df: df["facility_type"].replace(
