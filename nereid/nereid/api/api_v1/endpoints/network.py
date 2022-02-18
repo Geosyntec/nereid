@@ -36,7 +36,7 @@ async def validate_network(
     )
 ) -> Dict[str, Any]:
 
-    task = bg.background_validate_network.s(graph=graph.dict(by_alias=True))
+    task = bg.validate_network.s(graph=graph.dict(by_alias=True))
     return run_task(task=task, router=router, get_route="get_validate_network_result")
 
 
@@ -48,7 +48,7 @@ async def validate_network(
 )
 async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
 
-    task = bg.background_validate_network.AsyncResult(task_id, app=router)
+    task = bg.validate_network.AsyncResult(task_id, app=router)
     return standard_json_response(task, router, "get_validate_network_result")
 
 
@@ -100,7 +100,7 @@ async def subgraph_network(
     ),
 ) -> Dict[str, Any]:
 
-    task = bg.background_network_subgraphs.s(**subgraph_req.dict(by_alias=True))
+    task = bg.network_subgraphs.s(**subgraph_req.dict(by_alias=True))
 
     return run_task(task=task, router=router, get_route="get_subgraph_network_result")
 
@@ -113,7 +113,7 @@ async def subgraph_network(
 )
 async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
 
-    task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
+    task = bg.network_subgraphs.AsyncResult(task_id, app=router)
     return standard_json_response(task, router, "get_subgraph_network_result")
 
 
@@ -130,7 +130,7 @@ async def get_subgraph_network_as_img(
     npi: float = Query(4.0),
 ) -> Union[Dict[str, Any], Any]:
 
-    task = bg.background_network_subgraphs.AsyncResult(task_id, app=router)
+    task = bg.network_subgraphs.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
 
     if task.successful():  # pragma: no branch
@@ -140,11 +140,9 @@ async def get_subgraph_network_as_img(
         render_task_id = task.task_id + f"-{media_type}-{npi}"
 
         if media_type == "svg":
-            render_task = bg.background_render_subgraph_svg.AsyncResult(
-                render_task_id, app=router
-            )
+            render_task = bg.render_subgraph_svg.AsyncResult(render_task_id, app=router)
             if render_task.status.lower() != "started":  # pragma: no branch
-                render_task = bg.background_render_subgraph_svg.apply_async(
+                render_task = bg.render_subgraph_svg.apply_async(
                     args=(result, npi), task_id=render_task_id
                 )
                 _ = wait_a_sec_and_see_if_we_can_return_some_data(
@@ -214,7 +212,7 @@ async def network_solution_sequence(
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
 
-    task = bg.background_solution_sequence.s(
+    task = bg.solution_sequence.s(
         graph=graph.dict(by_alias=True), min_branch_size=min_branch_size
     )
 
@@ -229,7 +227,7 @@ async def network_solution_sequence(
 )
 async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
 
-    task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
+    task = bg.solution_sequence.AsyncResult(task_id, app=router)
     return standard_json_response(task, router, "get_network_solution_sequence")
 
 
@@ -246,7 +244,7 @@ async def get_network_solution_sequence_as_img(
     npi: float = Query(4.0),
 ) -> Union[Dict[str, Any], Any]:
 
-    task = bg.background_solution_sequence.AsyncResult(task_id, app=router)
+    task = bg.solution_sequence.AsyncResult(task_id, app=router)
     response = dict(task_id=task.task_id, status=task.status)
 
     if task.successful():  # pragma: no branch
@@ -257,11 +255,11 @@ async def get_network_solution_sequence_as_img(
 
         if media_type == "svg":
 
-            render_task = bg.background_render_solution_sequence_svg.AsyncResult(
+            render_task = bg.render_solution_sequence_svg.AsyncResult(
                 render_task_id, app=router
             )
             if render_task.status.lower() != "started":  # pragma: no branch
-                render_task = bg.background_render_solution_sequence_svg.apply_async(
+                render_task = bg.render_solution_sequence_svg.apply_async(
                     args=(result, npi), task_id=render_task_id
                 )
                 _ = wait_a_sec_and_see_if_we_can_return_some_data(

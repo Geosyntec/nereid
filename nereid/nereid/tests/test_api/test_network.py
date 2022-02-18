@@ -46,11 +46,10 @@ def test_get_network_validate(
     post_response = named_validation_responses[post_response_name]
 
     prjson = post_response.json()
-    if settings.FORCE_FOREGROUND:  # pragma: no cover
-        grjson = prjson
-    else:
-        result_route = prjson["result_route"]
+    grjson = prjson
+    result_route = prjson.get("result_route")
 
+    if result_route:
         get_response = client.get(result_route)
         assert get_response.status_code == 200
 
@@ -112,20 +111,19 @@ def test_get_finished_network_subgraph(
     post_response = named_subgraph_responses[post_response_name]
 
     prjson = post_response.json()
-    if settings.FORCE_FOREGROUND:  # pragma: no cover
-        grjson = prjson
-    else:
-        result_route = prjson["result_route"]
+    grjson = prjson
+    result_route = prjson.get("result_route")
 
+    if result_route:
         get_response = client.get(result_route)
         assert get_response.status_code == 200
 
         grjson = get_response.json()
+        assert grjson["task_id"] is not None
+        assert grjson["result_route"] is not None
     assert network_models.SubgraphResponse(**prjson)
 
     assert grjson["status"].lower() == "success"
-    assert grjson["task_id"] is not None
-    assert grjson["result_route"] is not None
     assert grjson["data"] is not None
 
     assert len(grjson["data"]["subgraph_nodes"]) == len(exp["subgraph_nodes"])
@@ -154,21 +152,23 @@ def test_get_render_subgraph_svg(
     post_response = named_subgraph_responses[post_response_name]
     rjson = post_response.json()
 
-    result_route = rjson["result_route"]
-
-    svg_response = client.get(result_route + "/img")
-    assert svg_response.status_code == 200
-    if isfast:
-        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
-    else:
-        srjson = svg_response.json()
-        assert srjson["status"].lower() != "failure"
-        assert srjson["task_id"] is not None
-
-    if isfast:
-        # try to cover cached retrieval by asking again
+    result_route = rjson.get("result_route")
+    if result_route:
         svg_response = client.get(result_route + "/img")
         assert svg_response.status_code == 200
+        if isfast:
+            assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
+        else:
+            srjson = svg_response.json()
+            assert srjson["status"].lower() != "failure"
+            assert srjson["task_id"] is not None
+
+        if isfast:
+            # try to cover cached retrieval by asking again
+            svg_response = client.get(result_route + "/img")
+            assert svg_response.status_code == 200
+    else:
+        print("didnt check sync")
 
 
 @pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
@@ -183,11 +183,14 @@ def test_get_render_subgraph_svg_bad_media_type(
     post_response = named_subgraph_responses[post_response_name]
     rjson = post_response.json()
 
-    result_route = rjson["result_route"]
+    result_route = rjson.get("result_route")
+    if result_route:
+        svg_response = client.get(result_route + "/img?media_type=png")
+        assert svg_response.status_code == 400
+        assert "media_type not supported" in svg_response.content.decode()
 
-    svg_response = client.get(result_route + "/img?media_type=png")
-    assert svg_response.status_code == 400
-    assert "media_type not supported" in svg_response.content.decode()
+    else:
+        print("didnt check sync")
 
 
 @pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
@@ -217,20 +220,17 @@ def test_get_solution_sequence(
     post_response = solution_sequence_response[key]
 
     prjson = post_response.json()
-    if settings.FORCE_FOREGROUND:  # pragma: no cover
-        grjson = prjson
-    else:
-        result_route = prjson["result_route"]
-
+    grjson = prjson
+    result_route = prjson.get("result_route")
+    if result_route:
         get_response = client.get(result_route)
         assert get_response.status_code == 200
 
         grjson = get_response.json()
+        assert grjson["task_id"] == prjson["task_id"]
+        assert grjson["result_route"] == prjson["result_route"]
     assert network_models.SolutionSequenceResponse(**prjson)
-
     assert grjson["status"].lower() == "success"
-    assert grjson["task_id"] == prjson["task_id"]
-    assert grjson["result_route"] == prjson["result_route"]
     assert grjson["data"] is not None
 
 
@@ -246,20 +246,24 @@ def test_get_render_solution_sequence(
     post_response = solution_sequence_response[key]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
+    result_route = prjson.get("result_route")
 
-    _ = client.get(result_route + "/img")
-    svg_response = client.get(result_route + "/img")
+    if result_route:
 
-    assert svg_response.status_code == 200
+        _ = client.get(result_route + "/img")
+        svg_response = client.get(result_route + "/img")
 
-    if "html" in svg_response.headers["content-type"]:
-        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
+        assert svg_response.status_code == 200
 
+        if "html" in svg_response.headers["content-type"]:
+            assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
+
+        else:
+            srjson = svg_response.json()
+            assert srjson["status"].lower() != "failure"
+            assert srjson["task_id"] is not None
     else:
-        srjson = svg_response.json()
-        assert srjson["status"].lower() != "failure"
-        assert srjson["task_id"] is not None
+        print("didnt check sync")
 
 
 @pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
@@ -270,7 +274,11 @@ def test_get_render_solution_sequence_bad_media_type(
     post_response = solution_sequence_response[key]
 
     prjson = post_response.json()
-    result_route = prjson["result_route"]
-    svg_response = client.get(result_route + "/img?media_type=png")
-    assert svg_response.status_code == 400
-    assert "media_type not supported" in svg_response.content.decode()
+    result_route = prjson.get("result_route")
+    if result_route:
+        svg_response = client.get(result_route + "/img?media_type=png")
+        assert svg_response.status_code == 400
+        assert "media_type not supported" in svg_response.content.decode()
+    else:
+        print("didnt check sync")
+

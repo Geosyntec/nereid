@@ -1,7 +1,7 @@
 import pytest
 from fastapi import HTTPException
 
-import nereid.bg_worker as bg
+# import nereid.bg_worker as bg
 from nereid.api.api_v1 import utils
 
 
@@ -17,12 +17,12 @@ def test_get_valid_context(state, region, raises, exp):
         assert all([req_context[k] == v for k, v in exp.items()])
 
 
-def test_run_task_by_name(subgraph_request_dict):
+# def test_run_task_by_name(subgraph_request_dict):
 
-    graph, nodes = subgraph_request_dict["graph"], subgraph_request_dict["nodes"]
+#     graph, nodes = subgraph_request_dict["graph"], subgraph_request_dict["nodes"]
 
-    task = bg.background_network_subgraphs.s(graph=graph, nodes=nodes)
+#     task = bg.background_network_subgraphs.s(graph=graph, nodes=nodes)
 
-    return utils.run_task(
-        task=task, router=r"¯\_(ツ)_/¯", get_route=r"¯\_(ツ)_/¯", force_foreground=True
-    )
+#     return utils.run_task(
+#         task=task, router=r"¯\_(ツ)_/¯", get_route=r"¯\_(ツ)_/¯", force_foreground=True
+#     )

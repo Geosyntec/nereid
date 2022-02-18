@@ -2,22 +2,9 @@ import functools
 import hashlib
 import logging
 
-import redis
 
 logger = logging.getLogger(__name__)
-
-
-redis_cache = redis.Redis(host="redis", port=6379, db=9)
-
-try:  # pragma: no cover
-    # It's ok if redis isn't up, we'll fall back to an lru_cache if we can only
-    # use the main process. If redis is available, let's flush the cache to start
-    # fresh.
-    if redis_cache.ping():
-        redis_cache.flushdb()
-        logger.debug("flushed redis function cache")
-except redis.ConnectionError:  # pragma: no cover
-    pass
+redis_cache = None
 
 
 def rcache(**rkwargs):
@@ -68,13 +55,33 @@ def get_cache_decorator():
     The point of the no_cache fallback is to make development easier.
     In production and even in CI this should use the redis cache.
     """
+    global redis_cache
     try:
-        if redis_cache.ping():
-            return rcache
-        else:  # pragma: no cover
-            return no_cache
-    except redis.ConnectionError:  # pragma: no cover
+        import redis
+    except ImportError:
+        logger.warning("`redis` library is not installed")
         return no_cache
 
+    redis_cache = redis.Redis(host="redis", port=6379, db=9)
 
-cache_decorator = get_cache_decorator()
+    try:  # pragma: no cover
+        # It's ok if redis isn't up, we'll fall back to an lru_cache if we can only
+        # use the main process. If redis is available, let's flush the cache to start
+        # fresh.
+        if redis_cache.ping():
+            redis_cache.flushdb()
+            logger.debug("flushed redis function cache")
+            return rcache
+
+    except redis.ConnectionError:  # pragma: no cover
+        pass
+
+    return no_cache
+
+
+def cache(*args, **kwargs):
+    return functools.lru_cache
+
+
+cache_decorator = no_cache
+# cache_decorator = get_cache_decorator()

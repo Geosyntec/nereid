@@ -130,9 +130,11 @@ def dictlist_to_dict(dictlist, key):
 
     Example
     -------
-    >>>dict_list = [{"id":"a"}, {"id":"b"}]
-    >>>dictlist_to_dict(dict_list, "id")
+    ```python
+    dict_list = [{"id":"a"}, {"id":"b"}]
+    dictlist_to_dict(dict_list, "id")
     {'a': {'id': 'a'}, 'b': {'id': 'b'}}
+    ```
 
     """
     result = {}
