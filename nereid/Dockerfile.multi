@@ -5,6 +5,14 @@
 # time to build and is considerably more complex for scipy and pandas.
 
 
+FROM python:3.9-bullseye as nereid_install
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends graphviz \ 
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /nereid
+CMD ["bash", "-c", "while true; do sleep 1; done"]
+
+
 FROM redis:6.2.6-alpine3.15 as redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
