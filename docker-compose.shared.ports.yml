@@ -1,8 +1,8 @@
 version: '3.7'
 services:
   redis:
-    ports:
-      - 6379:6379
+    expose:
+      - 6379
   nereid:
     ports:
       - '80:80'
