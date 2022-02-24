@@ -137,6 +137,7 @@ RUN pip install \
 FROM core-runtime as nereid-tests
 COPY --from=test-env /opt/venv /opt/venv
 COPY .coveragerc /nereid/.coveragerc
+COPY conftest.py /nereid/conftest.py
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 EXPOSE 8888
