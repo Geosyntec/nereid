@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
   schedule:
     # every other sunday at noon.
-    - cron: "0 10 1,15 *"
+    - cron: "0 10 1,15 * *"
 
 jobs:
   python-test:
