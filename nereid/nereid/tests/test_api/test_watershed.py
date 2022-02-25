@@ -31,10 +31,13 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
     post_response = watershed_responses[key]
 
     prjson = post_response.json()
-    if settings.FORCE_FOREGROUND:  # pragma: no cover
-        grjson = prjson
-    else:
-        result_route = prjson["result_route"]
+    grjson = prjson
+    result_route = prjson.get("result_route")
+
+    if result_route:
+        get_route = f"{settings.API_LATEST}/task/{prjson.get('task_id', 'error$!#*&^')}"
+        get_response = client.get(get_route)
+        assert get_response.status_code == 200, (prjson, get_route)
 
         get_response = client.get(result_route)
         assert get_response.status_code == 200

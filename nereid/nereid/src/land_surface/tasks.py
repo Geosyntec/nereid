@@ -55,7 +55,10 @@ def land_surface_loading(
         )
 
         detailed_results = detailed_loading_results(
-            df, wet_weather_parameters, dry_weather_parameters, seasons,
+            df,
+            wet_weather_parameters,
+            dry_weather_parameters,
+            seasons,
         )
         summary_results = summary_loading_results(
             detailed_results,

@@ -5,82 +5,111 @@
 # time to build and is considerably more complex for scipy and pandas.
 
 
-FROM redis:6.0.8-alpine3.12 as redis
+FROM python:3.9-bullseye as nereid_install
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends graphviz \ 
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /nereid
+CMD ["bash", "-c", "while true; do sleep 1; done"]
+
+
+FROM redis:6.2.6-alpine3.15 as redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:3.8.6-alpine3.12 as flower
-RUN apk add --no-cache ca-certificates && update-ca-certificates
-RUN pip install --no-cache-dir redis==3.5.3 flower==0.9.5 celery==4.4.7
+FROM python:3.9-alpine3.15 as flower
+RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
+RUN pip install --no-cache-dir redis==4.1.0 flower==1.0.0 celery==5.2.3
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
+ENV FLOWER_DATA_DIR=/data 
+ENV PYTHONPATH=${FLOWER_DATA_DIR}
+WORKDIR $FLOWER_DATA_DIR
+# Add a user with an explicit UID/GID and create necessary directories
+ENV IMG_USER=flower
+RUN set -eux; \
+    addgroup -g 1000 ${IMG_USER}; \
+    adduser -u 1000 -G ${IMG_USER} ${IMG_USER} -D; \
+    mkdir -p "$FLOWER_DATA_DIR"; \
+    chown ${IMG_USER}:${IMG_USER} "$FLOWER_DATA_DIR"
+USER ${IMG_USER}
+VOLUME $FLOWER_DATA_DIR
+# Default port
 EXPOSE 5555
-USER nobody
-ENTRYPOINT ["flower"]
+CMD ["celery", "flower"]
 
 
-FROM python:3.8.6-buster as builder
+FROM python:3.9.9-bullseye as builder
 COPY requirements.txt /requirements.txt
 COPY requirements_tests.txt /requirements_tests.txt
 COPY requirements_server.txt /requirements_server.txt
 RUN mkdir /core && \
-  pip wheel \
-  --wheel-dir=/core \
-  -r /requirements.txt
+    pip wheel \
+    --wheel-dir=/core \
+    -r /requirements.txt
 RUN mkdir /tsts && \
-  pip wheel \
-  --wheel-dir=/tsts \
-  -r /requirements_tests.txt
+    pip wheel \
+    --wheel-dir=/tsts \
+    -r /requirements_tests.txt
 RUN mkdir /serve && \
-  pip wheel \
-  --wheel-dir=/serve \
-  -r /requirements_server.txt
+    pip wheel \
+    --wheel-dir=/serve \
+    -r /requirements_server.txt
 
 
-FROM python:3.8.6-slim-buster as core-runtime
+FROM python:3.9.9-slim-bullseye as core-runtime
 RUN apt-get update -y \
-  && apt-get install -y --no-install-recommends graphviz \ 
-  && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends graphviz \ 
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
-ENV PATH=/root/.local/bin:$PATH
+ENV PATH=/opt/venv/bin:$PATH
 
 
-FROM python:3.8.6-slim-buster as core-env
+FROM python:3.9.9-slim-bullseye as core-env
 COPY --from=builder /core /core
 COPY requirements.txt /requirements.txt
+RUN python -m venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH=/opt/venv/bin:$PATH
 RUN pip install \
-  --user \
-  --no-index \
-  --no-cache-dir \
-  --find-links=/core \
-  -r /requirements.txt \
-  && rm -rf /core/*
+    --no-index \
+    --no-cache-dir \
+    --find-links=/core \
+    -r /requirements.txt \
+    && rm -rf /core/*
 
 
 FROM core-runtime as celeryworker
-ENV C_FORCE_ROOT=1
-COPY --from=core-env /root/.local /root/.local
-COPY ./scripts/run-worker.sh /run-worker.sh
-RUN chmod +x /run-worker.sh
+# Add a user with an explicit UID/GID and create necessary directories
+ENV IMG_USER=celeryworker
+RUN addgroup --gid 1000 ${IMG_USER} \
+    && adduser --system --disabled-password --uid 1000 --gid 1000 ${IMG_USER} \
+    && chown -R ${IMG_USER}:${IMG_USER} /nereid 
+USER ${IMG_USER}
+COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
+COPY --chown=${IMG_USER} ./scripts/run-worker.sh /run-worker.sh
+RUN chmod gu+x /run-worker.sh
 CMD ["bash", "/run-worker.sh"]
-COPY ./nereid /nereid/nereid
+COPY --chown=${IMG_USER} ./nereid /nereid/nereid
 
 
 FROM core-env as server-env
 COPY requirements_server.txt /requirements_server.txt
 COPY --from=builder /serve /serve
+RUN python -m venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH=/opt/venv/bin:$PATH
 RUN pip install \
-  --user \
-  --no-index \
-  --no-cache-dir \
-  --find-links=/serve \
-  -r /requirements_server.txt \
-  && rm -rf /serve/*
+    --no-index \
+    --no-cache-dir \
+    --find-links=/serve \
+    -r /requirements_server.txt \
+    && rm -rf /serve/*
 
 
 FROM core-runtime as nereid
-COPY --from=server-env /root/.local /root/.local
+COPY --from=server-env /opt/venv /opt/venv
 COPY gunicorn_conf.py /gunicorn_conf.py
 COPY ./scripts/start.sh /start.sh
 RUN chmod +x /start.sh
@@ -94,30 +123,33 @@ COPY ./nereid /nereid/nereid
 FROM core-env as test-env
 COPY requirements_tests.txt /requirements_tests.txt
 COPY --from=builder /tsts /tsts
+RUN python -m venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH=/opt/venv/bin:$PATH
 RUN pip install \
-  --user \
-  --no-index \
-  --no-cache-dir \
-  --find-links=/tsts \
-  -r /requirements_tests.txt \
-  && rm -rf /tsts/*
+    --no-index \
+    --no-cache-dir \
+    --find-links=/tsts \
+    -r /requirements_tests.txt \
+    && rm -rf /tsts/*
 
 
 FROM core-runtime as nereid-tests
-COPY --from=test-env /root/.local /root/.local
+COPY --from=test-env /opt/venv /opt/venv
 COPY .coveragerc /nereid/.coveragerc
+COPY conftest.py /nereid/conftest.py
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 EXPOSE 8888
 COPY ./nereid /nereid/nereid
 
 
-FROM python:3.8-buster as nereid-edge
+FROM python:3.9-bullseye as nereid-edge
 RUN apt-get update && apt-get install -y graphviz
 COPY requirements.txt /requirements.txt
 COPY requirements_tests.txt /requirements_tests.txt
 RUN awk -F"==" '{print $1}' /requirements.txt /requirements_tests.txt \
-  > /requirements_edge.txt
+    > /requirements_edge.txt
 RUN cat requirements_edge.txt
 RUN pip install -r /requirements_edge.txt
 COPY ./nereid /nereid/nereid

@@ -4,7 +4,7 @@ import networkx as nx
 import pandas
 import pytest
 
-from nereid.core.utils import get_request_context
+from nereid.core.context import get_request_context
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 from nereid.src.tmnt_performance.tasks import effluent_function_map
 from nereid.src.watershed.solve_watershed import solve_node

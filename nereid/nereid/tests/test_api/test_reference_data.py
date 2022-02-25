@@ -65,7 +65,12 @@ def test_ref_data_file(client, query, isvalid):
 
 
 @pytest.mark.parametrize(
-    "table, isvalid", [("", False), ("met_table", True), ("met_tables", False),],
+    "table, isvalid",
+    [
+        ("", False),
+        ("met_table", True),
+        ("met_tables", False),
+    ],
 )
 def test_ref_data_table(client, table, isvalid):
     url = settings.API_LATEST + f"/reference_data/{table}"

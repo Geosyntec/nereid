@@ -7,13 +7,17 @@ import pytest
 from fastapi.testclient import TestClient
 
 from nereid.core.config import settings
-from nereid.main import app
+from nereid.factory import create_app
 from nereid.src.network.utils import clean_graph_dict
 from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_payload
 
 
 @pytest.fixture(scope="module")
-def client():
+def client(async_mode):
+    mode = "none"
+    if async_mode:
+        mode = "replace"
+    app = create_app(ASYNC_MODE=mode)
     with TestClient(app) as client:
         yield client
 
@@ -54,21 +58,25 @@ def named_subgraph_responses(client):
 
     init_post_requests = [
         # name, file or object, is-fast
-        ("subgraph_response_fast", get_payload("network_subgraph_request.json"), True),
+        (
+            "subgraph_response_fast",
+            get_payload("network_subgraph_request.json"),
+            # True
+        ),
         (
             "subgraph_response_slow",
             json.dumps(dict(graph=slow_graph, nodes=nodes)),
-            False,
+            # False,
         ),
     ]
 
-    for name, payload, isfast in init_post_requests:
+    for name, payload in init_post_requests:
 
         response = client.post(route, data=payload)
         responses[name] = response
-        result_route = response.json()["result_route"]
+        result_route = response.json().get("result_route")
 
-        if isfast:
+        if result_route:
             # trigger the svg render here so it's ready to get later.
             client.get(result_route + "/img?media_type=svg")
             time.sleep(0.5)
@@ -95,9 +103,9 @@ def solution_sequence_response(client):
         response = client.post(route + f"?min_branch_size={bs}", data=payload)
 
         responses[(bs, ngraph, minmax)] = response
+        result_route = response.json().get("result_route")
 
-        if all([minmax == (10, 11), ngraph == 3, bs == 6]):
-            result_route = response.json()["result_route"]
+        if all([minmax == (10, 11), ngraph == 3, bs == 6, result_route]):
             client.get(result_route + "/img?media_type=svg")
             time.sleep(0.5)
 
@@ -117,7 +125,7 @@ def land_surface_loading_responses(client, land_surface_loading_response_dicts):
         payload = json.dumps(ls_request)
         route = settings.API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
         response = client.post(route, data=payload)
-        assert response.status_code == 200, (response, detail_tf, nrows, nnodes)
+        assert response.status_code == 200, (response.text, detail_tf, nrows, nnodes)
 
         responses[(detail_tf, nrows, nnodes)] = response
 

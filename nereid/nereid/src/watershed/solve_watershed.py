@@ -29,7 +29,9 @@ from nereid.src.wq_parameters import init_wq_parameters
 
 
 def initialize_graph(
-    watershed: Dict[str, Any], treatment_pre_validated: bool, context: Dict[str, Any],
+    watershed: Dict[str, Any],
+    treatment_pre_validated: bool,
+    context: Dict[str, Any],
 ) -> Tuple[nx.DiGraph, List[str]]:
 
     errors: List[str] = []
@@ -52,7 +54,7 @@ def initialize_graph(
     )
     errors.extend(treatment_facilities["errors"])
 
-    treatment_sites = initialize_treatment_sites(watershed, context=context,)
+    treatment_sites = initialize_treatment_sites(watershed, context=context)
     errors.extend(treatment_sites["errors"])
 
     data: Dict[str, Any] = {}
@@ -73,7 +75,10 @@ def initialize_graph(
     return g, errors
 
 
-def solve_watershed_loading(g: nx.DiGraph, context: Dict[str, Any]) -> None:
+def solve_watershed_loading(
+    g: nx.DiGraph,
+    context: Dict[str, Any],
+) -> None:
 
     wet_weather_parameters = init_wq_parameters(
         "land_surface_emc_table", context=context
@@ -195,9 +200,7 @@ def solve_node(
     predecessors = list(g.predecessors(node))
 
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
-    accumulate_dry_weather_loading(
-        g, data, predecessors, dry_weather_parameters,
-    )
+    accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
 
     if "site_based" in node_type:
         # This sequence handles volume capture, load reductions, and also delivers
@@ -219,7 +222,9 @@ def solve_node(
         )
 
     elif "facility" in node_type:
-        if any([_type in node_type for _type in ["volume_based", "flow_based",]]):
+        if any(
+            [_type in node_type for _type in ["volume_based", "flow_based", "dry_well"]]
+        ):
             compute_volume_capture_with_nomograph(data, nomograph_map)
             compute_wet_weather_volume_discharge(data)
             compute_wet_weather_load_reduction(

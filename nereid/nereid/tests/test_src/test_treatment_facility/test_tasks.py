@@ -1,6 +1,6 @@
 import pytest
 
-from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
+from nereid.src.tasks import initialize_treatment_facilities
 
 
 @pytest.mark.parametrize(
@@ -49,7 +49,12 @@ def test_construct_nodes_from_treatment_facility_request(
     ],
 )
 def test_construct_nodes_from_treatment_facility_request_checkval(
-    contexts, valid_treatment_facility_dicts, ctxt_key, has_met_data, model, checkfor,
+    contexts,
+    valid_treatment_facility_dicts,
+    ctxt_key,
+    has_met_data,
+    model,
+    checkfor,
 ):
 
     context = contexts[ctxt_key]

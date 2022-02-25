@@ -244,10 +244,12 @@ class NomographBase(object):
             y = numpy.clip(y, numpy.nanmin(self.y_data), numpy.nanmax(self.y_data))
 
             if numpy.iterable(t) and numpy.iterable(y):
-                if len(t) == len(y):
+                t_iter = numpy.array(t)
+                y_iter = numpy.array(y)
+                if t_iter.size == y_iter.size:
 
                     res: List[float] = []
-                    for _y, _t in zip(y, t):
+                    for _y, _t in zip(y_iter, t_iter):
 
                         guess, _ = self.get_x(
                             at_y=_y, t=_t, atol=atol, max_iters=max_iters

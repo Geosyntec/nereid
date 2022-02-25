@@ -4,10 +4,8 @@ import networkx as nx
 import pandas
 import pytest
 
-from nereid.src.land_surface.tasks import land_surface_loading
-from nereid.src.network.tasks import solution_sequence
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
-from nereid.src.watershed.tasks import solve_watershed
+from nereid.src.tasks import land_surface_loading, solution_sequence, solve_watershed
 from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import check_results_dataframes
 
@@ -50,16 +48,18 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
         subg_request.update(subgraph)
         subg_request.update(previous_results)
 
-        subgraph_response_dict = solve_watershed(subg_request, False, context=context,)
+        subgraph_response_dict = solve_watershed(subg_request, False, context=context)
         subgraph_results = subgraph_response_dict["results"]
 
         presults.extend(subgraph_results)
         db = db.combine_first(pandas.DataFrame(subgraph_results).set_index("node_id"))
 
     response_dict = solve_watershed(
-        watershed=watershed_request, treatment_pre_validated=False, context=context,
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
     )
     results = response_dict["results"] + response_dict["leaf_results"]
 
-    check_db = pandas.DataFrame(results).set_index("node_id").sort_index(0)
-    check_results_dataframes(db.sort_index(0), check_db)
+    check_db = pandas.DataFrame(results).set_index("node_id").sort_index(axis=0)
+    check_results_dataframes(db.sort_index(axis=0), check_db)

@@ -1,10 +1,12 @@
 from typing import Any, Callable, Dict, List, Mapping
 
 from nereid.core.utils import safe_divide
+from nereid.src.watershed.design_functions import design_intensity_inhr
 
 
 def compute_volume_capture_with_nomograph(
-    data: Dict[str, Any], nomograph_map: Mapping[str, Callable],
+    data: Dict[str, Any],
+    nomograph_map: Mapping[str, Callable],
 ) -> Dict[str, Any]:
     """Compute volume captured by a treatment facility if it treats wet weather flow
     via either volume or flow-based calculation strategies.
@@ -17,7 +19,7 @@ def compute_volume_capture_with_nomograph(
     Parameters
     ----------
     data : dict
-        information about the node, inclding treatment facility sizing and inflow
+        information about the node, including treatment facility sizing and inflow
         characteristics
     nomograph_map : mapping
         this mapping uses the nomograph data filepath as the key to return a 2d nomograph
@@ -83,6 +85,9 @@ def compute_volume_capture_with_nomograph(
     elif "flow_based_facility" in node_type:
         data = compute_flow_based_facility(data, flow_nomo, volume_nomo)
 
+    elif "dry_well_facility" in node_type:
+        data = compute_dry_well_facility(data, flow_nomo, volume_nomo)
+
     else:  # pragma: no cover
         # this should be impossible to reach since this function is called within the
         # solve_watershed_loading function
@@ -106,7 +111,8 @@ def compute_volume_capture_with_nomograph(
 
 
 def compute_volume_based_standalone_facility(
-    data: Dict[str, Any], volume_nomo: Callable
+    data: Dict[str, Any],
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """Calculate treatment and retention volume for a standalone volume-based
     treatment facility. Standalone means that there are not volume-based facilities
@@ -178,7 +184,8 @@ def compute_volume_based_standalone_facility(
 
 
 def solve_volume_based_compartments(
-    compartments: List[Dict[str, float]], volume_nomo: Callable
+    compartments: List[Dict[str, float]],
+    volume_nomo: Callable,
 ) -> List[Dict[str, float]]:
     """Traverse a series of volume-based nomographs from the bottom compartment (retention)
     to the top compartment (treatment). This function accumulates the x-offset from
@@ -214,7 +221,8 @@ def solve_volume_based_compartments(
 
 
 def compute_volume_based_nested_facility(
-    data: Dict[str, Any], volume_nomo: Callable
+    data: Dict[str, Any],
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """Process a volume based treatment facility whose performance
     is influenced by upstream volume based facilities.
@@ -333,7 +341,10 @@ def compute_volume_based_nested_facility(
 
 
 def detention_vol(
-    tmnt_ddt: float, cumul_within_storm_vol: float, ret_vol: float, tmnt_vol: float
+    tmnt_ddt: float,
+    cumul_within_storm_vol: float,
+    ret_vol: float,
+    tmnt_vol: float,
 ) -> float:
     """This is a helper function for calculating the volume that is detained (delayed)
     by a treatment facility.
@@ -356,7 +367,9 @@ def detention_vol(
 
 
 def compute_flow_based_facility(
-    data: Dict[str, Any], flow_nomo: Callable, volume_nomo: Callable
+    data: Dict[str, Any],
+    flow_nomo: Callable,
+    volume_nomo: Callable,
 ) -> Dict[str, Any]:
     """Solves volume balance for flow based treatment. these facilities *can* perform both
     treatment via treatment rate nomographs to reduce the effluent concentration and/or
@@ -383,10 +396,11 @@ def compute_flow_based_facility(
         msg = f"overriding tributary_area_tc_min from '{tc}' to 5 minutes."
         data["node_warnings"].append(msg)
 
-    captured_fraction = float(
-        flow_nomo(intensity=data.get("design_intensity_inhr", 0.0), tc=tc) or 0.0
+    intensity = data["design_intensity_inhr"] = design_intensity_inhr(
+        data.get("treatment_rate_cfs", 0.0), data["eff_area_acres_cumul"]
     )
 
+    captured_fraction = float(flow_nomo(intensity=intensity, tc=tc) or 0.0)
     size_fraction = safe_divide(
         data.get("retention_volume_cuft", 0.0), data["design_volume_cuft_cumul"]
     )
@@ -408,8 +422,69 @@ def compute_flow_based_facility(
     return data
 
 
+def compute_dry_well_facility(
+    data: Dict[str, Any],
+    flow_nomo: Callable,
+    volume_nomo: Callable,
+) -> Dict[str, Any]:
+    """best of flow-based and volume based nomographs for bmp volume and treatment rate.
+
+    the fate of all of the treatment for a drywell is _always_ retention.
+
+    Parameters
+    ----------
+    data : dict
+        all the current node's information. this will be treatment facilily size
+        information and characteristics of incoming upstream flow.
+    *_nomo : thinly wrapped 2D CloughTocher Interpolators
+        Reference: `nereid.src.nomograph.nomo`
+
+    """
+
+    tc = data.get("tributary_area_tc_min")
+    if tc is None or tc < 5:
+        tc = 5
+        msg = f"overriding tributary_area_tc_min from '{tc}' to 5 minutes."
+        data["node_warnings"].append(msg)
+
+    # check flow nomo
+    intensity = data["design_intensity_inhr"] = design_intensity_inhr(
+        data.get("retention_rate_cfs", 0.0), data["eff_area_acres_cumul"]
+    )
+
+    flow_based_captured_fraction = float(flow_nomo(intensity=intensity, tc=tc) or 0.0)
+
+    # check volume nomo
+    size_fraction = safe_divide(
+        data.get("retention_volume_cuft", 0.0), data["design_volume_cuft_cumul"]
+    )
+    ret_ddt_hr = data.get("retention_ddt_hr", 0.0)
+
+    volume_based_captured_fraction = float(
+        volume_nomo(size=size_fraction, ddt=ret_ddt_hr) or 0.0
+    )
+
+    # check which is best capture
+    solution_type = "flow based"
+    if volume_based_captured_fraction > flow_based_captured_fraction:
+        solution_type = "volume based"
+
+    captured_pct = (
+        max(flow_based_captured_fraction, volume_based_captured_fraction) * 100
+    )
+
+    # for dry wells, all capture is retention.
+    data["retained_pct"] = captured_pct
+    data["captured_pct"] = captured_pct
+    data["treated_pct"] = 0.0
+    data["_nomograph_solution_status"] = f"successful; dry well {solution_type}"
+
+    return data
+
+
 def compute_peak_flow_reduction(
-    data: Dict[str, Any], peak_nomo: Callable
+    data: Dict[str, Any],
+    peak_nomo: Callable,
 ) -> Dict[str, Any]:
 
     ret_vol_cuft = data["retention_volume_cuft"]

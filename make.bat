@@ -8,10 +8,14 @@ if /i %1 == up goto :up
 if /i %1 == down goto :down
 if /i %1 == typecheck goto :typecheck
 if /i %1 == coverage goto :coverage
+if /i %1 == coverage-sync goto :coverage-sync
+if /i %1 == coverage-async goto :coverage-async
+if /i %1 == coverage-all goto :coverage-all
 if /i %1 == cover-src goto :cover-src
 if /i %1 == dev-server goto :dev-server
 if /i %1 == restart goto :restart
 if /i %1 == lint goto :lint
+if /i %1 == login goto :login
 
 :help
 echo Commands:
@@ -31,10 +35,15 @@ goto :eof
 
 set COMPOSE_DOCKER_CLI_BUILD=1
 
+:login
+bash scripts/az-login.sh
+goto :eof
+
 :test
 call make clean
 call make restart
-docker compose exec nereid-tests pytest %2 %3 %4 %5 %6
+for /f "tokens=1,* delims= " %%a in ("%*") do set ALL_BUT_FIRST=%%b
+docker compose exec nereid-tests pytest %ALL_BUT_FIRST%
 goto :eof
 
 :typecheck
@@ -59,7 +68,29 @@ goto :eof
 :coverage
 call make clean
 call make restart
-docker compose exec nereid-tests coverage run -m pytest -x
+docker compose exec nereid-tests coverage run --branch -m pytest nereid/tests -xs
+docker compose exec nereid-tests coverage report -m
+goto :eof
+
+:coverage-sync
+call make clean
+call make restart
+docker compose exec nereid-tests coverage run --branch -m pytest nereid/tests -xs
+docker compose exec nereid-tests coverage report -m --omit=*test*,*bg_*,*celery_*
+goto :eof
+
+:coverage-async
+call make clean
+call make restart
+docker compose exec nereid-tests coverage run --branch -m pytest nereid/tests -xs --async
+docker compose exec nereid-tests coverage report -m --omit=*test*,*_sync*
+goto :eof
+
+:coverage-all
+call make clean
+call make restart
+docker compose exec nereid-tests coverage run --branch -m pytest nereid/tests -xs
+docker compose exec nereid-tests coverage run -a --branch -m pytest nereid/tests/test_api -xs --async
 docker compose exec nereid-tests coverage report -m
 goto :eof
 
@@ -85,3 +116,8 @@ goto :eof
 :lint
 bash scripts/lint.sh
 goto :eof
+
+rem docker build --target nereid_install -t nereid_install -f nereid/Dockerfile.multi .
+rem docker run -it -v %cd%:/nereid -p 8088:80 --expose 80 nereid_install bash
+rem pip install -e .[app]
+rem uvicorn nereid.main:app --port 80 --host 0.0.0.0 --reload

@@ -121,11 +121,6 @@ def accumulate_wet_weather_loading(
         data.get("retention_volume_cuft", 0.0) + data["retention_volume_cuft_upstream"]
     )
 
-    # calculate design intensity
-    data["design_intensity_inhr"] = design_intensity_inhr(
-        data.get("treatment_rate_cfs", 0.0), data["eff_area_acres_cumul"]
-    )
-
     # accumulate design volume
     data["design_volume_cuft_direct"] = design_volume_cuft(
         data.get("design_storm_depth_inches", 0.0), data["eff_area_acres_direct"]
@@ -333,9 +328,7 @@ def compute_wet_weather_load_reduction(
 
 
 def check_node_results_close(data: Dict[str, Any]) -> Dict[str, Any]:
-    """Run a few mass balance checks on the node.
-
-    """
+    """Run a few mass balance checks on the node."""
     check1 = safe_divide(
         (
             data["runoff_volume_cuft_inflow"]

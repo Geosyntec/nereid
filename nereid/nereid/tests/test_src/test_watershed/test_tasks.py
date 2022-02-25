@@ -17,7 +17,9 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
-        watershed=watershed_request, treatment_pre_validated=False, context=context,
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
     )
     result = response_dict["results"] + response_dict["leaf_results"]
     outfall_results = [n for n in result if n["node_id"] == "0"][0]
@@ -48,7 +50,7 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
         assert abs(outfall_total - sum_individual) / outfall_total < 1e-15
 
 
-@pytest.mark.parametrize("pct_tmnt", [0.3, 0.6,])
+@pytest.mark.parametrize("pct_tmnt", [0.3, 0.6])
 @pytest.mark.parametrize("n_nodes", [50, 100])
 def test_solve_watershed_with_treatment(
     contexts, watershed_requests, n_nodes, pct_tmnt
@@ -57,7 +59,9 @@ def test_solve_watershed_with_treatment(
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
-        watershed=watershed_request, treatment_pre_validated=False, context=context,
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
     )
 
     result = response_dict["results"] + response_dict["leaf_results"]
@@ -111,7 +115,9 @@ def test_stable_watershed_stable_subgraph_solutions(
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
-        watershed=watershed_request, treatment_pre_validated=False, context=context,
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
     )
     results = response_dict["results"]
 
@@ -134,7 +140,9 @@ def test_stable_watershed_stable_subgraph_solutions(
     new_request.update(previous_results)
 
     subgraph_response_dict = solve_watershed(
-        watershed=new_request, treatment_pre_validated=False, context=context,
+        watershed=new_request,
+        treatment_pre_validated=False,
+        context=context,
     )
     subgraph_results = subgraph_response_dict["results"]
 
@@ -179,7 +187,9 @@ def test_treatment_facility_waterbalance(
     watershed_request["treatment_facilities"] = [facility]
 
     response_dict = solve_watershed(
-        watershed=watershed_request, treatment_pre_validated=False, context=context,
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
     )
 
     results = response_dict["results"]

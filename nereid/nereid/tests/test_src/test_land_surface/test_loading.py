@@ -72,7 +72,10 @@ def test_detailed_land_surface_loading_results(
     )
 
     t = detailed_loading_results(
-        land_surfaces_df, wet_weather_parameters, dry_weather_parameters, seasons,
+        land_surfaces_df,
+        wet_weather_parameters,
+        dry_weather_parameters,
+        seasons,
     )
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
     assert len(t) == len(land_surfaces_list)
@@ -86,7 +89,7 @@ def test_detailed_land_surface_loading_results(
     assert t["runoff_volume_cuft"].sum() > 0
 
     t = detailed_pollutant_loading_results(
-        land_surfaces_df,
+        t,
         wet_weather_parameters,
         dry_weather_parameters,
         seasons.keys(),

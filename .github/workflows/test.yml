@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
   schedule:
     # every other sunday at noon.
-    - cron:  '0 12 1-7,15-21,29-31 * 0'
-    
+    - cron: "0 12 1-7,15-21,29-31 * 0"
+
 jobs:
   python-test:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install Deps
         run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
       - name: Run Tests
@@ -36,11 +36,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install nereid as library
         run: |
-          pip install . 
-          pip install -r nereid/requirements_tests.txt
+          pip install .
+          pip install pytest
       - name: Run Tests
         run: pytest nereid/nereid/tests/test_src -xv
 
@@ -64,7 +64,7 @@ jobs:
       - name: Run Edge Tests
         continue-on-error: true
         run: |
-          pytest nereid/nereid/tests/test_src -xv
+          pytest nereid/nereid/tests -xv
       - name: Exit
         run: exit 0
 
@@ -77,10 +77,12 @@ jobs:
       - name: build stack
         run: |
           docker --version
-          bash ./scripts/build_deploy.sh
+          bash ./scripts/build_dev.sh
           docker-compose up -d nereid-tests
       - name: run tests
-        run: docker-compose exec -T nereid-tests coverage run -m pytest -xv
+        run: |
+          docker compose exec -T nereid-tests coverage run --branch -m pytest nereid/tests -xs
+          docker compose exec -T nereid-tests coverage run -a --branch -m pytest nereid/tests/test_api -xs --async
       - name: coverage
         run: |
           docker-compose exec -T nereid-tests coverage report -mi

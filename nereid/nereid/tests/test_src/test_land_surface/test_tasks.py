@@ -1,6 +1,6 @@
 import pytest
 
-from nereid.core.utils import get_request_context
+from nereid.core.context import get_request_context
 from nereid.src.land_surface.tasks import land_surface_loading
 
 
@@ -34,7 +34,7 @@ def test_land_surface_loading_with_err(
     land_surfaces["land_surfaces"][5]["surface_key"] = r"¯\_(ツ)_/¯"
     result = land_surface_loading(land_surfaces, details, context=get_request_context())
 
-    assert "ERROR" in result.get("errors", [])[0]
+    assert "ERROR" in result.get("errors", ["nope"])[0]
     assert result.get("summary") is not None
     assert len(result.get("summary")) <= len(land_surfaces["land_surfaces"])
 

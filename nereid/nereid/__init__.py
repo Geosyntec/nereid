@@ -1,3 +1,3 @@
-__version__ = "0.4.3"
+__version__ = "0.5.0rc2"
 __author__ = "Austin Orr"
 __email__ = "aorr@geosyntec.com"

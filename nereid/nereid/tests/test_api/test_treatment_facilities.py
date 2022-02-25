@@ -24,15 +24,12 @@ def test_get_init_tmnt_facility_params(client, treatment_facility_responses, key
     post_response = treatment_facility_responses[key]
 
     prjson = post_response.json()
+    grjson = prjson
+    result_route = prjson.get("result_route")
 
-    if settings.FORCE_FOREGROUND:  # pragma: no cover
-        grjson = prjson
-    else:
-        result_route = prjson["result_route"]
-
+    if result_route:
         get_response = client.get(result_route)
         assert get_response.status_code == 200
-
         grjson = get_response.json()
 
     assert treatment_facility_models.TreatmentFacilitiesResponse(**prjson)
@@ -56,12 +53,10 @@ def test_get_default_context_tmnt_facility_params(
     for name, post_response in default_context_treatment_facility_responses.items():
 
         prjson = post_response.json()
+        grjson = prjson
+        result_route = prjson.get("result_route")
 
-        if settings.FORCE_FOREGROUND:  # pragma: no cover
-            grjson = prjson
-        else:
-            result_route = prjson["result_route"]
-
+        if result_route:
             get_response = client.get(result_route)
             assert get_response.status_code == 200
 

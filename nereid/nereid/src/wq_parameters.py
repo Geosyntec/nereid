@@ -55,9 +55,11 @@ def init_wq_parameters(tablename: str, context: Dict[str, Any]) -> List[Dict[str
 
     """
 
-    parameters: List[Dict[str, Any]] = context.get("project_reference_data", {}).get(
-        tablename, {}
-    ).get("parameters", [])
+    parameters: List[Dict[str, Any]] = (
+        context.get("project_reference_data", {})
+        .get(tablename, {})
+        .get("parameters", [])
+    )
 
     for param in parameters:
 

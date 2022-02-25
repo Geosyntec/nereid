@@ -4,5 +4,5 @@ set -e
 set -x
 
 mypy nereid/nereid --install-types --non-interactive
-black nereid --check
+black nereid --check --diff
 isort nereid --check --diff 

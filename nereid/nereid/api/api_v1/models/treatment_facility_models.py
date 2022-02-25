@@ -9,9 +9,24 @@ from nereid.core.utils import validate_with_discriminator
 class FacilityBase(BaseModel):
     node_id: str
     facility_type: str
-    ref_data_key: str
-    design_storm_depth_inches: float = Field(..., gt=0)
-    eliminate_all_dry_weather_flow_override: bool = False
+    ref_data_key: str = Field(
+        ...,
+        description=(
+            """This attribute is used to determine which nomographs 
+to reference in order to compute the long-term volume 
+capture performance of the facility."""
+        ),
+    )
+    design_storm_depth_inches: float = Field(
+        ..., gt=0, description="""85th percentile design storm depth in inches"""
+    )
+    eliminate_all_dry_weather_flow_override: bool = Field(
+        False,
+        description=(
+            """Whether to override the dr weather flow capture calculation 
+and set the performance to 'fully elimates all dry weather flow'. (default=False)"""
+        ),
+    )
 
 
 class NTFacility(FacilityBase):
@@ -77,10 +92,23 @@ class RetentionFacility(OnlineFaciltyBase):
     _constructor: str = "retention_facility_constructor"
 
 
+class RetentionFacilityHSG(OnlineFaciltyBase):
+    total_volume_cuft: float
+    area_sqft: float
+    hsg: str
+    _constructor: str = "retention_facility_constructor"
+
+
 class DryWellFacility(OnlineFaciltyBase):
     total_volume_cuft: float
     treatment_rate_cfs: float
     _constructor: str = "dry_well_facility_constructor"
+
+
+class DryWellFacilityFlowOrVolume(OnlineFaciltyBase):
+    total_volume_cuft: float
+    treatment_rate_cfs: float
+    _constructor: str = "dry_well_facility_flow_or_volume_constructor"
 
 
 class BioInfFacility(OnlineFaciltyBase):
@@ -154,10 +182,12 @@ STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for val
     BioInfFacility,
     FlowAndRetFacility,
     RetentionFacility,
+    RetentionFacilityHSG,
     TmntFacility,
     TmntFacilityWithRetentionOverride,
     CisternFacility,
     DryWellFacility,
+    DryWellFacilityFlowOrVolume,
     DryWeatherTreatmentLowFlowFacility,
     DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
@@ -171,10 +201,12 @@ TREATMENT_FACILITY_MODELS = [
     BioInfFacility,
     FlowAndRetFacility,
     RetentionFacility,
+    RetentionFacilityHSG,
     TmntFacility,
     TmntFacilityWithRetentionOverride,
     CisternFacility,
     DryWellFacility,
+    DryWellFacilityFlowOrVolume,
     DryWeatherTreatmentLowFlowFacility,
     DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
