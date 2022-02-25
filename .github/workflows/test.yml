@@ -9,13 +9,15 @@ on:
   workflow_dispatch:
   schedule:
     # every other sunday at noon.
-    - cron: "0 12 1-7,15-21,29-31 * 0"
+    - cron: "0 10 1,15 *"
 
 jobs:
   python-test:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get install graphviz
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y graphviz
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
