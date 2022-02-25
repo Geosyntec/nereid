@@ -2,7 +2,6 @@ from typing import IO, Any, Dict, List, Optional, Union
 
 import networkx as nx
 
-from nereid.core.cache import cache_decorator
 from nereid.src.network import validate
 from nereid.src.network.algorithms import get_subset, parallel_sequential_subgraph_nodes
 from nereid.src.network.render import (
@@ -71,8 +70,7 @@ def network_subgraphs(
     return result
 
 
-@cache_decorator(ex=3600 * 24)  # expires in 24 hours
-def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> IO:
+def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> bytes:
 
     g = graph_factory(task_result["graph"])
 
@@ -84,7 +82,7 @@ def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> IO:
     )
 
     svg_bin = fig_to_image(fig)
-    svg: IO = svg_bin.read()
+    svg: bytes = svg_bin.read()
 
     return svg
 
@@ -113,8 +111,9 @@ def solution_sequence(
     return result
 
 
-@cache_decorator(ex=3600 * 24)  # expires in 24 hours
-def render_solution_sequence_svg(task_result: dict, npi: Optional[float] = None) -> IO:
+def render_solution_sequence_svg(
+    task_result: dict, npi: Optional[float] = None
+) -> bytes:
 
     _graph = thin_graph_dict(task_result["graph"])  # strip unneeded metadata
 
@@ -130,6 +129,6 @@ def render_solution_sequence_svg(task_result: dict, npi: Optional[float] = None)
     fig = render_solution_sequence(g, solution_sequence=solution_sequence, npi=npi)
 
     svg_bin = fig_to_image(fig)
-    svg: IO = svg_bin.read()
+    svg: bytes = svg_bin.read()
 
     return svg

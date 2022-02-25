@@ -1,4 +1,5 @@
 from copy import deepcopy
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
@@ -6,12 +7,10 @@ import orjson as json
 import pandas
 import yaml
 
-from nereid.core.cache import cache_decorator
-
 PathType = Union[Path, str]
 
 
-@cache_decorator(ex=3600 * 24)  # expires in 24 hours
+@lru_cache
 def _load_file(filepath: PathType) -> bytes:
     """returns bytes for redis cache compatability"""
     fp = Path(filepath)
