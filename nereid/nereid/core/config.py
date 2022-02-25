@@ -1,4 +1,3 @@
-import importlib.resources as pkg_resources
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import AnyHttpUrl, BaseSettings, validator
@@ -45,11 +44,7 @@ class Settings(BaseSettings):
 
     class Config:  # pragma: no cover
         env_prefix = "NEREID_"
-        try:
-            with pkg_resources.path(".env") as p:
-                env_file = p
-        except FileNotFoundError:
-            pass
+        env_file = ".env"
         extra = "allow"
 
     def update(self, other: dict) -> None:  # pragma: no cover
