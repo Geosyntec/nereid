@@ -10,7 +10,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get install graphviz
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y graphviz
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
