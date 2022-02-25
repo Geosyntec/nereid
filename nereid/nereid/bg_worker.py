@@ -3,17 +3,6 @@ import logging
 from nereid.core.celery_app import celery_app
 from nereid.src import tasks
 
-# import (
-#     initialize_treatment_facilities,
-#     land_surface_loading,
-#     network_subgraphs,
-#     render_solution_sequence_svg,
-#     render_subgraph_svg,
-#     solution_sequence,
-#     solve_watershed,
-#     validate_network,
-# )
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -36,8 +25,7 @@ def network_subgraphs(graph, nodes):  # pragma: no cover
 
 @celery_app.task(acks_late=True, track_started=True)
 def render_subgraph_svg(task_result, npi):  # pragma: no cover
-    bytes_response = tasks.render_subgraph_svg(task_result=task_result, npi=npi)
-    return bytes_response.decode()
+    return tasks.render_subgraph_svg(task_result=task_result, npi=npi).decode()
 
 
 @celery_app.task(acks_late=True, track_started=True)

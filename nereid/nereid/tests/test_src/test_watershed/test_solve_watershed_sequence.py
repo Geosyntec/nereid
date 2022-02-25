@@ -4,10 +4,8 @@ import networkx as nx
 import pandas
 import pytest
 
-from nereid.src.tasks import land_surface_loading
-from nereid.src.tasks import solution_sequence
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
-from nereid.src.tasks import solve_watershed
+from nereid.src.tasks import land_surface_loading, solution_sequence, solve_watershed
 from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import check_results_dataframes
 

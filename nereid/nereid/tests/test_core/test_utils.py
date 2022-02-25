@@ -1,6 +1,7 @@
 import pytest
 
 from nereid.core import utils
+from nereid.core.context import get_request_context, validate_request_context
 
 
 @pytest.mark.parametrize(
@@ -18,7 +19,7 @@ from nereid.core import utils
     ],
 )
 def test_get_request_context(state, region, dirname, context, exp):
-    req_context = utils.get_request_context(state, region, dirname, context)
+    req_context = get_request_context(state, region, dirname, context)
     assert all([k in req_context for k in exp.keys()])
 
 
@@ -44,7 +45,7 @@ def test_get_request_context(state, region, dirname, context, exp):
 def test_validate_request_context(contexts, key):
     context = contexts[key]
 
-    isvalid, msg = utils.validate_request_context(context)
+    isvalid, msg = validate_request_context(context)
 
     assert len(msg) > 0
 

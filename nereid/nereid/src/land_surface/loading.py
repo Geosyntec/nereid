@@ -2,6 +2,8 @@ from typing import Dict, List, Optional
 
 import pandas
 
+from nereid.core.utils import safe_array_divide
+
 
 def clean_land_surface_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
     """this function cleans up the imperviousness passed by the client and uses
@@ -27,6 +29,8 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
         is_developed: bool
 
     """
+
+    df = df.loc[df["area_acres"] > 0]
 
     # method chaining with 'df.assign' looks better, but it's much less memory efficient
     df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
@@ -202,9 +206,12 @@ def summary_loading_results(
     for param in wet_weather_parameters:
         conc_col = param["conc_col"]
         load_col = param["load_col"]
-        factor = param["load_to_conc_factor"]
+        factor: float = float(param["load_to_conc_factor"])
 
-        df[conc_col] = (df[load_col] / df["runoff_volume_cuft"]) * factor
+        df[conc_col] = (
+            safe_array_divide(df[load_col].values, df["runoff_volume_cuft"].values)
+            * factor
+        )
 
     for season in season_names:
         dw_vol_col = f"{season}_dry_weather_flow_cuft"
@@ -213,8 +220,10 @@ def summary_loading_results(
         for param in dry_weather_parameters:
             conc_col = season + "_" + param["conc_col"]
             load_col = season + "_" + param["load_col"]
-            factor = param["load_to_conc_factor"]
+            factor = float(param["load_to_conc_factor"])
 
-            df[conc_col] = (df[load_col] / df[dw_vol_col]).fillna(0) * factor
+            df[conc_col] = (
+                safe_array_divide(df[load_col].values, df[dw_vol_col].values) * factor
+            )
 
     return df

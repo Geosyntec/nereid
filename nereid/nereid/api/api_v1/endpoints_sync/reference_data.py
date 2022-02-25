@@ -6,21 +6,19 @@ from typing import Any, Dict, Optional, Union
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import FileResponse, ORJSONResponse
-from fastapi.templating import Jinja2Templates
 
 from nereid.api.api_v1.models.reference_models import ReferenceDataResponse
-from nereid.api.api_v1.utils import get_valid_context
+from nereid.api.api_v1.utils import get_valid_context, templates
 from nereid.core.io import load_file, load_json, load_ref_data
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory="nereid/api/templates")
-
 
 @router.get("/reference_data_file", tags=["reference_data"])
 async def get_reference_data_file(
-    context: dict = Depends(get_valid_context), filename: str = ""
+    context: dict = Depends(get_valid_context),
+    filename: str = "",
 ) -> FileResponse:
 
     filepath = Path(context.get("data_path", "")) / filename
@@ -41,7 +39,8 @@ async def get_reference_data_file(
     response_class=ORJSONResponse,
 )
 async def get_reference_data_json(
-    context: dict = Depends(get_valid_context), filename: str = ""
+    context: dict = Depends(get_valid_context),
+    filename: str = "",
 ) -> Dict[str, Any]:
 
     filepath = Path(context.get("data_path", "")) / filename
@@ -108,7 +107,9 @@ async def get_nomograph(
 
 
 @router.get(
-    "/reference_data/{table}", tags=["reference_data"], response_class=ORJSONResponse,
+    "/reference_data/{table}",
+    tags=["reference_data"],
+    response_class=ORJSONResponse,
 )
 async def get_reference_data_table(
     table: str, context: dict = Depends(get_valid_context)

@@ -1,22 +1,19 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, Union
 
 from fastapi import APIRouter, Body, HTTPException, Query
-from fastapi.encoders import jsonable_encoder
 from fastapi.requests import Request
 from fastapi.responses import ORJSONResponse
-from fastapi.templating import Jinja2Templates
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.models import network_models
-from nereid.api.api_v1.utils import (
+from nereid.api.api_v1.async_utils import (
     run_task,
     standard_json_response,
     wait_a_sec_and_see_if_we_can_return_some_data,
 )
+from nereid.api.api_v1.models import network_models
+from nereid.api.api_v1.utils import templates
 
 router = APIRouter()
-
-templates = Jinja2Templates(directory="nereid/api/templates")
 
 
 @router.post(
@@ -26,14 +23,7 @@ templates = Jinja2Templates(directory="nereid/api/templates")
     response_class=ORJSONResponse,
 )
 async def validate_network(
-    graph: network_models.Graph = Body(
-        ...,
-        example={
-            "directed": True,
-            "nodes": [{"id": "A"}, {"id": "B"}],
-            "edges": [{"source": "A", "target": "B"}],
-        },
-    )
+    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples)
 ) -> Dict[str, Any]:
 
     task = bg.validate_network.s(graph=graph.dict(by_alias=True))
@@ -59,45 +49,7 @@ async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
     response_class=ORJSONResponse,
 )
 async def subgraph_network(
-    subgraph_req: network_models.SubgraphRequest = Body(
-        ...,
-        example={
-            "graph": {
-                "directed": True,
-                "edges": [
-                    {"source": "3", "target": "1"},
-                    {"source": "5", "target": "3"},
-                    {"source": "7", "target": "1"},
-                    {"source": "9", "target": "1"},
-                    {"source": "11", "target": "1"},
-                    {"source": "13", "target": "3"},
-                    {"source": "15", "target": "9"},
-                    {"source": "17", "target": "7"},
-                    {"source": "19", "target": "17"},
-                    {"source": "21", "target": "15"},
-                    {"source": "23", "target": "1"},
-                    {"source": "25", "target": "5"},
-                    {"source": "27", "target": "11"},
-                    {"source": "29", "target": "7"},
-                    {"source": "31", "target": "11"},
-                    {"source": "33", "target": "25"},
-                    {"source": "35", "target": "23"},
-                    {"source": "4", "target": "2"},
-                    {"source": "6", "target": "2"},
-                    {"source": "8", "target": "6"},
-                    {"source": "10", "target": "2"},
-                    {"source": "12", "target": "2"},
-                    {"source": "14", "target": "2"},
-                    {"source": "16", "target": "12"},
-                    {"source": "18", "target": "12"},
-                    {"source": "20", "target": "8"},
-                    {"source": "22", "target": "6"},
-                    {"source": "24", "target": "12"},
-                ],
-            },
-            "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
-        },
-    ),
+    subgraph_req: network_models.SubgraphRequest = Body(...),
 ) -> Dict[str, Any]:
 
     task = bg.network_subgraphs.s(**subgraph_req.dict(by_alias=True))
@@ -173,42 +125,7 @@ async def get_subgraph_network_as_img(
     response_class=ORJSONResponse,
 )
 async def network_solution_sequence(
-    graph: network_models.Graph = Body(
-        ...,
-        example={
-            "directed": True,
-            "edges": [
-                {"source": "3", "target": "1"},
-                {"source": "5", "target": "3"},
-                {"source": "7", "target": "1"},
-                {"source": "9", "target": "1"},
-                {"source": "11", "target": "1"},
-                {"source": "13", "target": "3"},
-                {"source": "15", "target": "9"},
-                {"source": "17", "target": "7"},
-                {"source": "19", "target": "17"},
-                {"source": "21", "target": "15"},
-                {"source": "23", "target": "1"},
-                {"source": "25", "target": "5"},
-                {"source": "27", "target": "11"},
-                {"source": "29", "target": "7"},
-                {"source": "31", "target": "11"},
-                {"source": "33", "target": "25"},
-                {"source": "35", "target": "23"},
-                {"source": "4", "target": "2"},
-                {"source": "6", "target": "2"},
-                {"source": "8", "target": "6"},
-                {"source": "10", "target": "2"},
-                {"source": "12", "target": "2"},
-                {"source": "14", "target": "2"},
-                {"source": "16", "target": "12"},
-                {"source": "18", "target": "12"},
-                {"source": "20", "target": "8"},
-                {"source": "22", "target": "6"},
-                {"source": "24", "target": "12"},
-            ],
-        },
-    ),
+    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
 

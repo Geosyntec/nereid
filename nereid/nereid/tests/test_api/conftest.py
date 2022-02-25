@@ -7,13 +7,17 @@ import pytest
 from fastapi.testclient import TestClient
 
 from nereid.core.config import settings
-from nereid.main import app
+from nereid.factory import create_app
 from nereid.src.network.utils import clean_graph_dict
 from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_payload
 
 
 @pytest.fixture(scope="module")
-def client():
+def client(async_mode):
+    mode = "none"
+    if async_mode:
+        mode = "replace"
+    app = create_app(ASYNC_MODE=mode)
     with TestClient(app) as client:
         yield client
 

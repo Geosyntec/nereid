@@ -5,35 +5,47 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 
-
 from nereid.api.api_v1.endpoints_sync import sync_router
-
-from nereid.api.api_v1.endpoints import api_router
 from nereid.api.api_v1.utils import get_valid_context
-from nereid.core.cache import redis_cache
-from nereid.core.config import settings
-from nereid.src import tasks as tasks
+from nereid.core.config import nereid_path, settings
 
 
-def create_app(settings_override: Optional[Dict[str, Any]] = None) -> FastAPI:
+def create_app(**settings_override: Optional[Dict[str, Any]]) -> FastAPI:
 
-    _settings = settings.copy()
-
-    if settings_override is not None:
-        _settings.update(settings_override)
+    _settings = settings.copy(deep=True)
+    _settings.update(settings_override)
 
     app = FastAPI(
         title="nereid", version=_settings.VERSION, docs_url=None, redoc_url=None
     )
+    setattr(app, "_settings", _settings)
 
-    app.tasks = tasks
-    # if not _settings.FORCE_FOREGROUND:
-    #     import nereid.bg_worker as tasks
-
-    #     app.tasks = tasks
-
-    static_path = _settings._nereid_path / "static"
+    static_path = nereid_path / "static"
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+
+    if _settings.ASYNC_MODE == "replace":  # pragma: no cover
+        from nereid.api.api_v1.endpoints_async import async_router
+
+        app.include_router(async_router, prefix=_settings.API_V1_STR, tags=["async"])
+    else:
+        app.include_router(sync_router, prefix=_settings.API_V1_STR)
+        if _settings.ASYNC_MODE == "add":  # pragma: no cover
+            from nereid.api.api_v1.endpoints_async import async_router
+
+            app.include_router(
+                async_router,
+                prefix=_settings.API_V1_STR + _settings.ASYNC_ROUTE_PREFIX,
+                tags=["async"],
+            )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_settings.ALLOW_CORS_ORIGINS,
+        allow_origin_regex=_settings.ALLOW_CORS_ORIGIN_REGEX,
+        allow_credentials=False,
+        allow_methods=["GET", "OPTIONS", "POST"],
+        allow_headers=["*"],
+    )
 
     @app.get("/docs", include_in_schema=False)
     async def custom_swagger_ui_html():
@@ -55,31 +67,9 @@ def create_app(settings_override: Optional[Dict[str, Any]] = None) -> FastAPI:
             redoc_favicon_url="/static/logo/trident_neptune_logo.ico",
         )
 
-    @app.get("/config", include_in_schema=False)
+    @app.get("/config")
     async def check_config(state="state", region="region"):
-
-        try:  # pragma: no cover
-            # if redis is available, let's flush the cache to start
-            # fresh.
-            if redis_cache.ping():
-                redis_cache.flushdb()
-        except Exception as e:  # pragma: no cover
-            pass
-
         context = get_valid_context(state, region)
-
         return context
-
-    app.include_router(sync_router, prefix=_settings.API_V1_STR)
-    app.include_router(api_router, prefix=_settings.API_V1_STR + "/bg")
-
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=_settings.ALLOW_CORS_ORIGINS,
-        allow_origin_regex=_settings.ALLOW_CORS_ORIGIN_REGEX,
-        allow_credentials=False,
-        allow_methods=["GET", "OPTIONS", "POST"],
-        allow_headers=["*"],
-    )
 
     return app

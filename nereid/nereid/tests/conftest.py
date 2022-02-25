@@ -9,13 +9,18 @@ from nereid.api.api_v1.models.treatment_facility_models import (
     TREATMENT_FACILITY_MODELS,
     validate_treatment_facility_models,
 )
-from nereid.core.utils import get_request_context
+from nereid.core.context import get_request_context
 from nereid.tests.utils import (
     generate_random_land_surface_request_sliver,
     generate_random_treatment_facility_request_node,
     generate_random_treatment_site_request,
     generate_random_watershed_solve_request,
 )
+
+
+@pytest.fixture(scope="session")
+def async_mode(request):
+    return request.config.getoption("--async", False)
 
 
 @pytest.fixture

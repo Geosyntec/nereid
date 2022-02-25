@@ -19,6 +19,42 @@ class TreatmentSite(BaseModel):
 class TreatmentSites(BaseModel):
     treatment_sites: List[TreatmentSite]
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "treatment_sites": [
+                    {
+                        "node_id": "WQMP-1a-tmnt",
+                        "facility_type": "bioretention",
+                        "area_pct": 75,
+                        "captured_pct": 80,
+                        "retained_pct": 10,
+                    },
+                    {
+                        "node_id": "WQMP-1a-tmnt",
+                        "facility_type": "nt",
+                        "area_pct": 25,
+                        "captured_pct": 0,
+                        "retained_pct": 0,
+                    },
+                    {
+                        "node_id": "WQMP-1b-tmnt",
+                        "facility_type": "bioretention",
+                        "area_pct": 75,
+                        "captured_pct": 50,
+                        "retained_pct": 10,
+                    },
+                    {
+                        "node_id": "WQMP-1b-tmnt",
+                        "facility_type": "nt",
+                        "area_pct": 25,
+                        "captured_pct": 0,
+                        "retained_pct": 0,
+                    },
+                ]
+            }
+        }
+
 
 ## Treatment Site Response Models
 

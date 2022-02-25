@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple, Union
 
-from fastapi import APIRouter, Body, Depends, Request
+from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
 from nereid.api.api_v1.models.treatment_facility_models import (
@@ -10,6 +10,7 @@ from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
 from nereid.api.api_v1.utils import get_valid_context
+from nereid.src import tasks
 
 router = APIRouter()
 
@@ -38,7 +39,6 @@ def validate_facility_request(
     response_class=ORJSONResponse,
 )
 async def initialize_treatment_facility_parameters(
-    request: Request,
     tmnt_facility_req: Tuple[TreatmentFacilities, Dict[str, Any]] = Depends(
         validate_facility_request
     ),
@@ -46,7 +46,7 @@ async def initialize_treatment_facility_parameters(
 
     treatment_facilities, context = tmnt_facility_req
 
-    data = request.app.tasks.initialize_treatment_facilities(
+    data = tasks.initialize_treatment_facilities(
         treatment_facilities=treatment_facilities.dict(),
         pre_validated=True,
         context=context,

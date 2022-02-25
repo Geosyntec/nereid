@@ -4,13 +4,14 @@ from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
+from nereid.api.api_v1.async_utils import run_task, standard_json_response
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,
     TreatmentFacilitiesStrict,
     validate_treatment_facility_models,
 )
-from nereid.api.api_v1.utils import get_valid_context, run_task, standard_json_response
+from nereid.api.api_v1.utils import get_valid_context
 
 router = APIRouter()
 
@@ -63,7 +64,5 @@ async def initialize_treatment_facility_parameters(
     response_class=ORJSONResponse,
 )
 async def get_treatment_facility_parameters(task_id: str) -> Dict[str, Any]:
-    task = bg.initialize_treatment_facilities.AsyncResult(
-        task_id, app=router
-    )
+    task = bg.initialize_treatment_facilities.AsyncResult(task_id, app=router)
     return standard_json_response(task, router, "get_treatment_facility_parameters")

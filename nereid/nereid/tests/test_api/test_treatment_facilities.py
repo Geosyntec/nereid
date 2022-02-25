@@ -30,7 +30,6 @@ def test_get_init_tmnt_facility_params(client, treatment_facility_responses, key
     if result_route:
         get_response = client.get(result_route)
         assert get_response.status_code == 200
-
         grjson = get_response.json()
 
     assert treatment_facility_models.TreatmentFacilitiesResponse(**prjson)

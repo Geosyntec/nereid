@@ -50,6 +50,10 @@ def test_get_network_validate(
     result_route = prjson.get("result_route")
 
     if result_route:
+        get_route = f"{settings.API_LATEST}/task/{prjson.get('task_id', 'error$!#*&^')}"
+        get_response = client.get(get_route)
+        assert get_response.status_code == 200, (prjson, get_route)
+
         get_response = client.get(result_route)
         assert get_response.status_code == 200
 
@@ -140,7 +144,6 @@ def test_post_network_subgraph(client, named_subgraph_responses, post_response_n
     assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize(
     "post_response_name, isfast",
     [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
@@ -150,6 +153,7 @@ def test_get_render_subgraph_svg(
 ):
 
     post_response = named_subgraph_responses[post_response_name]
+    assert post_response.status_code == 200
     rjson = post_response.json()
 
     result_route = rjson.get("result_route")
@@ -167,11 +171,8 @@ def test_get_render_subgraph_svg(
             # try to cover cached retrieval by asking again
             svg_response = client.get(result_route + "/img")
             assert svg_response.status_code == 200
-    else:
-        print("didnt check sync")
 
 
-@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize(
     "post_response_name, isfast",
     [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
@@ -181,6 +182,7 @@ def test_get_render_subgraph_svg_bad_media_type(
 ):
 
     post_response = named_subgraph_responses[post_response_name]
+    assert post_response.status_code == 200
     rjson = post_response.json()
 
     result_route = rjson.get("result_route")
@@ -188,9 +190,6 @@ def test_get_render_subgraph_svg_bad_media_type(
         svg_response = client.get(result_route + "/img?media_type=png")
         assert svg_response.status_code == 400
         assert "media_type not supported" in svg_response.content.decode()
-
-    else:
-        print("didnt check sync")
 
 
 @pytest.mark.parametrize("min_branch_size", [2, 6, 10, 50])
@@ -234,7 +233,6 @@ def test_get_solution_sequence(
     assert grjson["data"] is not None
 
 
-@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 @pytest.mark.parametrize("min_branch_size", [6])
 @pytest.mark.parametrize("n_graphs", [1, 3])
 @pytest.mark.parametrize("min_max", [(3, 4), (10, 11), (20, 40)])
@@ -244,6 +242,7 @@ def test_get_render_solution_sequence(
 
     key = min_branch_size, n_graphs, min_max
     post_response = solution_sequence_response[key]
+    assert post_response.status_code == 200
 
     prjson = post_response.json()
     result_route = prjson.get("result_route")
@@ -262,16 +261,14 @@ def test_get_render_solution_sequence(
             srjson = svg_response.json()
             assert srjson["status"].lower() != "failure"
             assert srjson["task_id"] is not None
-    else:
-        print("didnt check sync")
 
 
-@pytest.mark.skipif(settings.FORCE_FOREGROUND, reason="tasks ran in foreground")
 def test_get_render_solution_sequence_bad_media_type(
     client, solution_sequence_response
 ):
     key = 6, 3, (10, 11)
     post_response = solution_sequence_response[key]
+    assert post_response.status_code == 200
 
     prjson = post_response.json()
     result_route = prjson.get("result_route")
@@ -279,6 +276,3 @@ def test_get_render_solution_sequence_bad_media_type(
         svg_response = client.get(result_route + "/img?media_type=png")
         assert svg_response.status_code == 400
         assert "media_type not supported" in svg_response.content.decode()
-    else:
-        print("didnt check sync")
-
