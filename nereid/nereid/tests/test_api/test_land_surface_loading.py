@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from nereid.api.api_v1.models import land_surface_models
@@ -36,17 +38,21 @@ def test_get_land_surface_loading(
         result_route = prjson["result_route"]
 
         get_response = client.get(result_route)
-        assert get_response.status_code == 200
+        assert get_response.status_code == 200, get_response.content
 
         grjson = get_response.json()
-    assert land_surface_models.LandSurfaceResponse(**prjson)
-    assert grjson["task_id"] == prjson["task_id"]
-    assert grjson["result_route"] == prjson["result_route"]
-    assert grjson["status"].lower() != "failure"
+    try:
+        assert land_surface_models.LandSurfaceResponse(**prjson)
+        assert grjson["task_id"] == prjson["task_id"]
+        assert grjson["result_route"] == prjson["result_route"]
+        assert grjson["status"].lower() != "failure"
 
-    if grjson["status"].lower() == "success":  # pragma: no branch
-        assert len(grjson["data"]["summary"]) <= n_nodes
-        if details == "true":
-            assert len(grjson["data"]["details"]) == n_rows
-        else:
-            assert grjson["data"]["details"] is None
+        if grjson["status"].lower() == "success":  # pragma: no branch
+            assert len(grjson["data"]["summary"]) <= n_nodes
+            if details == "true":
+                assert len(grjson["data"]["details"]) == n_rows
+            else:
+                assert grjson["data"]["details"] is None
+    except AssertionError:  # pragma: no cover
+        print(json.dumps(grjson, indent=2))
+        raise

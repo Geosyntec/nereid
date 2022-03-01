@@ -42,7 +42,7 @@ def is_valid(G: nx.Graph) -> bool:
 
         # catch
         assert len(G.edges()) == len(set(G.edges()))
-    except:
+    except Exception:
         return False
 
     return True
