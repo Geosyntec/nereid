@@ -17,7 +17,7 @@ def client(async_mode):
     mode = "none"
     if async_mode:
         mode = "replace"
-    app = create_app(ASYNC_MODE=mode)
+    app = create_app(settings_override=dict(ASYNC_MODE=mode))
     with TestClient(app) as client:
         yield client
 

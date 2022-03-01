@@ -18,7 +18,7 @@ def create_app(
 
     _settings = settings.copy(deep=True)
     if settings_override is not None:  # pragma: no branch
-    _settings.update(settings_override)
+        _settings.update(settings_override)
 
     kwargs = {}
     if app_kwargs is not None:  # pragma: no cover
@@ -65,31 +65,30 @@ def create_app(
 
     if app.docs_url is None:  # pragma: no branch
 
-    @app.get("/docs", include_in_schema=False)
-    async def custom_swagger_ui_html():
-        return get_swagger_ui_html(
-            openapi_url=str(app.openapi_url),
-            title=app.title + " - Swagger UI",
-            oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
-            swagger_js_url="/static/swagger-ui-bundle.js",
-            swagger_css_url="/static/swagger-ui.css",
-            swagger_favicon_url="/static/logo/trident_neptune_logo.ico",
-        )
+        @app.get("/docs", include_in_schema=False)
+        async def custom_swagger_ui_html():
+            return get_swagger_ui_html(
+                openapi_url=str(app.openapi_url),
+                title=app.title + " - Swagger UI",
+                oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+                swagger_js_url="/static/swagger-ui-bundle.js",
+                swagger_css_url="/static/swagger-ui.css",
+                swagger_favicon_url="/static/logo/trident_neptune_logo.ico",
+            )
 
     if app.redoc_url is None:  # pragma: no branch
 
-    @app.get("/redoc", include_in_schema=False)
-    async def redoc_html():
-        return get_redoc_html(
-            openapi_url=str(app.openapi_url),
-            title=app.title + " - ReDoc",
-            redoc_js_url="/static/redoc.standalone.js",
-            redoc_favicon_url="/static/logo/trident_neptune_logo.ico",
-        )
+        @app.get("/redoc", include_in_schema=False)
+        async def redoc_html():
+            return get_redoc_html(
+                openapi_url=str(app.openapi_url),
+                title=app.title + " - ReDoc",
+                redoc_js_url="/static/redoc.standalone.js",
+                redoc_favicon_url="/static/logo/trident_neptune_logo.ico",
+            )
 
     @app.get("/config")
-    async def check_config(state="state", region="region"):
-        context = get_valid_context(state, region)
+    async def check_config(context=Depends(get_valid_context)):
         return context
 
     return app

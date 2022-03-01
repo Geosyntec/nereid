@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple, Union
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
@@ -40,9 +40,10 @@ def validate_facility_request(
     response_class=ORJSONResponse,
 )
 async def initialize_treatment_facility_parameters(
+    request: Request,
     tmnt_facility_req: Tuple[TreatmentFacilities, Dict[str, Any]] = Depends(
         validate_facility_request
-    )
+    ),
 ) -> Dict[str, Any]:
 
     treatment_facilities, context = tmnt_facility_req
@@ -52,9 +53,7 @@ async def initialize_treatment_facility_parameters(
         pre_validated=True,
         context=context,
     )
-    return run_task(
-        task=task, router=router, get_route="get_treatment_facility_parameters"
-    )
+    return run_task(request, task, "get_treatment_facility_parameters")
 
 
 @router.get(
@@ -63,6 +62,8 @@ async def initialize_treatment_facility_parameters(
     response_model=TreatmentFacilitiesResponse,
     response_class=ORJSONResponse,
 )
-async def get_treatment_facility_parameters(task_id: str) -> Dict[str, Any]:
+async def get_treatment_facility_parameters(
+    request: Request, task_id: str
+) -> Dict[str, Any]:
     task = bg.initialize_treatment_facilities.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_treatment_facility_parameters")
+    return standard_json_response(request, task, "get_treatment_facility_parameters")
