@@ -188,7 +188,7 @@ def summary_loading_results(
     }
 
     df = (
-        detailed_results.reindex(columns=groupby_cols + output_columns_summable)
+        detailed_results.loc[:, groupby_cols + output_columns_summable]
         .groupby(groupby_cols)
         .agg(agg_dict)
     )

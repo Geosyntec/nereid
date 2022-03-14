@@ -1,6 +1,7 @@
 import copy
 import itertools
 import string
+from typing import Any, Dict, List
 
 import networkx as nx
 import pytest
@@ -81,9 +82,14 @@ def _construct_graph_dicts():
             for dct in g1["edges"]:
                 dct["metadata"]["key"] = 0
 
-        g2 = copy.deepcopy(g1)
-
-        g2["nodes"] = [{"id": "A"}, {"id": "B"}, {"id": "C"}, {"id": "D"}]
+        g2: Dict[str, Any] = copy.deepcopy(g1)
+        _nodes: List[Dict[str, Any]] = [
+            {"id": "A"},
+            {"id": "B"},
+            {"id": "C"},
+            {"id": "D"},
+        ]
+        g2["nodes"] = _nodes
 
         for i, (dct, l) in enumerate(zip(g2["nodes"], string.ascii_lowercase)):
             dct["metadata"] = {}

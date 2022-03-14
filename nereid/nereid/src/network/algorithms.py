@@ -61,7 +61,9 @@ def get_all_successors(
     return subset
 
 
-def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGraph:
+def find_leafy_branch_larger_than_size(
+    g: nx.DiGraph, size: int = 1
+) -> Union[None, nx.DiGraph]:
     """This algorithm will sort the graph `G` and return the outermost
     contiguous subgraph that is larger than `size`
     """
