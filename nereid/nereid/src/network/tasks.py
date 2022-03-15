@@ -29,9 +29,9 @@ def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
     """
 
     _graph = thin_graph_dict(graph)
-    G = graph_factory(_graph)
+    g = graph_factory(_graph)
 
-    isvalid = validate.is_valid(G)
+    isvalid = validate.is_valid(g)
 
     result: Dict[str, Union[bool, List]] = {"isvalid": isvalid}
 
@@ -40,7 +40,7 @@ def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
 
     else:
         _keys = ["node_cycles", "edge_cycles", "multiple_out_edges", "duplicate_edges"]
-        for key, value in zip(_keys, validate.validate_network(G)):
+        for key, value in zip(_keys, validate.validate_network(g)):
             result[key] = value
 
         return result
@@ -54,9 +54,9 @@ def network_subgraphs(
 
     node_ids = [node["id"] for node in nodes]
 
-    G = graph_factory(_graph)
-    subset = get_subset(G, node_ids)
-    sub_g = G.subgraph(subset)
+    g = nx.DiGraph(graph_factory(_graph))
+    subset = get_subset(g, node_ids)
+    sub_g = g.subgraph(subset)
 
     subgraph_nodes = [
         {"nodes": [{"id": n} for n in nodes]}
@@ -93,9 +93,9 @@ def solution_sequence(
 
     _graph = thin_graph_dict(graph)  # strip unneeded metadata
 
-    G = graph_factory(_graph)
+    g = nx.DiGraph(graph_factory(_graph))
 
-    _sequence = parallel_sequential_subgraph_nodes(G, min_branch_size)
+    _sequence = parallel_sequential_subgraph_nodes(g, min_branch_size)
 
     sequence = {
         "parallel": [
@@ -117,7 +117,7 @@ def render_solution_sequence_svg(
 
     _graph = thin_graph_dict(task_result["graph"])  # strip unneeded metadata
 
-    g = graph_factory(_graph)
+    g = nx.DiGraph(graph_factory(_graph))
 
     _sequence = task_result["solution_sequence"]
 

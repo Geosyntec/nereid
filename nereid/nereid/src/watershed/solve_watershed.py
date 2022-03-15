@@ -32,7 +32,7 @@ def initialize_graph(
     watershed: Dict[str, Any],
     treatment_pre_validated: bool,
     context: Dict[str, Any],
-) -> Tuple[nx.DiGraph, List[str]]:
+) -> Tuple[nx.Graph, List[str]]:
 
     errors: List[str] = []
 

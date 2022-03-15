@@ -20,7 +20,7 @@ def validate_network(
 
     edge_cycles = [list(map(str, _)) for _ in find_cycle(G, **kwargs)]
 
-    multiple_outs = [[str(k), str(v)] for k, v in G.out_degree() if v > 1]
+    multiple_outs = [[str(k), str(v)] for k, v in nx.DiGraph(G).out_degree() if v > 1]
 
     duplicate_edges: List[List[str]] = []
     if len(G.edges()) != len(set(G.edges())):
@@ -38,7 +38,7 @@ def is_valid(G: nx.Graph) -> bool:
 
     try:
         # catch multiple out connections
-        assert all((v <= 1 for k, v in G.out_degree()))
+        assert all((v <= 1 for k, v in nx.DiGraph(G).out_degree()))
 
         # catch
         assert len(G.edges()) == len(set(G.edges()))

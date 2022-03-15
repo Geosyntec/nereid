@@ -3,33 +3,35 @@ from io import BytesIO
 from itertools import cycle
 from typing import IO, Any, Dict, List, Optional, Tuple, Union
 
-from matplotlib import axes, cm, figure
 import networkx as nx
 import orjson as json
+from matplotlib import axes, cm, figure
 from matplotlib import pyplot as plt
 
 
 @lru_cache(maxsize=100)
 def _cached_layout(
     edge_json: str, prog: str
-) -> Optional[Dict[Union[str, int], Tuple[float, float]]]:
+) -> Dict[Union[str, int], Tuple[float, float]]:
     g = nx.from_edgelist(json.loads(edge_json), create_using=nx.MultiDiGraph)
     layout: Optional[
         Dict[Union[str, int], Tuple[float, float]]
     ] = nx.nx_pydot.pydot_layout(g, prog=prog)
+    if layout is None:
+        layout = {}
     return layout
 
 
 def cached_layout(
     g: nx.Graph, prog: str = "dot"
-) -> Optional[Dict[Union[str, int], Tuple[float, float]]]:
+) -> Dict[Union[str, int], Tuple[float, float]]:
     edges = sorted(g.edges(), key=lambda x: str(x))
     edge_json = json.dumps(list(edges))
     return _cached_layout(edge_json, prog=prog)
 
 
 def get_figure_width_height_from_graph_layout(
-    layout_dict: Optional[Dict[Union[str, int], Tuple[float, float]]],
+    layout_dict: Dict[Union[str, int], Tuple[float, float]],
     npi: Optional[float] = None,
     min_width: float = 1.0,
     min_height: float = 1.0,
@@ -47,9 +49,6 @@ def get_figure_width_height_from_graph_layout(
 
     if npi is None:  # pragma: no branch
         npi = 4.0
-
-    if layout_dict is None:
-        layout_dict = {}
 
     ndots = len(layout_dict)
 
