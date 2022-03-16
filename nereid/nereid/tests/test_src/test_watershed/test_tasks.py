@@ -106,6 +106,18 @@ def test_solve_watershed_with_treatment(
         # check that treatment happened
         assert outfall_results[load_type] > 0
 
+    nested_bmps = [
+        data
+        for data in response_dict["results"]
+        if (data["eff_area_acres_direct"] < data["eff_area_acres_cumul"])
+        and "facility" in data.get("node_type", "")
+    ]
+
+    for data in nested_bmps:
+        assert (
+            data["design_volume_cuft_direct"] < data["design_volume_cuft_cumul"]
+        ), data.get("node_type", "")
+
 
 def test_stable_watershed_stable_subgraph_solutions(
     contexts, watershed_requests, watershed_test_case
@@ -129,7 +141,7 @@ def test_stable_watershed_stable_subgraph_solutions(
         ]
     }
 
-    g = graph_factory(watershed_request["graph"])
+    g = nx.DiGraph(graph_factory(watershed_request["graph"]))
 
     # this subgraph is empty, has no data.
     subg = nx.DiGraph(g.subgraph(get_subset(g, nodes=dirty_nodes)).edges)
@@ -147,6 +159,18 @@ def test_stable_watershed_stable_subgraph_solutions(
     subgraph_results = subgraph_response_dict["results"]
 
     check_subgraph_response_equal(subgraph_results, results)
+
+    nested_bmps = [
+        data
+        for data in subgraph_results
+        if (data["eff_area_acres_direct"] < data["eff_area_acres_cumul"])
+        and "facility" in data.get("node_type", "")
+    ]
+
+    for data in nested_bmps:
+        assert (
+            data["design_volume_cuft_direct"] < data["design_volume_cuft_cumul"]
+        ), data.get("node_type", "")
 
 
 @pytest.mark.parametrize(
