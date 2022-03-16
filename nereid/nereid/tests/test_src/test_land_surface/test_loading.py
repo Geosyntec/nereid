@@ -139,7 +139,7 @@ def test_detailed_land_surface_pollutant_loading_results(
     size = 4
 
     runoff_volume_cuft = numpy.random.randint(0, 4, size)
-    FC_conc = numpy.random.randint(0, 1e5, size)  # mpn/100ml
+    FC_conc = numpy.random.randint(0, 100_000, size)  # mpn/100ml
     TCu_conc = numpy.random.randint(0, 1000, size)  # ug/l
     TSS_conc = numpy.random.randint(0, 1000, size)  # mg/l
 

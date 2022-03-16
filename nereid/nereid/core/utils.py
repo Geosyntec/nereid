@@ -1,7 +1,8 @@
 import importlib.resources as pkg_resources
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import numpy
+import pandas
 from pydantic import BaseModel, ValidationError
 
 
@@ -50,7 +51,9 @@ def safe_divide(x: float, y: float) -> float:
     return x / y
 
 
-def safe_array_divide(x: numpy.ndarray, y: numpy.ndarray) -> numpy.ndarray:
+def safe_array_divide(
+    x: Union[numpy.ndarray, pandas.Series], y: Union[numpy.ndarray, pandas.Series]
+) -> numpy.ndarray:
     return numpy.divide(x, y, out=numpy.zeros_like(x), where=y != 0)
 
 

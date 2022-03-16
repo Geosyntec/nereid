@@ -4,10 +4,7 @@ import networkx as nx
 
 from nereid.core.utils import safe_divide
 from nereid.src.network.utils import sum_node_attr
-from nereid.src.watershed.design_functions import (
-    design_intensity_inhr,
-    design_volume_cuft,
-)
+from nereid.src.watershed.design_functions import design_volume_cuft
 from nereid.src.watershed.loading import compute_pollutant_load_reduction
 
 
@@ -130,8 +127,11 @@ def accumulate_wet_weather_loading(
         g, predecessors, "design_volume_cuft_cumul"
     )
 
-    data["design_volume_cuft_cumul"] = (
-        data["design_volume_cuft_direct"] + data["design_volume_cuft_upstream"]
+    # land surface nodes don't have a design depth, so we have to recalc this
+    # if there is one set for this node, and it has to include the whole effective
+    # area upstream. Patched 2022-03-14.
+    data["design_volume_cuft_cumul"] = design_volume_cuft(
+        data.get("design_storm_depth_inches", 0.0), data["eff_area_acres_cumul"]
     )
 
     # during storm detention doesn't exist for the 'current' node

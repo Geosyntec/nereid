@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
@@ -39,6 +39,7 @@ def validate_watershed_request(
     response_class=ORJSONResponse,
 )
 async def post_solve_watershed(
+    request: Request,
     watershed_pkg: Tuple[Dict[str, Any], Dict[str, Any]] = Depends(
         validate_watershed_request
     ),
@@ -48,7 +49,7 @@ async def post_solve_watershed(
     task = bg.solve_watershed.s(
         watershed=watershed, treatment_pre_validated=True, context=context
     )
-    return run_task(task=task, router=router, get_route="get_watershed_result")
+    return run_task(request, task, "get_watershed_result")
 
 
 @router.get(
@@ -57,6 +58,6 @@ async def post_solve_watershed(
     response_model=WatershedResponse,
     response_class=ORJSONResponse,
 )
-async def get_watershed_result(task_id: str) -> Dict[str, Any]:
+async def get_watershed_result(request: Request, task_id: str) -> Dict[str, Any]:
     task = bg.solve_watershed.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_watershed_result")
+    return standard_json_response(request, task, "get_watershed_result")

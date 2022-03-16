@@ -1,4 +1,4 @@
-from nereid.core.config import settings
+from nereid.core.config import nereid_path
 
 
 def test(*args):  # pragma: no cover
@@ -7,6 +7,6 @@ def test(*args):  # pragma: no cover
     except ImportError:
         raise ImportError("`pytest` is required to run the test suite")
 
-    options = [str(settings._nereid_path)]
+    options = [str(nereid_path)]
     options.extend(list(args))
     return pytest.main(options)

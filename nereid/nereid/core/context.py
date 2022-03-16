@@ -1,6 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, Union
 
 from nereid.core.config import settings
 from nereid.core.io import load_cfg
@@ -50,8 +50,8 @@ def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
 def get_request_context(
     state: str = "state",
     region: str = "region",
-    datadir: Optional[str] = None,
-    context: Optional[dict] = None,
+    datadir: Optional[Union[str, Path]] = None,
+    context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
 
     if context is None:
@@ -64,10 +64,11 @@ def get_request_context(
         default_path = Path(__file__).parent.parent / "data"
         basepath = Path(context.get("data_path", default_path))
 
+        p: str = context.get("project_data_directory", "")
         if (state == "state") or (region == "region"):
-            datadir = basepath / context.get("default_data_directory", "")
-        else:
-            datadir = basepath / context.get("project_data_directory", "")
+            p = context.get("default_data_directory", "")
+
+        datadir = basepath / p
 
     data_path = Path(datadir) / state / region
 

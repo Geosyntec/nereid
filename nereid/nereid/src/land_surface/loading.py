@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, Optional
 
 import pandas
 
@@ -54,7 +54,7 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
 
 
 def detailed_dry_weather_volume_loading_results(
-    df: pandas.DataFrame, seasons: Dict[str, Optional[List[str]]]
+    df: pandas.DataFrame, seasons: Dict[str, Optional[Iterable[str]]]
 ) -> pandas.DataFrame:
     """This function aggregates the dry weather flowrate (dwf) by season according
     to the config file spec.
@@ -83,9 +83,9 @@ def detailed_dry_weather_volume_loading_results(
 
 def detailed_pollutant_loading_results(
     df: pandas.DataFrame,
-    wet_weather_parameters: List[Dict[str, str]],
-    dry_weather_parameters: List[Dict[str, str]],
-    season_names: List[str],
+    wet_weather_parameters: Iterable[Dict[str, str]],
+    dry_weather_parameters: Iterable[Dict[str, str]],
+    season_names: Iterable[str],
 ) -> pandas.DataFrame:
     """convert the washoff concentration to load for both wet and dry seasons.
 
@@ -125,9 +125,9 @@ def detailed_pollutant_loading_results(
 
 def detailed_loading_results(
     land_surfaces_df: pandas.DataFrame,
-    wet_weather_parameters: List[Dict[str, str]],
-    dry_weather_parameters: List[Dict[str, str]],
-    seasons: Dict[str, List[str]],
+    wet_weather_parameters: Iterable[Dict[str, str]],
+    dry_weather_parameters: Iterable[Dict[str, str]],
+    seasons: Dict[str, Iterable[str]],
 ) -> pandas.DataFrame:
 
     results = (
@@ -147,9 +147,9 @@ def detailed_loading_results(
 
 def summary_loading_results(
     detailed_results: pandas.DataFrame,
-    wet_weather_parameters: List[Dict[str, str]],
-    dry_weather_parameters: List[Dict[str, str]],
-    season_names: List[str],
+    wet_weather_parameters: Iterable[Dict[str, str]],
+    dry_weather_parameters: Iterable[Dict[str, str]],
+    season_names: Iterable[str],
 ) -> pandas.DataFrame:
 
     groupby_cols = ["node_id"]
@@ -188,7 +188,7 @@ def summary_loading_results(
     }
 
     df = (
-        detailed_results.reindex(columns=groupby_cols + output_columns_summable)
+        detailed_results.loc[:, groupby_cols + output_columns_summable]
         .groupby(groupby_cols)
         .agg(agg_dict)
     )
@@ -209,8 +209,7 @@ def summary_loading_results(
         factor: float = float(param["load_to_conc_factor"])
 
         df[conc_col] = (
-            safe_array_divide(df[load_col].values, df["runoff_volume_cuft"].values)
-            * factor
+            safe_array_divide(df[load_col], df["runoff_volume_cuft"]) * factor
         )
 
     for season in season_names:
@@ -222,8 +221,6 @@ def summary_loading_results(
             load_col = season + "_" + param["load_col"]
             factor = float(param["load_to_conc_factor"])
 
-            df[conc_col] = (
-                safe_array_divide(df[load_col].values, df[dw_vol_col].values) * factor
-            )
+            df[conc_col] = safe_array_divide(df[load_col], df[dw_vol_col]) * factor
 
     return df

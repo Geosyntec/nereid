@@ -23,11 +23,12 @@ router = APIRouter()
     response_class=ORJSONResponse,
 )
 async def validate_network(
-    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples)
+    request: Request,
+    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
 ) -> Dict[str, Any]:
 
     task = bg.validate_network.s(graph=graph.dict(by_alias=True))
-    return run_task(task=task, router=router, get_route="get_validate_network_result")
+    return run_task(request, task, "get_validate_network_result")
 
 
 @router.get(
@@ -36,10 +37,10 @@ async def validate_network(
     response_model=network_models.NetworkValidationResponse,
     response_class=ORJSONResponse,
 )
-async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
+async def get_validate_network_result(request: Request, task_id: str) -> Dict[str, Any]:
 
     task = bg.validate_network.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_validate_network_result")
+    return standard_json_response(request, task, "get_validate_network_result")
 
 
 @router.post(
@@ -49,12 +50,13 @@ async def get_validate_network_result(task_id: str) -> Dict[str, Any]:
     response_class=ORJSONResponse,
 )
 async def subgraph_network(
+    request: Request,
     subgraph_req: network_models.SubgraphRequest = Body(...),
 ) -> Dict[str, Any]:
 
     task = bg.network_subgraphs.s(**subgraph_req.dict(by_alias=True))
 
-    return run_task(task=task, router=router, get_route="get_subgraph_network_result")
+    return run_task(request, task, "get_subgraph_network_result")
 
 
 @router.get(
@@ -63,10 +65,10 @@ async def subgraph_network(
     response_model=network_models.SubgraphResponse,
     response_class=ORJSONResponse,
 )
-async def get_subgraph_network_result(task_id: str) -> Dict[str, Any]:
+async def get_subgraph_network_result(request: Request, task_id: str) -> Dict[str, Any]:
 
     task = bg.network_subgraphs.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_subgraph_network_result")
+    return standard_json_response(request, task, "get_subgraph_network_result")
 
 
 @router.get(
@@ -125,6 +127,7 @@ async def get_subgraph_network_as_img(
     response_class=ORJSONResponse,
 )
 async def network_solution_sequence(
+    request: Request,
     graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
@@ -133,7 +136,7 @@ async def network_solution_sequence(
         graph=graph.dict(by_alias=True), min_branch_size=min_branch_size
     )
 
-    return run_task(task=task, router=router, get_route="get_network_solution_sequence")
+    return run_task(request, task, "get_network_solution_sequence")
 
 
 @router.get(
@@ -142,10 +145,12 @@ async def network_solution_sequence(
     response_model=network_models.SolutionSequenceResponse,
     response_class=ORJSONResponse,
 )
-async def get_network_solution_sequence(task_id: str) -> Dict[str, Any]:
+async def get_network_solution_sequence(
+    request: Request, task_id: str
+) -> Dict[str, Any]:
 
     task = bg.solution_sequence.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_network_solution_sequence")
+    return standard_json_response(request, task, "get_network_solution_sequence")
 
 
 @router.get(

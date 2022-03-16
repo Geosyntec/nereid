@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
@@ -21,6 +21,7 @@ router = APIRouter()
     response_class=ORJSONResponse,
 )
 async def calculate_loading(
+    request: Request,
     land_surfaces: LandSurfaces = Body(...),
     details: bool = False,
     context: dict = Depends(get_valid_context),
@@ -32,9 +33,7 @@ async def calculate_loading(
         land_surfaces=land_surfaces_req, details=details, context=context
     )
 
-    return run_task(
-        task=task, router=router, get_route="get_land_surface_loading_result"
-    )
+    return run_task(request, task, "get_land_surface_loading_result")
 
 
 @router.get(
@@ -43,6 +42,9 @@ async def calculate_loading(
     response_model=LandSurfaceResponse,
     response_class=ORJSONResponse,
 )
-async def get_land_surface_loading_result(task_id: str) -> Dict[str, Any]:
+async def get_land_surface_loading_result(
+    request: Request,
+    task_id: str,
+) -> Dict[str, Any]:
     task = bg.land_surface_loading.AsyncResult(task_id, app=router)
-    return standard_json_response(task, router, "get_land_surface_loading_result")
+    return standard_json_response(request, task, "get_land_surface_loading_result")

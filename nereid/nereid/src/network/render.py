@@ -1,11 +1,11 @@
 from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
-from typing import IO, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, Dict, List, Optional, Tuple, Union
 
-import matplotlib as mpl
 import networkx as nx
 import orjson as json
+from matplotlib import axes, cm, figure
 from matplotlib import pyplot as plt
 
 
@@ -14,9 +14,11 @@ def _cached_layout(
     edge_json: str, prog: str
 ) -> Dict[Union[str, int], Tuple[float, float]]:
     g = nx.from_edgelist(json.loads(edge_json), create_using=nx.MultiDiGraph)
-    layout: Dict[Union[str, int], Tuple[float, float]] = nx.nx_pydot.pydot_layout(
-        g, prog=prog
-    )
+    layout: Optional[
+        Dict[Union[str, int], Tuple[float, float]]
+    ] = nx.nx_pydot.pydot_layout(g, prog=prog)
+    if layout is None:  # pragma: no cover
+        layout = {}
     return layout
 
 
@@ -29,7 +31,7 @@ def cached_layout(
 
 
 def get_figure_width_height_from_graph_layout(
-    layout_dict: Dict[Union[int, str], Tuple[float, float]],
+    layout_dict: Dict[Union[str, int], Tuple[float, float]],
     npi: Optional[float] = None,
     min_width: float = 1.0,
     min_height: float = 1.0,
@@ -61,15 +63,15 @@ def get_figure_width_height_from_graph_layout(
 
 
 def render_subgraphs(
-    g: nx.DiGraph,
+    g: nx.Graph,
     request_nodes: list,
     subgraph_nodes: list,
     layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = None,
     npi: Optional[float] = None,
-    node_size: float = 200,
-    ax: Optional[mpl.axes.Axes] = None,
+    node_size: int = 200,
+    ax: Optional[axes.Axes] = None,
     fig_kwargs: Optional[Dict] = None,
-) -> mpl.figure.Figure:
+) -> figure.Figure:
 
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
@@ -135,7 +137,7 @@ def render_subgraphs(
 def render_solution_sequence(
     G: nx.DiGraph,
     solution_sequence: List[List[List]],
-    ax: Optional[mpl.axes.Axes] = None,
+    ax: Optional[axes.Axes] = None,
     layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = None,
     npi: Optional[float] = None,
     min_marker_size: float = 40.0,
@@ -144,7 +146,7 @@ def render_solution_sequence(
     marker_cycle_str: str = "^ovs>",
     nx_draw_kwargs: Optional[Dict] = None,
     fig_kwargs: Optional[Dict] = None,
-) -> mpl.figure.Figure:
+) -> figure.Figure:
     if layout is None:  # pragma: no branch
         layout = cached_layout(G, prog="dot")
     if fig_kwargs is None:  # pragma: no branch
@@ -160,7 +162,7 @@ def render_solution_sequence(
         fig, ax = plt.subplots(**fig_kwargs)
 
     marker_cycle = cycle(marker_cycle_str)
-    cmap = mpl.cm.get_cmap(cmap_str)
+    cmap = cm.get_cmap(cmap_str)
 
     for k, series_graphs in enumerate(solution_sequence):
         node_shape = next(marker_cycle)
@@ -201,7 +203,7 @@ def render_solution_sequence(
     return ax.get_figure()
 
 
-def fig_to_image(fig: mpl.figure.Figure, **kwargs: dict) -> IO:
+def fig_to_image(fig: figure.Figure, **kwargs: Any) -> IO:
     _kwargs = dict(bbox_inches="tight", format="svg", dpi=300)
     _kwargs.update(kwargs)
 

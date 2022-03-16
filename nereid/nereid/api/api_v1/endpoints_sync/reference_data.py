@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.requests import Request
@@ -17,8 +17,7 @@ router = APIRouter()
 
 @router.get("/reference_data_file", tags=["reference_data"])
 async def get_reference_data_file(
-    context: dict = Depends(get_valid_context),
-    filename: str = "",
+    context: dict = Depends(get_valid_context), filename: str = ""
 ) -> FileResponse:
 
     filepath = Path(context.get("data_path", "")) / filename
@@ -39,21 +38,23 @@ async def get_reference_data_file(
     response_class=ORJSONResponse,
 )
 async def get_reference_data_json(
-    context: dict = Depends(get_valid_context),
-    filename: str = "",
+    context: dict = Depends(get_valid_context), filename: str = ""
 ) -> Dict[str, Any]:
 
     filepath = Path(context.get("data_path", "")) / filename
     state, region = context["state"], context["region"]
 
     if filepath.is_file():
+        filedata: Union[Dict[str, Any], str] = ""
+        loader: Callable[[Union[Path, str]], Union[Dict[str, Any], str]] = load_file
         if "json" in filepath.suffix.lower():
-            filedata: Dict[str, Any] = load_json(filepath)
-        else:
-            filedata: str = load_file(filepath)  # type: ignore
+            loader = load_json
+        filedata = loader(filepath)
 
     else:
-        detail = f"state '{state}', region '{region}', or filename '{filename}' not found. {filepath}"
+        detail = (
+            f"state '{state}', region '{region}', or filename '{filename}' not found."
+        )
         raise HTTPException(status_code=400, detail=detail)
 
     response = dict(
@@ -64,12 +65,7 @@ async def get_reference_data_json(
     return response
 
 
-@router.get(
-    "/reference_data/nomograph",
-    tags=["reference_data"],
-    # response_model=ReferenceDataResponse,
-    # response_class=ORJSONResponse,
-)
+@router.get("/reference_data/nomograph", tags=["reference_data"])
 async def get_nomograph(
     request: Request,
     context: dict = Depends(get_valid_context),

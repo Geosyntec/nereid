@@ -3,6 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
+import numpy
 import orjson as json
 import pandas
 import yaml
@@ -45,14 +46,14 @@ def load_json(filepath: PathType) -> Dict[str, Any]:
     return contents
 
 
-def load_ref_data(tablename: str, context: dict) -> pandas.DataFrame:
+def load_ref_data(tablename: str, context: dict) -> Tuple[pandas.DataFrame, List[str]]:
 
     data_path = Path(context["data_path"])
 
     table_context = context.get("project_reference_data", {}).get(tablename, {})
 
     filepath = data_path / table_context["file"]
-    ref_table = pandas.read_json(load_file(filepath), orient="table")
+    ref_table = pandas.read_json(load_file(filepath), orient="table", typ="frame")
 
     df, msg = parse_configuration_logic(
         df=ref_table,
@@ -81,7 +82,7 @@ def parse_expand_fields(
 
             for ix, col in enumerate(cols):
                 df[col] = df[field].str.split(sep).str[ix]
-        except:
+        except Exception:
             messages.append(
                 f"unable to expand fields in {config_section}:{config_object} "
                 f"for instructions {f}"
@@ -105,10 +106,12 @@ def parse_collapse_fields(
             sep = f.get("sep", "_")
             cols = f.get("fields", [])
 
-            df[field] = df[cols[0]].astype(str)
-            for col in cols[1:]:
-                df[field] = df[field] + sep + df[col].astype(str)
-        except:
+            if field is not None:  # pragma: no branch
+                df[field] = df[cols[0]].astype(str)
+                for col in cols[1:]:
+                    df[field] = df[field] + sep + df[col].astype(str)
+
+        except Exception:
             messages.append(
                 f"unable to expand fields in {config_section}:{config_object} "
                 f"for instructions {f}"
@@ -210,7 +213,7 @@ def parse_remaps(
 
         how = remap["how"]
         mapping = remap["mapping"]
-        fillna = remap.get("fillna", pandas.NA)
+        fillna = remap.get("fillna", numpy.nan)
 
         try:
             if how == "addend":
@@ -238,7 +241,7 @@ def parse_remaps(
                     f"in {config_section}:{config_object}."
                 )
 
-        except:
+        except Exception:
             messages.append(
                 f"ERROR: unable to apply mapping '{remap}' in "
                 f"{config_section}:{config_object}."

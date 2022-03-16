@@ -1,6 +1,9 @@
+import matplotlib
 import pytest
 
 from nereid.core.config import settings
+
+matplotlib.use("agg")
 
 
 @pytest.mark.parametrize(

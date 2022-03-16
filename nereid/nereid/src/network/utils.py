@@ -1,10 +1,12 @@
 import copy
-from typing import Any, Collection, Dict
+from typing import Any, Collection, Dict, Union
 
 import networkx as nx
 
+GraphType = Union[nx.MultiGraph, nx.Graph, nx.MultiDiGraph, nx.DiGraph]
 
-def graph_factory(graph: Dict[str, Any]) -> nx.Graph:
+
+def graph_factory(graph: Dict[str, Any]) -> GraphType:
     """
     Parameters
     ----------
@@ -28,41 +30,47 @@ def graph_factory(graph: Dict[str, Any]) -> nx.Graph:
     # multi graphs so we can identify which edges are duplicated.
     if is_multigraph:
         if is_directed:
-            g = nx.MultiDiGraph()
+            cls = nx.MultiDiGraph
 
         else:
-            g = nx.MultiGraph()
+            cls = nx.MultiGraph
             # this is the most tolerant type of graph
 
     elif is_directed:
-        g = nx.DiGraph()
+        cls = nx.DiGraph
 
     else:
-        g = nx.Graph()  # for testing purposes
+        cls = nx.Graph  # for testing purposes
 
     if edges:
 
-        if g.is_multigraph():
-            g = nx.from_edgelist(
-                [
-                    (
-                        d.get("source"),
-                        d.get("target"),
-                        d.get("key", None),
-                        d.get("metadata", {}),
-                    )
-                    for d in edges
-                ],
-                create_using=g,
+        if is_multigraph:
+            g = cls(
+                nx.from_edgelist(
+                    [
+                        (
+                            d.get("source"),
+                            d.get("target"),
+                            d.get("key", None),
+                            d.get("metadata", {}),
+                        )
+                        for d in edges
+                    ],
+                    create_using=cls(),
+                )
             )
         else:
-            g = nx.from_edgelist(
-                [
-                    (d.get("source"), d.get("target"), d.get("metadata", {}))
-                    for d in edges
-                ],
-                create_using=g,
+            g = cls(
+                nx.from_edgelist(
+                    [
+                        (d.get("source"), d.get("target"), d.get("metadata", {}))
+                        for d in edges
+                    ],
+                    create_using=cls(),
+                )
             )
+    else:
+        g = cls()
 
     if nodes:
         g.add_nodes_from([(n.get("id"), n.get("metadata", {})) for n in nodes])
@@ -91,7 +99,7 @@ def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
-def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
+def nxGraph_to_dict(g: GraphType) -> Dict[str, Any]:
     """Convert a networkx garph object into a dictionary
     suitable for serialization.
 
@@ -139,7 +147,7 @@ def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
     return result
 
 
-def clean_graph_dict(g: nx.Graph) -> Dict[str, Any]:
+def clean_graph_dict(g: GraphType) -> Dict[str, Any]:
     """
     Converts a graph to a dictionary, ensuring all node labels
     are converted to strings
@@ -147,7 +155,7 @@ def clean_graph_dict(g: nx.Graph) -> Dict[str, Any]:
     return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))
 
 
-def sum_node_attr(g: nx.Graph, nodes: Collection, attr: str) -> float:
+def sum_node_attr(g: GraphType, nodes: Collection, attr: str) -> float:
     """Returns sum of one attribute for node's upstream nodes
 
     Parameters

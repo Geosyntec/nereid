@@ -4,7 +4,7 @@ import networkx as nx
 
 from nereid.core.utils import dictlist_to_dict
 from nereid.src.land_surface.tasks import land_surface_loading
-from nereid.src.network.utils import graph_factory
+from nereid.src.network.utils import GraphType, graph_factory
 from nereid.src.network.validate import is_valid, validate_network
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 from nereid.src.tmnt_performance.tasks import effluent_function_map
@@ -32,7 +32,7 @@ def initialize_graph(
     watershed: Dict[str, Any],
     treatment_pre_validated: bool,
     context: Dict[str, Any],
-) -> Tuple[nx.DiGraph, List[str]]:
+) -> Tuple[GraphType, List[str]]:
 
     errors: List[str] = []
 
