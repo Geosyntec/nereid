@@ -1,12 +1,12 @@
 version: "3.7"
 services:
   nereid:
-    image: ${ACR_SERVER}/nereid/nereid:${NEREID_IMAGE_TAG:-latest}
+    image: ${ACR_SERVER}/${ACR_REPOSITORY:-nereid}/${ACR_NETWORK:-}nereid:${NEREID_IMAGE_TAG:-latest}
   celeryworker:
-    image: ${ACR_SERVER}/nereid/celeryworker:${NEREID_IMAGE_TAG:-latest}
+    image: ${ACR_SERVER}/${ACR_REPOSITORY:-nereid}/${ACR_NETWORK:-}celeryworker:${NEREID_IMAGE_TAG:-latest}
   nereid-tests:
-    image: ${ACR_SERVER}/nereid/nereid-tests:${NEREID_IMAGE_TAG:-latest}
+    image: ${ACR_SERVER}/${ACR_REPOSITORY:-nereid}/${ACR_NETWORK:-}nereid-tests:${NEREID_IMAGE_TAG:-latest}
   redis:
-    image: ${ACR_SERVER}/nereid/redis:${NEREID_IMAGE_TAG:-latest}
+    image: ${ACR_SERVER}/${ACR_REPOSITORY:-nereid}/${ACR_NETWORK:-}redis:${NEREID_IMAGE_TAG:-latest}
   flower:
-    image: ${ACR_SERVER}/nereid/flower:${NEREID_IMAGE_TAG:-latest}
+    image: ${ACR_SERVER}/${ACR_REPOSITORY:-nereid}/${ACR_NETWORK:-}flower:${NEREID_IMAGE_TAG:-latest}
