@@ -1,10 +1,12 @@
 import copy
-from typing import Any, Collection, Dict
+from typing import Any, Collection, Dict, Union
 
 import networkx as nx
 
+GraphType = Union[nx.MultiGraph, nx.Graph, nx.MultiDiGraph, nx.DiGraph]
 
-def graph_factory(graph: Dict[str, Any]) -> nx.Graph:
+
+def graph_factory(graph: Dict[str, Any]) -> GraphType:
     """
     Parameters
     ----------
@@ -97,7 +99,7 @@ def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
-def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
+def nxGraph_to_dict(g: GraphType) -> Dict[str, Any]:
     """Convert a networkx garph object into a dictionary
     suitable for serialization.
 
@@ -145,7 +147,7 @@ def nxGraph_to_dict(g: nx.Graph) -> Dict[str, Any]:
     return result
 
 
-def clean_graph_dict(g: nx.Graph) -> Dict[str, Any]:
+def clean_graph_dict(g: GraphType) -> Dict[str, Any]:
     """
     Converts a graph to a dictionary, ensuring all node labels
     are converted to strings
@@ -153,7 +155,7 @@ def clean_graph_dict(g: nx.Graph) -> Dict[str, Any]:
     return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))
 
 
-def sum_node_attr(g: nx.Graph, nodes: Collection, attr: str) -> float:
+def sum_node_attr(g: GraphType, nodes: Collection, attr: str) -> float:
     """Returns sum of one attribute for node's upstream nodes
 
     Parameters

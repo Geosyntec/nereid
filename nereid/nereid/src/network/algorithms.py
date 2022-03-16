@@ -79,7 +79,7 @@ def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGra
         us.add(node)
         if len(us) >= size:
             return g.subgraph(us)
-    return nx.Digraph()
+    return nx.Digraph()  # pragma: no cover
 
 
 def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Union[str, int]]]:

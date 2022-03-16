@@ -17,7 +17,7 @@ def _cached_layout(
     layout: Optional[
         Dict[Union[str, int], Tuple[float, float]]
     ] = nx.nx_pydot.pydot_layout(g, prog=prog)
-    if layout is None:
+    if layout is None:  # pragma: no cover
         layout = {}
     return layout
 

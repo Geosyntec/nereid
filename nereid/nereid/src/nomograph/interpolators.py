@@ -87,7 +87,7 @@ class NomographBase(object):
         x: Union[Sequence[float], pandas.Series, numpy.ndarray],
         t: Union[Sequence[float], pandas.Series, numpy.ndarray],
         y: Union[Sequence[float], pandas.Series, numpy.ndarray],
-        interp_kwargs: Dict[str, Any] = None,
+        interp_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         """This class manages 2D interpolations of stormwater treatment facility performance
         across the size, drawdown time, and long term capture.
