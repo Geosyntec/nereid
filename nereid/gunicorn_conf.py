@@ -31,6 +31,8 @@ bind = use_bind
 keepalive = 120
 errorlog = "-"
 worker_tmp_dir = "/dev/shm"
+proxy_allow_ips = "*"
+proxy_protocol = True
 
 # For debugging and testing
 log_data = {
