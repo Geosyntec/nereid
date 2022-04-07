@@ -17,26 +17,30 @@ def initialize_treatment_facilities(
     context: Dict[str, Any],
 ) -> Dict[str, Any]:
 
-    treatment_facility_list = treatment_facilities.get("treatment_facilities") or []
-    if not pre_validated:
-        treatment_facility_list = validate_treatment_facility_models(
-            treatment_facility_list, context
-        )
-
-    df, messages = parse_configuration_logic(
-        df=pandas.DataFrame(treatment_facility_list),
-        config_section="api_recognize",
-        config_object="treatment_facility",
-        context=context,
-    )
-
-    treatment_facility_nodes = build_treatment_facility_nodes(df=df)
-
     response: Dict[str, Any] = {"errors": []}
 
-    if len(messages) > 0:
-        response["errors"] = messages
+    try:
+        treatment_facility_list = treatment_facilities.get("treatment_facilities") or []
+        if not pre_validated:
+            treatment_facility_list = validate_treatment_facility_models(
+                treatment_facility_list, context
+            )
 
-    response["treatment_facilities"] = treatment_facility_nodes
+        df, messages = parse_configuration_logic(
+            df=pandas.DataFrame(treatment_facility_list),
+            config_section="api_recognize",
+            config_object="treatment_facility",
+            context=context,
+        )
+
+        treatment_facility_nodes = build_treatment_facility_nodes(df=df)
+
+        if len(messages) > 0:
+            response["errors"] = messages
+
+        response["treatment_facilities"] = treatment_facility_nodes
+
+    except Exception as e:  # pragma: no cover
+        response["errors"].append(str(e))
 
     return response
