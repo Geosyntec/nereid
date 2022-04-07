@@ -77,7 +77,23 @@ def test_detailed_land_surface_loading_results(
         dry_weather_parameters,
         seasons,
     )
-    assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
+
+    land_surfaces_df_reduced = land_surfaces_df.drop(
+        columns=["imp_ro_depth_inches", "perv_ro_depth_inches"]
+    ).assign(precip_depth_inches=12)
+
+    t_precip = detailed_loading_results(
+        land_surfaces_df_reduced,
+        wet_weather_parameters,
+        dry_weather_parameters,
+        seasons,
+    )
+
+    assert (
+        t["area_acres"].sum()
+        == land_surfaces_df["area_acres"].sum()
+        == t_precip["area_acres"].sum()
+    )
     assert len(t) == len(land_surfaces_list)
     if not "no_joins" in key and not "no_params" in key:
         assert any(["conc" in c for c in t.columns])

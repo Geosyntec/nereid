@@ -32,6 +32,13 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
 
     df = df.loc[df["area_acres"] > 0]
 
+    if "precip_depth_inches" in df:
+        if "imp_ro_depth_inches" not in df:  # pragma: no branch
+            df["imp_ro_depth_inches"] = df["precip_depth_inches"] * df["imp_ro_coeff"]
+
+        if "perv_ro_depth_inches" not in df:  # pragma: no branch
+            df["perv_ro_depth_inches"] = df["precip_depth_inches"] * df["perv_ro_coeff"]
+
     # method chaining with 'df.assign' looks better, but it's much less memory efficient
     df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
     df["perv_area_acres"] = df["area_acres"] - df["imp_area_acres"]

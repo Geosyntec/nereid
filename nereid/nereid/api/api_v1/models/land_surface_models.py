@@ -102,7 +102,7 @@ class LandSurfaceDetails(LandSurfaceBase):
 
 
 class LandSurfaceResults(BaseModel):
-    summary: List[LandSurfaceSummary]
+    summary: Optional[List[LandSurfaceSummary]] = None
     details: Optional[List[LandSurfaceDetails]] = None
     errors: Optional[List[str]] = None
 
