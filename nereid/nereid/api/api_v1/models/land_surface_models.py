@@ -60,6 +60,8 @@ class LandSurfaces(BaseModel):
 
 
 class LandSurfaceBase(BaseModel):
+    node_type: str = "land_surface"
+
     class Config:
         extra = "allow"
 
