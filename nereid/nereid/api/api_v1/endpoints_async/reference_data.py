@@ -70,7 +70,7 @@ async def get_nomograph(
     filename: str = "",
     type: Optional[str] = None,
 ) -> Union[Dict[str, Any], Any]:
-    mapping = load_nomograph_mapping(context)
+    mapping = load_nomograph_mapping(context) or {}
     state, region = context["state"], context["region"]
     nomo = mapping.get(filename) or None
     if nomo:
@@ -112,8 +112,10 @@ async def get_reference_data_table(
     state, region = context["state"], context["region"]
     tables = context.get("project_reference_data", {}).keys()
     if table in tables:
+        data = None
         df, msg = load_ref_data(table, context)
-        data = df.to_dict(orient="records")
+        if df is not None:
+            data = df.to_dict(orient="records")
 
     else:
         detail = f"No such table. Options are {tables}"

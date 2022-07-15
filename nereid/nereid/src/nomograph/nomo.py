@@ -60,7 +60,7 @@ def load_nomograph_mapping(context: Dict[str, Any]) -> Optional[Dict[str, Callab
     met_table, msg = load_ref_data("met_table", context)
 
     if met_table is None:
-        return
+        return None
 
     data_path = Path(context["data_path"])
 

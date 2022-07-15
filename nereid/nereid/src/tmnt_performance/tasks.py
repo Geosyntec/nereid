@@ -13,12 +13,12 @@ def effluent_function_map(
     tmnt_context = context.get("project_reference_data", {}).get(tablename, {})
 
     if not tmnt_context:
-        return
+        return None
 
     df, msg = io.load_ref_data(tablename, context)
 
     if df is None:
-        return
+        return None
 
     facility_column = tmnt_context.get("facility_column", "facility_type")
     pollutant_column = tmnt_context.get("pollutant_column", "pollutant")
