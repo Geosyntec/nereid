@@ -1,7 +1,7 @@
 from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy
 import orjson as json
@@ -46,11 +46,24 @@ def load_json(filepath: PathType) -> Dict[str, Any]:
     return contents
 
 
-def load_ref_data(tablename: str, context: dict) -> Tuple[pandas.DataFrame, List[str]]:
+def load_ref_data(
+    tablename: str, context: dict
+) -> Tuple[Optional[pandas.DataFrame], List[str]]:
 
     data_path = Path(context["data_path"])
+    project_reference_data = context.get("project_reference_data", {})
 
-    table_context = context.get("project_reference_data", {}).get(tablename, {})
+    if not tablename in project_reference_data:
+        return None, [
+            f"Warning: no '{tablename}' in context[project_reference_data] section"
+        ]
+
+    table_context = project_reference_data.get(tablename, {})
+
+    if not "file" in table_context:  # pragma: no cover
+        return None, [
+            f"Warning: no file to load from {tablename} in context[project_reference_data] section"
+        ]
 
     filepath = data_path / table_context["file"]
     ref_table = pandas.read_json(load_file(filepath), orient="table", typ="frame")
@@ -77,6 +90,8 @@ def parse_expand_fields(
     for f in deepcopy(params):
         try:
             field = f.get("field")
+            if field is None:
+                continue
             sep = f.get("sep", "_")
             cols = f.get("new_column_names", [])
 
@@ -137,6 +152,8 @@ def parse_joins(
 
         try:
             table, msg = load_ref_data(tablename, context)
+            if table is None:
+                continue
             messages.extend(msg)
             df = df.merge(table, **j)
 
@@ -150,8 +167,6 @@ def parse_joins(
 
                 patches = [matched]
                 for fuzzy_key in fuzzy_on:
-                    table, msg = load_ref_data(tablename, context)
-                    messages.extend(msg)
                     fuzzy_j = deepcopy(j)
                     fuzzy_j["left_on"] = fuzzy_key
                     fuzzy_df = missing.merge(table, **fuzzy_j)
@@ -173,13 +188,13 @@ def parse_joins(
             if "_merge" in df:
                 if not all(df["_merge"] == "both"):
                     messages.append(
-                        f"ERROR: Some data from {tablename} failed the requested join '{j}' to "
+                        f"Warning: Some data from {tablename} failed the requested join '{j}' to "
                         f"reference data in {config_section}:{config_object}."
                     )
-                    if not "errors" in df:
-                        df["errors"] = ""
-                    df.loc[df["_merge"] != "both", "errors"] += (
-                        f"ERROR: unable join '{j['left_on']}' from {tablename} to '{j['right_on']}' "
+                    if not "warnings" in df:
+                        df["warnings"] = ""
+                    df.loc[df["_merge"] != "both", "warnings"] += (
+                        f"Warning: unable join '{j['left_on']}' from {tablename} to '{j['right_on']}' "
                         f"for reference data in {config_section}:{config_object}.\n"
                     )
                 df = df.drop(columns="_merge")

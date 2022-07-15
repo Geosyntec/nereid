@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Tuple, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 import networkx as nx
 
@@ -14,6 +14,9 @@ from nereid.src.watershed.dry_weather_loading import (
     accumulate_dry_weather_loading,
     compute_dry_weather_load_reduction,
     compute_dry_weather_volume_performance,
+)
+from nereid.src.watershed.simple_facility_capture import (
+    compute_simple_facility_volume_capture,
 )
 from nereid.src.watershed.treatment_facility_capture import (
     compute_volume_capture_with_nomograph,
@@ -106,11 +109,11 @@ def solve_watershed_loading(
         solve_node(
             g,
             node,
-            wet_weather_parameters,
-            dry_weather_parameters,
-            wet_weather_facility_performance_map,
-            dry_weather_facility_performance_map,
-            nomograph_map,
+            wet_weather_parameters=wet_weather_parameters,
+            wet_weather_facility_performance_map=wet_weather_facility_performance_map,
+            nomograph_map=nomograph_map,
+            dry_weather_parameters=dry_weather_parameters,
+            dry_weather_facility_performance_map=dry_weather_facility_performance_map,
         )
 
     return
@@ -119,11 +122,14 @@ def solve_watershed_loading(
 def solve_node(
     g: nx.DiGraph,
     node: Union[str, int],
+    *,
     wet_weather_parameters: List[Dict[str, Any]],
-    dry_weather_parameters: List[Dict[str, Any]],
     wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
-    dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
-    nomograph_map: Mapping[str, Callable],
+    nomograph_map: Optional[Mapping[str, Callable]] = None,
+    dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
+    dry_weather_facility_performance_map: Optional[
+        Mapping[Tuple[str, str], Callable]
+    ] = None,
 ) -> None:
     """Solve a single node of the graph data structure in place.
 
@@ -199,8 +205,14 @@ def solve_node(
     node_type = data.get("node_type", "")
     predecessors = list(g.predecessors(node))
 
+    solve_dw = all(
+        _ is not None
+        for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
+    )
+
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
-    accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
+    if solve_dw:
+        accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
 
     if "site_based" in node_type:
         # This sequence handles volume capture, load reductions, and also delivers
@@ -215,17 +227,32 @@ def solve_node(
         # is a raw land surface, and not an upstream standalone facility.
         solve_treatment_site(
             data,
-            wet_weather_parameters,
-            dry_weather_parameters,
-            wet_weather_facility_performance_map,
-            dry_weather_facility_performance_map,
+            wet_weather_parameters=wet_weather_parameters,
+            dry_weather_parameters=dry_weather_parameters,
+            wet_weather_facility_performance_map=wet_weather_facility_performance_map,
+            dry_weather_facility_performance_map=dry_weather_facility_performance_map,
         )
 
     elif "facility" in node_type:
         if any(
-            [_type in node_type for _type in ["volume_based", "flow_based", "dry_well"]]
+            [
+                _type in node_type
+                for _type in ["volume_based", "flow_based", "dry_well", "simple"]
+            ]
         ):
-            compute_volume_capture_with_nomograph(data, nomograph_map)
+            if "simple" in node_type:
+                compute_simple_facility_volume_capture(data, "runoff_volume_cuft")
+                for attr in ["captured", "treated", "retained", "bypassed"]:
+                    data[f"{attr}_pct"] = data[f"runoff_volume_cuft_{attr}_pct"]
+
+            elif nomograph_map:  # pragma: no branch
+                compute_volume_capture_with_nomograph(data, nomograph_map)
+
+            else:  # pragma: no cover
+                raise ValueError(
+                    f"nomographs are required for treatment node type '{node_type}'."
+                )
+
             compute_wet_weather_volume_discharge(data)
             compute_wet_weather_load_reduction(
                 data, wet_weather_parameters, wet_weather_facility_performance_map
@@ -235,10 +262,21 @@ def solve_node(
             # This catches diversions that don't do wet weather tmnt.
             compute_wet_weather_volume_discharge(data)
 
-        compute_dry_weather_volume_performance(data)
-        compute_dry_weather_load_reduction(
-            data, dry_weather_parameters, dry_weather_facility_performance_map
-        )
+        if solve_dw:
+            if "simple" in node_type:
+                seasons = ["summer", "winter"]
+                vol_cols = [f"{s}_dry_weather_flow_cuft" for s in seasons] + [
+                    f"{s}_dry_weather_flow_cuft_psecond" for s in seasons
+                ]
+
+                for vol_col in vol_cols:
+                    compute_simple_facility_volume_capture(data, vol_col)
+            else:
+                compute_dry_weather_volume_performance(data)
+
+            compute_dry_weather_load_reduction(
+                data, dry_weather_parameters, dry_weather_facility_performance_map
+            )
 
     else:
         # This is a null node or a land surface node. Just aggregate necessary

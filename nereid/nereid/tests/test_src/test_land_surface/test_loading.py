@@ -39,6 +39,7 @@ def test_build_land_surface_dataframe(
         "default_api_ls_joins_no_merge_no_params_valid",
         "default_dw_flow_null_months_valid",
         "default_dw_flow_unknown_season_valid",
+        "default_no_dw_valid",
     ],
 )
 def test_detailed_land_surface_loading_results(

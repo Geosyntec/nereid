@@ -4,7 +4,6 @@ import networkx as nx
 import pandas
 import pytest
 
-from nereid.core.context import get_request_context
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 from nereid.src.tmnt_performance.tasks import effluent_function_map
 from nereid.src.watershed.solve_watershed import solve_node
@@ -283,11 +282,11 @@ def test_watershed_vs_swmm(contexts, realistic_graph, swmm_results):
         solve_node(
             g,
             node,
-            wet_weather_parameters,
-            [],
-            wet_weather_facility_performance_map,
-            {},
-            nomograph_map,
+            wet_weather_parameters=wet_weather_parameters,
+            dry_weather_parameters=[],
+            wet_weather_facility_performance_map=wet_weather_facility_performance_map,
+            dry_weather_facility_performance_map={},
+            nomograph_map=nomograph_map,
         )
 
     assert all([len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True)])

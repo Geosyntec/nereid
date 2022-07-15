@@ -34,7 +34,7 @@ def test_land_surface_loading_with_err(
     land_surfaces["land_surfaces"][5]["surface_key"] = r"¯\_(ツ)_/¯"
     result = land_surface_loading(land_surfaces, details, context=get_request_context())
 
-    assert "ERROR" in result.get("errors", ["nope"])[0]
+    assert "warning" in result.get("errors", ["nope"])[0].lower()
     assert result.get("summary") is not None
     assert len(result.get("summary")) <= len(land_surfaces["land_surfaces"])
 

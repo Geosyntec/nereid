@@ -6,14 +6,57 @@ from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_with_discriminator
 
 
-class FacilityBase(BaseModel):
+class _Base(BaseModel):
     node_id: str
     facility_type: str
+
+
+class SimpleFacilityBase(_Base):
+    captured_pct: float = Field(0.0, le=100.0, ge=0.0)
+    retained_pct: Optional[float] = None
+    _constructor: str = "simple_facility_constructor"
+
+    class Config:
+        extra = "allow"
+
+
+class SimpleFacility(SimpleFacilityBase):
+    @validator("retained_pct", pre=True, always=True, check_fields=False)
+    def retained_default(cls, v, values):
+        if v is None:
+            v = 0.0
+        else:
+            assert 0.0 <= v <= 100.0, "retained percent must be between 0.0-100.0"
+            assert v <= values.get(
+                "captured_pct", 0.0
+            ), "retained percent must be less than or equal to captured percent"
+        return v
+
+
+class SimpleTmntFacility(SimpleFacilityBase):
+    @validator("retained_pct", pre=True, always=True, check_fields=False)
+    def retained_default(cls, v):
+        if v is not None:
+            assert abs(v) <= 1e-6, "retained percent must be zero."
+        return 0.0
+
+
+class SimpleRetFacility(SimpleFacilityBase):
+    @validator("retained_pct", pre=True, always=True, check_fields=False)
+    def retained_default(cls, v, values):
+        if v is not None:
+            assert v == values.get(
+                "captured_pct"
+            ), "retained must equal captured for retention BMPs"
+        return values.get("captured_pct", 0.0)
+
+
+class FacilityBase(_Base):
     ref_data_key: str = Field(
         ...,
         description=(
-            """This attribute is used to determine which nomographs 
-to reference in order to compute the long-term volume 
+            """This attribute is used to determine which nomographs
+to reference in order to compute the long-term volume
 capture performance of the facility."""
         ),
     )
@@ -23,13 +66,13 @@ capture performance of the facility."""
     eliminate_all_dry_weather_flow_override: bool = Field(
         False,
         description=(
-            """Whether to override the dr weather flow capture calculation 
+            """Whether to override the dr weather flow capture calculation
 and set the performance to 'fully elimates all dry weather flow'. (default=False)"""
         ),
     )
 
 
-class NTFacility(FacilityBase):
+class NTFacility(_Base):
     _constructor: str = "nt_facility_constructor"
 
     class Config:
@@ -192,6 +235,9 @@ STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for val
     DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
     FlowFacility,
+    SimpleFacility,
+    SimpleTmntFacility,
+    SimpleRetFacility,
     NTFacility,
 ]
 
@@ -211,6 +257,9 @@ TREATMENT_FACILITY_MODELS = [
     DryWeatherDiversionLowFlowFacility,
     LowFlowFacility,
     FlowFacility,
+    SimpleFacility,
+    SimpleTmntFacility,
+    SimpleRetFacility,
     NTFacility,
 ]
 
@@ -221,6 +270,17 @@ EXAMPLE_TREATMENT_FACILITIES = {
             "facility_type": "no_treatment",
             "ref_data_key": "10101200",
             "design_storm_depth_inches": 1.45,
+        },
+        {
+            "node_id": 2,
+            "facility_type": "bioretention_simple",
+            "captured_pct": 80,
+            "retained_pct": 20,
+        },
+        {
+            "node_id": 2,
+            "facility_type": "hydrodynamic_separator_simple",
+            "captured_pct": 80,
         },
         {
             "node_id": "1",

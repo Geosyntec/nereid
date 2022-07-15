@@ -1,16 +1,22 @@
 from itertools import product
-from typing import Any, Callable, Dict, List, Mapping, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 
 from nereid.core.utils import safe_divide
 from nereid.src.watershed.loading import compute_pollutant_load_reduction
+from nereid.src.watershed.simple_facility_capture import (
+    compute_simple_facility_volume_capture,
+)
 
 
 def solve_treatment_site(
     data: Dict[str, Any],
+    *,
     wet_weather_parameters: List[Dict[str, Any]],
-    dry_weather_parameters: List[Dict[str, Any]],
+    dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
     wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
-    dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
+    dry_weather_facility_performance_map: Optional[
+        Mapping[Tuple[str, str], Callable]
+    ] = None,
 ) -> Dict[str, Any]:
     """This function computes the volume reduction/capture performance and the
     load reduction for each individual facility of a treatment site. Treatment sites
@@ -49,9 +55,13 @@ def solve_treatment_site(
     compute_site_wet_weather_load_reduction(
         data, wet_weather_parameters, wet_weather_facility_performance_map
     )
-    compute_site_dry_weather_load_reduction(
-        data, dry_weather_parameters, dry_weather_facility_performance_map
-    )
+    if all(
+        _ is not None
+        for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
+    ):
+        compute_site_dry_weather_load_reduction(
+            data, dry_weather_parameters, dry_weather_facility_performance_map  # type: ignore
+        )
 
     return data
 
@@ -79,44 +89,12 @@ def _compute_site_volume_capture(data: Dict[str, Any], vol_col: str) -> Dict[str
     facilities = data.get("treatment_facilities", [])
 
     for facility_data in facilities:
-        facility_data["node_errors"] = []
-        facility_data["node_warnings"] = []
-
-        # check if we are solving for dry weather water balance, and if so, is there
-        # an override condition
-        dwf_override = facility_data.get("eliminate_all_dry_weather_flow_override")
-        is_dwf = any([s in vol_col for s in ["summer", "winter"]])
 
         site_fraction = facility_data["area_pct"] / 100
+        facility_data[f"{vol_col}_inflow"] = site_inflow_volume * site_fraction
 
-        if is_dwf and dwf_override:
-            captured_fraction = retained_fraction = 1
-        else:
-            captured_fraction = facility_data["captured_pct"] / 100
-            retained_fraction = facility_data["retained_pct"] / 100
-
-        treated_fraction = max(0, captured_fraction - retained_fraction)
-
-        facility_inflow_volume = facility_data[f"{vol_col}_inflow"] = (
-            site_inflow_volume * site_fraction
-        )
-
-        facility_data[f"{vol_col}_captured"] = (
-            facility_inflow_volume * captured_fraction
-        )
-
-        facility_data[f"{vol_col}_retained"] = (
-            facility_inflow_volume * retained_fraction
-        )
-
-        facility_data[f"{vol_col}_treated"] = facility_inflow_volume * treated_fraction
-
-        facility_data[f"{vol_col}_discharged"] = (
-            facility_inflow_volume - facility_data[f"{vol_col}_retained"]
-        )
-
-        facility_data[f"{vol_col}_bypassed"] = facility_inflow_volume * (
-            1 - captured_fraction
+        facility_data = compute_simple_facility_volume_capture(
+            facility_data, vol_col=vol_col
         )
 
         for attr in ["captured", "treated", "retained", "bypassed"]:

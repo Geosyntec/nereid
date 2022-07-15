@@ -53,12 +53,13 @@ def test_watershed_solve_scaler_conservation(
         assert abs(outfall_total - sum_individual) / outfall_total < 1e-15
 
 
+@pytest.mark.parametrize("ctx_key", ["default", "default_no_dw_valid"])
 def test_solve_watershed_stable_with_subsets(
-    contexts, watershed_graph, initial_node_data
+    contexts, watershed_graph, initial_node_data, ctx_key
 ):
 
     g, data = watershed_graph, deepcopy(initial_node_data)
-    context = contexts["default"]
+    context = contexts[ctx_key]
 
     nx.set_node_attributes(g, data)
     solve_watershed_loading(g, context)
@@ -342,6 +343,18 @@ tmnt_facilities = [
         "winter_dry_weather_treatment_rate_cfs": 0.0,
         "node_type": "diversion_facility",
     },
+    {
+        "node_id": "BMP-Bio-simple",
+        "facility_type": "bioretention_simple",
+        "validator": "SimpleFacility",
+        "validation_fallback": "NTFacility",
+        "valid_model": "SimpleFacility",
+        "captured_pct": 80,
+        "retained_pct": 21,
+        "tmnt_performance_facility_type": "Biofiltration",
+        "node_type": "simple_facility",
+        "constructor": "simple_facility_constructor",
+    },
 ]
 
 
@@ -559,12 +572,13 @@ def test_invalid_graph(contexts, subbasins, land_surface_permutations):
     assert len(err) > 0
 
 
+@pytest.mark.parametrize("ctx_key", ["default", "default_no_dw_valid"])
 def test_watershed_graph_land_surface_only(
-    contexts, watershed_graph, initial_node_data
+    contexts, watershed_graph, initial_node_data, ctx_key
 ):
 
     g, data = watershed_graph, deepcopy(initial_node_data)
-    context = contexts["default"]
+    context = contexts[ctx_key]
 
     nx.set_node_attributes(g, data)
     solve_watershed_loading(g, context)

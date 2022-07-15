@@ -1,18 +1,16 @@
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
+from nereid.api.api_v1.models.treatment_facility_models import SimpleFacilityBase
 
 ## Treatment Site Request Models
 
 
-class TreatmentSite(BaseModel):
-    node_id: str
-    facility_type: str
-    area_pct: float
-    captured_pct: float
-    retained_pct: float
+class TreatmentSite(SimpleFacilityBase):
+    area_pct: float = Field(0.0, le=100.0, ge=0.0)
+    retained_pct: float = Field(0.0, le=100.0, ge=0.0)
     eliminate_all_dry_weather_flow_override: bool = False
 
 

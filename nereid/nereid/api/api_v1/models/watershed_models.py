@@ -395,7 +395,7 @@ EXAMPLE_WATERSHED = {
 
 class Watershed(BaseModel):
     graph: Graph
-    land_surfaces: List[LandSurface]
+    land_surfaces: Optional[List[LandSurface]] = None
     treatment_facilities: Optional[
         Union[List[Dict[str, Any]], List[STRUCTURAL_FACILITY_TYPE]]
     ] = None

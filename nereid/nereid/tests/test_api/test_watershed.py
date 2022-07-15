@@ -54,7 +54,6 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
         for res in grjson["data"]["results"]:
             errors = res.get("errors", "")
             assert "error" not in errors.lower()
-
             assert res.get("_version") is not None
 
 

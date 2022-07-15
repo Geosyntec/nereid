@@ -49,6 +49,7 @@ def test_io_load_multiple_cfgs():
         "default_api_ls_remap_right_dne_valid",
         "default_lst_no_collapse_fields_valid",
         "default_lst_collapse_fields_valid",
+        "default_no_dw_valid",
     ],
 )
 def test_load_ref_data(contexts, table, key):
@@ -78,6 +79,7 @@ def test_load_ref_data(contexts, table, key):
         ("default_lst_expand_field_dne_valid", True),
         ("default_lst_no_collapse_fields_valid", True),
         ("default_lst_collapse_fields_valid", False),
+        ("default_no_dw_valid", False),
     ],
 )
 def test_parse_api_recognize(

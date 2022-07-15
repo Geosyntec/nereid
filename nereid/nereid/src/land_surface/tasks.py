@@ -79,7 +79,7 @@ def land_surface_loading(
                     orient="records"
                 )
         else:  # pragma: no cover
-            response["errors"].append("ERROR: no land surface input data provided.")
+            response["warning"].append("WARNING: no land surface input data provided.")
 
     except Exception as e:  # pragma: no cover
         response["errors"].append(str(e))

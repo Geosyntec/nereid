@@ -257,6 +257,74 @@ def contexts():
         },
     ]
 
+    cx25 = deepcopy(cx1)  # no dry weather calcs
+    for t in [
+        "dry_weather_flow_table",
+        "dry_weather_tmnt_performance_table",
+        "dry_weather_land_surface_emc_table",
+    ]:
+        del cx25["project_reference_data"][t]
+    joins = cx25["api_recognize"]["land_surfaces"]["preprocess"][2]["joins"]  # no joins
+    del_ix = []
+    for i, dct in enumerate(joins):
+        other = dct["other"]
+        if "dry_weather" in other:
+            del_ix.append(i)
+
+    for i in sorted(del_ix, reverse=True):
+        del joins[i]
+
+    cxmin = {
+        "data_path": cx1["data_path"],
+        "api_recognize": {
+            "treatment_facility": {
+                "facility_type": {
+                    "no_treatment": {
+                        "validator": "NTFacility",
+                        "validation_fallback": "NTFacility",
+                        "tmnt_performance_facility_type": "¯\\_(ツ)_/¯",
+                        "label": "No Treatment",
+                    },
+                    "infiltration_simple": {
+                        "validator": "SimpleRetFacility",
+                        "validation_fallback": "NTFacility",
+                        "tmnt_performance_facility_type": "¯\\_(ツ)_/¯",
+                        "label": "Infiltration Basin (simple)",
+                    },
+                    "bioretention_simple": {
+                        "validator": "SimpleFacility",
+                        "validation_fallback": "NTFacility",
+                        "tmnt_performance_facility_type": "Biofiltration",
+                        "label": "Bioretention (simple)",
+                    },
+                    "sand_filter_simple": {
+                        "validator": "SimpleTmntFacility",
+                        "validation_fallback": "NTFacility",
+                        "tmnt_performance_facility_type": "Sand Filter",
+                        "label": "Sand Filter (simple)",
+                    },
+                }
+            }
+        },
+        "project_reference_data": {
+            "tmnt_performance_table": {
+                "file": "bmp_params.json",
+                "facility_column": "facility_type",
+                "pollutant_column": "pollutant",
+            },
+            "land_surface_emc_table": {
+                "parameters": [
+                    {
+                        "long_name": "Total Suspended Solids",
+                        "short_name": "TSS",
+                        "concentration_unit": "mg/L",
+                        "load_unit": "lbs",
+                    },
+                ]
+            },
+        },
+    }
+
     keys = [  # these are easier to copy into tests
         "default",
         "default_no_data_path_invalid",
@@ -282,6 +350,8 @@ def contexts():
         "default_dw_flow_unknown_season_valid",
         "default_lst_no_collapse_fields_valid",
         "default_lst_collapse_fields_valid",
+        "default_no_dw_valid",
+        "min",
     ]
 
     values = [
@@ -309,6 +379,8 @@ def contexts():
         cx22,
         cx23,
         cx24,
+        cx25,
+        cxmin,
     ]
 
     return {k: v for k, v in zip(keys, values)}

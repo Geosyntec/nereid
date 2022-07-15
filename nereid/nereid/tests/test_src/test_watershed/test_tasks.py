@@ -111,6 +111,7 @@ def test_solve_watershed_with_treatment(
         for data in response_dict["results"]
         if (data["eff_area_acres_direct"] < data["eff_area_acres_cumul"])
         and "facility" in data.get("node_type", "")
+        and not "simple" in data.get("node_type", "")
     ]
 
     for data in nested_bmps:
@@ -119,13 +120,14 @@ def test_solve_watershed_with_treatment(
         ), data.get("node_type", "")
 
 
+@pytest.mark.parametrize("ctx_key", ["default", "default_no_dw_valid"])
 def test_stable_watershed_stable_subgraph_solutions(
-    contexts, watershed_requests, watershed_test_case
+    contexts, watershed_requests, watershed_test_case, ctx_key
 ):
 
     n_nodes, pct_tmnt, dirty_nodes = watershed_test_case
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
-    context = contexts["default"]
+    context = contexts[ctx_key]
     response_dict = solve_watershed(
         watershed=watershed_request,
         treatment_pre_validated=False,

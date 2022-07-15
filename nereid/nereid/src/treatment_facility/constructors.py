@@ -38,7 +38,11 @@ def construct_treatment_facility_node_context(
 class TreatmentFacilityConstructor:
     @staticmethod
     def nt_facility_constructor(**kwargs: dict) -> Dict:
-        return {}
+        return dict(captured_pct=0, retained_pct=0, treated_pct=0)
+
+    @staticmethod
+    def simple_facility_constructor(**kwargs: dict) -> Dict:
+        return dict(node_type="simple_facility")
 
     @staticmethod
     def retention_facility_constructor(
