@@ -90,7 +90,11 @@ def parse_expand_fields(
     for f in deepcopy(params):
         try:
             field = f.get("field")
-            if field is None:
+            if field is None: # pragma: no cover
+                messages.append(
+                    f"no field in {config_section}:{config_object} "
+                    f"for instructions {f}"
+                )
                 continue
             sep = f.get("sep", "_")
             cols = f.get("new_column_names", [])
@@ -121,10 +125,16 @@ def parse_collapse_fields(
             sep = f.get("sep", "_")
             cols = f.get("fields", [])
 
-            if field is not None:  # pragma: no branch
-                df[field] = df[cols[0]].astype(str)
-                for col in cols[1:]:
-                    df[field] = df[field] + sep + df[col].astype(str)
+            if field is None: # pragma: no cover
+                messages.append(
+                    f"unable to expand fields in {config_section}:{config_object} "
+                    f"for instructions {f}"
+                )
+                continue
+
+            df[field] = df[cols[0]].astype(str)
+            for col in cols[1:]:
+                df[field] = df[field] + sep + df[col].astype(str)
 
         except Exception:
             messages.append(
@@ -152,9 +162,10 @@ def parse_joins(
 
         try:
             table, msg = load_ref_data(tablename, context)
+            messages.extend(msg)
             if table is None:
                 continue
-            messages.extend(msg)
+
             df = df.merge(table, **j)
 
             if (fuzzy_on is not None) and (not all(df["_merge"] == "both")):

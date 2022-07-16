@@ -114,7 +114,7 @@ async def get_reference_data_table(
     if table in tables:
         data = None
         df, msg = load_ref_data(table, context)
-        if df is not None:
+        if df is not None:  # pragma: no branch
             data = df.to_dict(orient="records")
 
     else:

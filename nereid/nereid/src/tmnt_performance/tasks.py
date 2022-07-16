@@ -17,7 +17,7 @@ def effluent_function_map(
 
     df, msg = io.load_ref_data(tablename, context)
 
-    if df is None:
+    if df is None:  # pragma: no cover
         return None
 
     facility_column = tmnt_context.get("facility_column", "facility_type")
