@@ -90,7 +90,7 @@ def parse_expand_fields(
     for f in deepcopy(params):
         try:
             field = f.get("field")
-            if field is None: # pragma: no cover
+            if field is None:  # pragma: no cover
                 messages.append(
                     f"no field in {config_section}:{config_object} "
                     f"for instructions {f}"
@@ -125,7 +125,7 @@ def parse_collapse_fields(
             sep = f.get("sep", "_")
             cols = f.get("fields", [])
 
-            if field is None: # pragma: no cover
+            if field is None:  # pragma: no cover
                 messages.append(
                     f"unable to expand fields in {config_section}:{config_object} "
                     f"for instructions {f}"
