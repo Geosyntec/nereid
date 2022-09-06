@@ -11,15 +11,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          sudo apt-get update -y
-          sudo apt-get install -y graphviz
       - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install Linters
-        run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
+        run: pip install black isort mypy -c nereid/requirements_tests.txt
       - name: Run Linters
         run: bash scripts/lint.sh
