@@ -224,7 +224,7 @@ def generate_random_treatment_facility_request_node(
     if "retention_volume_cuft" in dct:
         dct["retention_volume_cuft"] = dct["total_volume_cuft"] * numpy.random.random()
 
-    if "pool_volume_cuft" in dct:
+    if "pool_volume_cuft" in dct: # pragma: no cover
         dct["pool_volume_cuft"] = 2000 * numpy.random.random()
 
     if "treatment_volume_cuft" in dct:
