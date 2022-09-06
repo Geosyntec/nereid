@@ -166,4 +166,4 @@ def sum_node_attr(g: GraphType, nodes: Collection, attr: str) -> float:
     once for all attr rather than for each attr
     attr: name of attribute to return sum of (e.g.  "eff_area_ac")
     """
-    return sum(g.nodes[n].get(attr, 0) for n in nodes)
+    return sum(float(g.nodes[n].get(attr, 0.0)) for n in nodes)
