@@ -17,6 +17,6 @@ jobs:
         with:
           python-version: 3.9
       - name: Install Linters
-        run: pip install black isort mypy -c nereid/requirements_tests.txt
+        run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
       - name: Run Linters
         run: bash scripts/lint.sh
