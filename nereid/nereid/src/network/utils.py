@@ -130,7 +130,7 @@ def nxGraph_to_dict(g: GraphType) -> Dict[str, Any]:
         ]
     }
     """
-    result: Dict[str, Any] = nx.node_link_data(g, {"link": "edges"})
+    result: Dict[str, Any] = nx.node_link_data(g, link="edges")
     for dct in result["nodes"]:
         id_ = dct.pop("id")
         dct["metadata"] = copy.deepcopy(dct)

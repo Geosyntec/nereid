@@ -228,7 +228,7 @@ def generate_random_treatment_facility_request_node(
         dct["pool_volume_cuft"] = 2000 * numpy.random.random()
 
     if "treatment_volume_cuft" in dct:
-        dct["treatment_volume_cuft"] = dct["pool_volume_cuft"] * numpy.random.random()
+        dct["treatment_volume_cuft"] = 2000 * numpy.random.random()
 
     if "treatment_drawdown_time_hr" in dct:
         dct["treatment_drawdown_time_hr"] = 720 * numpy.random.random()
