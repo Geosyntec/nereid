@@ -7,20 +7,15 @@ on:
       - master
   pull_request:
   workflow_dispatch:
-  schedule:
-    # twice per month
-    - cron: "0 10 1,15 * *"
 
 jobs:
   python-test:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          sudo apt-get update -y
-          sudo apt-get install -y graphviz
-      - uses: actions/checkout@v2
+      - run: sudo apt-get install graphviz
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install Deps
@@ -34,9 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install graphviz
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install nereid as library
@@ -50,12 +45,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.9", "3.10"]
     steps:
       - run: sudo apt-get install graphviz
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Edge Deps
@@ -75,7 +70,7 @@ jobs:
     env:
       COMPOSE_FILE: docker-stack.yml
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: build stack
         run: |
           docker --version
@@ -99,7 +94,7 @@ jobs:
     env:
       COMPOSE_FILE: docker-stack.yml
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: build stack
         run: |
           docker --version
