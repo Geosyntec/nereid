@@ -1,5 +1,7 @@
+import logging
 from typing import Any, Dict
 
+from nereid.core.config import settings
 from nereid.core.units import update_unit_registry
 from nereid.src.nomograph.nomo import build_nomo
 from nereid.src.watershed.solve_watershed import (
@@ -7,6 +9,9 @@ from nereid.src.watershed.solve_watershed import (
     solve_watershed_loading,
 )
 from nereid.src.watershed.utils import attrs_to_resubmit
+
+logging.basicConfig(level=settings.LOGLEVEL)
+logger = logging.getLogger(__name__)
 
 
 @update_unit_registry
@@ -54,6 +59,7 @@ def solve_watershed(
         response["previous_results_keys"] = previous_results_keys
 
     except Exception as e:  # pragma: no cover
+        logger.exception(e)
         response["errors"].append(str(e))
 
     return response

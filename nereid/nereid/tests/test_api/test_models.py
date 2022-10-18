@@ -5,7 +5,7 @@ from nereid.api.api_v1.models.treatment_facility_models import (
 )
 
 
-@pytest.mark.parametrize("ctxt_key", ["default"])
+@pytest.mark.parametrize("ctxt_key", ["default", "default_no_dw_valid"])
 @pytest.mark.parametrize(
     "err, data_dict",
     [

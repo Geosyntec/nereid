@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     )
     VERSION: str = nereid.__version__
     DATA_DIRECTORY: Optional[str] = None
+    LOGLEVEL: str = "INFO"
 
     FORCE_FOREGROUND: bool = False
     ENABLE_ASYNC_ROUTES: bool = False

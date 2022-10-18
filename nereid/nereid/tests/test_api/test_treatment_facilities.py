@@ -66,4 +66,4 @@ def test_get_default_context_tmnt_facility_params(
             assert (
                 dct["valid_model"]
                 == facility_type_dict[dct["facility_type"]]["validator"]
-            )
+            ), dct

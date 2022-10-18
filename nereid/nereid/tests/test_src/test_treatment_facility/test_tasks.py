@@ -23,9 +23,9 @@ def test_construct_nodes_from_treatment_facility_request(
 
     for n in tmnt_lst:
         if has_met_data:
-            assert n.get("rain_gauge") is not None
+            assert n.get("rain_gauge") is not None, n
         else:
-            assert n.get("rain_gauge") is None
+            assert n.get("rain_gauge") is None, n
 
 
 @pytest.mark.parametrize(

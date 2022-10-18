@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 import pandas
 
@@ -34,7 +34,7 @@ def build_nomo(
 
 
 def get_volume_nomograph(context: Dict[str, Any], nomo_path: str) -> VolumeNomograph:
-    met_context = context.get("project_reference_data", {}).get("met_table")
+    met_context = context.get("project_reference_data", {}).get("met_table", {})
     data_path = Path(context["data_path"])
     fpath = (data_path / nomo_path).resolve()
     nomo_params = next(
@@ -45,7 +45,7 @@ def get_volume_nomograph(context: Dict[str, Any], nomo_path: str) -> VolumeNomog
 
 
 def get_flow_nomograph(context: Dict[str, Any], nomo_path: str) -> FlowNomograph:
-    met_context = context.get("project_reference_data", {}).get("met_table")
+    met_context = context.get("project_reference_data", {}).get("met_table", {})
     data_path = Path(context["data_path"])
     fpath = (data_path / nomo_path).resolve()
     nomo_params = next(
@@ -55,13 +55,16 @@ def get_flow_nomograph(context: Dict[str, Any], nomo_path: str) -> FlowNomograph
     return nomo
 
 
-def load_nomograph_mapping(context: Dict[str, Any]) -> Dict[str, Callable]:
+def load_nomograph_mapping(context: Dict[str, Any]) -> Optional[Dict[str, Callable]]:
 
     met_table, msg = load_ref_data("met_table", context)
 
+    if met_table is None:
+        return None
+
     data_path = Path(context["data_path"])
 
-    met_context = context.get("project_reference_data", {}).get("met_table")
+    met_context = context.get("project_reference_data", {}).get("met_table", {})
 
     nomos = met_context["nomographs"]
 

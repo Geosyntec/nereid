@@ -67,10 +67,7 @@ def test_build_treatment_facility_nodes_from_long_list(
     nodes = build_treatment_facility_nodes(df)
 
     for n in nodes:
-        if has_met_data:
-            assert n.get("rain_gauge") is not None
-        else:
-            assert n.get("rain_gauge") is None
+        assert n["valid_model"] == n["validator"], n
 
 
 @pytest.mark.parametrize(

@@ -62,12 +62,15 @@ def land_surface_loading(
                 dry_weather_parameters,
                 seasons,
             )
+            detailed_results["node_type"] = "land_surface"
+
             summary_results = summary_loading_results(
                 detailed_results,
                 wet_weather_parameters,
                 dry_weather_parameters,
                 season_names=seasons.keys(),
             )
+            summary_results["node_type"] = "land_surface"
 
             response["summary"] = summary_results.fillna(0).to_dict(orient="records")
 
@@ -76,7 +79,7 @@ def land_surface_loading(
                     orient="records"
                 )
         else:  # pragma: no cover
-            response["errors"].append("ERROR: no land surface input data provided.")
+            response["warning"].append("WARNING: no land surface input data provided.")
 
     except Exception as e:  # pragma: no cover
         response["errors"].append(str(e))

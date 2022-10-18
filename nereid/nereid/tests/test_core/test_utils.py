@@ -40,6 +40,7 @@ def test_get_request_context(state, region, dirname, context, exp):
         "default_api_no_ls_remaps_valid",
         "default_api_no_ls_joins_or_remaps_valid",
         "default_api_ls_joins_no_merge_no_params_valid",
+        "default_no_dw_valid",
     ],
 )
 def test_validate_request_context(contexts, key):

@@ -38,7 +38,11 @@ def construct_treatment_facility_node_context(
 class TreatmentFacilityConstructor:
     @staticmethod
     def nt_facility_constructor(**kwargs: dict) -> Dict:
-        return {}
+        return dict(captured_pct=0, retained_pct=0, treated_pct=0)
+
+    @staticmethod
+    def simple_facility_constructor(**kwargs: dict) -> Dict:
+        return dict(node_type="simple_facility")
 
     @staticmethod
     def retention_facility_constructor(
@@ -347,12 +351,8 @@ class TreatmentFacilityConstructor:
     @staticmethod
     def perm_pool_facility_constructor(
         *,
-        # pool_volume_cuft: float,
-        # pool_drawdown_time_hr: float,
+        pool_volume_cuft: float,
         treatment_volume_cuft: float,
-        treatment_drawdown_time_hr: float,
-        winter_demand_cfs: float,
-        summer_demand_cfs: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
 
@@ -363,20 +363,13 @@ class TreatmentFacilityConstructor:
         # % treated + % treated, rather than the typical % retained + % treated.
         # reference issue: https://github.com/Geosyntec/nereid/issues/99
 
-        # retention_volume_cuft = pool_volume_cuft
-        # winter_demand_cfhr = winter_demand_cfs * 3600
-        # winter_pool_ddrate_cfhr = retention_volume_cuft / pool_drawdown_time_hr
-        # winter_total_ddrate_cfhr = winter_pool_ddrate_cfhr + winter_demand_cfhr
-        # retention_ddt_hr = safe_divide(retention_volume_cuft, winter_total_ddrate_cfhr)
-        treatment_ddt_hr = treatment_drawdown_time_hr
+        # Done 2022-09-30: decision to model them as a single combined compartment
+        # with the HRT as the drawdown time. Fixed to 48hrs
 
         result = dict(
-            # retention_volume_cuft=retention_volume_cuft,
-            # retention_ddt_hr=retention_ddt_hr,
-            treatment_volume_cuft=treatment_volume_cuft,
-            treatment_ddt_hr=treatment_ddt_hr,
-            summer_dry_weather_retention_rate_cfs=summer_demand_cfs,
-            winter_dry_weather_retention_rate_cfs=winter_demand_cfs,
+            # pool vol and tmnt vol have same fate so we sum them
+            treatment_volume_cuft=treatment_volume_cuft + pool_volume_cuft,
+            treatment_ddt_hr=48,  # set to 48 hr, the time needed to refresh the treatment capacity
             node_type="volume_based_facility",
         )
 

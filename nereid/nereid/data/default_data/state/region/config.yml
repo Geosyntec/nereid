@@ -121,6 +121,11 @@ api_recognize:
         validation_fallback: NTFacility
         tmnt_performance_facility_type: ¯\_(ツ)_/¯ # wq improvement via retention only
 
+      infiltration_simple:
+        validator: SimpleRetFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: ¯\_(ツ)_/¯ # wq improvement via retention only
+
       permeable_pavement:
         validator: RetentionFacility
         validation_fallback: NTFacility
@@ -133,6 +138,11 @@ api_recognize:
 
       bioretention:
         validator: BioInfFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: Biofiltration
+
+      bioretention_simple:
+        validator: SimpleFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Biofiltration
 
@@ -158,6 +168,11 @@ api_recognize:
 
       hydrodynamic_separator:
         validator: FlowFacility
+        validation_fallback: NTFacility
+        tmnt_performance_facility_type: Hydrodynamic Separator
+
+      hydrodynamic_separator_simple:
+        validator: SimpleTmntFacility
         validation_fallback: NTFacility
         tmnt_performance_facility_type: Hydrodynamic Separator
 

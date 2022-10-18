@@ -191,6 +191,9 @@ def generate_random_treatment_facility_request_node(
     dct["node_id"] = node_id
     dct["facility_type"] = facility_type
     dct["ref_data_key"] = ref_data_key
+    if "simple" in model_str.lower():
+        dct["captured_pct"] = numpy.random.uniform(0.1, 99.0)
+        del dct["retained_pct"]
     dct["design_storm_depth_inches"] = numpy.random.uniform(0.75, 1.5)
     dct["is_online"] = True
 
@@ -221,11 +224,11 @@ def generate_random_treatment_facility_request_node(
     if "retention_volume_cuft" in dct:
         dct["retention_volume_cuft"] = dct["total_volume_cuft"] * numpy.random.random()
 
-    if "pool_volume_cuft" in dct:
+    if "pool_volume_cuft" in dct:  # pragma: no cover
         dct["pool_volume_cuft"] = 2000 * numpy.random.random()
 
     if "treatment_volume_cuft" in dct:
-        dct["treatment_volume_cuft"] = dct["pool_volume_cuft"] * numpy.random.random()
+        dct["treatment_volume_cuft"] = 2000 * numpy.random.random()
 
     if "treatment_drawdown_time_hr" in dct:
         dct["treatment_drawdown_time_hr"] = 720 * numpy.random.random()

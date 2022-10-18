@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 
 import networkx as nx
 
@@ -11,7 +11,7 @@ def accumulate_dry_weather_loading(
     g: nx.DiGraph,
     data: Dict[str, Any],
     predecessors: List[str],
-    dry_weather_parameters: List[Dict[str, Any]],
+    dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """This function helps aggregate the state of the watershed upstream of
     the current node for dry weather conditions. This function considers dry weather
@@ -37,6 +37,9 @@ def accumulate_dry_weather_loading(
         Reference: `nereid.src.wq_parameters.init_wq_parameters`
 
     """
+
+    if not dry_weather_parameters:
+        return data
 
     seasons = ["summer", "winter"]
 
