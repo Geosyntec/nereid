@@ -210,12 +210,8 @@ class CisternFacility(OnlineFaciltyBase):
 
 
 class PermPoolFacility(OnlineFaciltyBase):
-    pool_volume_cuft: float
-    # pool_drawdown_time_hr: float
-    treatment_volume_cuft: float
-    treatment_drawdown_time_hr: float = 48.0
-    winter_demand_cfs: float = 0.0
-    summer_demand_cfs: float = 0.0
+    pool_volume_cuft: float = 0.0
+    treatment_volume_cuft: float = 0.0
     _constructor: str = "perm_pool_facility_constructor"
 
 

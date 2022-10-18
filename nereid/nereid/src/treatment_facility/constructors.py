@@ -353,9 +353,6 @@ class TreatmentFacilityConstructor:
         *,
         pool_volume_cuft: float,
         treatment_volume_cuft: float,
-        treatment_drawdown_time_hr: float,
-        winter_demand_cfs: float,
-        summer_demand_cfs: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
 
@@ -367,16 +364,12 @@ class TreatmentFacilityConstructor:
         # reference issue: https://github.com/Geosyntec/nereid/issues/99
 
         # Done 2022-09-30: decision to model them as a single combined compartment
-        # with the HRT as the drawdown time. Defaults to 48hrs
-
-        treatment_ddt_hr = treatment_drawdown_time_hr
+        # with the HRT as the drawdown time. Fixed to 48hrs
 
         result = dict(
             # pool vol and tmnt vol have same fate so we sum them
             treatment_volume_cuft=treatment_volume_cuft + pool_volume_cuft,
-            treatment_ddt_hr=treatment_ddt_hr,  # defaults to 48 hr, the time needed to refresh the treatment capacity
-            summer_dry_weather_retention_rate_cfs=summer_demand_cfs,
-            winter_dry_weather_retention_rate_cfs=winter_demand_cfs,
+            treatment_ddt_hr=48,  # set to 48 hr, the time needed to refresh the treatment capacity
             node_type="volume_based_facility",
         )
 
