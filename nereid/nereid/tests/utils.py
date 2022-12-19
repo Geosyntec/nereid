@@ -421,7 +421,11 @@ def check_results_dataframes(db1, db2):
     db1 is being checked
     db2 is the reference
     """
-    ignore = [c for c in db2.columns if c[0] == "_"] + ["node_errors", "node_warnings"]
+    ignore = [c for c in db2.columns if c[0] == "_"] + [
+        "node_errors",
+        "node_warnings",
+        "treatment_facilities",
+    ]
 
     db = db1[[c for c in db1.columns if c not in ignore]]
 
@@ -433,3 +437,8 @@ def check_results_dataframes(db1, db2):
 
     for col in db.select_dtypes(exclude=[numpy.number]):
         pandas.testing.assert_series_equal(db[col], db2[col]), col
+        # try:
+        #     pandas.testing.assert_series_equal(db[col], db2[col]), col
+        # except AssertionError as e:
+        #     assert False, (col, len(db[col]), db[col])
+        # #     raise e

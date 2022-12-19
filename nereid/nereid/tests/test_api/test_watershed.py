@@ -1,4 +1,3 @@
-import json
 from copy import deepcopy
 
 import networkx as nx
@@ -84,9 +83,9 @@ def test_post_solve_watershed_stable(
     new_request.update(subgraph)
     new_request.update(previous_results)
 
-    payload = json.dumps(new_request)
+    payload = new_request
     route = settings.API_LATEST + "/watershed/solve"
-    response = client.post(route, data=payload)
+    response = client.post(route, json=payload)
 
     subgraph_results = response.json()["data"]["results"]
 

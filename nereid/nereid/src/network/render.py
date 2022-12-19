@@ -2,11 +2,19 @@ from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
 from typing import IO, Any, Dict, List, Optional, Tuple, Union
+import warnings
 
 import networkx as nx
 import orjson as json
-from matplotlib import axes, cm, figure
+from matplotlib import axes, colormaps, figure
 from matplotlib import pyplot as plt
+
+
+def pydot_layout(*args, **kwargs):
+    with warnings.catch_warnings():
+        warnings.filterwarnings(action="ignore", message="nx.nx_pydot")
+        v = nx.nx_pydot.pydot_layout(*args, **kwargs)
+    return v
 
 
 @lru_cache(maxsize=100)
@@ -14,9 +22,9 @@ def _cached_layout(
     edge_json: str, prog: str
 ) -> Dict[Union[str, int], Tuple[float, float]]:
     g = nx.from_edgelist(json.loads(edge_json), create_using=nx.MultiDiGraph)
-    layout: Optional[
-        Dict[Union[str, int], Tuple[float, float]]
-    ] = nx.nx_pydot.pydot_layout(g, prog=prog)
+    layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = pydot_layout(
+        g, prog=prog
+    )
     if layout is None:  # pragma: no cover
         layout = {}
     return layout
@@ -142,13 +150,15 @@ def render_solution_sequence(
     npi: Optional[float] = None,
     min_marker_size: float = 40.0,
     max_marker_size: float = 600.0,
-    cmap_str: str = "Blues_r",
+    cmap_str: Optional[str] = None,
     marker_cycle_str: str = "^ovs>",
     nx_draw_kwargs: Optional[Dict] = None,
     fig_kwargs: Optional[Dict] = None,
 ) -> figure.Figure:
     if layout is None:  # pragma: no branch
         layout = cached_layout(G, prog="dot")
+    if cmap_str is None:
+        cmap_str = "Blues_r"
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
     if nx_draw_kwargs is None:  # pragma: no branch
@@ -162,7 +172,7 @@ def render_solution_sequence(
         fig, ax = plt.subplots(**fig_kwargs)
 
     marker_cycle = cycle(marker_cycle_str)
-    cmap = cm.get_cmap(cmap_str)
+    cmap = colormaps.get(cmap_str)
 
     for k, series_graphs in enumerate(solution_sequence):
         node_shape = next(marker_cycle)

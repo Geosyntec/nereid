@@ -1,4 +1,4 @@
-import importlib.resources as pkg_resources
+from pathlib import Path
 from typing import Any, Dict, Union
 
 import numpy
@@ -7,8 +7,7 @@ from pydantic import BaseModel, ValidationError
 
 
 def get_nereid_path():
-    with pkg_resources.path("nereid", "__init__.py") as file:
-        return file.parent
+    return Path(__file__).resolve().parent.parent
 
 
 def validate_with_discriminator(

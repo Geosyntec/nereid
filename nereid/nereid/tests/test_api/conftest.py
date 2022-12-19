@@ -27,21 +27,24 @@ def named_validation_responses(client):
 
     route = settings.API_LATEST + "/network/validate"
     responses = {}
-    slow_valid = json.dumps(clean_graph_dict(nx.gnr_graph(15000, p=0.05, seed=42)))
-    slow_invalid = json.dumps(clean_graph_dict(nx.gnc_graph(15000, seed=42)))
+    slow_valid = clean_graph_dict(nx.gnr_graph(15000, p=0.05, seed=42))
+    slow_invalid = clean_graph_dict(nx.gnc_graph(15000, seed=42))
 
     init_post_requests = [
-        ("valid_graph_response_fast", get_payload("network_validate_is_valid.json")),
+        (
+            "valid_graph_response_fast",
+            json.loads(get_payload("network_validate_is_valid.json")),
+        ),
         (
             "invalid_graph_response_fast",
-            get_payload("network_validate_is_invalid_cycle.json"),
+            json.loads(get_payload("network_validate_is_invalid_cycle.json")),
         ),
         ("valid_graph_response_slow", slow_valid),
         ("invalid_graph_response_slow", slow_invalid),
     ]
 
     for name, payload in init_post_requests:
-        response = client.post(route, data=payload)
+        response = client.post(route, json=payload)
         responses[name] = response
 
     yield responses
@@ -60,19 +63,19 @@ def named_subgraph_responses(client):
         # name, file or object, is-fast
         (
             "subgraph_response_fast",
-            get_payload("network_subgraph_request.json"),
+            json.loads(get_payload("network_subgraph_request.json")),
             # True
         ),
         (
             "subgraph_response_slow",
-            json.dumps(dict(graph=slow_graph, nodes=nodes)),
+            dict(graph=slow_graph, nodes=nodes),
             # False,
         ),
     ]
 
     for name, payload in init_post_requests:
 
-        response = client.post(route, data=payload)
+        response = client.post(route, json=payload)
         responses[name] = response
         result_route = response.json().get("result_route")
 
@@ -96,11 +99,11 @@ def solution_sequence_response(client):
     for bs, ngraph, minmax in product(min_branch_size, n_graphs, min_max):
 
         g = generate_n_random_valid_watershed_graphs(ngraph, *minmax)
-        payload = json.dumps(clean_graph_dict(g))
+        payload = clean_graph_dict(g)
 
         route = settings.API_LATEST + "/network/solution_sequence"
 
-        response = client.post(route + f"?min_branch_size={bs}", data=payload)
+        response = client.post(route + f"?min_branch_size={bs}", json=payload)
 
         responses[(bs, ngraph, minmax)] = response
         result_route = response.json().get("result_route")
@@ -122,10 +125,9 @@ def land_surface_loading_responses(client, land_surface_loading_response_dicts):
         details, land_surface_loading_response_dicts.items()
     ):
 
-        payload = json.dumps(ls_request)
+        payload = ls_request
         route = settings.API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
-        response = client.post(route, data=payload)
-        assert response.status_code == 200, (response.text, detail_tf, nrows, nnodes)
+        response = client.post(route, json=payload)
 
         responses[(detail_tf, nrows, nnodes)] = response
 
@@ -139,9 +141,9 @@ def treatment_facility_responses(client, treatment_facility_dicts):
 
     for name, dct in treatment_facility_dicts.items():
 
-        payload = json.dumps({"treatment_facilities": [dct]})
+        payload = {"treatment_facilities": [dct]}
         route = settings.API_LATEST + "/treatment_facility/validate"
-        response = client.post(route, data=payload)
+        response = client.post(route, json=payload)
         responses[name] = response
 
     yield responses
@@ -156,9 +158,9 @@ def default_context_treatment_facility_responses(
 
     for name, dct in default_context_treatment_facility_dicts.items():
 
-        payload = json.dumps({"treatment_facilities": [dct]})
+        payload = {"treatment_facilities": [dct]}
         route = settings.API_LATEST + "/treatment_facility/validate"
-        response = client.post(route, data=payload)
+        response = client.post(route, json=payload)
         responses[name] = response
 
     yield responses
@@ -171,9 +173,9 @@ def treatment_site_responses(client, valid_treatment_site_requests):
 
     for name, dct in valid_treatment_site_requests.items():
 
-        payload = json.dumps(dct)
+        payload = dct
         route = settings.API_LATEST + "/treatment_site/validate"
-        response = client.post(route, data=payload)
+        response = client.post(route, json=payload)
         responses[name] = response
 
     yield responses
@@ -186,9 +188,9 @@ def watershed_responses(client, watershed_requests):
 
     for name, dct in watershed_requests.items():
 
-        payload = json.dumps(dct)
+        payload = dct
         route = settings.API_LATEST + "/watershed/solve"
-        response = client.post(route, data=payload)
+        response = client.post(route, json=payload)
         responses[name] = response
 
     yield responses

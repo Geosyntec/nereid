@@ -30,6 +30,7 @@ def test_get_land_surface_loading(
 
     key = details, n_rows, n_nodes
     post_response = land_surface_loading_responses[key]
+    assert post_response.status_code == 200, post_response.content
 
     prjson = post_response.json()
     grjson = prjson

@@ -254,9 +254,8 @@ def parse_remaps(
                 right = remap["right"]
                 if right not in df:
                     df[right] = None
-                df.loc[pandas.notnull(df[left]), right] = (
-                    df[left].map(mapping).fillna(fillna)
-                )
+                new_c = df[left].map(mapping).fillna(fillna)
+                df[right] = numpy.where(pandas.notnull(df[left]), new_c, df[right])
 
             elif how == "replace":
                 df[left] = df[left].replace(mapping)
