@@ -18,8 +18,6 @@ def test_post_network_validate(
 ):
 
     post_response = named_validation_responses[post_response_name]
-    assert post_response.status_code == 200
-
     prjson = post_response.json()
     assert network_models.NetworkValidationResponse(**prjson)
 

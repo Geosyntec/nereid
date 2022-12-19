@@ -144,7 +144,7 @@ EXPOSE 8888
 COPY ./nereid /nereid/nereid
 
 
-FROM python:3.9-bullseye as nereid-edge
+FROM python:3.11-bullseye as nereid-edge
 RUN apt-get update && apt-get install -y graphviz
 COPY requirements.txt /requirements.txt
 COPY requirements_tests.txt /requirements_tests.txt
