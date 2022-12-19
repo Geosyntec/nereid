@@ -1,8 +1,8 @@
+import warnings
 from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
 from typing import IO, Any, Dict, List, Optional, Tuple, Union
-import warnings
 
 import networkx as nx
 import orjson as json
