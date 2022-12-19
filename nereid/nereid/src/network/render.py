@@ -157,7 +157,7 @@ def render_solution_sequence(
 ) -> figure.Figure:
     if layout is None:  # pragma: no branch
         layout = cached_layout(G, prog="dot")
-    if cmap_str is None:
+    if cmap_str is None:  # pragma: no branch
         cmap_str = "Blues_r"
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
