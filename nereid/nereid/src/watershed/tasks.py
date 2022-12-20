@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from nereid.core.config import settings
 from nereid.core.units import update_unit_registry
@@ -49,7 +49,7 @@ def solve_watershed(
     try:  # pragma: no branch
         solve_watershed_loading(g, context=context)
 
-        all_results = [dct for n, dct in g.nodes(data=True)]
+        all_results: List[Any] = [dct for n, dct in g.nodes(data=True)]
         results = [dct for dct in all_results if not dct["_is_leaf"]]
         leafs = [dct for dct in all_results if dct["_is_leaf"]]
         previous_results_keys = attrs_to_resubmit(all_results)

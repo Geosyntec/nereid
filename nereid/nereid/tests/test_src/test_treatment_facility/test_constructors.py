@@ -112,14 +112,14 @@ def test_build_diversion_facility_months_operational(
     for n in nodes:
         assert n, "error: no data created"
         if summer_reduction:
-            assert n.get(f"summer_dry_weather_{reduction_type}_rate_cfs") > 0.0, n
+            assert n.get(f"summer_dry_weather_{reduction_type}_rate_cfs") or 1 > 0.0, n
             assert n.get(f"summer_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n
         else:
             assert n.get(f"summer_dry_weather_{reduction_type}_rate_cfs") == 0.0, n
             assert n.get(f"summer_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n
 
         if winter_reduction:
-            assert n.get(f"winter_dry_weather_{reduction_type}_rate_cfs") > 0.0, n
+            assert n.get(f"winter_dry_weather_{reduction_type}_rate_cfs") or 1 > 0.0, n
             assert n.get(f"winter_dry_weather_{no_reduction_type}_rate_cfs") == 0.0, n
         else:
             assert n.get(f"winter_dry_weather_{reduction_type}_rate_cfs") == 0.0, n

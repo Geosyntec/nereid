@@ -27,7 +27,7 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
     _node_list = solution_sequence(watershed_request["graph"], 16)["solution_sequence"][
         "parallel"
     ][0]["series"]
-    node_list = [[n["id"] for n in nl["nodes"]] for nl in _node_list]
+    node_list = [[n["id"] for n in nl["nodes"]] for nl in _node_list]  # type: ignore
 
     presults = []  # no initial results, obvs
     for branch_nodes in node_list:

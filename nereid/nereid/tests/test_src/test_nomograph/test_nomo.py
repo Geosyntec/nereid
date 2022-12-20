@@ -140,26 +140,28 @@ def test_get_volume_nomograph(contexts):
     context = contexts["default"]
 
     met, _ = load_ref_data("met_table", context)
+    assert met is not None
     paths = met["volume_nomograph"].unique()
 
     for path in paths:
         nomo = get_volume_nomograph(context=context, nomo_path=path)
         ddt = 3
-        res = nomo(size=nomo.nomo.x_data[nomo.nomo.t_data == ddt], ddt=ddt)
-        assert all((nomo.nomo.y_data[nomo.nomo.t_data == ddt] - res) < 1e-6)
+        res = nomo(size=nomo.nomo.x_data[nomo.nomo.t_data == ddt], ddt=ddt)  # type: ignore
+        assert all((nomo.nomo.y_data[nomo.nomo.t_data == ddt] - res) < 1e-6)  # type: ignore
 
 
 def test_get_flow_nomograph(contexts):
     context = contexts["default"]
 
     met, _ = load_ref_data("met_table", context)
+    assert met is not None
     paths = met["flow_nomograph"].unique()
 
     for path in paths:
         nomo = get_flow_nomograph(context=context, nomo_path=path)
         tc = 15
-        res = nomo(intensity=nomo.nomo.x_data[nomo.nomo.t_data == tc], tc=tc)
-        assert all((nomo.nomo.y_data[nomo.nomo.t_data == tc] - res) < 1e-6)
+        res = nomo(intensity=nomo.nomo.x_data[nomo.nomo.t_data == tc], tc=tc)  # type: ignore
+        assert all((nomo.nomo.y_data[nomo.nomo.t_data == tc] - res) < 1e-6)  # type: ignore
 
 
 @pytest.mark.parametrize(

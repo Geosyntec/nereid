@@ -1,4 +1,4 @@
-from typing import List, Optional, Set, Union
+from typing import Hashable, Iterable, List, Optional, Set, Union
 
 import networkx as nx
 
@@ -14,14 +14,14 @@ def find_cycle(g: nx.Graph, **kwargs: dict) -> List:
         return []
 
 
-def get_subset(g: nx.DiGraph, nodes: Union[str, Set[str], List[str]]) -> Set[str]:
+def get_subset(g: nx.DiGraph, nodes: Union[Hashable, Iterable[Hashable]]) -> Set:
     """This algorithm is for determining which nodes in a graph must be re-solved if
     `nodes` are dirty. It looks for the immediate parents of each dirty node, all
     descendants of the dirty nodes down to the root node (no 'out' edge connections),
     and the immediate parents of _each_ descdendant. This algorithm only works on
     directed acyclic graphs (DAGs).
     """
-    if isinstance(nodes, (int, str)):
+    if isinstance(nodes, Hashable):
         nodes = [nodes]
 
     node_parents = {s for n in nodes for s in g.predecessors(n)}
@@ -32,8 +32,8 @@ def get_subset(g: nx.DiGraph, nodes: Union[str, Set[str], List[str]]) -> Set[str
 
 
 def get_all_predecessors(
-    g: nx.DiGraph, node: str, subset: Optional[Set[str]] = None
-) -> Set[str]:
+    g: nx.DiGraph, node: Hashable, subset: Optional[Set] = None
+) -> Set:
     """This algorithm is a good deal faster than the nx.ancestors variant,
     **but** it only works on directed acyclic graphs (DAGs).
     """
@@ -47,8 +47,8 @@ def get_all_predecessors(
 
 
 def get_all_successors(
-    g: nx.DiGraph, node: str, subset: Optional[Set[str]] = None
-) -> Set[str]:
+    g: nx.DiGraph, node: Hashable, subset: Optional[Set] = None
+) -> Set:
     """This algorithm is a good deal faster than the nx.descendants variant,
     **but** it only works on directed acyclic graphs (DAGs).
     """
@@ -82,7 +82,7 @@ def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGra
     return nx.Digraph()  # pragma: no cover
 
 
-def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Union[str, int]]]:
+def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Hashable]]:
 
     if not nx.is_weakly_connected(g):
         raise nx.NetworkXUnfeasible(
@@ -114,7 +114,7 @@ def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Union[str, 
 
 def parallel_sequential_subgraph_nodes(
     g: nx.DiGraph, size: int
-) -> List[List[List[Union[str, int]]]]:
+) -> List[List[List[Hashable]]]:
     # strip the input graph to just the edge info
     g = nx.DiGraph(g.edges())
 

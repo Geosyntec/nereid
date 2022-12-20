@@ -6,7 +6,7 @@ from typing import IO, Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
 import orjson as json
-from matplotlib import axes, colormaps, figure
+from matplotlib import axes, colormaps, figure  # type: ignore
 from matplotlib import pyplot as plt
 
 
@@ -92,7 +92,10 @@ def render_subgraphs(
         fig_kwargs["figsize"] = width, height
 
     if ax is None:  # pragma: no branch
-        fig, ax = plt.subplots(**fig_kwargs)
+        _, ax = plt.subplots(**fig_kwargs)  # type: ignore
+
+    if ax is None:  # pragma: no branch
+        return figure.Figure()
 
     sgs = [[n["id"] for n in ng["nodes"]] for ng in subgraph_nodes]
     req = [n["id"] for n in request_nodes]
@@ -169,7 +172,10 @@ def render_solution_sequence(
         fig_kwargs["figsize"] = width, height
 
     if ax is None:  # pragma: no branch
-        fig, ax = plt.subplots(**fig_kwargs)
+        _, ax = plt.subplots(**fig_kwargs)  # type: ignore
+
+    if ax is None:  # pragma: no branch
+        return figure.Figure()
 
     marker_cycle = cycle(marker_cycle_str)
     cmap = colormaps.get(cmap_str)

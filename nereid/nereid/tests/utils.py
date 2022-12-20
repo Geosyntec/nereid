@@ -50,7 +50,7 @@ def is_equal_subset(
 
     if isinstance(subset, dict):
         return all(
-            key in superset and is_equal_subset(val, superset[key])
+            key in superset and is_equal_subset(val, superset[key])  # type: ignore
             for key, val in subset.items()
         )
 
@@ -260,16 +260,6 @@ def generate_random_treatment_facility_request(node_list, context, ref_data_keys
     return {"treatment_facilities": nodes}
 
 
-def generate_random_validated_treatment_facility_node(context):  # pragma: no cover
-
-    facility = generate_random_treatment_facility_request_node(context)
-    validated_facility_model = validate_treatment_facility_models(
-        [facility], context=context
-    )[0]
-
-    return validated_facility_model
-
-
 def generate_random_land_surface_request_sliver(
     node_id,
     surface_key,
@@ -348,16 +338,16 @@ def generate_random_watershed_solve_request_from_graph(
     if treatment_facility_nodes:
         request.update(
             generate_random_treatment_facility_request(
-                treatment_facility_nodes, context, ref_data_keys=ref_data_keys
+                treatment_facility_nodes, context, ref_data_keys=ref_data_keys  # type: ignore
             )
         )
     if treatment_site_nodes:
         request.update(
-            generate_random_treatment_site_request(treatment_site_nodes, context)
+            generate_random_treatment_site_request(treatment_site_nodes, context)  # type: ignore
         )
     if land_surface_nodes:  # pragma: no branch
         request.update(
-            generate_random_land_surface_request(land_surface_nodes, surface_keys)
+            generate_random_land_surface_request(land_surface_nodes, surface_keys)  # type: ignore
         )
 
     return request
@@ -436,9 +426,4 @@ def check_results_dataframes(db1, db2):
             assert abs(numpy.nansum(db[col] - db2[col])) < 1e-6, col
 
     for col in db.select_dtypes(exclude=[numpy.number]):
-        pandas.testing.assert_series_equal(db[col], db2[col]), col
-        # try:
-        #     pandas.testing.assert_series_equal(db[col], db2[col]), col
-        # except AssertionError as e:
-        #     assert False, (col, len(db[col]), db[col])
-        # #     raise e
+        pandas.testing.assert_series_equal(db[col], db2[col])

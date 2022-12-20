@@ -9,7 +9,7 @@ from nereid.core.utils import safe_divide
 def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]:
 
     _treatment_facility_list: List[Dict[str, Any]] = [
-        {k: v for k, v in m.items() if pandas.notnull(v)}
+        {str(k): v for k, v in m.items() if pandas.notnull(v)}
         for m in df.to_dict(orient="records")
     ]
 

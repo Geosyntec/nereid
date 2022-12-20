@@ -37,10 +37,12 @@ def test_round_trip_graph_to_graph(graph_obj_isvalid):
         assert data == graph_obj.nodes[node]
 
     if G.is_multigraph():
-        for s, t, k, data in G.edges(data=True, keys=True):  # same edge attrs
+        for s, t, k, data in G.edges(data=True, keys=True):  # type: ignore ; same edge attrs
+            assert data is not None
             assert is_equal_subset(graph_obj.edges[(s, t, k)], data)
     else:
-        for s, t, data in G.edges(data=True):  # same edge attrs
+        for s, t, data in G.edges(data=True):  # type: ignore ; same edge attrs
+            assert data is not None
             assert is_equal_subset(graph_obj.edges[(s, t)], data)
 
 
