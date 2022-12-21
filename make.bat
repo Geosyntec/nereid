@@ -89,8 +89,8 @@ goto :eof
 :coverage-all
 call make clean
 call make restart
-docker compose exec nereid-tests pytest nereid/tests -xs --dist loadfile -n 4 --cov=nereid/
-docker compose exec nereid-tests pytest nereid/tests/test_api -xs --dist loadfile -n 4 --cov=nereid/ --cov-append --async
+docker compose exec nereid-tests pytest nereid/tests -xs -n 4 --cov=nereid/
+docker compose exec nereid-tests pytest nereid/tests/test_api -xs -n 4 --cov=nereid/ --cov-append --async
 docker compose exec nereid-tests coverage report -m
 goto :eof
 
