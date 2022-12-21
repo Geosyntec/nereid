@@ -1,7 +1,9 @@
+import networkx as nx
 import pytest
 
 from nereid.api.api_v1.models import network_models
 from nereid.core.config import settings
+from nereid.src.network.utils import clean_graph_dict
 
 
 @pytest.mark.parametrize(
@@ -143,11 +145,13 @@ def test_post_network_subgraph(client, named_subgraph_responses, post_response_n
 
 
 @pytest.mark.parametrize(
-    "post_response_name, isfast",
-    [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
+    "post_response_name",
+    [
+        ("subgraph_response_fast"),
+    ],
 )
-def test_get_render_subgraph_svg(
-    client, named_subgraph_responses, post_response_name, isfast
+def test_get_render_subgraph_svg_fast(
+    client, named_subgraph_responses, post_response_name
 ):
 
     post_response = named_subgraph_responses[post_response_name]
@@ -155,20 +159,35 @@ def test_get_render_subgraph_svg(
     rjson = post_response.json()
 
     result_route = rjson.get("result_route")
+
     if result_route:
         svg_response = client.get(result_route + "/img")
         assert svg_response.status_code == 200
-        if isfast:
-            assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
-        else:
-            srjson = svg_response.json()
-            assert srjson["status"].lower() != "failure"
-            assert srjson["task_id"] is not None
+        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
 
-        if isfast:
-            # try to cover cached retrieval by asking again
-            svg_response = client.get(result_route + "/img")
-            assert svg_response.status_code == 200
+        # try to cover cached retrieval by asking again
+        svg_response = client.get(result_route + "/img")
+        assert svg_response.status_code == 200
+
+
+def test_get_render_subgraph_svg_slow(
+    client,
+):
+    route = settings.API_LATEST + "/network/subgraph"
+
+    slow_graph = clean_graph_dict(nx.gnr_graph(200, p=0.05, seed=42))
+    nodes = [{"id": "3"}, {"id": "29"}, {"id": "18"}]
+
+    payload = dict(graph=slow_graph, nodes=nodes)
+
+    response = client.post(route, json=payload)
+    result_route = response.json().get("result_route")
+    if result_route:
+        svg_response = client.get(result_route + "/img")
+        assert svg_response.status_code == 200
+        srjson = svg_response.json()
+        assert srjson["status"].lower() != "failure"
+        assert srjson["task_id"] is not None
 
 
 @pytest.mark.parametrize(

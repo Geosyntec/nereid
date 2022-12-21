@@ -67,22 +67,22 @@ def detailed_dry_weather_volume_loading_results(
     to the config file spec.
     """
 
-    developed_area_acres = df.get("developed_area_acres", 0.0)
+    developed_area_acres = df.get("developed_area_acres", 0.0)  # type: ignore
 
     for season, months in seasons.items():
         if months is not None:
-            dwf_cfs_ac = df.get(f"{season}_dry_weather_flow_cuft_psecond_pacre", 0.0)
+            dwf_cfs_ac = df.get(f"{season}_dry_weather_flow_cuft_psecond_pacre", 0.0)  # type: ignore
 
-            dwf_cfs = dwf_cfs_ac * developed_area_acres
+            dwf_cfs = dwf_cfs_ac * developed_area_acres  # type: ignore
             df[f"{season}_dry_weather_flow_cuft_psecond"] = dwf_cfs
 
-            dwf_cuft_pday_pacre = dwf_cfs_ac * 3600 * 24
+            dwf_cuft_pday_pacre = dwf_cfs_ac * 3600 * 24  # type: ignore
 
             dwf_pseason_pacre = sum(
-                [df.get(f"n_dry_days_{m}", 0.0) * dwf_cuft_pday_pacre for m in months]
+                [df.get(f"n_dry_days_{m}", 0.0) * dwf_cuft_pday_pacre for m in months]  # type: ignore
             )
             df[f"{season}_dry_weather_flow_cuft"] = (
-                dwf_pseason_pacre * developed_area_acres
+                dwf_pseason_pacre * developed_area_acres  # type: ignore
             )
 
     return df
@@ -113,7 +113,7 @@ def detailed_pollutant_loading_results(
         factor = param["conc_to_load_factor"]
 
         if conc_col in df:
-            df[load_col] = df["runoff_volume_cuft"] * df[conc_col] * factor
+            df[load_col] = df["runoff_volume_cuft"] * df[conc_col] * factor  # type: ignore
 
     for param in dry_weather_parameters:
         conc_col = param["conc_col"]
@@ -124,7 +124,7 @@ def detailed_pollutant_loading_results(
             for season in season_names:
                 dw_vol_month_col = f"{season}_dry_weather_flow_cuft"
                 df[season + "_" + load_col] = (
-                    df.get(dw_vol_month_col, 0.0) * df[conc_col] * factor
+                    df.get(dw_vol_month_col, 0.0) * df[conc_col] * factor  # type: ignore
                 )
 
     return df
@@ -197,7 +197,7 @@ def summary_loading_results(
     df = (
         detailed_results.loc[:, groupby_cols + output_columns_summable]
         .groupby(groupby_cols)
-        .agg(agg_dict)
+        .agg(agg_dict)  # type: ignore
     )
 
     #  'area_acres' is just a dummy here, any column would do

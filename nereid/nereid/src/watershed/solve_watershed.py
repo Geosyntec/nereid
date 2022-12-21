@@ -35,7 +35,7 @@ def initialize_graph(
     watershed: Dict[str, Any],
     treatment_pre_validated: bool,
     context: Dict[str, Any],
-) -> Tuple[GraphType, List[str]]:
+) -> Tuple[nx.DiGraph, List[str]]:
 
     errors: List[str] = []
 
@@ -75,7 +75,7 @@ def initialize_graph(
 
     nx.set_node_attributes(g, data)
 
-    return g, errors
+    return nx.DiGraph(g), errors
 
 
 def solve_watershed_loading(
@@ -198,7 +198,8 @@ def solve_node(
         )
 
     # leaf nodes are read only
-    if g.in_degree(node) < 1:
+    deg = g.in_degree(node)
+    if isinstance(deg, int) and deg < 1:
         data["_is_leaf"] = True
         return
 

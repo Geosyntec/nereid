@@ -74,7 +74,7 @@ def test_post_solve_watershed_stable(
         ]
     }
 
-    g = graph_factory(watershed_request["graph"])
+    g = nx.DiGraph(graph_factory(watershed_request["graph"]))
 
     subg = nx.DiGraph(g.subgraph(get_subset(g, nodes=dirty_nodes)).edges)
     subgraph = {"graph": nxGraph_to_dict(subg)}

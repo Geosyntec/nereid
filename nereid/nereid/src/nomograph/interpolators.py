@@ -261,7 +261,7 @@ class NomographBase(object):
                 else:
                     raise ValueError("y and t must be the same length")
 
-            guess, converged = self.get_x(at_y=y, t=t, atol=atol, max_iters=max_iters)
+            guess, converged = self.get_x(at_y=y, t=t, atol=atol, max_iters=max_iters)  # type: ignore
 
             if not converged:
                 pass
@@ -283,7 +283,7 @@ class NomographBase(object):
         ax.scatter(
             self.x_data,
             fits,
-            marker="o",
+            marker="o",  # type: ignore
             s=50,
             facecolor="none",
             edgecolor="k",
@@ -292,8 +292,8 @@ class NomographBase(object):
 
         for i, d in enumerate(sorted(set(self.t_data))):
 
-            x = self.x_data[self.t_data == d]
-            y = self.y_data[self.t_data == d]
+            x = self.x_data[self.t_data == d]  # type: ignore
+            y = self.y_data[self.t_data == d]  # type: ignore
 
             xline = numpy.linspace(numpy.nanmin(x), numpy.nanmax(x), 100)
             vals = self.nomo(xline, [d for _ in xline])
@@ -319,12 +319,12 @@ class NomographBase(object):
         return ax
 
     def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:  # pragma: no cover
-        return self._baseplot(*args, **kwargs)
+        return self._baseplot(*args, **kwargs)  # type: ignore
 
     def surfaceplot(
         self, *args: Tuple, **kwargs: Dict[str, Any]
     ) -> Axes:  # pragma: no cover
-        return self._basesurface(*args, **kwargs)
+        return self._basesurface(*args, **kwargs)  # type: ignore
 
 
 class VolumeNomograph(object):
@@ -334,7 +334,7 @@ class VolumeNomograph(object):
         ddt: Union[pandas.Series, numpy.ndarray],
         performance: Union[pandas.Series, numpy.ndarray],
         interp_kwargs: Optional[Dict[str, Any]] = None,
-        source_data: str = None,
+        source_data: Optional[str] = None,
     ) -> None:
 
         self.nomo = NomographBase(
@@ -356,14 +356,14 @@ class VolumeNomograph(object):
         return self.nomo(x=size, t=ddt, y=performance)
 
     def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
-        ax = self.nomo._baseplot(*args, **kwargs)
+        ax = self.nomo._baseplot(*args, **kwargs)  # type: ignore
         ax.set_xlabel("size")
         ax.set_ylabel("performance")
         ax.legend(ncol=2, title="ddt")
         return ax
 
     def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
-        ax = self.nomo._basesurface(*args, **kwargs)
+        ax = self.nomo._basesurface(*args, **kwargs)  # type: ignore
         ax.set_xlabel("size")
         ax.set_ylabel("ddt")
         ax.legend(loc=6, bbox_to_anchor=(1.01, 0.5))
@@ -377,7 +377,7 @@ class FlowNomograph(object):
         tc: Union[pandas.Series, numpy.ndarray],
         performance: Union[pandas.Series, numpy.ndarray],
         interp_kwargs: Optional[Dict[str, Any]] = None,
-        source_data: str = None,
+        source_data: Optional[str] = None,
     ) -> None:
 
         self.nomo = NomographBase(
@@ -399,14 +399,14 @@ class FlowNomograph(object):
         return self.nomo(x=intensity, t=tc, y=performance)
 
     def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
-        ax = self.nomo._baseplot(*args, **kwargs)
+        ax = self.nomo._baseplot(*args, **kwargs)  # type: ignore
         ax.set_xlabel("intensity")
         ax.set_ylabel("performance")
         ax.legend(ncol=2, title="tc")
         return ax
 
     def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
-        ax = self.nomo._basesurface(*args, **kwargs)
+        ax = self.nomo._basesurface(*args, **kwargs)  # type: ignore
         ax.set_xlabel("intensity")
         ax.set_ylabel("tc")
         ax.legend(loc=6, bbox_to_anchor=(1.01, 0.5))

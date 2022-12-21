@@ -475,7 +475,7 @@ def watershed_requests(contexts, subbasins, land_surface_permutations):
     requests = {}
     numpy.random.seed(42)
     for n_nodes, pct_tmnt in product(SIZE, PCT_TMNT):
-        seed = numpy.random.randint(1e6)
+        seed = numpy.random.randint(1_000_000)
         req = generate_random_watershed_solve_request(
             context,
             subbasins,

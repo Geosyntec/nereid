@@ -56,6 +56,7 @@ def test_load_ref_data(contexts, table, key):
 
     context = contexts[key]
     ref_table, msg = io.load_ref_data(table, context)
+    assert ref_table is not None
     assert len(ref_table) > 1, ref_table
     assert all(["error" not in m.lower() for m in msg]), msg
 
