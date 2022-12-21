@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/nereid/nereid/static/logo/trident_neptune_logo_mark_strokes_aspath.svg" alt="nereid" height=125px>
+  <img src="/nereid/nereid/static/logo/trident_neptune_logo_mark_strokes_aspath-color.svg" alt="nereid" height=125px>
 </p>
 <p align="center">
     <em>Neptune's stormwater water quality tool of choice</em>
