@@ -5,13 +5,13 @@
     <em>Neptune's stormwater water quality tool of choice</em>
 </p>
 <p align="center">
-<a href="https://travis-ci.com/Geosyntec/nereid" target="_blank">
-    <img src="https://travis-ci.com/Geosyntec/nereid.svg?branch=develop" alt="Build Status">
+<a href="https://github.com/Geosyntec/nereid/actions?query=workflow%3ATest+event%3Apush+branch%3Adevelop" target="_blank">
+    <img src="https://github.com/Geosyntec/nereid/workflows/Test/badge.svg?event=push&branch=develop" alt="Build Status">
 </a>
 <a href="https://codecov.io/gh/Geosyntec/nereid" target="_blank">
     <img src="https://codecov.io/gh/Geosyntec/nereid/branch/develop/graph/badge.svg" alt="Coverage">
 </a>
-<a href="http://mypy-lang.org/" target="_blank">
+<a href="https://github.com/Geosyntec/nereid/actions?query=workflow%3ALint+event%3Apush+branch%3Adevelop" target="_blank">
     <img src="http://www.mypy-lang.org/static/mypy_badge.svg" alt="mypy">
 </a>
 </p>
