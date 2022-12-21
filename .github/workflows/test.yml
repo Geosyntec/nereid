@@ -22,7 +22,7 @@ jobs:
         run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
       - name: Run Tests
         run: |
-          coverage run --source=nereid/nereid/src --branch -m pytest nereid/nereid/tests/test_src -xv
+          pytest nereid/nereid/tests/test_src -xv --dist loadfile -n 4 --cov=nereid/nereid/src
           coverage report -m --omit=*test*
 
   python-test-install:
@@ -57,7 +57,7 @@ jobs:
         run: |
           pip install --upgrade pip
           awk -F"==" '{print $1}' nereid/requirements.txt nereid/requirements_tests.txt > nereid/requirements_edge.txt
-          pip install -r nereid/requirements_edge.txt pytest-xdist
+          pip install -r nereid/requirements_edge.txt
       - name: Run Edge Tests
         continue-on-error: true
         run: |
@@ -78,8 +78,8 @@ jobs:
           docker-compose up -d nereid-tests
       - name: run tests
         run: |
-          docker compose exec -T nereid-tests coverage run --branch -m pytest nereid/tests -xs
-          docker compose exec -T nereid-tests coverage run -a --branch -m pytest nereid/tests/test_api -xs --async
+          docker compose exec -T nereid-tests pytest nereid/tests -xs --dist loadfile -n 4 --cov=nereid/
+          docker compose exec -T nereid-tests pytest nereid/tests/test_api -xs --dist loadfile -n 4 --cov=nereid/ --cov-append --async
       - name: coverage
         run: |
           docker-compose exec -T nereid-tests coverage report -mi
@@ -100,7 +100,6 @@ jobs:
           docker --version
           bash ./scripts/build_edge.sh
           docker-compose up -d nereid-tests
-          docker-compose exec -T nereid-tests pip install pytest-xdist
       - name: run edge tests
         continue-on-error: true
         run: docker-compose exec -T nereid-tests pytest -xv -n 2 --dist loadfile
