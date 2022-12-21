@@ -22,7 +22,7 @@ def validate_network(
     edge_cycles = [list(map(str, _)) for _ in find_cycle(G, **kwargs)]
 
     out_degs = nx.MultiDiGraph(G).out_degree()
-    if isinstance(out_degs, int):
+    if isinstance(out_degs, int):  # pragma: no cover
         out_degs = [("", out_degs)]
     multiple_outs = [[str(node), str(deg)] for node, deg in out_degs if deg > 1]
 

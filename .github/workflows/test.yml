@@ -37,9 +37,9 @@ jobs:
       - name: Install nereid as library
         run: |
           pip install .
-          pip install pytest
+          pip install pytest pytest-xdist
       - name: Run Tests
-        run: pytest nereid/nereid/tests/test_src -xv
+        run: pytest nereid/nereid/tests/test_src -xv -n 2 --dist loadfile
 
   python-edge-test:
     runs-on: ubuntu-latest
@@ -57,11 +57,11 @@ jobs:
         run: |
           pip install --upgrade pip
           awk -F"==" '{print $1}' nereid/requirements.txt nereid/requirements_tests.txt > nereid/requirements_edge.txt
-          pip install -r nereid/requirements_edge.txt
+          pip install -r nereid/requirements_edge.txt pytest-xdist
       - name: Run Edge Tests
         continue-on-error: true
         run: |
-          pytest nereid/nereid/tests -xv
+          pytest nereid/nereid/tests -xv -n 2 --dist loadfile
       - name: Exit
         run: exit 0
 
@@ -100,8 +100,9 @@ jobs:
           docker --version
           bash ./scripts/build_edge.sh
           docker-compose up -d nereid-tests
+          docker-compose exec -T nereid-tests pip install pytest-xdist
       - name: run edge tests
         continue-on-error: true
-        run: docker-compose exec -T nereid-tests pytest -xv
+        run: docker-compose exec -T nereid-tests pytest -xv -n 2 --dist loadfile
       - name: Exit
         run: exit 0

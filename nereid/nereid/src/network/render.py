@@ -94,7 +94,7 @@ def render_subgraphs(
     if ax is None:  # pragma: no branch
         _, ax = plt.subplots(**fig_kwargs)  # type: ignore
 
-    if ax is None:  # pragma: no branch
+    if ax is None:  # pragma: no cover
         return figure.Figure()
 
     sgs = [[n["id"] for n in ng["nodes"]] for ng in subgraph_nodes]
@@ -174,7 +174,7 @@ def render_solution_sequence(
     if ax is None:  # pragma: no branch
         _, ax = plt.subplots(**fig_kwargs)  # type: ignore
 
-    if ax is None:  # pragma: no branch
+    if ax is None:  # pragma: no cover
         return figure.Figure()
 
     marker_cycle = cycle(marker_cycle_str)
