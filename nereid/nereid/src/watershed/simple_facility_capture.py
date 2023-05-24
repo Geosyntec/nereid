@@ -51,3 +51,27 @@ def compute_simple_facility_volume_capture(
     )
 
     return data
+
+
+def compute_simple_facility_wet_weather_volume_capture(
+    data: Dict[str, Any]
+) -> Dict[str, Any]:
+    compute_simple_facility_volume_capture(data, "runoff_volume_cuft")
+    for attr in ["captured", "treated", "retained", "bypassed"]:
+        data[f"{attr}_pct"] = data[f"runoff_volume_cuft_{attr}_pct"]
+
+    return data
+
+
+def compute_simple_facility_dry_weather_volume_capture(
+    data: Dict[str, Any],
+) -> Dict[str, Any]:
+    seasons = ["summer", "winter"]
+    vol_cols = [f"{s}_dry_weather_flow_cuft" for s in seasons] + [
+        f"{s}_dry_weather_flow_cuft_psecond" for s in seasons
+    ]
+
+    for vol_col in vol_cols:
+        compute_simple_facility_volume_capture(data, vol_col)
+
+    return data

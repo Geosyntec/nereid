@@ -57,14 +57,8 @@ def compute_volume_capture_with_nomograph(
     data["treatment_volume_cuft"] = data.get("treatment_volume_cuft", 0.0)
     data["treatment_ddt_hr"] = data.get("treatment_ddt_hr", 0.0)
 
-    if "volume_based_facility" in node_type:
-
-        sum_upstream_vol = (
-            data["retention_volume_cuft_upstream"]
-            + data["during_storm_det_volume_cuft_upstream"]
-        )
-
-        if sum_upstream_vol == 0:
+    if all(v in node_type for v in ["volume_based", "facility"]):
+        if data["_has_upstream_vol_storage"]:
             data = compute_volume_based_standalone_facility(data, volume_nomo)
 
         else:

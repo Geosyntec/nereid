@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pandas
 
@@ -329,21 +329,43 @@ class TreatmentFacilityConstructor:
         total_volume_cuft: float,
         winter_demand_cfs: float,
         summer_demand_cfs: float,
+        winter_dry_weather_flow_cuft_psecond_inflow: Optional[float] = None,
+        summer_dry_weather_flow_cuft_psecond_inflow: Optional[float] = None,
         **kwargs: dict,
     ) -> Dict[str, Any]:
 
-        retention_volume_cuft = total_volume_cuft
+        winter_dry_weather_flow_cuft_psecond_inflow = (
+            winter_dry_weather_flow_cuft_psecond_inflow or 0.0
+        )
+        summer_dry_weather_flow_cuft_psecond_inflow = (
+            summer_dry_weather_flow_cuft_psecond_inflow or 0.0
+        )
+
+        winter_demand_cfs_user = winter_demand_cfs
+        summer_demand_cfs_user = summer_demand_cfs
+
+        winter_demand_cfs = max(
+            0, winter_demand_cfs_user - winter_dry_weather_flow_cuft_psecond_inflow
+        )
+
+        summer_demand_cfs = max(
+            0, summer_demand_cfs_user - summer_dry_weather_flow_cuft_psecond_inflow
+        )
+
         winter_demand_cfhr = winter_demand_cfs * 3600
-        retention_ddt_hr = total_volume_cuft / winter_demand_cfhr
+        retention_ddt_hr = safe_divide(total_volume_cuft, winter_demand_cfhr)
+        retention_volume_cuft = total_volume_cuft if retention_ddt_hr > 0 else 0
 
         result = dict(
+            winter_demand_cfs_user=winter_demand_cfs_user,
+            summer_demand_cfs_user=summer_demand_cfs_user,
             retention_volume_cuft=retention_volume_cuft,
             retention_ddt_hr=retention_ddt_hr,
             summer_dry_weather_retention_rate_cfs=summer_demand_cfs,
             summer_dry_weather_treatment_rate_cfs=0.0,
             winter_dry_weather_retention_rate_cfs=winter_demand_cfs,
             winter_dry_weather_treatment_rate_cfs=0.0,
-            node_type="volume_based_facility",
+            node_type="volume_based_cistern_facility",
         )
 
         return result

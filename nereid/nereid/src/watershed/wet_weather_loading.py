@@ -163,6 +163,15 @@ def accumulate_wet_weather_loading(
         + data["during_storm_design_vol_cuft_upstream"]
     )
 
+    # track if is a nested node. This is used to change strategies
+    # in the BMP wet weather volume capture solver
+    _sum_upstream_vol = (
+        data["retention_volume_cuft_upstream"]
+        + data["during_storm_det_volume_cuft_upstream"]
+    )
+
+    data["_has_upstream_vol_storage"] = _sum_upstream_vol >= 0
+
     ## -- accumulate wet weather pollutant loading
     for param in wet_weather_parameters:
         load_col = param["load_col"]
