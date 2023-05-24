@@ -59,10 +59,10 @@ def compute_volume_capture_with_nomograph(
 
     if all(v in node_type for v in ["volume_based", "facility"]):
         if data["_has_upstream_vol_storage"]:
-            data = compute_volume_based_standalone_facility(data, volume_nomo)
+            data = compute_volume_based_nested_facility(data, volume_nomo)
 
         else:
-            data = compute_volume_based_nested_facility(data, volume_nomo)
+            data = compute_volume_based_standalone_facility(data, volume_nomo)
 
         # writeup step 2, equation 4. this value is stored, but is
         # not used until there is a next-downstream facility.
