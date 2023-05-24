@@ -16,7 +16,8 @@ from nereid.src.watershed.dry_weather_loading import (
     compute_dry_weather_volume_performance,
 )
 from nereid.src.watershed.simple_facility_capture import (
-    compute_simple_facility_volume_capture,
+    compute_simple_facility_wet_weather_volume_capture,
+    compute_simple_facility_dry_weather_volume_capture,
 )
 from nereid.src.watershed.treatment_facility_capture import (
     compute_volume_capture_with_nomograph,
@@ -29,6 +30,10 @@ from nereid.src.watershed.wet_weather_loading import (
     compute_wet_weather_volume_discharge,
 )
 from nereid.src.wq_parameters import init_wq_parameters
+
+from nereid.src.treatment_facility.constructors import (
+    TreatmentFacilityConstructor as TMNTConstructor,
+)
 
 
 def initialize_graph(
@@ -102,6 +107,11 @@ def solve_watershed_loading(
     nereid_version = context.get("version", "error: no version info")
     cfg_version = context.get("config_date", "error: no config version info")
 
+    solve_dw = all(
+        _ is not None
+        for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
+    )
+
     for node in nx.lexicographical_topological_sort(g):
         g.nodes[node]["_version"] = nereid_version
         g.nodes[node]["_config_version"] = cfg_version
@@ -114,6 +124,7 @@ def solve_watershed_loading(
             nomograph_map=nomograph_map,
             dry_weather_parameters=dry_weather_parameters,
             dry_weather_facility_performance_map=dry_weather_facility_performance_map,
+            solve_dw=solve_dw,
         )
 
     return
@@ -130,6 +141,7 @@ def solve_node(
     dry_weather_facility_performance_map: Optional[
         Mapping[Tuple[str, str], Callable]
     ] = None,
+    solve_dw: bool = False,
 ) -> None:
     """Solve a single node of the graph data structure in place.
 
@@ -203,13 +215,8 @@ def solve_node(
         data["_is_leaf"] = True
         return
 
-    node_type = data.get("node_type", "")
+    node_type = data.get("node_type", None) or "virtual"
     predecessors = list(g.predecessors(node))
-
-    solve_dw = all(
-        _ is not None
-        for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
-    )
 
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
     if solve_dw:
@@ -241,10 +248,13 @@ def solve_node(
                 for _type in ["volume_based", "flow_based", "dry_well", "simple"]
             ]
         ):
+            if "cistern" in node_type:
+                # run this again to prorate the demand rate & ddt based on the dw inflow.
+                cistern = TMNTConstructor.cistern_facility_constructor(**data)
+                data.update(cistern)  # this is an in-place update
+
             if "simple" in node_type:
-                compute_simple_facility_volume_capture(data, "runoff_volume_cuft")
-                for attr in ["captured", "treated", "retained", "bypassed"]:
-                    data[f"{attr}_pct"] = data[f"runoff_volume_cuft_{attr}_pct"]
+                compute_simple_facility_wet_weather_volume_capture(data)
 
             elif nomograph_map:  # pragma: no branch
                 compute_volume_capture_with_nomograph(data, nomograph_map)
@@ -265,13 +275,8 @@ def solve_node(
 
         if solve_dw:
             if "simple" in node_type:
-                seasons = ["summer", "winter"]
-                vol_cols = [f"{s}_dry_weather_flow_cuft" for s in seasons] + [
-                    f"{s}_dry_weather_flow_cuft_psecond" for s in seasons
-                ]
+                compute_simple_facility_dry_weather_volume_capture(data)
 
-                for vol_col in vol_cols:
-                    compute_simple_facility_volume_capture(data, vol_col)
             else:
                 compute_dry_weather_volume_performance(data)
 
