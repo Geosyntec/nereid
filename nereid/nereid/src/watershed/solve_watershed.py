@@ -8,6 +8,9 @@ from nereid.src.network.utils import GraphType, graph_factory
 from nereid.src.network.validate import is_valid, validate_network
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 from nereid.src.tmnt_performance.tasks import effluent_function_map
+from nereid.src.treatment_facility.constructors import (
+    TreatmentFacilityConstructor as TMNTConstructor,
+)
 from nereid.src.treatment_facility.tasks import initialize_treatment_facilities
 from nereid.src.treatment_site.tasks import initialize_treatment_sites
 from nereid.src.watershed.dry_weather_loading import (
@@ -16,8 +19,8 @@ from nereid.src.watershed.dry_weather_loading import (
     compute_dry_weather_volume_performance,
 )
 from nereid.src.watershed.simple_facility_capture import (
-    compute_simple_facility_wet_weather_volume_capture,
     compute_simple_facility_dry_weather_volume_capture,
+    compute_simple_facility_wet_weather_volume_capture,
 )
 from nereid.src.watershed.treatment_facility_capture import (
     compute_volume_capture_with_nomograph,
@@ -30,10 +33,6 @@ from nereid.src.watershed.wet_weather_loading import (
     compute_wet_weather_volume_discharge,
 )
 from nereid.src.wq_parameters import init_wq_parameters
-
-from nereid.src.treatment_facility.constructors import (
-    TreatmentFacilityConstructor as TMNTConstructor,
-)
 
 
 def initialize_graph(
@@ -219,8 +218,7 @@ def solve_node(
     predecessors = list(g.predecessors(node))
 
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
-    if solve_dw:
-        accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
+    accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
 
     if "site_based" in node_type:
         # This sequence handles volume capture, load reductions, and also delivers

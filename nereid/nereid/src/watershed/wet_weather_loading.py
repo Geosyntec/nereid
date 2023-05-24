@@ -170,7 +170,7 @@ def accumulate_wet_weather_loading(
         + data["during_storm_det_volume_cuft_upstream"]
     )
 
-    data["_has_upstream_vol_storage"] = _sum_upstream_vol >= 0
+    data["_has_upstream_vol_storage"] = _sum_upstream_vol > 0
 
     ## -- accumulate wet weather pollutant loading
     for param in wet_weather_parameters:
