@@ -312,7 +312,7 @@ class NomographBase(object):
         ax.tricontourf(self.x_data, self.t_data, self.y_data, levels=255)
 
         t = numpy.linspace(1, numpy.max(self.t_data), 100)
-        for i, perf in enumerate([0.6, 0.8, 0.9, 0.95, 0.97]):
+        for i, perf in enumerate([0.2, 0.4, 0.6, 0.8, 0.9, 0.95, 0.97]):
             x = [self(t=_t, y=perf) for _t in t]
             ax.plot(x, t, c=f"C{i}", label=f"{perf:.0%}")
 
@@ -359,7 +359,7 @@ class VolumeNomograph(object):
         ax = self.nomo._baseplot(*args, **kwargs)  # type: ignore
         ax.set_xlabel("size")
         ax.set_ylabel("performance")
-        ax.legend(ncol=2, title="ddt")
+        ax.legend(loc=6, bbox_to_anchor=(1.01, 0.5), ncol=2, title="ddt")
         return ax
 
     def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
