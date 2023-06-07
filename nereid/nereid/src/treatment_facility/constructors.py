@@ -357,6 +357,8 @@ class TreatmentFacilityConstructor:
         retention_volume_cuft = total_volume_cuft if retention_ddt_hr > 0 else 0
 
         result = dict(
+            winter_demand_cfs=winter_demand_cfs,
+            summer_demand_cfs=summer_demand_cfs,
             winter_demand_cfs_user=winter_demand_cfs_user,
             summer_demand_cfs_user=summer_demand_cfs_user,
             retention_volume_cuft=retention_volume_cuft,

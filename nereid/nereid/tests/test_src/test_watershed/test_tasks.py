@@ -235,3 +235,84 @@ def test_treatment_facility_waterbalance(
     assert mitigates_peak_flow == (peak_pct > 1e-3), (peak_pct, treatment_results)
 
     return
+
+
+def test_cistern_facility_waterbalance(
+    contexts,
+    simple_3_node_watershed,
+    treatment_facilities_dict,
+):
+    context = contexts["default"]
+    facility = deepcopy(treatment_facilities_dict["cistern"])
+    facility["winter_demand_cfs"] = 0.01
+    facility["node_id"] = "1"
+    watershed_request = deepcopy(simple_3_node_watershed)
+    watershed_request["treatment_facilities"] = [facility]
+
+    response_dict = solve_watershed(
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
+    )
+
+    results = response_dict["results"]
+
+    treatment_results = [res for res in results if res.get("node_id") == "1"][0]
+
+    facility["winter_demand_cfs"] = 0.006
+    watershed_request["treatment_facilities"] = [facility]
+
+    response_dict = solve_watershed(
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
+    )
+
+    results = response_dict["results"]
+
+    treatment_results_long = [res for res in results if res.get("node_id") == "1"][0]
+
+    facility["winter_demand_cfs"] = 0.002
+    watershed_request["treatment_facilities"] = [facility]
+
+    response_dict = solve_watershed(
+        watershed=watershed_request,
+        treatment_pre_validated=False,
+        context=context,
+    )
+
+    results = response_dict["results"]
+
+    treatment_results_xlong = [res for res in results if res.get("node_id") == "1"][0]
+
+    # print(
+    #     f"""
+    #     35 day:
+    #         ddt: {treatment_results['retention_ddt_hr']}
+    #         % ret: {treatment_results['retained_pct']}
+    #     6 month:
+    #         ddt: {treatment_results_long['retention_ddt_hr']}
+    #         % ret: {treatment_results_long['retained_pct']}
+    #     too long:
+    #         ddt: {treatment_results_xlong['retention_ddt_hr']}
+    #         % ret: {treatment_results_xlong['retained_pct']}
+    #     """
+    # )
+
+    # if there's dry weather inflows, the actual demands is prorated
+    for r in [treatment_results, treatment_results_long, treatment_results_xlong]:
+        assert r["winter_demand_cfs"] < r["winter_demand_cfs_user"], r
+        assert r["summer_demand_cfs"] < r["summer_demand_cfs_user"], r
+
+    # long ddts should be greater than short ddts
+    assert (
+        treatment_results["retention_ddt_hr"]
+        < treatment_results_long["retention_ddt_hr"]
+    ), (
+        treatment_results["retention_ddt_hr"],
+        treatment_results_long["retention_ddt_hr"],
+    )
+
+    # way long ddts are the same as zero if there are dry weather inflows.
+    assert 0 == treatment_results_xlong["retention_ddt_hr"], treatment_results_xlong
+    assert 0 == treatment_results_xlong["retained_pct"], treatment_results_xlong
