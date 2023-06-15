@@ -148,9 +148,7 @@ class DryWellFacility(FacilityBase):
     _constructor: str = "dry_well_facility_constructor"
 
 
-class DryWellFacilityFlowOrVolume(FacilityBase):
-    total_volume_cuft: float
-    treatment_rate_cfs: float
+class DryWellFacilityFlowOrVolume(FlowFacility, DryWellFacility):
     _constructor: str = "dry_well_facility_flow_or_volume_constructor"
 
 
