@@ -192,8 +192,7 @@ class TmntFacilityWithRetentionOverride(TmntFacility):
     )
 
 
-class FlowAndRetFacility(FacilityBase):
-    treatment_rate_cfs: float
+class FlowAndRetFacility(FlowFacility, FacilityBase):
     area_sqft: float
     depth_ft: float
     hsg: str
