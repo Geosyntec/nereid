@@ -25,7 +25,7 @@ from nereid.api.api_v1.models.treatment_facility_models import (
             },
         ),
         (
-            "validation error",
+            False,
             {
                 "node_id": "1",
                 "facility_type": "biofiltration",
