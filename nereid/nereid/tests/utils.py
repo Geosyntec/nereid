@@ -195,7 +195,6 @@ def generate_random_treatment_facility_request_node(
         dct["captured_pct"] = numpy.random.uniform(0.1, 99.0)
         del dct["retained_pct"]
     dct["design_storm_depth_inches"] = numpy.random.uniform(0.75, 1.5)
-    dct["is_online"] = True
 
     if "tributary_area_tc_min" in dct:
         dct["tributary_area_tc_min"] = int(numpy.random.choice(range(5, 60, 5)))

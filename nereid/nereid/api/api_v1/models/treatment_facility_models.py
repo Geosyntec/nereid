@@ -113,7 +113,7 @@ class DryWeatherTreatmentLowFlowFacility(LowFlowFacility):
     _constructor: str = "dry_weather_treatment_low_flow_facility_constructor"
 
 
-class OnlineFaciltyBase(FacilityBase):
+class OnlineFacilityBase(FacilityBase):  # pragma: no cover
     is_online: bool = True
     tributary_area_tc_min: float = Field(5.0, le=60)
     offline_diversion_rate_cfs: Optional[float] = None
@@ -128,33 +128,33 @@ class OnlineFaciltyBase(FacilityBase):
         return v
 
 
-class RetentionFacility(OnlineFaciltyBase):
+class RetentionFacility(FacilityBase):
     total_volume_cuft: float
     area_sqft: float
     inf_rate_inhr: float
     _constructor: str = "retention_facility_constructor"
 
 
-class RetentionFacilityHSG(OnlineFaciltyBase):
+class RetentionFacilityHSG(FacilityBase):
     total_volume_cuft: float
     area_sqft: float
     hsg: str
     _constructor: str = "retention_facility_constructor"
 
 
-class DryWellFacility(OnlineFaciltyBase):
+class DryWellFacility(FacilityBase):
     total_volume_cuft: float
     treatment_rate_cfs: float
     _constructor: str = "dry_well_facility_constructor"
 
 
-class DryWellFacilityFlowOrVolume(OnlineFaciltyBase):
+class DryWellFacilityFlowOrVolume(FacilityBase):
     total_volume_cuft: float
     treatment_rate_cfs: float
     _constructor: str = "dry_well_facility_flow_or_volume_constructor"
 
 
-class BioInfFacility(OnlineFaciltyBase):
+class BioInfFacility(FacilityBase):
     total_volume_cuft: float
     retention_volume_cuft: float
     area_sqft: float
@@ -163,7 +163,7 @@ class BioInfFacility(OnlineFaciltyBase):
     _constructor: str = "bioinfiltration_facility_constructor"
 
 
-class RetAndTmntFacility(OnlineFaciltyBase):
+class RetAndTmntFacility(FacilityBase):
     total_volume_cuft: float
     retention_volume_cuft: float
     area_sqft: float
@@ -172,7 +172,7 @@ class RetAndTmntFacility(OnlineFaciltyBase):
     _constructor: str = "retention_and_treatment_facility_constructor"
 
 
-class TmntFacility(OnlineFaciltyBase):
+class TmntFacility(FacilityBase):
     total_volume_cuft: float
     area_sqft: float
     media_filtration_rate_inhr: float
@@ -194,7 +194,7 @@ class TmntFacilityWithRetentionOverride(TmntFacility):
     )
 
 
-class FlowAndRetFacility(OnlineFaciltyBase):
+class FlowAndRetFacility(FacilityBase):
     treatment_rate_cfs: float
     area_sqft: float
     depth_ft: float
@@ -202,14 +202,14 @@ class FlowAndRetFacility(OnlineFaciltyBase):
     _constructor: str = "flow_and_retention_facility_constructor"
 
 
-class CisternFacility(OnlineFaciltyBase):
+class CisternFacility(FacilityBase):
     total_volume_cuft: float
     winter_demand_cfs: float = 0.0
     summer_demand_cfs: float = 0.0
     _constructor: str = "cistern_facility_constructor"
 
 
-class PermPoolFacility(OnlineFaciltyBase):
+class PermPoolFacility(FacilityBase):
     pool_volume_cuft: float = 0.0
     treatment_volume_cuft: float = 0.0
     _constructor: str = "perm_pool_facility_constructor"
