@@ -93,7 +93,6 @@ from nereid.api.api_v1.models.treatment_facility_models import (
                 "ref_data_key": "10101000",
                 "design_storm_depth_inches": 0.85,
                 "tributary_area_tc_min": None,
-                "tributary_area_tc_min": None,
                 "design_capacity_cfs": None,
             },
         ),

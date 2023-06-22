@@ -170,7 +170,7 @@ def summary_loading_results(
     dwf_cols = [
         c
         for c in detailed_results.columns
-        if "dry_weather_flow_cuft" in c and not "_pacre" in c
+        if "dry_weather_flow_cuft" in c and "_pacre" not in c
     ]
 
     output_columns_summable = (
@@ -221,7 +221,6 @@ def summary_loading_results(
 
     for season in season_names:
         dw_vol_col = f"{season}_dry_weather_flow_cuft"
-        dw_cfs_col = f"{season}_dry_weather_flow_cuft_psecond"
 
         for param in dry_weather_parameters:
             conc_col = season + "_" + param["conc_col"]

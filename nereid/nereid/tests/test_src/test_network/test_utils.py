@@ -57,8 +57,8 @@ def test_thin_graph_dict(graph_dict_isvalid):
     edge_meta = [dct.get("metadata", {}) for dct in _graph_dict.get("edges", [{}])]
     node_meta = [dct.get("metadata", {}) for dct in _graph_dict.get("nodes", [{}])]
 
-    assert all([len(e) == 1 if "key" in e else len(e) == 0 for e in edge_meta])
-    assert all([len(n) == 0 for n in node_meta])
+    assert all(len(e) == 1 if "key" in e else len(e) == 0 for e in edge_meta)
+    assert all(len(n) == 0 for n in node_meta)
 
 
 @pytest.mark.parametrize("check", ["edges", "nodes", "multigraph", "directed"])
@@ -94,9 +94,9 @@ def test_clean_graph_object(graph_obj_isvalid):
     graph_obj, isvalid = graph_obj_isvalid
     clean_graph_dict = utils.clean_graph_dict(graph_obj)
 
-    assert all([isinstance(n["id"], str) for n in clean_graph_dict["nodes"]])
-    assert all([isinstance(e["source"], str) for e in clean_graph_dict["edges"]])
-    assert all([isinstance(e["target"], str) for e in clean_graph_dict["edges"]])
+    assert all(isinstance(n["id"], str) for n in clean_graph_dict["nodes"])
+    assert all(isinstance(e["source"], str) for e in clean_graph_dict["edges"])
+    assert all(isinstance(e["target"], str) for e in clean_graph_dict["edges"])
 
     clean_graph_obj = nx.relabel_nodes(graph_obj, lambda x: str(x))
     _g = utils.graph_factory(clean_graph_dict)

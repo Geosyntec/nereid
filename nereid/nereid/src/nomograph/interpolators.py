@@ -80,7 +80,7 @@ def bisection_search(
     return guess, converged
 
 
-class NomographBase(object):
+class NomographBase:
     def __init__(
         self,
         *,
@@ -194,7 +194,9 @@ class NomographBase(object):
 
         _nomo: Callable[[float, float], float] = self.nomo
 
-        function: Callable[[float], float] = lambda x: _nomo(x, t)
+        def function(x: float) -> float:
+            return _nomo(x, t)
+
         vmin, vmax = numpy.nanmin(self.x_data), numpy.nanmax(self.x_data)
 
         result, converged = bisection_search(
@@ -249,7 +251,7 @@ class NomographBase(object):
                 if t_iter.size == y_iter.size:
 
                     res: List[float] = []
-                    for _y, _t in zip(y_iter, t_iter):
+                    for _y, _t in zip(y_iter, t_iter, strict=True):
 
                         guess, _ = self.get_x(
                             at_y=_y, t=_t, atol=atol, max_iters=max_iters
@@ -290,7 +292,7 @@ class NomographBase(object):
             alpha=0.4,
         )
 
-        for i, d in enumerate(sorted(set(self.t_data))):
+        for _i, d in enumerate(sorted(set(self.t_data))):
 
             x = self.x_data[self.t_data == d]  # type: ignore
             y = self.y_data[self.t_data == d]  # type: ignore
@@ -327,7 +329,7 @@ class NomographBase(object):
         return self._basesurface(*args, **kwargs)  # type: ignore
 
 
-class VolumeNomograph(object):
+class VolumeNomograph:
     def __init__(
         self,
         size: Union[pandas.Series, numpy.ndarray],
@@ -370,7 +372,7 @@ class VolumeNomograph(object):
         return ax
 
 
-class FlowNomograph(object):
+class FlowNomograph:
     def __init__(
         self,
         intensity: Union[pandas.Series, numpy.ndarray],

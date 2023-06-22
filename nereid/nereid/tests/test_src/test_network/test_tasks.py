@@ -39,7 +39,7 @@ def test_validate_network(edgelist, isvalid, exp):
 
     g = {"edges": [{"source": s, "target": t} for s, t in edgelist], "directed": True}
 
-    G = graph_factory(g)
+    graph_factory(g)
 
     result = tasks.validate_network(g)
 
@@ -54,7 +54,7 @@ def test_validate_network(edgelist, isvalid, exp):
     if isvalid:
         assert result["isvalid"] == isvalid
     else:
-        for key, value in zip(keys, expected_result):
+        for key, value in zip(keys, expected_result, strict=True):
             assert result[key] == value
 
 

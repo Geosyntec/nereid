@@ -4,7 +4,7 @@ import networkx as nx
 
 from nereid.core.utils import dictlist_to_dict
 from nereid.src.land_surface.tasks import land_surface_loading
-from nereid.src.network.utils import GraphType, graph_factory
+from nereid.src.network.utils import graph_factory
 from nereid.src.network.validate import is_valid, validate_network
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 from nereid.src.tmnt_performance.tasks import effluent_function_map
@@ -48,7 +48,7 @@ def initialize_graph(
     if not is_valid(g):
         err_msg = "NetworkValidationError: "
         _keys = ["node_cycles", "edge_cycles", "multiple_out_edges", "duplicate_edges"]
-        for key, value in zip(_keys, validate_network(g)):
+        for key, value in zip(_keys, validate_network(g), strict=True):
             if len(value) > 0:
                 err_msg += ", " + ": ".join([key, str(value)])
         errors.append(err_msg)
@@ -241,10 +241,8 @@ def solve_node(
 
     elif "facility" in node_type:
         if any(
-            [
-                _type in node_type
-                for _type in ["volume_based", "flow_based", "dry_well", "simple"]
-            ]
+            _type in node_type
+            for _type in ["volume_based", "flow_based", "dry_well", "simple"]
         ):
             if "cistern" in node_type:
                 # run this again to prorate the demand rate & ddt based on the dw inflow.

@@ -50,7 +50,10 @@ def compute_pollutant_load_reduction(
     tmnt_fxn = effluent_function_map.get((tmnt_facility_type, poc_long), None)
 
     if tmnt_fxn is None:
-        tmnt_fxn = lambda inf_conc, inf_unit: inf_conc
+
+        def tmnt_fxn(inf_conc, inf_unit):
+            return inf_conc
+
         data["node_warnings"].append(
             f"WARNING: treatment function not found for ({tmnt_facility_type}, {poc_long})"
         )

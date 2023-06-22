@@ -102,7 +102,7 @@ def render_subgraphs(
 
     edge_color = (51 / 255, 51 / 255, 51 / 255)
 
-    basenodes = nx.draw_networkx(
+    nx.draw_networkx(
         g,
         pos=layout,
         ax=ax,
@@ -127,7 +127,7 @@ def render_subgraphs(
     selection.set_linewidths(1.5)
 
     for i, _nodes in enumerate(sgs):
-        subgraphs = nx.draw_networkx_nodes(
+        nx.draw_networkx_nodes(
             g.subgraph(_nodes),
             ax=ax,
             pos=layout,
@@ -194,21 +194,21 @@ def render_solution_sequence(
 
             sg = G.subgraph(g)
 
-            _nx_draw_kwargs = dict(
-                pos=layout,
-                ax=ax,
-                node_shape=node_shape,
-                node_color=[color for _ in sg.nodes()],
-                edge_color=[(0.2, 0.2, 0.2, 1) for _ in sg.edges()],
-                width=1.5,
-                linewidths=0.5,
-                edgecolors=[(0.2, 0.2, 0.2, 1) for _ in sg.nodes()],
-                node_size=group_size,
-                arrows=True,
-                with_labels=True,
-                font_color=font_color,
-                label=f"{k}-{i}",
-            )
+            _nx_draw_kwargs = {
+                "pos": layout,
+                "ax": ax,
+                "node_shape": node_shape,
+                "node_color": [color for _ in sg.nodes()],
+                "edge_color": [(0.2, 0.2, 0.2, 1) for _ in sg.edges()],
+                "width": 1.5,
+                "linewidths": 0.5,
+                "edgecolors": [(0.2, 0.2, 0.2, 1) for _ in sg.nodes()],
+                "node_size": group_size,
+                "arrows": True,
+                "with_labels": True,
+                "font_color": font_color,
+                "label": f"{k}-{i}",
+            }
 
             _nx_draw_kwargs.update(**nx_draw_kwargs)
 
@@ -220,7 +220,7 @@ def render_solution_sequence(
 
 
 def fig_to_image(fig: figure.Figure, **kwargs: Any) -> IO:
-    _kwargs = dict(bbox_inches="tight", format="svg", dpi=300)
+    _kwargs = {"bbox_inches": "tight", "format": "svg", "dpi": 300}
     _kwargs.update(kwargs)
 
     img = BytesIO()

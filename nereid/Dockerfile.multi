@@ -1,5 +1,5 @@
 # Austin Orr 11/27/2019
-# This approach is the fastest to build and yields reasonably 
+# This approach is the fastest to build and yields reasonably
 # small images at ~500mb each. The alipine+install variant of this
 # pattern is able to reduce each image to ~250MB but takes considerable
 # time to build and is considerably more complex for scipy and pandas.
@@ -7,7 +7,7 @@
 
 FROM python:3.11-bullseye as nereid_install
 RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends graphviz \ 
+    && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
 CMD ["bash", "-c", "while true; do sleep 1; done"]
@@ -22,7 +22,7 @@ FROM python:3.11-alpine3.17 as flower
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 RUN pip install --no-cache-dir redis==4.1.0 flower==1.0.0 celery==5.2.3
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
-ENV FLOWER_DATA_DIR=/data 
+ENV FLOWER_DATA_DIR=/data
 ENV PYTHONPATH=${FLOWER_DATA_DIR}
 WORKDIR $FLOWER_DATA_DIR
 # Add a user with an explicit UID/GID and create necessary directories
@@ -59,7 +59,7 @@ RUN mkdir /serve && \
 
 FROM python:3.11.1-slim-bullseye as core-runtime
 RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends graphviz \ 
+    && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
@@ -85,7 +85,7 @@ FROM core-runtime as celeryworker
 ENV IMG_USER=celeryworker
 RUN addgroup --gid 1000 ${IMG_USER} \
     && adduser --system --disabled-password --uid 1000 --gid 1000 ${IMG_USER} \
-    && chown -R ${IMG_USER}:${IMG_USER} /nereid 
+    && chown -R ${IMG_USER}:${IMG_USER} /nereid
 USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
 COPY --chown=${IMG_USER} ./scripts/run-worker.sh /run-worker.sh

@@ -24,7 +24,7 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
     result = response_dict["results"] + response_dict["leaf_results"]
     outfall_results = [n for n in result if n["node_id"] == "0"][0]
     assert len(result) == len(watershed_request["graph"]["nodes"])
-    assert all([len(n["node_errors"]) == 0 for n in result])
+    assert all(len(n["node_errors"]) == 0 for n in result)
 
     for single, total in [
         ("eff_area_acres", "eff_area_acres_total_cumul"),
@@ -67,7 +67,7 @@ def test_solve_watershed_with_treatment(
     result = response_dict["results"] + response_dict["leaf_results"]
     outfall_results = [n for n in result if n["node_id"] == "0"][0]
     assert len(result) == len(watershed_request["graph"]["nodes"])
-    assert all([len(n["node_errors"]) == 0 for n in result])
+    assert all(len(n["node_errors"]) == 0 for n in result)
 
     sum_ret = sum([n.get("runoff_volume_cuft_retained", 0.0) for n in result])
     sum_inflow = sum([n.get("runoff_volume_cuft", 0.0) for n in result])
@@ -111,7 +111,7 @@ def test_solve_watershed_with_treatment(
         for data in response_dict["results"]
         if (data["eff_area_acres_direct"] < data["eff_area_acres_cumul"])
         and "facility" in data.get("node_type", "")
-        and not "simple" in data.get("node_type", "")
+        and "simple" not in data.get("node_type", "")
     ]
 
     for data in nested_bmps:

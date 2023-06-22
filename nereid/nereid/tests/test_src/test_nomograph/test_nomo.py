@@ -51,7 +51,7 @@ from nereid.tests.utils import TEST_PATH
 def test_build_nomograph(path, name, x, t, z, exception):
 
     if exception is None:
-        nomo = build_nomo(name, TEST_PATH / path, x_col=x, t_col=t, y_col=z)
+        build_nomo(name, TEST_PATH / path, x_col=x, t_col=t, y_col=z)
     else:
         pytest.raises(
             exception, build_nomo, name, TEST_PATH / path, x_col=x, t_col=t, y_col=z

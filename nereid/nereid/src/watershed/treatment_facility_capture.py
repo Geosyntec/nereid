@@ -35,21 +35,24 @@ def compute_volume_capture_with_nomograph(
     node_type = data.get("node_type", "none")
 
     vol_nomo_file = data.get("volume_nomograph", "")
-    default_volume_nomo = (  # pragma: no branch
-        lambda size=None, ddt=None, performance=None: 0.0
-    )
+
+    def default_volume_nomo(size=None, ddt=None, performance=None):
+        return 0.0
+
     volume_nomo = nomograph_map.get(vol_nomo_file, default_volume_nomo)
 
     flow_nomo_file = data.get("flow_nomograph", "")
-    default_flow_nomo = (  # pragma: no branch
-        lambda intensity=None, tc=None, performance=None: 0.0
-    )
+
+    def default_flow_nomo(intensity=None, tc=None, performance=None):
+        return 0.0
+
     flow_nomo = nomograph_map.get(flow_nomo_file, default_flow_nomo)
 
     peak_nomo_file = data.get("peak_nomograph", "")
-    default_peak_nomo = (  # pragma: no branch
-        lambda size=None, ddt=None, performance=None: 0.0
-    )
+
+    def default_peak_nomo(size=None, ddt=None, performance=None):
+        return 0.0
+
     peak_nomo = nomograph_map.get(peak_nomo_file, default_peak_nomo)
 
     data["retention_volume_cuft"] = data.get("retention_volume_cuft", 0.0)
@@ -155,8 +158,8 @@ def compute_volume_based_standalone_facility(
     treatment_vol_frac = safe_divide(trt_mvol, design_volume)
 
     input_compartments = [
-        dict(volume=retention_vol_frac, ddt=ret_mddt),  # retention compartment is [0]
-        dict(volume=treatment_vol_frac, ddt=trt_mddt),  # treatment compartment is [1]
+        {"volume": retention_vol_frac, "ddt": ret_mddt},  # retention compartment is [0]
+        {"volume": treatment_vol_frac, "ddt": trt_mddt},  # treatment compartment is [1]
     ]
 
     compartments = solve_volume_based_compartments(input_compartments, volume_nomo)

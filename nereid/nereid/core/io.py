@@ -53,14 +53,14 @@ def load_ref_data(
     data_path = Path(context["data_path"])
     project_reference_data = context.get("project_reference_data", {})
 
-    if not tablename in project_reference_data:
+    if tablename not in project_reference_data:
         return None, [
             f"Warning: no '{tablename}' in context[project_reference_data] section"
         ]
 
     table_context = project_reference_data.get(tablename, {})
 
-    if not "file" in table_context:  # pragma: no cover
+    if "file" not in table_context:  # pragma: no cover
         return None, [
             f"Warning: no file to load from {tablename} in context[project_reference_data] section"
         ]
@@ -202,7 +202,7 @@ def parse_joins(
                         f"Warning: Some data from {tablename} failed the requested join '{j}' to "
                         f"reference data in {config_section}:{config_object}."
                     )
-                    if not "warnings" in df:
+                    if "warnings" not in df:
                         df["warnings"] = ""
                     df.loc[df["_merge"] != "both", "warnings"] += (
                         f"Warning: unable join '{j['left_on']}' from {tablename} to '{j['right_on']}' "

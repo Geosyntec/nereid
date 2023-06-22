@@ -14,13 +14,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     API_LATEST: str = API_V1_STR
     APP_CONTEXT: Dict[str, Any] = load_cfg(nereid_path / "core" / "base_config.yml")
-    APP_CONTEXT.update(
-        {
-            "version": nereid.__version__,
-            "author": nereid.__author__,
-            "contact": nereid.__email__,
-        }
-    )
+    APP_CONTEXT.update({"version": nereid.__version__})
     VERSION: str = nereid.__version__
     DATA_DIRECTORY: Optional[str] = None
     LOGLEVEL: str = "INFO"

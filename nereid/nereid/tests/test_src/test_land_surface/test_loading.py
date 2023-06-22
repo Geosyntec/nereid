@@ -96,9 +96,9 @@ def test_detailed_land_surface_loading_results(
         == t_precip["area_acres"].sum()
     )
     assert len(t) == len(land_surfaces_list)
-    if not "no_joins" in key and not "no_params" in key:
-        assert any(["conc" in c for c in t.columns])
-        assert any(["load" in c for c in t.columns])
+    if "no_joins" not in key and "no_params" not in key:
+        assert any("conc" in c for c in t.columns)
+        assert any("load" in c for c in t.columns)
 
     t = detailed_volume_loading_results(land_surfaces_df)
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
@@ -113,9 +113,9 @@ def test_detailed_land_surface_loading_results(
     )
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
     assert len(t) == len(land_surfaces_list)
-    if not "no_joins" in key and not "no_params" in key:
-        assert any(["conc" in c for c in t.columns])
-        assert any(["load" in c for c in t.columns])
+    if "no_joins" not in key and "no_params" not in key:
+        assert any("conc" in c for c in t.columns)
+        assert any("load" in c for c in t.columns)
 
 
 def test_detailed_land_surface_volume_loading_results(
@@ -133,15 +133,15 @@ def test_detailed_land_surface_volume_loading_results(
     imp_ro_coeff = imp_ro_depth_inches / MAP
 
     input_df = pandas.DataFrame(
-        dict(
-            area_acres=area_acres,
-            imp_area_acres=imp_area_acres,
-            is_developed=[True, True],
-            perv_ro_depth_inches=perv_ro_depth_inches,
-            imp_ro_depth_inches=imp_ro_depth_inches,
-            perv_ro_coeff=perv_ro_coeff,
-            imp_ro_coeff=imp_ro_coeff,
-        )
+        {
+            "area_acres": area_acres,
+            "imp_area_acres": imp_area_acres,
+            "is_developed": [True, True],
+            "perv_ro_depth_inches": perv_ro_depth_inches,
+            "imp_ro_depth_inches": imp_ro_depth_inches,
+            "perv_ro_coeff": perv_ro_coeff,
+            "imp_ro_coeff": imp_ro_coeff,
+        }
     )
 
     result = detailed_volume_loading_results(input_df).round(2)

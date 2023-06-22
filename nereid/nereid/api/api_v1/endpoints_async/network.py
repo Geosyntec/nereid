@@ -85,7 +85,7 @@ async def get_subgraph_network_as_img(
 ) -> Union[Dict[str, Any], Any]:
 
     task = bg.network_subgraphs.AsyncResult(task_id, app=router)
-    response = dict(task_id=task.task_id, status=task.status)
+    response = {"task_id": task.task_id, "status": task.status}
 
     if task.successful():  # pragma: no branch
 
@@ -103,7 +103,7 @@ async def get_subgraph_network_as_img(
                     render_task, timeout=0.2
                 )
 
-            svgresponse = dict(task_id=render_task.task_id, status=render_task.status)
+            svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
 
             if render_task.successful():
 
@@ -167,7 +167,7 @@ async def get_network_solution_sequence_as_img(
 ) -> Union[Dict[str, Any], Any]:
 
     task = bg.solution_sequence.AsyncResult(task_id, app=router)
-    response = dict(task_id=task.task_id, status=task.status)
+    response = {"task_id": task.task_id, "status": task.status}
 
     if task.successful():  # pragma: no branch
 
@@ -188,7 +188,7 @@ async def get_network_solution_sequence_as_img(
                     render_task, timeout=0.2
                 )
 
-            svgresponse = dict(task_id=render_task.task_id, status=render_task.status)
+            svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
 
             if render_task.successful():
 

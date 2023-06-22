@@ -42,7 +42,7 @@ def test_network_algo_get_all_predecessors(g):
         # double tap
         # this is overkill, but proves all preds
         # are upstream of the input node
-        assert all([tsort.index(i) < nix for i in preds])
+        assert all(tsort.index(i) < nix for i in preds)
 
 
 def test_network_algo_get_all_successors(g):
@@ -58,7 +58,7 @@ def test_network_algo_get_all_successors(g):
         # double tap
         # this is overkill, but proves all preds
         # are upstream of the input node
-        assert all([tsort.index(i) > nix for i in succs])
+        assert all(tsort.index(i) > nix for i in succs)
 
 
 def test_network_algo_get_subset_dag(g):

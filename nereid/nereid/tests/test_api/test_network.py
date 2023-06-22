@@ -178,7 +178,7 @@ def test_get_render_subgraph_svg_slow(
     slow_graph = clean_graph_dict(nx.gnr_graph(200, p=0.05, seed=42))
     nodes = [{"id": "3"}, {"id": "29"}, {"id": "18"}]
 
-    payload = dict(graph=slow_graph, nodes=nodes)
+    payload = {"graph": slow_graph, "nodes": nodes}
 
     response = client.post(route, json=payload)
     result_route = response.json().get("result_route")

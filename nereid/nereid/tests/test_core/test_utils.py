@@ -20,7 +20,7 @@ from nereid.core.context import get_request_context, validate_request_context
 )
 def test_get_request_context(state, region, dirname, context, exp):
     req_context = get_request_context(state, region, dirname, context)
-    assert all([k in req_context for k in exp.keys()])
+    assert all(k in req_context for k in exp.keys())
 
 
 @pytest.mark.parametrize(

@@ -289,7 +289,7 @@ def test_watershed_vs_swmm(contexts, realistic_graph, swmm_results):
             nomograph_map=nomograph_map,
         )
 
-    assert all([len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True)])
+    assert all(len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True))
 
     sum_ret = sum(nx.get_node_attributes(g, "runoff_volume_cuft_retained").values())
     sum_inflow = sum(nx.get_node_attributes(g, "runoff_volume_cuft").values())

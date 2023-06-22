@@ -53,7 +53,11 @@ def standard_json_response(
     _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=timeout)
     result_route = str(request.url_for(get_route, task_id=task.id))
 
-    response = dict(task_id=task.task_id, status=task.status, result_route=result_route)
+    response = {
+        "task_id": task.task_id,
+        "status": task.status,
+        "result_route": result_route,
+    }
 
     if task.successful():
         response["data"] = task.result

@@ -5,9 +5,9 @@ services:
       - redis
       - celeryworker
   celeryworker:
-    depends_on: 
+    depends_on:
       - redis
-  nereid-tests:  
+  nereid-tests:
     depends_on:
       - redis
       - celeryworker
