@@ -21,5 +21,4 @@ def minimum_attrs(dct: Dict[str, Any]) -> List[str]:
 
 
 def attrs_to_resubmit(collection: List[Dict[str, Any]]) -> List[str]:
-
     return list({k for data in collection for k in minimum_attrs(data)})

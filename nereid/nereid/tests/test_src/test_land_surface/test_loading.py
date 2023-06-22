@@ -17,7 +17,6 @@ from nereid.src.wq_parameters import init_wq_parameters
 def test_build_land_surface_dataframe(
     land_surface_loading_response_dicts, n_rows, n_nodes
 ):
-
     land_surfaces = land_surface_loading_response_dicts[(n_rows, n_nodes)]
     land_surfaces_list = land_surfaces["land_surfaces"]
     df = pandas.DataFrame(land_surfaces_list)
@@ -45,7 +44,6 @@ def test_build_land_surface_dataframe(
 def test_detailed_land_surface_loading_results(
     land_surface_loading_response_dicts, contexts, key, n_rows, n_nodes
 ):
-
     land_surfaces = land_surface_loading_response_dicts[(n_rows, n_nodes)]
     land_surfaces_list = land_surfaces["land_surfaces"]
     df = pandas.DataFrame(land_surfaces_list)
@@ -121,7 +119,6 @@ def test_detailed_land_surface_loading_results(
 def test_detailed_land_surface_volume_loading_results(
     known_land_surface_volume_loading_result,
 ):
-
     numpy.random.seed(42)
     size = 2
     MAP = 10  # inches
@@ -202,7 +199,6 @@ def test_detailed_land_surface_pollutant_loading_results(
     ]
 
     def sigfigs(x, N):
-
         if x > 0 or x < 0:
             return numpy.round(x, 4 - int(numpy.floor(numpy.log10(abs(x)))))
         else:

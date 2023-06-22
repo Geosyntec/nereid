@@ -27,7 +27,6 @@ def run_task(
     force_foreground: Optional[bool] = False,
     timeout: float = 0.2,
 ) -> Dict[str, Any]:
-
     if force_foreground or settings.FORCE_FOREGROUND:  # pragma: no cover
         task_ret: Union[bytes, str] = task()
         response = {

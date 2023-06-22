@@ -41,7 +41,6 @@ def pollutant_units_map(tmnt_params):
 def test_eff_concs(
     KTRL_curves, eff_conc_mapping, pollutant_facilities_map, pollutant_units_map, poc
 ):
-
     check_infs = KTRL_curves[poc]["xhat"]
     unit = pollutant_units_map[poc]
 
@@ -64,7 +63,6 @@ def test_eff_concs(
     ],
 )
 def test_eff_conc_varied_input(eff_conc_mapping, inf_conc, inf_unit, kwargs, exp):
-
     res = tmnt.effluent_conc(inf_conc, inf_unit, **kwargs)
     assert abs(exp - res) < 1e-3
 

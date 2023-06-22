@@ -28,7 +28,6 @@ def g(request):
 
 
 def test_network_algo_get_all_predecessors(g):
-
     # ensure input is a dag
     tsort = list(nx.lexicographical_topological_sort(g))
     for node in g.nodes():
@@ -133,13 +132,11 @@ def graph():
     ],
 )
 def test_network_algo_get_subset(graph, nodes, exp):
-
     subset = get_subset(graph, nodes)
     assert subset == set(exp)
 
 
 def test_find_leafy_branch_larger_than_size(graph):
-
     with pytest.raises(nx.NetworkXUnfeasible):
         sg = find_leafy_branch_larger_than_size(graph, len(graph))
 
@@ -152,7 +149,6 @@ def test_find_leafy_branch_larger_than_size(graph):
 
 
 def check_sequential(seqs, ls):
-
     root = seqs[-1][-1]  # last sequence, last element
     ls_ix_of_prev_seq_root = -1
 
@@ -174,7 +170,6 @@ def check_sequential(seqs, ls):
 
 @pytest.mark.parametrize("size", [1, 3, 5, 10, 100])
 def test_sequential_subgraph_nodes(graph, size):
-
     with pytest.raises(nx.NetworkXUnfeasible):
         _ = sequential_subgraph_nodes(graph, size)
 
@@ -193,7 +188,6 @@ def test_sequential_subgraph_nodes(graph, size):
 
 @pytest.mark.parametrize("size", [1, 3, 5, 10, 100])
 def test_parallel_sequential_subgraph_nodes(graph, size):
-
     if size == 1:
         with pytest.raises(nx.NetworkXUnfeasible):
             p_seqs = parallel_sequential_subgraph_nodes(graph, size)

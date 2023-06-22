@@ -19,7 +19,7 @@ def effluent_conc(
     E: float = 0,
     dl: float = 0,
     unit: Optional[str] = None,
-    **kwargs: Dict
+    **kwargs: Dict,
 ) -> float:
     """
     This function applies the NCHRP formula for computing stormwater treatment facility

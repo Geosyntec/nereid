@@ -10,7 +10,6 @@ from nereid.src.tasks import initialize_treatment_facilities
 def test_construct_nodes_from_treatment_facility_request(
     contexts, valid_treatment_facilities, ctxt_key, has_met_data
 ):
-
     context = contexts[ctxt_key]
     tmnt_facilities = {"treatment_facilities": valid_treatment_facilities}
     treatment_facilities = initialize_treatment_facilities(
@@ -56,7 +55,6 @@ def test_construct_nodes_from_treatment_facility_request_checkval(
     model,
     checkfor,
 ):
-
     context = contexts[ctxt_key]
     tmnt_facilities = {"treatment_facilities": [valid_treatment_facility_dicts[model]]}
 
@@ -79,7 +77,6 @@ def test_construct_nodes_from_treatment_facility_request_checkval(
 def test_construct_nodes_from_treatment_facility_request_pre_validation(
     contexts, treatment_facility_dicts, valid_treatment_facility_dicts, pre_validated
 ):
-
     context = contexts["default"]
     facilities = context["api_recognize"]["treatment_facility"]["facility_type"]
     model_map = {k: dct["validator"] for k, dct in facilities.items()}
@@ -103,7 +100,6 @@ def test_construct_nodes_from_treatment_facility_request_pre_validation(
     tmnt_lst = treatment_facilities["treatment_facilities"]
 
     for m in tmnt_lst:
-
         # check that the joins happened
         assert m.get("rain_gauge") is not None
         if not pre_validated:

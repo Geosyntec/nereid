@@ -6,11 +6,9 @@ import pandas
 def initialize_treatment_sites(
     treatment_sites: Dict[str, List[Dict[str, Any]]], context: Dict[str, Any]
 ) -> Dict[str, Any]:
-
     response: Dict[str, Any] = {"errors": []}
 
     try:
-
         sites = treatment_sites.get("treatment_sites") or []
 
         # tmnt_map is connects the facility name with the treatment
@@ -29,7 +27,6 @@ def initialize_treatment_sites(
         tmnt_sites = []
 
         if sites:
-
             _df = pandas.DataFrame(sites)
 
             remainder_data = []

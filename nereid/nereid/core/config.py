@@ -10,7 +10,6 @@ nereid_path = get_nereid_path()
 
 
 class Settings(BaseSettings):
-
     API_V1_STR: str = "/api/v1"
     API_LATEST: str = API_V1_STR
     APP_CONTEXT: Dict[str, Any] = load_cfg(nereid_path / "core" / "base_config.yml")

@@ -137,7 +137,6 @@ def compute_volume_based_standalone_facility(
     design_volume = data["design_volume_cuft_cumul"]
 
     if ret_vol_cuft > 0 and trt_vol_cuft > 0:
-
         q_ret = ret_vol_cuft / (ret_ddt_hr * 3600)
         q_trt = trt_vol_cuft / (trt_ddt_hr * 3600)
         q_tot = q_ret + q_trt
@@ -248,7 +247,6 @@ def compute_volume_based_nested_facility(
     )
 
     if data["retention_volume_cuft"] > 0:
-
         # writeup step 4
         data["us_ret_vol_xoff"] = float(
             volume_nomo(
@@ -483,7 +481,6 @@ def compute_peak_flow_reduction(
     data: Dict[str, Any],
     peak_nomo: Callable,
 ) -> Dict[str, Any]:
-
     ret_vol_cuft = data["retention_volume_cuft"]
     trt_vol_cuft = data["treatment_volume_cuft"]
 

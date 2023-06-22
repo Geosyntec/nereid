@@ -262,7 +262,6 @@ Wet Pond,Total Zinc,ug/L,638,40,80,5.0,,,,,4.156361721427686,0.4220690064430488,
 
 @pytest.fixture
 def KTRL_curves():
-
     curves = {
         "Dissolved Copper": DCu_CURVES,
         "Dissolved Zinc": DZn_CURVES,

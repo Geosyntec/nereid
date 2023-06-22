@@ -136,7 +136,6 @@ def detailed_loading_results(
     dry_weather_parameters: Iterable[Dict[str, str]],
     seasons: Dict[str, Iterable[str]],
 ) -> pandas.DataFrame:
-
     results = (
         land_surfaces_df.pipe(clean_land_surface_dataframe)
         .pipe(detailed_volume_loading_results)
@@ -158,7 +157,6 @@ def summary_loading_results(
     dry_weather_parameters: Iterable[Dict[str, str]],
     season_names: Iterable[str],
 ) -> pandas.DataFrame:
-
     groupby_cols = ["node_id"]
     wet_load_cols = [dct["load_col"] for dct in wet_weather_parameters]
     dry_load_cols = [

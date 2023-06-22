@@ -40,7 +40,6 @@ def initialize_graph(
     treatment_pre_validated: bool,
     context: Dict[str, Any],
 ) -> Tuple[nx.DiGraph, List[str]]:
-
     errors: List[str] = []
 
     g = graph_factory(watershed["graph"])
@@ -86,7 +85,6 @@ def solve_watershed_loading(
     g: nx.DiGraph,
     context: Dict[str, Any],
 ) -> None:
-
     wet_weather_parameters = init_wq_parameters(
         "land_surface_emc_table", context=context
     )

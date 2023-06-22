@@ -17,7 +17,6 @@ def validate_watershed_request(
     watershed_req: Watershed,
     context: dict = Depends(get_valid_context),
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-
     watershed: Dict[str, Any] = watershed_req.dict(by_alias=True)
 
     unvalidated_treatment_facilities = watershed.get("treatment_facilities")

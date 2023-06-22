@@ -14,7 +14,6 @@ from nereid.tests.utils import check_subgraph_response_equal
 @pytest.mark.parametrize("size", [50, 100])
 @pytest.mark.parametrize("pct_tmnt", [0, 0.3, 0.6])
 def test_post_solve_watershed(watershed_responses, size, pct_tmnt):
-
     post_response = watershed_responses[size, pct_tmnt]
     assert post_response.status_code == 200
     prjson = post_response.json()
@@ -25,7 +24,6 @@ def test_post_solve_watershed(watershed_responses, size, pct_tmnt):
 @pytest.mark.parametrize("size", [50, 100])
 @pytest.mark.parametrize("pct_tmnt", [0, 0.3, 0.6])
 def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
-
     key = size, pct_tmnt
     post_response = watershed_responses[key]
 
@@ -59,7 +57,6 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
 def test_post_solve_watershed_stable(
     client, watershed_requests, watershed_responses, watershed_test_case
 ):
-
     size, pct_tmnt, dirty_nodes = watershed_test_case
     watershed_request = watershed_requests[size, pct_tmnt]
     post_response = watershed_responses[size, pct_tmnt]

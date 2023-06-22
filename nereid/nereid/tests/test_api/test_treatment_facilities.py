@@ -9,7 +9,6 @@ names = [
 
 @pytest.mark.parametrize("key", names)
 def test_post_init_tmnt_facility_params(treatment_facility_responses, key):
-
     post_response = treatment_facility_responses[key]
     assert post_response.status_code == 200
     prjson = post_response.json()
@@ -19,7 +18,6 @@ def test_post_init_tmnt_facility_params(treatment_facility_responses, key):
 
 @pytest.mark.parametrize("key", names)
 def test_get_init_tmnt_facility_params(client, treatment_facility_responses, key):
-
     post_response = treatment_facility_responses[key]
 
     prjson = post_response.json()
@@ -44,13 +42,11 @@ def test_get_init_tmnt_facility_params(client, treatment_facility_responses, key
 def test_get_default_context_tmnt_facility_params(
     client, default_context_treatment_facility_responses, contexts
 ):
-
     facility_type_dict = contexts["default"]["api_recognize"]["treatment_facility"][
         "facility_type"
     ]
 
     for _name, post_response in default_context_treatment_facility_responses.items():
-
         prjson = post_response.json()
         grjson = prjson
         result_route = prjson.get("result_route")

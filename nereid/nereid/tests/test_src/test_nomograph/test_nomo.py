@@ -49,7 +49,6 @@ from nereid.tests.utils import TEST_PATH
     ],
 )
 def test_build_nomograph(path, name, x, t, z, exception):
-
     if exception is None:
         build_nomo(name, TEST_PATH / path, x_col=x, t_col=t, y_col=z)
     else:
@@ -77,7 +76,6 @@ def vol_nomo():
 
 
 def construct_vol_nomos():
-
     ls = []
     nomo = construct_vol_nomo()
     for ddt in set(nomo.nomo.t_data):
@@ -110,7 +108,6 @@ def flow_nomo():
 
 
 def construct_flow_nomos():
-
     ls = []
     nomo = construct_flow_nomo()
     for ddt in set(nomo.nomo.t_data):

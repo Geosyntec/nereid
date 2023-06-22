@@ -43,7 +43,6 @@ def graph_factory(graph: Dict[str, Any]) -> GraphType:
         cls = nx.Graph  # for testing purposes
 
     if edges:
-
         if is_multigraph:
             g = cls(
                 nx.from_edgelist(

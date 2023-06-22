@@ -21,7 +21,6 @@ def validate_facility_request(
     ),
     context: dict = Depends(get_valid_context),
 ) -> Tuple[TreatmentFacilities, Dict[str, Any]]:
-
     unvalidated_data = treatment_facilities.dict()["treatment_facilities"]
 
     valid_models = validate_treatment_facility_models(unvalidated_data, context)
@@ -43,7 +42,6 @@ async def initialize_treatment_facility_parameters(
         validate_facility_request
     ),
 ) -> Dict[str, Any]:
-
     treatment_facilities, context = tmnt_facility_req
 
     data = tasks.initialize_treatment_facilities(

@@ -83,7 +83,6 @@ def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGra
 
 
 def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Hashable]]:
-
     if not nx.is_weakly_connected(g):
         raise nx.NetworkXUnfeasible(
             "sequential solutions are not possible for disconnected graphs."
@@ -97,7 +96,6 @@ def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Hashable]]:
     graphs = []
 
     while len(g.nodes()) > 1:
-
         sg = find_leafy_branch_larger_than_size(g, size)
 
         sg_nodes = list(nx.lexicographical_topological_sort(sg))
@@ -125,7 +123,6 @@ def parallel_sequential_subgraph_nodes(
     # In this case, it separates the input graph into subgraphs
     # with different root nodes, or outfalls.
     for ws in nx.weakly_connected_components(g):
-
         ws_graph = g.subgraph(ws)
 
         sequential_subgraphs = sequential_subgraph_nodes(ws_graph, size)

@@ -49,7 +49,6 @@ def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
 def network_subgraphs(
     graph: Dict[str, Any], nodes: List[Dict[str, Any]]
 ) -> Dict[str, Any]:
-
     _graph = thin_graph_dict(graph)
 
     node_ids = [node["id"] for node in nodes]
@@ -71,7 +70,6 @@ def network_subgraphs(
 
 
 def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> bytes:
-
     g = graph_factory(task_result["graph"])
 
     fig = render_subgraphs(
@@ -90,7 +88,6 @@ def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> bytes
 def solution_sequence(
     graph: Dict[str, Any], min_branch_size: int
 ) -> Dict[str, Dict[str, List[Dict[str, List[Dict[str, Union[str, Dict]]]]]]]:
-
     _graph = thin_graph_dict(graph)  # strip unneeded metadata
 
     g = nx.DiGraph(graph_factory(_graph))
@@ -114,7 +111,6 @@ def solution_sequence(
 def render_solution_sequence_svg(
     task_result: dict, npi: Optional[float] = None
 ) -> bytes:
-
     _graph = thin_graph_dict(task_result["graph"])  # strip unneeded metadata
 
     g = nx.DiGraph(graph_factory(_graph))

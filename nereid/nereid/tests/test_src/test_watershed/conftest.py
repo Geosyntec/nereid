@@ -16,7 +16,6 @@ def watershed_graph():
 
 @pytest.fixture
 def initial_node_data(contexts, watershed_graph, land_surface_permutations):
-
     context = contexts["default"]
     numpy.random.seed(42)
     ls_req = generate_random_land_surface_request(

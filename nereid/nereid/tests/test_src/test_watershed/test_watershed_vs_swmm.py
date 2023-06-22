@@ -251,7 +251,6 @@ def realistic_graph():
 
 
 def test_watershed_vs_swmm(contexts, realistic_graph, swmm_results):
-
     context = contexts["default"]
 
     # This is necessary because the swmm runs sized the facilities with the assumption that

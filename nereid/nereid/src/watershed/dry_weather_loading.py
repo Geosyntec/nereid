@@ -44,7 +44,6 @@ def accumulate_dry_weather_loading(
     seasons = ["summer", "winter"]
 
     for season in seasons:
-
         accumulate_dry_weather_volume_by_season(g, data, predecessors, season)
         accumulate_dry_weather_pollutant_loading_by_season(
             g, data, predecessors, dry_weather_parameters, season
@@ -72,7 +71,6 @@ def accumulate_dry_weather_volume_by_season(
     """
 
     for suffix in ["", "_psecond"]:
-
         dw_col = f"{season}_dry_weather_flow_cuft" + suffix
 
         data[dw_col] = data.get(dw_col, 0.0)
@@ -116,7 +114,6 @@ def accumulate_dry_weather_pollutant_loading_by_season(
     """
 
     for param in dry_weather_parameters:
-
         inflow_volume = data[f"{season}_dry_weather_flow_cuft_inflow"]
 
         load_col = season + "_" + param["load_col"]
@@ -200,13 +197,11 @@ def init_dry_weather_tmnt_rate_by_season(
 
     dw_treatment_rate_cfs = data.get(f"{season}_dry_weather_treatment_rate_cfs")
     if dw_treatment_rate_cfs is None:
-
         dw_treatment_rate_cfs = data.get("treatment_rate_cfs")
         treatment_volume_cuft = data.get("treatment_volume_cuft", 0.0)
 
         if dw_treatment_rate_cfs is None:
             if treatment_volume_cuft > 1e-3:
-
                 treatment_ddt_seconds = data.get("treatment_ddt_hr", 0.0) * 3600
 
                 dw_treatment_rate_cfs = safe_divide(

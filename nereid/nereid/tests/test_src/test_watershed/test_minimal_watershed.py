@@ -190,7 +190,6 @@ TMNT_FACILITIES = [
 def test_minimal_watershed(
     contexts, tmnt_facility, reduces_load, does_retention, does_treatment
 ):
-
     cxmin = contexts["min"]
 
     wshd = {

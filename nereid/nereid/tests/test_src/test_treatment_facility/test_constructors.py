@@ -28,7 +28,6 @@ from nereid.src.treatment_facility.constructors import build_treatment_facility_
 def test_build_treatment_facility_nodes(
     contexts, valid_treatment_facility_dicts, ctxt_key, has_met_data, model, checkfor
 ):
-
     context = contexts[ctxt_key]
     tmnt_facilities = pandas.DataFrame([valid_treatment_facility_dicts[model]])
     df, messages = parse_configuration_logic(
@@ -55,7 +54,6 @@ def test_build_treatment_facility_nodes(
 def test_build_treatment_facility_nodes_from_long_list(
     contexts, valid_treatment_facilities, ctxt_key, has_met_data
 ):
-
     context = contexts[ctxt_key]
     tmnt_facilities = pandas.DataFrame(valid_treatment_facilities)
     df, messages = parse_configuration_logic(
@@ -84,7 +82,6 @@ def test_build_treatment_facility_nodes_from_long_list(
 def test_build_diversion_facility_months_operational(
     contexts, valid_treatment_facilities, months_operational, facility_type
 ):
-
     context = contexts["default"]
 
     tmnt_facilities = (

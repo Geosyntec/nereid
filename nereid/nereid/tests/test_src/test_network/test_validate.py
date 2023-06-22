@@ -35,7 +35,6 @@ from nereid.src.network.validate import is_valid, validate_network
     ],
 )
 def test_validate_network(edgelist, isvalid, result):
-
     g = nx.from_edgelist(edgelist, create_using=nx.MultiDiGraph)
     assert isvalid == is_valid(g)
     assert result == validate_network(g)

@@ -19,7 +19,6 @@ router = APIRouter()
 async def get_reference_data_file(
     context: dict = Depends(get_valid_context), filename: str = ""
 ) -> FileResponse:
-
     filepath = Path(context.get("data_path", "")) / filename
     state, region = context["state"], context["region"]
 
@@ -40,7 +39,6 @@ async def get_reference_data_file(
 async def get_reference_data_json(
     context: dict = Depends(get_valid_context), filename: str = ""
 ) -> Dict[str, Any]:
-
     filepath = Path(context.get("data_path", "")) / filename
     state, region = context["state"], context["region"]
 
@@ -115,7 +113,6 @@ async def get_nomograph(
 async def get_reference_data_table(
     table: str, context: dict = Depends(get_valid_context)
 ) -> Dict[str, Any]:
-
     state, region = context["state"], context["region"]
     tables = context.get("project_reference_data", {}).keys()
     if table in tables:
