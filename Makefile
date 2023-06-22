@@ -65,6 +65,11 @@ coverage: clean restart ## check code coverage quickly with the default Python
 # 	coverage html
 # 	$(BROWSER) htmlcov/index.html
 
+coverage-all: clean restart ## check complete code coverage
+	docker compose exec nereid-tests pytest nereid/tests -xs -n 4 --cov=nereid/
+	docker compose exec nereid-tests pytest nereid/tests/test_api -xs -n 4 --cov=nereid/ --cov-append --async
+	docker compose exec nereid-tests coverage report -m
+
 typecheck: clean ## run static type checker
 	mypy --config-file=nereid/mypy.ini nereid/nereid
 

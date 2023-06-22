@@ -37,21 +37,21 @@ def compute_volume_capture_with_nomograph(
     vol_nomo_file = data.get("volume_nomograph", "")
 
     def default_volume_nomo(size=None, ddt=None, performance=None):
-        return 0.0
+        return 0.0  # pragma: no cover
 
     volume_nomo = nomograph_map.get(vol_nomo_file, default_volume_nomo)
 
     flow_nomo_file = data.get("flow_nomograph", "")
 
     def default_flow_nomo(intensity=None, tc=None, performance=None):
-        return 0.0
+        return 0.0  # pragma: no cover
 
     flow_nomo = nomograph_map.get(flow_nomo_file, default_flow_nomo)
 
     peak_nomo_file = data.get("peak_nomograph", "")
 
     def default_peak_nomo(size=None, ddt=None, performance=None):
-        return 0.0
+        return 0.0  # pragma: no cover
 
     peak_nomo = nomograph_map.get(peak_nomo_file, default_peak_nomo)
 

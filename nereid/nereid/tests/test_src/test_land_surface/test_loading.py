@@ -95,8 +95,8 @@ def test_detailed_land_surface_loading_results(
     )
     assert len(t) == len(land_surfaces_list)
     if "no_joins" not in key and "no_params" not in key:
-        assert any("conc" in c for c in t.columns)
-        assert any("load" in c for c in t.columns)
+        assert any("conc" in c for c in t.columns)  # pragma: no branch
+        assert any("load" in c for c in t.columns)  # pragma: no branch
 
     t = detailed_volume_loading_results(land_surfaces_df)
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
@@ -112,8 +112,8 @@ def test_detailed_land_surface_loading_results(
     assert t["area_acres"].sum() == land_surfaces_df["area_acres"].sum()
     assert len(t) == len(land_surfaces_list)
     if "no_joins" not in key and "no_params" not in key:
-        assert any("conc" in c for c in t.columns)
-        assert any("load" in c for c in t.columns)
+        assert any("conc" in c for c in t.columns)  # pragma: no branch
+        assert any("load" in c for c in t.columns)  # pragma: no branch
 
 
 def test_detailed_land_surface_volume_loading_results(
