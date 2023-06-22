@@ -55,10 +55,15 @@ async def get_reference_data_json(
         detail = f"state '{state}', region '{region}', or filename '{filename}' not found. {filepath}"
         raise HTTPException(status_code=400, detail=detail)
 
-    response = dict(
-        status="SUCCESS",
-        data=dict(state=state, region=region, file=filename, filedata=filedata),
-    )
+    response = {
+        "status": "SUCCESS",
+        "data": {
+            "state": state,
+            "region": region,
+            "file": filename,
+            "filedata": filedata,
+        },
+    }
 
     return response
 
@@ -121,8 +126,14 @@ async def get_reference_data_table(
         detail = f"No such table. Options are {tables}"
         raise HTTPException(status_code=400, detail=detail)
 
-    response = dict(
-        status="SUCCESS",
-        data=dict(state=state, region=region, table=table, data=data, msg=msg),
-    )
+    response = {
+        "status": "SUCCESS",
+        "data": {
+            "state": state,
+            "region": region,
+            "table": table,
+            "data": data,
+            "msg": msg,
+        },
+    }
     return response

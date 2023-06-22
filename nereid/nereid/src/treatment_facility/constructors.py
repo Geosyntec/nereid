@@ -38,11 +38,11 @@ def construct_treatment_facility_node_context(
 class TreatmentFacilityConstructor:
     @staticmethod
     def nt_facility_constructor(**kwargs: dict) -> Dict:
-        return dict(captured_pct=0, retained_pct=0, treated_pct=0)
+        return {"captured_pct": 0, "retained_pct": 0, "treated_pct": 0}
 
     @staticmethod
     def simple_facility_constructor(**kwargs: dict) -> Dict:
-        return dict(node_type="simple_facility")
+        return {"node_type": "simple_facility"}
 
     @staticmethod
     def retention_facility_constructor(
@@ -57,12 +57,12 @@ class TreatmentFacilityConstructor:
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
 
-        result = dict(
-            retention_volume_cuft=retention_volume_cuft,
-            retention_depth_ft=retention_depth_ft,
-            retention_ddt_hr=retention_ddt_hr,
-            node_type="volume_based_facility",
-        )
+        result = {
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_depth_ft": retention_depth_ft,
+            "retention_ddt_hr": retention_ddt_hr,
+            "node_type": "volume_based_facility",
+        }
 
         return result
 
@@ -74,15 +74,15 @@ class TreatmentFacilityConstructor:
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
 
-        result = dict(
-            retention_volume_cuft=retention_volume_cuft,
-            retention_ddt_hr=retention_ddt_hr,
+        result = {
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_ddt_hr": retention_ddt_hr,
             # We need to override this because dry wells don't perform treatment
             # in either wet weather or dry weather, only retention/volume reduction.
-            ini_treatment_rate_cfs=treatment_rate_cfs,
-            treatment_rate_cfs=0.0,
-            node_type="volume_based_facility",
-        )
+            "ini_treatment_rate_cfs": treatment_rate_cfs,
+            "treatment_rate_cfs": 0.0,
+            "node_type": "volume_based_facility",
+        }
 
         return result
 
@@ -94,15 +94,15 @@ class TreatmentFacilityConstructor:
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
 
-        result = dict(
-            retention_volume_cuft=retention_volume_cuft,
-            retention_ddt_hr=retention_ddt_hr,
+        result = {
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_ddt_hr": retention_ddt_hr,
             # We need to override this because dry wells don't perform treatment
             # in either wet weather or dry weather, only retention/volume reduction.
             # ini_treatment_rate_cfs=treatment_rate_cfs,
-            retention_rate_cfs=treatment_rate_cfs,
-            node_type="dry_well_facility",
-        )
+            "retention_rate_cfs": treatment_rate_cfs,
+            "node_type": "dry_well_facility",
+        }
 
         return result
 
@@ -127,16 +127,16 @@ class TreatmentFacilityConstructor:
             treatment_depth_ft * 12, media_filtration_rate_inhr
         )
 
-        result = dict(
-            inf_rate_inhr=inf_rate_inhr,
-            retention_volume_cuft=retention_volume_cuft,
-            retention_depth_ft=retention_depth_ft,
-            retention_ddt_hr=retention_ddt_hr,
-            treatment_volume_cuft=treatment_volume_cuft,
-            treatment_depth_ft=treatment_depth_ft,
-            treatment_ddt_hr=treatment_ddt_hr,
-            node_type="volume_based_facility",
-        )
+        result = {
+            "inf_rate_inhr": inf_rate_inhr,
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_depth_ft": retention_depth_ft,
+            "retention_ddt_hr": retention_ddt_hr,
+            "treatment_volume_cuft": treatment_volume_cuft,
+            "treatment_depth_ft": treatment_depth_ft,
+            "treatment_ddt_hr": treatment_ddt_hr,
+            "node_type": "volume_based_facility",
+        }
 
         return result
 
@@ -158,16 +158,16 @@ class TreatmentFacilityConstructor:
         treatment_depth_ft = safe_divide(treatment_volume_cuft, area_sqft)
         treatment_ddt_hr = treatment_drawdown_time_hr
 
-        result = dict(
-            inf_rate_inhr=inf_rate_inhr,
-            retention_volume_cuft=retention_volume_cuft,
-            retention_depth_ft=retention_depth_ft,
-            retention_ddt_hr=retention_ddt_hr,
-            treatment_volume_cuft=treatment_volume_cuft,
-            treatment_depth_ft=treatment_depth_ft,
-            treatment_ddt_hr=treatment_ddt_hr,
-            node_type="volume_based_facility",
-        )
+        result = {
+            "inf_rate_inhr": inf_rate_inhr,
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_depth_ft": retention_depth_ft,
+            "retention_ddt_hr": retention_ddt_hr,
+            "treatment_volume_cuft": treatment_volume_cuft,
+            "treatment_depth_ft": treatment_depth_ft,
+            "treatment_ddt_hr": treatment_ddt_hr,
+            "node_type": "volume_based_facility",
+        }
 
         return result
 
@@ -186,12 +186,12 @@ class TreatmentFacilityConstructor:
             treatment_depth_ft * 12, media_filtration_rate_inhr
         )
 
-        result = dict(
-            treatment_volume_cuft=total_volume_cuft,
-            treatment_depth_ft=treatment_depth_ft,
-            treatment_ddt_hr=treatment_ddt_hr,
-            node_type="volume_based_facility",
-        )
+        result = {
+            "treatment_volume_cuft": total_volume_cuft,
+            "treatment_depth_ft": treatment_depth_ft,
+            "treatment_ddt_hr": treatment_ddt_hr,
+            "node_type": "volume_based_facility",
+        }
 
         return result
 
@@ -204,20 +204,20 @@ class TreatmentFacilityConstructor:
         retention_volume_cuft = area_sqft * retention_depth_ft
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
 
-        result = dict(
-            inf_rate_inhr=inf_rate_inhr,
-            retention_volume_cuft=retention_volume_cuft,
-            retention_depth_ft=retention_depth_ft,
-            retention_ddt_hr=retention_ddt_hr,
-            node_type="flow_based_facility",
-        )
+        result = {
+            "inf_rate_inhr": inf_rate_inhr,
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_depth_ft": retention_depth_ft,
+            "retention_ddt_hr": retention_ddt_hr,
+            "node_type": "flow_based_facility",
+        }
 
         return result
 
     @staticmethod
     def flow_facility_constructor(**kwargs: dict) -> Dict[str, Any]:
 
-        result = dict(node_type="flow_based_facility")
+        result = {"node_type": "flow_based_facility"}
 
         return result
 
@@ -242,16 +242,16 @@ class TreatmentFacilityConstructor:
         if months_operational in ["winter", "both"]:
             winter_dry_weather_retention_rate_cfs = modeled_tmnt_rate
 
-        result = dict(
-            ini_treatment_rate_cfs=treatment_rate_cfs,
+        result = {
+            "ini_treatment_rate_cfs": treatment_rate_cfs,
             # diversions 'retain' their diverted volume, so we use it for the retention rate
             # and set the treatment rate to 0 since none of the discharge is treated.
-            summer_dry_weather_retention_rate_cfs=summer_dry_weather_retention_rate_cfs,
-            summer_dry_weather_treatment_rate_cfs=0.0,
-            winter_dry_weather_retention_rate_cfs=winter_dry_weather_retention_rate_cfs,
-            winter_dry_weather_treatment_rate_cfs=0.0,
-            node_type="dry_weather_only_facility",  # this node type has no influence on wet weather.
-        )
+            "summer_dry_weather_retention_rate_cfs": summer_dry_weather_retention_rate_cfs,
+            "summer_dry_weather_treatment_rate_cfs": 0.0,
+            "winter_dry_weather_retention_rate_cfs": winter_dry_weather_retention_rate_cfs,
+            "winter_dry_weather_treatment_rate_cfs": 0.0,
+            "node_type": "dry_weather_only_facility",  # this node type has no influence on wet weather.
+        }
 
         return result
 
@@ -276,16 +276,16 @@ class TreatmentFacilityConstructor:
         if months_operational in ["winter", "both"]:
             winter_dry_weather_treatment_rate_cfs = modeled_tmnt_rate
 
-        result = dict(
-            ini_treatment_rate_cfs=treatment_rate_cfs,
+        result = {
+            "ini_treatment_rate_cfs": treatment_rate_cfs,
             # treatment systems 'treat and discharge' their inflow volume, so we use it for the
             # teatment rate and set the retention rate to 0 since none of the discharge is retained.
-            summer_dry_weather_retention_rate_cfs=0.0,
-            summer_dry_weather_treatment_rate_cfs=summer_dry_weather_treatment_rate_cfs,
-            winter_dry_weather_retention_rate_cfs=0.0,
-            winter_dry_weather_treatment_rate_cfs=winter_dry_weather_treatment_rate_cfs,
-            node_type="dry_weather_only_facility",  # this node type has no influence on wet weather.
-        )
+            "summer_dry_weather_retention_rate_cfs": 0.0,
+            "summer_dry_weather_treatment_rate_cfs": summer_dry_weather_treatment_rate_cfs,
+            "winter_dry_weather_retention_rate_cfs": 0.0,
+            "winter_dry_weather_treatment_rate_cfs": winter_dry_weather_treatment_rate_cfs,
+            "node_type": "dry_weather_only_facility",  # this node type has no influence on wet weather.
+        }
 
         return result
 
@@ -310,16 +310,16 @@ class TreatmentFacilityConstructor:
         if months_operational in ["winter", "both"]:
             winter_dry_weather_retention_rate_cfs = modeled_tmnt_rate
 
-        result = dict(
-            ini_treatment_rate_cfs=treatment_rate_cfs,
+        result = {
+            "ini_treatment_rate_cfs": treatment_rate_cfs,
             # diversions 'retain' their diverted volume, so we use it for the retention rate
             # and set the treatment rate to 0 since none of the discharge is treated.
-            summer_dry_weather_retention_rate_cfs=summer_dry_weather_retention_rate_cfs,
-            summer_dry_weather_treatment_rate_cfs=0.0,
-            winter_dry_weather_retention_rate_cfs=winter_dry_weather_retention_rate_cfs,
-            winter_dry_weather_treatment_rate_cfs=0.0,
-            node_type="diversion_facility",  # this node type has no influence on wet weather.
-        )
+            "summer_dry_weather_retention_rate_cfs": summer_dry_weather_retention_rate_cfs,
+            "summer_dry_weather_treatment_rate_cfs": 0.0,
+            "winter_dry_weather_retention_rate_cfs": winter_dry_weather_retention_rate_cfs,
+            "winter_dry_weather_treatment_rate_cfs": 0.0,
+            "node_type": "diversion_facility",  # this node type has no influence on wet weather.
+        }
 
         return result
 
@@ -356,19 +356,19 @@ class TreatmentFacilityConstructor:
         retention_ddt_hr = safe_divide(total_volume_cuft, winter_demand_cfhr)
         retention_volume_cuft = total_volume_cuft if retention_ddt_hr > 0 else 0
 
-        result = dict(
-            winter_demand_cfs=winter_demand_cfs,
-            summer_demand_cfs=summer_demand_cfs,
-            winter_demand_cfs_user=winter_demand_cfs_user,
-            summer_demand_cfs_user=summer_demand_cfs_user,
-            retention_volume_cuft=retention_volume_cuft,
-            retention_ddt_hr=retention_ddt_hr,
-            summer_dry_weather_retention_rate_cfs=summer_demand_cfs,
-            summer_dry_weather_treatment_rate_cfs=0.0,
-            winter_dry_weather_retention_rate_cfs=winter_demand_cfs,
-            winter_dry_weather_treatment_rate_cfs=0.0,
-            node_type="volume_based_cistern_facility",
-        )
+        result = {
+            "winter_demand_cfs": winter_demand_cfs,
+            "summer_demand_cfs": summer_demand_cfs,
+            "winter_demand_cfs_user": winter_demand_cfs_user,
+            "summer_demand_cfs_user": summer_demand_cfs_user,
+            "retention_volume_cuft": retention_volume_cuft,
+            "retention_ddt_hr": retention_ddt_hr,
+            "summer_dry_weather_retention_rate_cfs": summer_demand_cfs,
+            "summer_dry_weather_treatment_rate_cfs": 0.0,
+            "winter_dry_weather_retention_rate_cfs": winter_demand_cfs,
+            "winter_dry_weather_treatment_rate_cfs": 0.0,
+            "node_type": "volume_based_cistern_facility",
+        }
 
         return result
 
@@ -390,11 +390,11 @@ class TreatmentFacilityConstructor:
         # Done 2022-09-30: decision to model them as a single combined compartment
         # with the HRT as the drawdown time. Fixed to 48hrs
 
-        result = dict(
+        result = {
             # pool vol and tmnt vol have same fate so we sum them
-            treatment_volume_cuft=treatment_volume_cuft + pool_volume_cuft,
-            treatment_ddt_hr=48,  # set to 48 hr, the time needed to refresh the treatment capacity
-            node_type="volume_based_facility",
-        )
+            "treatment_volume_cuft": treatment_volume_cuft + pool_volume_cuft,
+            "treatment_ddt_hr": 48,  # set to 48 hr, the time needed to refresh the treatment capacity
+            "node_type": "volume_based_facility",
+        }
 
         return result

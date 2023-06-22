@@ -40,7 +40,7 @@ def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
 
     else:
         _keys = ["node_cycles", "edge_cycles", "multiple_out_edges", "duplicate_edges"]
-        for key, value in zip(_keys, validate.validate_network(g)):
+        for key, value in zip(_keys, validate.validate_network(g), strict=True):
             result[key] = value
 
         return result

@@ -10,9 +10,6 @@ from pydantic import BaseModel
 
 import nereid.tests.test_data
 from nereid.api.api_v1.models import treatment_facility_models
-from nereid.api.api_v1.models.treatment_facility_models import (
-    validate_treatment_facility_models,
-)
 from nereid.src.network.utils import clean_graph_dict
 
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
@@ -26,7 +23,10 @@ def get_payload(file):
 def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: no cover
 
     ts = time.perf_counter()
-    timer = lambda: time.perf_counter() - ts
+
+    def timer():
+        return time.perf_counter() - ts
+
     tries = 0
 
     while timer() < timeout:
@@ -101,7 +101,7 @@ def generate_n_random_valid_watershed_graphs(
 
 def create_random_model_dict(model: BaseModel, can_fail: bool = True) -> Dict[str, Any]:
     def random_string(nchars: int) -> str:
-        letters = [l for l in string.ascii_letters]
+        letters = list(string.ascii_letters)
         return "".join([numpy.random.choice(letters) for i in range(nchars)])
 
     schema = model.schema()
@@ -270,12 +270,12 @@ def generate_random_land_surface_request_sliver(
     area_acres = numpy.random.uniform(min_acres, max_acres)
     imp_area_acres = area_acres * numpy.random.uniform(pct_imp_min, pct_imp_max)
 
-    return dict(
-        node_id=node_id,
-        surface_key=surface_key,
-        area_acres=area_acres,
-        imp_area_acres=imp_area_acres,
-    )
+    return {
+        "node_id": node_id,
+        "surface_key": surface_key,
+        "area_acres": area_acres,
+        "imp_area_acres": imp_area_acres,
+    }
 
 
 def generate_random_land_surface_request_node(

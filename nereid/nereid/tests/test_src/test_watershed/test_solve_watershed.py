@@ -27,7 +27,7 @@ def test_watershed_solve_scaler_conservation(
     solve_watershed_loading(g, context)
 
     # no errors should appear for a watershed with only land surfaces
-    assert all([len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True)])
+    assert all(len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True))
 
     for single, total in [
         ("eff_area_acres", "eff_area_acres_total_cumul"),
@@ -414,7 +414,7 @@ def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
     nx.set_node_attributes(g, data)
     solve_watershed_loading(g, context)
 
-    assert all([len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True)])
+    assert all(len(dct["node_errors"]) == 0 for n, dct in g.nodes(data=True))
     assert len(g.nodes["0"]["node_warnings"]) >= 1  # there is no node_id for this node.
 
     sum_ret = sum(nx.get_node_attributes(g, "runoff_volume_cuft_retained").values())
@@ -524,7 +524,7 @@ def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
         > tmnt_node["summer_dwTSS_load_lbs_discharged"]
     )
 
-    for n, dct in g.nodes(data=True):
+    for _n, dct in g.nodes(data=True):
         if "_nomograph_solution_status" in dct:
             assert "successful" in dct["_nomograph_solution_status"]
 

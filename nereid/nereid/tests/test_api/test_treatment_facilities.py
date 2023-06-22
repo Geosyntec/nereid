@@ -1,7 +1,6 @@
 import pytest
 
 from nereid.api.api_v1.models import treatment_facility_models
-from nereid.core.config import settings
 
 names = [
     i.schema()["title"] for i in treatment_facility_models.TREATMENT_FACILITY_MODELS
@@ -50,7 +49,7 @@ def test_get_default_context_tmnt_facility_params(
         "facility_type"
     ]
 
-    for name, post_response in default_context_treatment_facility_responses.items():
+    for _name, post_response in default_context_treatment_facility_responses.items():
 
         prjson = post_response.json()
         grjson = prjson

@@ -34,7 +34,7 @@ def create_app(
         redoc_url=_redoc_url,
         **kwargs
     )
-    setattr(app, "_settings", _settings)
+    app._settings = _settings  # type: ignore
 
     static_path = nereid_path / "static"
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")

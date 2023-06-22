@@ -12,14 +12,14 @@ EXCLUDE_TAGS = ["_total_discharged"]
 
 
 def minimum_attrs(dct: Dict[str, Any]) -> List[str]:
-
-    f = lambda x: (
-        any([i in x for i in INCLUDE_TAGS]) and not any([i in x for i in EXCLUDE_TAGS])
-    )
+    def f(x):
+        return any(i in x for i in INCLUDE_TAGS) and not any(
+            i in x for i in EXCLUDE_TAGS
+        )
 
     return list(filter(f, dct.keys()))
 
 
 def attrs_to_resubmit(collection: List[Dict[str, Any]]) -> List[str]:
 
-    return list(set(k for data in collection for k in minimum_attrs(data)))
+    return list({k for data in collection for k in minimum_attrs(data)})

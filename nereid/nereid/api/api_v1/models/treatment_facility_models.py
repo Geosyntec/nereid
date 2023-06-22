@@ -95,7 +95,7 @@ class LowFlowFacility(FacilityBase):
     @root_validator(pre=True)
     def one_or_both(cls, values):
         _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
-        if all([values.get(v) is None for v in _fields]):
+        if all(values.get(v) is None for v in _fields):
             raise ValueError(
                 "One or both of 'treatment_rate_cfs' and 'design_capacity_cfs' are required."
             )

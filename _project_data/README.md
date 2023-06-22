@@ -22,12 +22,12 @@ These data are used by [`nereid`](https://github.com/Geosyntec/nereid).
 │   │   │   │   │
 │   │   │   │   └───state
 │   │   │   │       └───region
-│   │   │   │       
+│   │   │   │
 │   │   │   └───test_data
 │   │   ├───network
 │   │   ├───static
 │   │   └───tests
 │   └───scripts
-│   
+│
 └───scripts
 ```

@@ -71,7 +71,7 @@ def land_surface_loading_response_dicts(contexts, land_surface_permutations):
     n_rows = [10, 50, 5000]
     n_nodes = [5, 50, 1000]
     responses = {}
-    context = contexts["default"]
+    contexts["default"]
 
     for nrows, nnodes in product(n_rows, n_nodes):
         node_list = list(map(str, range(nnodes)))
@@ -83,7 +83,7 @@ def land_surface_loading_response_dicts(contexts, land_surface_permutations):
             for _ in range(nrows)
         ]
 
-        ls_request = dict(land_surfaces=ls_list)
+        ls_request = {"land_surfaces": ls_list}
 
         responses[(nrows, nnodes)] = ls_request
 
@@ -383,7 +383,7 @@ def contexts():
         cxmin,
     ]
 
-    return {k: v for k, v in zip(keys, values)}
+    return dict(zip(keys, values, strict=True))
 
 
 @pytest.fixture(scope="module")
@@ -493,7 +493,7 @@ def _construct_watershed_test_cases():
     cases = []
     numpy.random.seed(28)
     # this is way overkill, but I wanted to be sure all subsets work.
-    for s, n_nodes, pct_tmnt in product(range(2), SIZE, PCT_TMNT):
+    for _s, n_nodes, pct_tmnt in product(range(2), SIZE, PCT_TMNT):
         node_ids = list(map(str, range(n_nodes)))
 
         # max dirty-node length is 50, 4 dirty set-sizes are created
@@ -544,7 +544,7 @@ def land_surface_permutations(subbasins):
     soil = ["A", "B", "C", "D", "rock", "water"]
     slope = ["0", "10", "5"]
 
-    yield ["-".join(l) for l in product(subbasins, land_use, soil, slope)]
+    yield ["-".join(lgu) for lgu in product(subbasins, land_use, soil, slope)]
 
 
 @pytest.fixture()

@@ -1,6 +1,6 @@
 # How to data
 
-Welcome to the documentation about reference data! If you are reading this, it's because you need to be able to load project specific data into this tool. That is great, and it is fully supported by the both the development build pattern, and the production build pattern (forthcoming). 
+Welcome to the documentation about reference data! If you are reading this, it's because you need to be able to load project specific data into this tool. That is great, and it is fully supported by the both the development build pattern, and the production build pattern (forthcoming).
 
 You're reading this from the default data directory here:
 ```
@@ -13,7 +13,7 @@ You're reading this from the default data directory here:
 │               ...etc.
 ```
 
-The `state/region` directory should contain several files to be used as data templates for providing this tool with data of your own. But where should you put it? You're likely not in a state called "state" or a region called "region" and so you should not put your data here. This data lives within the git repository but your own personal data does not (and should not). 
+The `state/region` directory should contain several files to be used as data templates for providing this tool with data of your own. But where should you put it? You're likely not in a state called "state" or a region called "region" and so you should not put your data here. This data lives within the git repository but your own personal data does not (and should not).
 
 You should place your data into a directory structure like so:
 ```
@@ -52,7 +52,7 @@ For example, on my system I have reference data for South Orange County, Califor
 │   │   ├───static
 │   │   └───tests
 │   └───scripts
-│   
+│
 └───scripts
 
 ```
@@ -64,13 +64,13 @@ PROJECT_DATA_DIRECTORY=./_no_git_project_data
 This `.env` file is read at build time by `docker-compose` and mounts the PROJECT_DATA_DIRECTORY as a volume at `nereid/nereid/data/project_data`.
 
 This is great because once you have ayour own data you can use it by setting the query parameters to `state={yourstate}&region={yourregion}`. For example, I can get my data in json format from here:
-`http://localhost:8080/api/v1/bmp/performance_data?state=ca&region=soc`. 
+`http://localhost:8080/api/v1/bmp/performance_data?state=ca&region=soc`.
 
 This is possible because I built the directory with a structure like `ca/soc` and I provided the build-time directory path in my .env file.
 
 This means that if I ever want to support clients in Seattle, Washington and North Orange County, CA, I could add directories like so:
 ```
-├───_no_git_project_data 
+├───_no_git_project_data
 │   ├───ca
 │   │   ├───soc
 │   │   │       bmp_params.csv (my original South Orange County, CA reference files are here.)

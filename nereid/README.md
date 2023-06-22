@@ -77,7 +77,5 @@ There is a lot of flexibility here while we develop the deployment pattern. I've
 `LOG_LEVEL=${LOG_LEVEL:-info}`
 
 ## Contact Info
-Austin Orr 
+Austin Orr
 github username: austinorr
-
-

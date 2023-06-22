@@ -17,13 +17,19 @@ def _construct_graph_objs():
 
         g2 = g1.copy()
         attrs = {
-            n: {l: i} for i, (n, l) in enumerate(zip(g2.nodes, string.ascii_lowercase))
+            node: {name: i}
+            for i, (node, name) in enumerate(
+                zip(g2.nodes, string.ascii_lowercase, strict=False)
+            )
         }
         nx.set_node_attributes(g2, attrs)
 
         g3 = copy.deepcopy(g2)
         attrs = {
-            e: {l: i} for i, (e, l) in enumerate(zip(g2.edges, string.ascii_lowercase))
+            edge: {name: i}
+            for i, (edge, name) in enumerate(
+                zip(g2.edges, string.ascii_lowercase, strict=False)
+            )
         }
         nx.set_edge_attributes(g3, attrs)
 
@@ -73,7 +79,9 @@ def _construct_graph_dicts():
                 }
                 for e in g1["edges"]
             ]
-            g1["edges"] = [dict(e, **oe) for e, oe in zip(g1["edges"], oe)]
+            g1["edges"] = [
+                dict(e, **args) for e, args in zip(g1["edges"], oe, strict=True)
+            ]
 
         for dct in g1["edges"]:
             dct["metadata"] = {}
@@ -91,17 +99,23 @@ def _construct_graph_dicts():
         ]
         g2["nodes"] = _nodes
 
-        for i, (dct, l) in enumerate(zip(g2["nodes"], string.ascii_lowercase)):
+        for i, (dct, name) in enumerate(
+            zip(g2["nodes"], string.ascii_lowercase, strict=False)
+        ):
             dct["metadata"] = {}
-            dct["metadata"][l] = i
+            dct["metadata"][name] = i
 
         g3 = copy.deepcopy(g2)
-        for i, (dct, l) in enumerate(zip(g3["edges"], string.ascii_lowercase)):
-            dct["metadata"][l] = i
+        for i, (dct, name) in enumerate(
+            zip(g3["edges"], string.ascii_lowercase, strict=False)
+        ):
+            dct["metadata"][name] = i
 
         g4 = copy.deepcopy(g3)
-        for i, (dct, l) in enumerate(zip(g4["edges"], string.ascii_lowercase)):
-            dct["metadata"][l] = {i: copy.deepcopy(dct["metadata"])}
+        for i, (dct, name) in enumerate(
+            zip(g4["edges"], string.ascii_lowercase, strict=False)
+        ):
+            dct["metadata"][name] = {i: copy.deepcopy(dct["metadata"])}
 
         dicts.extend([(g1, True), (g2, True), (g3, True), (g4, True)])
 

@@ -15,7 +15,7 @@ def compute_simple_facility_volume_capture(
     # check if we are solving for dry weather water balance, and if so, is there
     # an override condition
     dwf_override = data.get("eliminate_all_dry_weather_flow_override")
-    is_dwf = any([s in vol_col for s in ["summer", "winter"]])
+    is_dwf = any(s in vol_col for s in ["summer", "winter"])
 
     if is_dwf and dwf_override:
         captured_fraction = retained_fraction = 1
