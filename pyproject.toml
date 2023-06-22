@@ -65,7 +65,8 @@ dev =[
     "requests",
     "pytest-cov",
     "pytest-xdist",
-    "pre-commit>=3.3.3,<4.0.0"
+    "pre-commit>=3.3.3,<4.0.0",
+    "ruff==0.0.274",
 ]
 
 [tool.hatch.version]
