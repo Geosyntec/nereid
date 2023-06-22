@@ -30,3 +30,5 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
+ci:
+  autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks
