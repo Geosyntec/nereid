@@ -67,7 +67,6 @@ def solve_treatment_site(
 
 
 def compute_site_volume_capture(data):
-
     _compute_site_volume_capture(data, "runoff_volume_cuft")
     for attr in ["captured", "treated", "retained", "bypassed"]:
         data[f"{attr}_pct"] = data[f"runoff_volume_cuft_{attr}_pct"]
@@ -84,12 +83,10 @@ def compute_site_volume_capture(data):
 
 
 def _compute_site_volume_capture(data: Dict[str, Any], vol_col: str) -> Dict[str, Any]:
-
     site_inflow_volume = data.get(f"{vol_col}_inflow", 0)
     facilities = data.get("treatment_facilities", [])
 
     for facility_data in facilities:
-
         site_fraction = facility_data["area_pct"] / 100
         facility_data[f"{vol_col}_inflow"] = site_inflow_volume * site_fraction
 
@@ -129,7 +126,6 @@ def compute_site_wet_weather_load_reduction(
     wet_weather_parameters: List[Dict[str, Any]],
     wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
-
     facilities = data.get("treatment_facilities", [])
     vol_col = "runoff_volume_cuft"
 
@@ -174,7 +170,6 @@ def compute_site_wet_weather_load_reduction(
 
     # combine individual facilities into a total value to report for the node.
     for param in wet_weather_parameters:
-
         load_col = param["load_col"]
         conc_col = param["conc_col"]
         load_to_conc_factor = param["load_to_conc_factor"]
@@ -217,7 +212,6 @@ def compute_site_dry_weather_load_reduction(
     dry_weather_parameters: List[Dict[str, Any]],
     dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
-
     facilities = data.get("treatment_facilities", [])
     seasons = ["summer", "winter"]
 

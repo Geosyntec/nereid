@@ -16,7 +16,6 @@ def initialize_treatment_facilities(
     pre_validated: bool,
     context: Dict[str, Any],
 ) -> Dict[str, Any]:
-
     response: Dict[str, Any] = {"errors": []}
 
     try:

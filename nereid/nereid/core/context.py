@@ -7,7 +7,6 @@ from nereid.core.io import load_cfg
 
 
 def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
-
     dp = context.get("data_path")
     state = context["state"]
     region = context["region"]
@@ -29,7 +28,6 @@ def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
         try:
             filename = attrs.get("file")
             if filename:
-
                 filepath = data_path / filename
                 if not filepath.exists():
                     message = (
@@ -53,7 +51,6 @@ def get_request_context(
     datadir: Optional[Union[str, Path]] = None,
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-
     if context is None:
         context = settings.APP_CONTEXT
 

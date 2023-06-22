@@ -26,7 +26,6 @@ async def validate_network(
     request: Request,
     graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
 ) -> Dict[str, Any]:
-
     task = bg.validate_network.s(graph=graph.dict(by_alias=True))
     return run_task(request, task, "get_validate_network_result")
 
@@ -38,7 +37,6 @@ async def validate_network(
     response_class=ORJSONResponse,
 )
 async def get_validate_network_result(request: Request, task_id: str) -> Dict[str, Any]:
-
     task = bg.validate_network.AsyncResult(task_id, app=router)
     return standard_json_response(request, task, "get_validate_network_result")
 
@@ -53,7 +51,6 @@ async def subgraph_network(
     request: Request,
     subgraph_req: network_models.SubgraphRequest = Body(...),
 ) -> Dict[str, Any]:
-
     task = bg.network_subgraphs.s(**subgraph_req.dict(by_alias=True))
 
     return run_task(request, task, "get_subgraph_network_result")
@@ -66,7 +63,6 @@ async def subgraph_network(
     response_class=ORJSONResponse,
 )
 async def get_subgraph_network_result(request: Request, task_id: str) -> Dict[str, Any]:
-
     task = bg.network_subgraphs.AsyncResult(task_id, app=router)
     return standard_json_response(request, task, "get_subgraph_network_result")
 
@@ -83,12 +79,10 @@ async def get_subgraph_network_as_img(
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
 ) -> Union[Dict[str, Any], Any]:
-
     task = bg.network_subgraphs.AsyncResult(task_id, app=router)
     response = {"task_id": task.task_id, "status": task.status}
 
     if task.successful():  # pragma: no branch
-
         result = task.result
         response["data"] = task.result
         render_task_id = task.task_id + f"-{media_type}-{npi}"
@@ -106,7 +100,6 @@ async def get_subgraph_network_as_img(
             svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
 
             if render_task.successful():
-
                 svg = render_task.result
 
                 return templates.TemplateResponse(
@@ -131,7 +124,6 @@ async def network_solution_sequence(
     graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
-
     task = bg.solution_sequence.s(
         graph=graph.dict(by_alias=True), min_branch_size=min_branch_size
     )
@@ -148,7 +140,6 @@ async def network_solution_sequence(
 async def get_network_solution_sequence(
     request: Request, task_id: str
 ) -> Dict[str, Any]:
-
     task = bg.solution_sequence.AsyncResult(task_id, app=router)
     return standard_json_response(request, task, "get_network_solution_sequence")
 
@@ -165,18 +156,15 @@ async def get_network_solution_sequence_as_img(
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
 ) -> Union[Dict[str, Any], Any]:
-
     task = bg.solution_sequence.AsyncResult(task_id, app=router)
     response = {"task_id": task.task_id, "status": task.status}
 
     if task.successful():  # pragma: no branch
-
         result = task.result
         response["data"] = task.result
         render_task_id = task.task_id + f"-{media_type}-{npi}"
 
         if media_type == "svg":
-
             render_task = bg.render_solution_sequence_svg.AsyncResult(
                 render_task_id, app=router
             )
@@ -191,7 +179,6 @@ async def get_network_solution_sequence_as_img(
             svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
 
             if render_task.successful():
-
                 svg = render_task.result
 
                 return templates.TemplateResponse(

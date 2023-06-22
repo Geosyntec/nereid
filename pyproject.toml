@@ -57,7 +57,7 @@ async-app =    [
     ]
 dev =[
     "nereid-engine[async-app]",
-    "black==22.1.0",
+    "black==23.3.0",
     "coverage>=6.0.0",
     "isort>=5.0.0",
     "mypy>=0.910",

@@ -13,9 +13,8 @@ from nereid.core.config import nereid_path, settings
 def create_app(
     *,
     settings_override: Optional[Dict[str, Any]] = None,
-    app_kwargs: Optional[Dict[str, Any]] = None
+    app_kwargs: Optional[Dict[str, Any]] = None,
 ) -> FastAPI:
-
     _settings = settings.copy(deep=True)
     if settings_override is not None:  # pragma: no branch
         _settings.update(settings_override)
@@ -32,7 +31,7 @@ def create_app(
         version=_settings.VERSION,
         docs_url=_docs_url,
         redoc_url=_redoc_url,
-        **kwargs
+        **kwargs,
     )
     app._settings = _settings  # type: ignore
 

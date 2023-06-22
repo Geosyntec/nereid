@@ -58,7 +58,6 @@ def bisection_search(
     converged = False
 
     for _ in range(max_iters):
-
         check = function(guess)
 
         if numpy.isnan(check):  # pragma: no cover
@@ -249,10 +248,8 @@ class NomographBase:
                 t_iter = numpy.array(t)
                 y_iter = numpy.array(y)
                 if t_iter.size == y_iter.size:
-
                     res: List[float] = []
                     for _y, _t in zip(y_iter, t_iter, strict=True):
-
                         guess, _ = self.get_x(
                             at_y=_y, t=_t, atol=atol, max_iters=max_iters
                         )
@@ -273,7 +270,6 @@ class NomographBase:
             raise ValueError("must call with `t` and either `x` or `y`")
 
     def _baseplot(self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]) -> Axes:
-
         if ax is None:  # pragma: no branch
             fig, ax = plt.subplots()
 
@@ -293,7 +289,6 @@ class NomographBase:
         )
 
         for _i, d in enumerate(sorted(set(self.t_data))):
-
             x = self.x_data[self.t_data == d]  # type: ignore
             y = self.y_data[self.t_data == d]  # type: ignore
 
@@ -307,7 +302,6 @@ class NomographBase:
         return ax
 
     def _basesurface(self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]) -> Axes:
-
         if ax is None:  # pragma: no branch
             fig, ax = plt.subplots()
 
@@ -338,7 +332,6 @@ class VolumeNomograph:
         interp_kwargs: Optional[Dict[str, Any]] = None,
         source_data: Optional[str] = None,
     ) -> None:
-
         self.nomo = NomographBase(
             x=size, t=ddt, y=performance, interp_kwargs=interp_kwargs
         )
@@ -381,7 +374,6 @@ class FlowNomograph:
         interp_kwargs: Optional[Dict[str, Any]] = None,
         source_data: Optional[str] = None,
     ) -> None:
-
         self.nomo = NomographBase(
             x=intensity, t=tc, y=performance, interp_kwargs=interp_kwargs
         )

@@ -8,7 +8,6 @@ import pytest
 
 
 def _construct_graph_objs():
-
     graphs = []
     for graph_type in [nx.Graph, nx.MultiGraph, nx.DiGraph, nx.MultiDiGraph]:
         g1 = nx.from_edgelist(
@@ -52,11 +51,9 @@ def graph_obj_isvalid(request):
 
 
 def _construct_graph_dicts():
-
     dicts = []
 
     for directed, multigraph in itertools.product([True, False], [True, False]):
-
         g1 = {
             "directed": directed,
             "multigraph": multigraph,

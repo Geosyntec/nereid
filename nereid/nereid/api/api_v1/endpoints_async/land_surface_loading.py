@@ -26,7 +26,6 @@ async def calculate_loading(
     details: bool = False,
     context: dict = Depends(get_valid_context),
 ) -> Dict[str, Any]:
-
     land_surfaces_req = land_surfaces.dict(by_alias=True)
 
     task = bg.land_surface_loading.s(

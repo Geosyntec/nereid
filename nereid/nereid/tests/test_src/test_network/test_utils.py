@@ -47,7 +47,6 @@ def test_round_trip_graph_to_graph(graph_obj_isvalid):
 
 
 def test_thin_graph_dict(graph_dict_isvalid):
-
     graph_dict, isvalid = graph_dict_isvalid
 
     _graph_dict = utils.thin_graph_dict(graph_dict)
@@ -63,7 +62,6 @@ def test_thin_graph_dict(graph_dict_isvalid):
 
 @pytest.mark.parametrize("check", ["edges", "nodes", "multigraph", "directed"])
 def test_thin_graph_dict_roundtrip_dict_to_dict(graph_dict_isvalid, check):
-
     graph_dict, isvalid = graph_dict_isvalid
 
     _graph_dict = utils.thin_graph_dict(graph_dict)
@@ -77,7 +75,6 @@ def test_thin_graph_dict_roundtrip_dict_to_dict(graph_dict_isvalid, check):
 
 
 def test_thin_graph_dict_roundtrip_graph_to_graph(graph_obj_isvalid):
-
     graph_obj, isvalid = graph_obj_isvalid
 
     _g = utils.thin_graph_dict(utils.nxGraph_to_dict(graph_obj))
@@ -90,7 +87,6 @@ def test_thin_graph_dict_roundtrip_graph_to_graph(graph_obj_isvalid):
 
 
 def test_clean_graph_object(graph_obj_isvalid):
-
     graph_obj, isvalid = graph_obj_isvalid
     clean_graph_dict = utils.clean_graph_dict(graph_obj)
 

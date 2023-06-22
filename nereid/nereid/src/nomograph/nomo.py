@@ -17,7 +17,6 @@ def build_nomo(
     y_col: str,
     **kwargs: dict,
 ) -> Any:
-
     df = pandas.read_csv(path)
     x = df[x_col]
     t = df[t_col]
@@ -56,7 +55,6 @@ def get_flow_nomograph(context: Dict[str, Any], nomo_path: str) -> FlowNomograph
 
 
 def load_nomograph_mapping(context: Dict[str, Any]) -> Optional[Dict[str, Callable]]:
-
     met_table, msg = load_ref_data("met_table", context)
 
     if met_table is None:

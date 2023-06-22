@@ -6,6 +6,7 @@ from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 ## Network Request Models
 
+
 # https://github.com/jsongraph/json-graph-specification
 class Node(BaseModel):
     id_: Optional[StrictStr] = Field(None, alias="id")

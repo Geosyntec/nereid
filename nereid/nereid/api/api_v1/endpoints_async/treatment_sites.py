@@ -57,7 +57,6 @@ async def initialize_treatment_site(
     ),
     context: dict = Depends(get_valid_context),
 ) -> Dict[str, Any]:
-
     return {"data": initialize_treatment_sites(treatment_sites.dict(), context=context)}
 
     # task = bg.background_initialize_treatment_facilities.s(

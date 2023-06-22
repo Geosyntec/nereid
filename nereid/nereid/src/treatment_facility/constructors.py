@@ -7,7 +7,6 @@ from nereid.core.utils import safe_divide
 
 
 def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]:
-
     _treatment_facility_list: List[Dict[str, Any]] = [
         {str(k): v for k, v in m.items() if pandas.notnull(v)}
         for m in df.to_dict(orient="records")
@@ -23,7 +22,6 @@ def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]
 def construct_treatment_facility_node_context(
     node_context: Dict[str, Any]
 ) -> Dict[str, Any]:
-
     n_cxt: Dict[str, Any] = deepcopy(node_context)
 
     constructor_str = n_cxt.get("constructor") or "nt_facility_constructor"
@@ -52,7 +50,6 @@ class TreatmentFacilityConstructor:
         inf_rate_inhr: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-
         retention_volume_cuft = total_volume_cuft
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
@@ -70,7 +67,6 @@ class TreatmentFacilityConstructor:
     def dry_well_facility_constructor(
         *, total_volume_cuft: float, treatment_rate_cfs: float, **kwargs: dict
     ) -> Dict[str, Any]:
-
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
 
@@ -90,7 +86,6 @@ class TreatmentFacilityConstructor:
     def dry_well_facility_flow_or_volume_constructor(
         *, total_volume_cuft: float, treatment_rate_cfs: float, **kwargs: dict
     ) -> Dict[str, Any]:
-
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
 
@@ -150,7 +145,6 @@ class TreatmentFacilityConstructor:
         inf_rate_inhr: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
 
@@ -179,7 +173,6 @@ class TreatmentFacilityConstructor:
         media_filtration_rate_inhr: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-
         treatment_volume_cuft = total_volume_cuft
         treatment_depth_ft = safe_divide(treatment_volume_cuft, area_sqft)
         treatment_ddt_hr = safe_divide(
@@ -199,7 +192,6 @@ class TreatmentFacilityConstructor:
     def flow_and_retention_facility_constructor(
         *, area_sqft: float, depth_ft: float, inf_rate_inhr: float, **kwargs: dict
     ) -> Dict[str, Any]:
-
         retention_depth_ft = depth_ft
         retention_volume_cuft = area_sqft * retention_depth_ft
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
@@ -216,7 +208,6 @@ class TreatmentFacilityConstructor:
 
     @staticmethod
     def flow_facility_constructor(**kwargs: dict) -> Dict[str, Any]:
-
         result = {"node_type": "flow_based_facility"}
 
         return result
@@ -333,7 +324,6 @@ class TreatmentFacilityConstructor:
         summer_dry_weather_flow_cuft_psecond_inflow: Optional[float] = None,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-
         winter_dry_weather_flow_cuft_psecond_inflow = (
             winter_dry_weather_flow_cuft_psecond_inflow or 0.0
         )
@@ -379,7 +369,6 @@ class TreatmentFacilityConstructor:
         treatment_volume_cuft: float,
         **kwargs: dict,
     ) -> Dict[str, Any]:
-
         # TODO: wetponds are lined, thus they do not perform retention
         # during wet weather. The perm pool volume is treated during the hrt and
         # discharged. Therefore a future release will need to handle two nomograph

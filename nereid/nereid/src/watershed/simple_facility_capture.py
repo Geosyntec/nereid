@@ -6,7 +6,6 @@ from nereid.core.utils import safe_divide
 def compute_simple_facility_volume_capture(
     data: Dict[str, Any], vol_col: str
 ) -> Dict[str, Any]:
-
     inflow_volume = data.get(f"{vol_col}_inflow", 0)
 
     data["node_errors"] = []

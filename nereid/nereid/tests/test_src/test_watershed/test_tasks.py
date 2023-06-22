@@ -12,7 +12,6 @@ from nereid.tests.utils import check_subgraph_response_equal
 
 @pytest.mark.parametrize("n_nodes", [50, 100])
 def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes):
-
     pct_tmnt = 0
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
@@ -41,7 +40,6 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
         ),
         ("winter_dwTSS_load_lbs", "winter_dwTSS_load_lbs_total_discharged"),
     ]:
-
         outfall_total = outfall_results[total]
         assert outfall_total > 1e-3
         sum_individual = sum([n.get(single, 0.0) for n in result])
@@ -55,7 +53,6 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
 def test_solve_watershed_with_treatment(
     contexts, watershed_requests, n_nodes, pct_tmnt
 ):
-
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts["default"]
     response_dict = solve_watershed(
@@ -124,7 +121,6 @@ def test_solve_watershed_with_treatment(
 def test_stable_watershed_stable_subgraph_solutions(
     contexts, watershed_requests, watershed_test_case, ctx_key
 ):
-
     n_nodes, pct_tmnt, dirty_nodes = watershed_test_case
     watershed_request = deepcopy(watershed_requests[(n_nodes, pct_tmnt)])
     context = contexts[ctx_key]
@@ -204,7 +200,6 @@ def test_treatment_facility_waterbalance(
     captures_dwf,
     mitigates_peak_flow,
 ):
-
     context = contexts["default"]
     facility = treatment_facilities_dict[facility_type]
     facility["node_id"] = "1"

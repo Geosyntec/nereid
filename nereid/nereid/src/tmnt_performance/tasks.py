@@ -9,7 +9,6 @@ from nereid.src.tmnt_performance.tmnt import build_effluent_function_map
 def effluent_function_map(
     tablename: str, context: Dict[str, Any]
 ) -> Optional[Mapping[Tuple[str, str], Callable]]:
-
     tmnt_context = context.get("project_reference_data", {}).get(tablename, {})
 
     if not tmnt_context:

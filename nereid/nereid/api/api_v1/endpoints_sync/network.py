@@ -32,7 +32,6 @@ async def validate_network(
 async def subgraph_network(
     subgraph_req: network_models.SubgraphRequest = Body(...),
 ) -> Dict[str, Any]:
-
     kwargs = subgraph_req.dict(by_alias=True)
     data = tasks.network_subgraphs(**kwargs)
     return {"data": data}

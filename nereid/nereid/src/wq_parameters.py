@@ -62,7 +62,6 @@ def init_wq_parameters(tablename: str, context: Dict[str, Any]) -> List[Dict[str
     )
 
     for param in parameters:
-
         conc_unit = param["concentration_unit"]
         load_unit = param["load_unit"]
         poc = param["short_name"]

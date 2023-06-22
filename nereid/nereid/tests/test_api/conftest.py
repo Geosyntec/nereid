@@ -24,7 +24,6 @@ def client(async_mode):
 
 @pytest.fixture(scope="module")
 def named_validation_responses(client):
-
     route = settings.API_LATEST + "/network/validate"
     responses = {}
     slow_valid = clean_graph_dict(nx.gnr_graph(15000, p=0.05, seed=42))
@@ -52,7 +51,6 @@ def named_validation_responses(client):
 
 @pytest.fixture(scope="module")
 def named_subgraph_responses(client):
-
     route = settings.API_LATEST + "/network/subgraph"
     responses = {}
 
@@ -74,7 +72,6 @@ def named_subgraph_responses(client):
     ]
 
     for name, payload in init_post_requests:
-
         response = client.post(route, json=payload)
         responses[name] = response
         result_route = response.json().get("result_route")
@@ -89,7 +86,6 @@ def named_subgraph_responses(client):
 
 @pytest.fixture(scope="module")
 def solution_sequence_response(client):
-
     min_branch_size = [2, 6, 10, 50]
     n_graphs = [1, 3, 5, 10]
     min_max = [(3, 4), (10, 11), (20, 40)]
@@ -97,7 +93,6 @@ def solution_sequence_response(client):
     responses = {}
 
     for bs, ngraph, minmax in product(min_branch_size, n_graphs, min_max):
-
         g = generate_n_random_valid_watershed_graphs(ngraph, *minmax)
         payload = clean_graph_dict(g)
 
@@ -117,14 +112,12 @@ def solution_sequence_response(client):
 
 @pytest.fixture(scope="module")
 def land_surface_loading_responses(client, land_surface_loading_response_dicts):
-
     details = ["true", "false"]
     responses = {}
 
     for detail_tf, ((nrows, nnodes), ls_request) in product(
         details, land_surface_loading_response_dicts.items()
     ):
-
         payload = ls_request
         route = settings.API_LATEST + "/land_surface/loading" + f"?details={detail_tf}"
         response = client.post(route, json=payload)
@@ -136,11 +129,9 @@ def land_surface_loading_responses(client, land_surface_loading_response_dicts):
 
 @pytest.fixture(scope="module")
 def treatment_facility_responses(client, treatment_facility_dicts):
-
     responses = {}
 
     for name, dct in treatment_facility_dicts.items():
-
         payload = {"treatment_facilities": [dct]}
         route = settings.API_LATEST + "/treatment_facility/validate"
         response = client.post(route, json=payload)
@@ -153,11 +144,9 @@ def treatment_facility_responses(client, treatment_facility_dicts):
 def default_context_treatment_facility_responses(
     client, default_context_treatment_facility_dicts
 ):
-
     responses = {}
 
     for name, dct in default_context_treatment_facility_dicts.items():
-
         payload = {"treatment_facilities": [dct]}
         route = settings.API_LATEST + "/treatment_facility/validate"
         response = client.post(route, json=payload)
@@ -168,11 +157,9 @@ def default_context_treatment_facility_responses(
 
 @pytest.fixture(scope="module")
 def treatment_site_responses(client, valid_treatment_site_requests):
-
     responses = {}
 
     for name, dct in valid_treatment_site_requests.items():
-
         payload = dct
         route = settings.API_LATEST + "/treatment_site/validate"
         response = client.post(route, json=payload)
@@ -183,11 +170,9 @@ def treatment_site_responses(client, valid_treatment_site_requests):
 
 @pytest.fixture(scope="module")
 def watershed_responses(client, watershed_requests):
-
     responses = {}
 
     for name, dct in watershed_requests.items():
-
         payload = dct
         route = settings.API_LATEST + "/watershed/solve"
         response = client.post(route, json=payload)

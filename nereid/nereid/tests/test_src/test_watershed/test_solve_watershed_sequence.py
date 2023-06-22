@@ -13,7 +13,6 @@ from nereid.tests.utils import check_results_dataframes
 @pytest.mark.parametrize("pct_tmnt", [0.0, 0.6])
 @pytest.mark.parametrize("n_nodes", [100])
 def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmnt):
-
     watershed_request = deepcopy(watershed_requests[n_nodes, pct_tmnt])
     context = contexts["default"]
 
@@ -31,7 +30,6 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
 
     presults = []  # no initial results, obvs
     for branch_nodes in node_list:
-
         # this subgraph is empty, has no data.
         subg = nx.DiGraph(g.subgraph(branch_nodes).edges)
         subgraph = {"graph": nxGraph_to_dict(subg)}

@@ -21,7 +21,6 @@ def get_payload(file):
 
 
 def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: no cover
-
     ts = time.perf_counter()
 
     def timer():
@@ -30,7 +29,6 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
     tries = 0
 
     while timer() < timeout:
-
         response = testclient.get(url)
         status = response.json()["status"]
         if status.lower() == "success":
@@ -88,7 +86,6 @@ def generate_n_random_valid_watershed_graphs(
     max_graph_nodes: int = 50,
     seed: int = 42,
 ):
-
     G = nx.DiGraph()
     numpy.random.seed(seed)
     for i in range(n_graphs):
@@ -242,7 +239,6 @@ def generate_random_treatment_facility_request_node(
 
 
 def generate_random_treatment_facility_request(node_list, context, ref_data_keys):
-
     mapping = context["api_recognize"]["treatment_facility"]["facility_type"]
     facility_types = list(mapping.keys())
 
@@ -281,7 +277,6 @@ def generate_random_land_surface_request_sliver(
 def generate_random_land_surface_request_node(
     surface_keys, node_id="default", sliver_min=5, sliver_max=25, **kwargs
 ):
-
     node = []
     for _ in range(numpy.random.randint(sliver_min, sliver_max)):
         surface_key = numpy.random.choice(surface_keys)
@@ -295,7 +290,6 @@ def generate_random_land_surface_request_node(
 def generate_random_land_surface_request(
     node_list, surface_keys, sliver_min=5, sliver_max=25, **kwargs
 ):
-
     nodes = []
     for node_id in node_list:
         node = generate_random_land_surface_request_node(
@@ -319,7 +313,6 @@ def generate_random_watershed_solve_request_from_graph(
     surface_keys,
     pct_tmnt=0.5,
 ):
-
     request = {"graph": clean_graph_dict(g)}
 
     treatment_facility_nodes = []
@@ -360,7 +353,6 @@ def generate_random_watershed_solve_request(
     pct_tmnt=0.5,
     seed=42,
 ):
-
     g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=seed), lambda x: str(x))
 
     request = generate_random_watershed_solve_request_from_graph(
@@ -375,7 +367,6 @@ def generate_random_watershed_solve_request(
 
 
 def check_subgraph_response_equal(subgraph_results, original_results):
-
     for subg_result in subgraph_results:
         node = subg_result["node_id"]
         og_result = [n for n in original_results if n["node_id"] == node][0]

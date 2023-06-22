@@ -53,7 +53,6 @@ def test_io_load_multiple_cfgs():
     ],
 )
 def test_load_ref_data(contexts, table, key):
-
     context = contexts[key]
     ref_table, msg = io.load_ref_data(table, context)
     assert ref_table is not None
@@ -92,7 +91,6 @@ def test_parse_api_recognize(
     n_rows,
     n_nodes,
 ):
-
     context = contexts[key]
 
     land_surfaces = land_surface_loading_response_dicts[(n_rows, n_nodes)]

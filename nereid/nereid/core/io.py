@@ -49,7 +49,6 @@ def load_json(filepath: PathType) -> Dict[str, Any]:
 def load_ref_data(
     tablename: str, context: dict
 ) -> Tuple[Optional[pandas.DataFrame], List[str]]:
-
     data_path = Path(context["data_path"])
     project_reference_data = context.get("project_reference_data", {})
 
@@ -86,7 +85,6 @@ def parse_expand_fields(
     context: Dict[str, Any],
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
-
     for f in deepcopy(params):
         try:
             field = f.get("field")
@@ -118,7 +116,6 @@ def parse_collapse_fields(
     context: Dict[str, Any],
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
-
     for f in deepcopy(params):
         try:
             field = f.get("new_column_name")
@@ -153,7 +150,6 @@ def parse_joins(
     context: Dict[str, Any],
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
-
     df_input = df.copy()
 
     for j in deepcopy(params):
@@ -227,7 +223,6 @@ def parse_remaps(
     context: Dict[str, Any],
     messages: List[str],
 ) -> Tuple[pandas.DataFrame, List[str]]:
-
     for remap in deepcopy(params):
         left = remap["left"]
         if left not in df:
@@ -281,7 +276,6 @@ def parse_configuration_logic(
     config_object: str,
     context: Dict[str, Any],
 ) -> Tuple[pandas.DataFrame, List[str]]:
-
     obj_context = context.get(config_section, {}).get(config_object)
 
     if obj_context is None:
@@ -301,7 +295,6 @@ def parse_configuration_logic(
 
     for section in sections:
         for directive, params in section.items():
-
             if directive == "joins":
                 df, msg = parse_joins(
                     df, params, config_section, config_object, context, msg

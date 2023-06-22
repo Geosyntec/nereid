@@ -18,7 +18,6 @@ from nereid.src.network.utils import clean_graph_dict
 def test_post_network_validate(
     client, named_validation_responses, post_response_name, isfast, isvalid
 ):
-
     post_response = named_validation_responses[post_response_name]
     prjson = post_response.json()
     assert network_models.NetworkValidationResponse(**prjson)
@@ -153,7 +152,6 @@ def test_post_network_subgraph(client, named_subgraph_responses, post_response_n
 def test_get_render_subgraph_svg_fast(
     client, named_subgraph_responses, post_response_name
 ):
-
     post_response = named_subgraph_responses[post_response_name]
     assert post_response.status_code == 200
     rjson = post_response.json()
@@ -197,7 +195,6 @@ def test_get_render_subgraph_svg_slow(
 def test_get_render_subgraph_svg_bad_media_type(
     client, named_subgraph_responses, post_response_name, isfast
 ):
-
     post_response = named_subgraph_responses[post_response_name]
     assert post_response.status_code == 200
     rjson = post_response.json()
@@ -215,7 +212,6 @@ def test_get_render_subgraph_svg_bad_media_type(
 def test_post_solution_sequence(
     solution_sequence_response, min_branch_size, n_graphs, min_max
 ):
-
     key = min_branch_size, n_graphs, min_max
     post_response = solution_sequence_response[key]
 
@@ -231,7 +227,6 @@ def test_post_solution_sequence(
 def test_get_solution_sequence(
     client, solution_sequence_response, min_branch_size, n_graphs, min_max
 ):
-
     key = min_branch_size, n_graphs, min_max
     post_response = solution_sequence_response[key]
 
@@ -256,7 +251,6 @@ def test_get_solution_sequence(
 def test_get_render_solution_sequence(
     client, solution_sequence_response, min_branch_size, n_graphs, min_max
 ):
-
     key = min_branch_size, n_graphs, min_max
     post_response = solution_sequence_response[key]
     assert post_response.status_code == 200
@@ -265,7 +259,6 @@ def test_get_render_solution_sequence(
     result_route = prjson.get("result_route")
 
     if result_route:
-
         _ = client.get(result_route + "/img")
         svg_response = client.get(result_route + "/img")
 

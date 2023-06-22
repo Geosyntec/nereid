@@ -469,7 +469,6 @@ class TreatmentFacilitiesResponse(JSONAPIResponse):
 def validate_treatment_facility_models(
     unvalidated_data: List[Dict[str, Any]], context: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
-
     mapping = context["api_recognize"]["treatment_facility"]["facility_type"]
     model_map_str = {k: v.get("validator") for k, v in mapping.items()}
     fallback_map_str = {k: v.get("validation_fallback") for k, v in mapping.items()}

@@ -99,7 +99,6 @@ from nereid.api.api_v1.models.treatment_facility_models import (
     ],
 )
 def test_build_treatment_facility_nodes_errors(contexts, ctxt_key, err, data_dict):
-
     context = contexts[ctxt_key]
     tmnt_facilities = [data_dict]
     valid_models = validate_treatment_facility_models(tmnt_facilities, context)

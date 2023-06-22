@@ -67,7 +67,6 @@ def subgraph_request_dict():
 
 @pytest.fixture(scope="module")
 def land_surface_loading_response_dicts(contexts, land_surface_permutations):
-
     n_rows = [10, 50, 5000]
     n_nodes = [5, 50, 1000]
     responses = {}
@@ -92,7 +91,6 @@ def land_surface_loading_response_dicts(contexts, land_surface_permutations):
 
 @pytest.fixture(scope="session")
 def contexts():
-
     cx1 = get_request_context()
 
     cx2 = deepcopy(cx1)
@@ -391,7 +389,6 @@ def treatment_facility_dicts():
     responses = {}
 
     for model in TREATMENT_FACILITY_MODELS:
-
         model_str = model.schema()["title"]
         dct = generate_random_treatment_facility_request_node(
             model_str, model_str, "10101200", node_id="default"
@@ -412,7 +409,6 @@ def valid_treatment_facility_dicts(contexts):
     responses = {}
 
     for model in TREATMENT_FACILITY_MODELS:
-
         model_str = model.schema()["title"]
         facility_type = [
             ft
@@ -437,7 +433,6 @@ def default_context_treatment_facility_dicts(contexts):
     responses = {}
 
     for facility_type, dct in facility_type_dict.items():
-
         model_str = dct["validator"]
         req_dct = generate_random_treatment_facility_request_node(
             model_str, facility_type, "10101200", node_id="default"
@@ -489,7 +484,6 @@ def watershed_requests(contexts, subbasins, land_surface_permutations):
 
 
 def _construct_watershed_test_cases():
-
     cases = []
     numpy.random.seed(28)
     # this is way overkill, but I wanted to be sure all subsets work.

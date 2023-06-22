@@ -19,7 +19,6 @@ from nereid.tests.utils import (
 def test_watershed_solve_scaler_conservation(
     contexts, watershed_graph, initial_node_data
 ):
-
     g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts["default"]
 
@@ -44,7 +43,6 @@ def test_watershed_solve_scaler_conservation(
         ),
         ("winter_dwTSS_load_lbs", "winter_dwTSS_load_lbs_total_discharged"),
     ]:
-
         outfall_total = g.nodes["0"][total]
         assert outfall_total > 1e-3
         sum_individual = sum(nx.get_node_attributes(g, single).values())
@@ -57,7 +55,6 @@ def test_watershed_solve_scaler_conservation(
 def test_solve_watershed_stable_with_subsets(
     contexts, watershed_graph, initial_node_data, ctx_key
 ):
-
     g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts[ctx_key]
 
@@ -94,7 +91,6 @@ def test_solve_watershed_stable_with_subsets(
         numpy.random.choice(g.nodes(), size=size, replace=False)
         for size in [2, 4, 6, 8, 10]
     ]:
-
         subg = nx.DiGraph(g.subgraph(get_subset(g, nodes=dirty_nodes)).edges)
 
         # always send the info that was sent the first time
@@ -361,7 +357,6 @@ tmnt_facilities = [
 @pytest.mark.parametrize("tmnt_facility", tmnt_facilities)
 @pytest.mark.parametrize("dwf_override", [False, True])  # default is false.
 def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
-
     context = contexts["default"]
 
     g = nx.relabel_nodes(nx.gnr_graph(n=3, p=0.0, seed=0), lambda x: str(x))
@@ -456,7 +451,6 @@ def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
     ]
 
     if dwf_override:
-
         for s in ["summer", "winter"]:
             if s in seasons:  # this means the facility will retain all dw flow
                 for k, v in outfall_node.items():
@@ -511,7 +505,6 @@ def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
         ]
 
     for s, t in params:
-
         outfall_total = outfall_node[t]
         sum_individual = sum(nx.get_node_attributes(g, s).values())
 
@@ -542,7 +535,6 @@ def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
 def test_nested_treatment_facilities(
     contexts, watershed_graph, initial_node_data, f9, f2, upstream_ret
 ):
-
     g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts["default"]
 
@@ -576,7 +568,6 @@ def test_invalid_graph(contexts, subbasins, land_surface_permutations):
 def test_watershed_graph_land_surface_only(
     contexts, watershed_graph, initial_node_data, ctx_key
 ):
-
     g, data = watershed_graph, deepcopy(initial_node_data)
     context = contexts[ctx_key]
 

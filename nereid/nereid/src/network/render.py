@@ -80,7 +80,6 @@ def render_subgraphs(
     ax: Optional[axes.Axes] = None,
     fig_kwargs: Optional[Dict] = None,
 ) -> figure.Figure:
-
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
 
@@ -184,7 +183,6 @@ def render_solution_sequence(
         node_shape = next(marker_cycle)
 
         for i, g in enumerate(series_graphs):
-
             color_frac = i / len(series_graphs)
             size_inc = (max_marker_size - min_marker_size) / len(series_graphs) * i
             group_size = max_marker_size - size_inc

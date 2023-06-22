@@ -33,7 +33,6 @@ def conversion_factor_from_to(from_unit: str, to_unit: str) -> float:
 
 
 def update_reg_from_context(context: Dict[str, Any]) -> None:
-
     for reg in context.get("pint_unit_registry", []):
         ureg.define(reg)
 
