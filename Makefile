@@ -24,6 +24,8 @@ endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+export COMPOSE_FILE=docker-stack.yml
+
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
@@ -40,7 +42,8 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
+## don't remove pycache dirs for docker mount volume compat
+# find . -name '__pycache__' -exec rm -fr {} +
 
 clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
@@ -52,8 +55,9 @@ clean-test: ## remove test and coverage artifacts
 restart: ## restart the redis server and the background workers
 	docker-compose restart redis celeryworker
 
-test: clean ## run tests quickly with the default Python
-	docker-compose exec nereid-tests pytest -xvv
+test: clean restart ## run tests quickly with the default Python
+	docker-compose exec nereid-tests pytest -xv -n 4
+	docker compose exec nereid-tests pytest nereid/tests/test_api -xv -n 4 --async
 
 coverage: clean restart ## check code coverage quickly with the default Python
 	docker-compose exec nereid-tests coverage run -m pytest -x
@@ -66,8 +70,8 @@ typecheck: clean ## run static type checker
 
 develop: clean ## build the development environment and launch containers in background
 	bash scripts/build_dev.sh
-	
-up: ## bring up the containers in '-d' mode 
+
+up: ## bring up the containers in '-d' mode
 	docker-compose up -d
 
 down: ## bring down the containers and detach volumes
