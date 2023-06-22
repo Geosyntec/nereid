@@ -1,0 +1,117 @@
+[build-system]
+requires = ["hatchling >= 1.13.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["nereid/nereid"]
+
+[project]
+name = "nereid-engine"
+description = "Water quality engine for computing graph-based land surface load aggregation and BMP effectiveness."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+url = "https://github.com/Geosyntec/nereid"
+authors = [
+    { name = "Austin Orr", email = "aorr@geosyntec.com" },
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Typing :: Typed",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: FastAPI",
+    "Framework :: Celery",
+    "Framework :: Pydantic",
+    "License :: OSI Approved :: BSD License",
+]
+dependencies = [
+    "python-dotenv>=0.14",
+    "scipy>=1.5",
+    "pandas>=1.1",
+    "networkx>=2.8.6",
+    "pyyaml>=5.4.1",
+    "pint>=0.17",
+    "matplotlib>=3.6.0",
+    "graphviz",
+    "pydot",
+    "pydantic>=1.8.0",
+    "orjson",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+app = [
+    "fastapi[all]>=0.70.0"
+]
+async-app =    [
+    "nereid-engine[app]",
+    "celery>=5.0",
+    "redis>=4.0.0",
+    ]
+dev =[
+    "nereid-engine[async-app]",
+    "black==22.1.0",
+    "coverage>=6.0.0",
+    "isort>=5.0.0",
+    "mypy>=0.910",
+    "pytest",
+    "requests",
+    "pytest-cov",
+    "pytest-xdist",
+    "pre-commit>=3.3.3,<4.0.0"
+]
+
+[tool.hatch.version]
+path = "nereid/nereid/__init__.py"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    # todo: remove after networkx.drawing.nx_pylab is updated for numpy>=2.0.0
+    "ignore:`alltrue` is deprecated.:DeprecationWarning",
+]
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[[tool.mypy.overrides]]
+module = "nereid.tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "pandas.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "networkx.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "celery.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "matplotlib.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "scipy.interpolate.*"
+ignore_missing_imports = true
