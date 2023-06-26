@@ -6,7 +6,7 @@ from nereid.src.network.utils import graph_factory
 try:
     import matplotlib
     import pydot
-except ImportError:
+except ImportError:  # pragma: no cover
     matplotlib = None
     pydot = None
 

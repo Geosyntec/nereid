@@ -12,7 +12,7 @@ from nereid.tests.utils import TEST_PATH
 
 try:
     import matplotlib
-except ImportError:
+except ImportError:  # pragma: no cover
     matplotlib = None
 
 

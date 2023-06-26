@@ -16,10 +16,10 @@ from scipy.interpolate import CloughTocher2DInterpolator as CT2DI
 
 try:
     import matplotlib.pyplot as plt
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from matplotlib.axes import Axes
 else:
     Axes = Any
