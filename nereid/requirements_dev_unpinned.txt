@@ -1,0 +1,8 @@
+-r requirements_nereid.txt
+-r requirements_lint.txt
+coverage
+httpx
+pytest
+pytest-cov
+pytest-xdist
+watchfiles
