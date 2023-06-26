@@ -1,10 +1,28 @@
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
-import matplotlib.pyplot as plt
 import numpy
 import pandas
-from matplotlib.axes import Axes
 from scipy.interpolate import CloughTocher2DInterpolator as CT2DI
+
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    pass
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+else:
+    Axes = Any
 
 
 def bisection_search(

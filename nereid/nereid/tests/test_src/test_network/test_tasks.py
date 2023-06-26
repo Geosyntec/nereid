@@ -3,6 +3,13 @@ import pytest
 from nereid.src.network import tasks
 from nereid.src.network.utils import graph_factory
 
+try:
+    import matplotlib
+    import pydot
+except ImportError:
+    matplotlib = None
+    pydot = None
+
 
 @pytest.mark.parametrize(
     "edgelist, isvalid, exp",
@@ -74,6 +81,8 @@ def test_network_subgraph_result(subgraph_result):
     assert "requested_nodes" in result
 
 
+@pytest.mark.skipif(matplotlib is None, reason="optional matplotlib is not installed")
+@pytest.mark.skipif(pydot is None, reason="optional pydot is not installed")
 def test_render_subgraph_svg(subgraph_result):
     result = tasks.render_subgraph_svg(subgraph_result).decode()
     assert "svg" in result
@@ -92,6 +101,8 @@ def test_solution_sequence_result(solution_sequence_result):
     assert len(result["solution_sequence"]["parallel"]) == 2
 
 
+@pytest.mark.skipif(matplotlib is None, reason="optional matplotlib is not installed")
+@pytest.mark.skipif(pydot is None, reason="optional pydot is not installed")
 def test_render_solution_sequence_svg(solution_sequence_result):
     result = tasks.render_solution_sequence_svg(solution_sequence_result).decode()
     assert "svg" in result
