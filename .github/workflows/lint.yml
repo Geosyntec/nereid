@@ -17,6 +17,6 @@ jobs:
         with:
           python-version: 3.11
       - name: Install Linters
-        run: pip install -r nereid/requirements.txt -r nereid/requirements_tests.txt
+        run: pip install  -r nereid/requirements_nereid.txt -r nereid/requirements_lint.txt
       - name: Run Linters
         run: bash scripts/lint.sh
