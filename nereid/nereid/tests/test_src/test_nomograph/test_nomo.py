@@ -10,6 +10,11 @@ from nereid.src.nomograph.nomo import (
 )
 from nereid.tests.utils import TEST_PATH
 
+try:
+    import matplotlib
+except ImportError:
+    matplotlib = None
+
 
 @pytest.mark.parametrize(
     "path, name, x, t, z, exception",
@@ -217,6 +222,7 @@ def test_nomo_raises(vol_nomo, s, t, y, exception):
     pytest.raises(exception, vol_nomo, size=s, ddt=t, performance=y)
 
 
+@pytest.mark.skipif(matplotlib is None, reason="optional matplotlib is not installed")
 def test_nomo_plots(vol_nomo, flow_nomo):
     _ = vol_nomo.plot()
     _ = vol_nomo.surface_plot()

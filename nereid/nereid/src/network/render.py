@@ -2,12 +2,23 @@ import warnings
 from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
-from typing import IO, Any, Dict, List, Optional, Tuple, Union
+from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
 import orjson as json
-from matplotlib import axes, colormaps, figure  # type: ignore
-from matplotlib import pyplot as plt
+
+try:
+    import matplotlib.pyplot as plt
+    from matplotlib import colormaps, figure  # type: ignore
+except ImportError:
+    pass
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+else:
+    Axes = Any
+    Figure = Any
 
 
 def pydot_layout(*args, **kwargs):
@@ -77,9 +88,9 @@ def render_subgraphs(
     layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = None,
     npi: Optional[float] = None,
     node_size: int = 200,
-    ax: Optional[axes.Axes] = None,
+    ax: Optional[Axes] = None,
     fig_kwargs: Optional[Dict] = None,
-) -> figure.Figure:
+) -> Figure:
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
 
@@ -147,7 +158,7 @@ def render_subgraphs(
 def render_solution_sequence(
     G: nx.DiGraph,
     solution_sequence: List[List[List]],
-    ax: Optional[axes.Axes] = None,
+    ax: Optional[Axes] = None,
     layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = None,
     npi: Optional[float] = None,
     min_marker_size: float = 40.0,
@@ -156,7 +167,7 @@ def render_solution_sequence(
     marker_cycle_str: str = "^ovs>",
     nx_draw_kwargs: Optional[Dict] = None,
     fig_kwargs: Optional[Dict] = None,
-) -> figure.Figure:
+) -> Figure:
     if layout is None:  # pragma: no branch
         layout = cached_layout(G, prog="dot")
     if cmap_str is None:  # pragma: no branch
@@ -217,7 +228,7 @@ def render_solution_sequence(
     return ax.get_figure()
 
 
-def fig_to_image(fig: figure.Figure, **kwargs: Any) -> IO:
+def fig_to_image(fig: Figure, **kwargs: Any) -> IO:
     _kwargs = {"bbox_inches": "tight", "format": "svg", "dpi": 300}
     _kwargs.update(kwargs)
 
