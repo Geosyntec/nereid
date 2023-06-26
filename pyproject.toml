@@ -32,41 +32,57 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
 ]
 dependencies = [
-    "python-dotenv>=0.14",
-    "scipy>=1.5",
-    "pandas>=1.1",
-    "networkx>=2.8.6",
-    "pyyaml>=5.4.1",
-    "pint>=0.17",
-    "matplotlib>=3.6.0",
-    "graphviz",
-    "pydot",
-    "pydantic>=1.8.0",
+    "networkx",
     "orjson",
+    "pandas",
+    "Pint",
+    "pydantic<=2.0.0",
+    "python-dotenv",
+    "pytz",
+    "PyYAML",
+    "scipy",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-app = [
-    "fastapi[all]>=0.70.0"
+extras = [
+    "graphviz",
+    "matplotlib",
+    "pydot",
 ]
-async-app =    [
-    "nereid-engine[app]",
-    "celery>=5.0",
-    "redis>=4.0.0",
+base-async-worker = [
+    "celery[redis]",
+]
+async-worker = [
+    "nereid-engine[base-async-worker]",
+    "nereid-engine[extras]",
+]
+base-app = [
+    "fastapi",
+    "jinja2",
+    "uvicorn",
+    "uvloop",
+    "websockets",
+]
+app = [
+    "nereid-engine[async-worker]",
+    "nereid-engine[base-app]",
+    "nereid-engine[extras]",
     ]
-dev =[
-    "nereid-engine[async-app]",
-    "black==23.3.0",
-    "coverage>=6.0.0",
-    "isort>=5.0.0",
-    "mypy>=0.910",
+base-dev = [
+    "coverage",
     "pytest",
-    "requests",
     "pytest-cov",
     "pytest-xdist",
+]
+dev = [
+    "nereid-engine[app]",
+    "nereid-engine[base-dev]",
+    "httpx",
+    "mypy",
     "pre-commit>=3.3.3,<4.0.0",
-    "ruff==0.0.274",
+    "ruff==0.0.275",
+    "watchfiles",
 ]
 
 [tool.hatch.version]
