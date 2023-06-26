@@ -141,8 +141,7 @@ COPY ./nereid /nereid/nereid
 FROM python:3.11-bullseye as nereid-edge
 RUN apt-get update && apt-get install -y graphviz
 COPY requirements_dev.txt /requirements_dev.txt
-RUN awk -F"==" '{print $1}' /requirements.txt /requirements_dev.txt \
-    > /requirements_edge.txt
+RUN awk -F"==" '{print $1}' /requirements_dev.txt > /requirements_edge.txt
 RUN cat requirements_edge.txt
 RUN pip install -r /requirements_edge.txt
 COPY ./nereid /nereid/nereid
