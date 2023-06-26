@@ -60,7 +60,7 @@ jobs:
       - name: Install Edge Deps
         run: |
           pip install --upgrade pip
-          awk -F"==" '{print $1}' nereid/requirements.txt nereid/requirements_tests.txt > nereid/requirements_edge.txt
+          awk -F"==" '{print $1}' nereid/requirements_dev.txt > nereid/requirements_edge.txt
           pip install -r nereid/requirements_edge.txt
       - name: Run Edge Tests
         continue-on-error: true
