@@ -79,7 +79,7 @@ def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGra
         us.add(node)
         if len(us) >= size:
             return g.subgraph(us)
-    return nx.Digraph()  # pragma: no cover
+    return nx.DiGraph()  # pragma: no cover
 
 
 def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Hashable]]:
@@ -88,7 +88,7 @@ def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> List[List[Hashable]]:
             "sequential solutions are not possible for disconnected graphs."
         )
 
-    if size <= 1:
+    if size < 2:
         raise nx.NetworkXUnfeasible("the minimum directed subgraph length is 2 nodes.")
 
     g = nx.DiGraph(g.edges())  # make a copy because we'll modify the structure
