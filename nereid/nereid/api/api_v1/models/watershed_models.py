@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
+from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.land_surface_models import LandSurface
 from nereid.api.api_v1.models.network_models import Graph
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
@@ -402,8 +403,12 @@ class Watershed(BaseModel):
     treatment_sites: Optional[List[TreatmentSite]] = None
     previous_results: Optional[List[PreviousResult]] = None
 
-    class Config:
-        schema_extra = {"example": EXAMPLE_WATERSHED}
+    if PYDANTIC_V2:
+        model_config = {"json_schema_extra": {"examples": [EXAMPLE_WATERSHED]}}
+    else:
+
+        class Config:
+            schema_extra = {"examples": [EXAMPLE_WATERSHED]}
 
 
 ## Response Models

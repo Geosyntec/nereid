@@ -9,6 +9,7 @@ import pandas
 from pydantic import BaseModel
 
 import nereid.tests.test_data
+from nereid._compat import model_json_schema
 from nereid.api.api_v1.models import treatment_facility_models
 from nereid.src.network.utils import clean_graph_dict
 
@@ -96,12 +97,14 @@ def generate_n_random_valid_watershed_graphs(
     return G
 
 
-def create_random_model_dict(model: BaseModel, can_fail: bool = True) -> Dict[str, Any]:
+def create_random_model_dict(
+    model: type[BaseModel], can_fail: bool = True
+) -> Dict[str, Any]:
     def random_string(nchars: int) -> str:
         letters = list(string.ascii_letters)
         return "".join([numpy.random.choice(letters) for i in range(nchars)])
 
-    schema = model.schema()
+    schema = model_json_schema(model)
     reqds = schema["required"]
     props = schema["properties"]
     optionalprops = list(set(props.keys()) - set(reqds))
@@ -121,6 +124,11 @@ def create_random_model_dict(model: BaseModel, can_fail: bool = True) -> Dict[st
     for k in keys_subset:  # pragma: no cover
         v = props[k]
         value: Any = None
+
+        anyOf = v.get("anyOf", [])
+        for dct in anyOf:
+            if dct["type"] in ["string", "number"]:
+                v["type"] = dct["type"]
 
         if v.get("default") is not None:
             value = v["default"]

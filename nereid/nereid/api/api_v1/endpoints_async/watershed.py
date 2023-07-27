@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
+from nereid._compat import model_dump
 from nereid.api.api_v1.async_utils import run_task, standard_json_response
 from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
@@ -18,7 +19,7 @@ def validate_watershed_request(
     watershed_req: Watershed,
     context: dict = Depends(get_valid_context),
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    watershed: Dict[str, Any] = watershed_req.dict(by_alias=True)
+    watershed: Dict[str, Any] = model_dump(watershed_req, by_alias=True)
 
     unvalidated_treatment_facilities = watershed.get("treatment_facilities")
     if unvalidated_treatment_facilities is not None:

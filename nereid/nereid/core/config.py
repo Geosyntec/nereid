@@ -1,10 +1,14 @@
 from typing import Any, Dict, List, Literal, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, validator
-
 import nereid
+from nereid._compat import PYDANTIC_V2, BaseSettings
 from nereid.core.io import load_cfg
 from nereid.core.utils import get_nereid_path
+
+if PYDANTIC_V2:
+    from pydantic import AnyHttpUrl, field_validator
+else:
+    from pydantic import AnyHttpUrl, validator
 
 nereid_path = get_nereid_path()
 
@@ -29,18 +33,37 @@ class Settings(BaseSettings):
     ALLOW_CORS_ORIGINS: List[Union[AnyHttpUrl, Literal["*"]]] = ["*"]
     ALLOW_CORS_ORIGIN_REGEX: Optional[str] = None
 
-    @validator("ALLOW_CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
-        if isinstance(v, str) and not v.startswith("["):  # pragma: no cover
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
-        raise ValueError(v)  # pragma: no cover
+    if PYDANTIC_V2:
 
-    class Config:  # pragma: no cover
-        env_prefix = "NEREID_"
-        env_file = ".env"
-        extra = "allow"
+        @field_validator("ALLOW_CORS_ORIGINS", mode="before")
+        @classmethod
+        def assemble_cors_origins(
+            cls, v: Union[str, List[str]]
+        ) -> Union[List[str], str]:
+            if isinstance(v, str) and not v.startswith("["):  # pragma: no cover
+                return [i.strip() for i in v.split(",")]
+            elif isinstance(v, (list, str)):
+                return v
+            raise ValueError(v)  # pragma: no cover
+
+        model_config = {"env_prefix": "NEREID_", "env_file": ".env", "extra": "allow"}
+
+    else:
+
+        @validator("ALLOW_CORS_ORIGINS", pre=True)
+        def assemble_cors_origins(
+            cls, v: Union[str, List[str]]
+        ) -> Union[List[str], str]:
+            if isinstance(v, str) and not v.startswith("["):  # pragma: no cover
+                return [i.strip() for i in v.split(",")]
+            elif isinstance(v, (list, str)):
+                return v
+            raise ValueError(v)  # pragma: no cover
+
+        class Config:  # pragma: no cover
+            env_prefix = "NEREID_"
+            env_file = ".env"
+            extra = "allow"
 
     def update(self, other: dict) -> None:  # pragma: no cover
         for key, value in other.items():

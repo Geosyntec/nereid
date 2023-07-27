@@ -5,6 +5,8 @@ import numpy
 import pandas
 from pydantic import BaseModel, ValidationError
 
+from nereid._compat import PYDANTIC_V2, model_construct, model_json_schema
+
 
 def get_nereid_path():
     return Path(__file__).resolve().parent.parent
@@ -17,17 +19,21 @@ def validate_with_discriminator(
     fallback_mapping: Dict[str, Any],
 ) -> Any:
     class NullModel(BaseModel):
-        class Config:
-            extra = "allow"
+        if PYDANTIC_V2:
+            model_config = {"extra": "allow"}
+        else:
+
+            class Config:
+                extra = "allow"
 
     attr = unvalidated_data[discriminator]
     model = model_mapping.get(attr, None)
-    fallback = fallback_mapping.get(attr, NullModel)
+    fallback = fallback_mapping.get(attr, NullModel)  # type: ignore
 
     if model is None:
         e = (
             f"ERROR: the key '{attr}' is not in `model_mapping`. "
-            f"Using `fallback` value: {fallback.schema()['title']}"
+            f"Using `fallback` value: {model_json_schema(fallback)['title']}"
         )
 
         unvalidated_data["errors"] = str(e) + "  \n"
@@ -38,7 +44,7 @@ def validate_with_discriminator(
     except ValidationError as e:
         unvalidated_data["errors"] = "ERROR: " + str(e) + "  \n"
         model = fallback
-        valid = model.construct(**unvalidated_data)
+        valid = model_construct(model, **unvalidated_data)
 
     return valid
 
