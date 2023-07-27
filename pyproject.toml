@@ -30,7 +30,7 @@ dependencies = [
     "orjson",
     "pandas",
     "Pint",
-    "pydantic<2",
+    "pydantic>=1.10.0",
     "python-dotenv",
     "pytz",
     "PyYAML",
@@ -54,7 +54,7 @@ where = ["nereid"]
 extras = ["graphviz", "matplotlib", "pydot"]
 base-async-worker = ["celery[redis]"]
 async-worker = ["nereid-engine[base-async-worker]", "nereid-engine[extras]"]
-base-app = ["fastapi<0.99", "jinja2", "uvicorn", "uvloop", "websockets"]
+base-app = ["fastapi", "jinja2", "uvicorn", "uvloop", "websockets"]
 app = [
     "nereid-engine[async-worker]",
     "nereid-engine[base-app]",

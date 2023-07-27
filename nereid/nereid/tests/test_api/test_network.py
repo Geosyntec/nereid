@@ -215,7 +215,7 @@ def test_post_solution_sequence(
     key = min_branch_size, n_graphs, min_max
     post_response = solution_sequence_response[key]
 
-    assert post_response.status_code == 200
+    assert post_response.status_code == 200, post_response.content
     prjson = post_response.json()
     assert network_models.SolutionSequenceResponse(**prjson)
     assert prjson["status"].lower() != "failure"

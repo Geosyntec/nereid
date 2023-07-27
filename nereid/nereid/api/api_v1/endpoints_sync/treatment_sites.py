@@ -3,6 +3,7 @@ from typing import Any, Dict
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
+from nereid._compat import model_dump
 from nereid.api.api_v1.models.treatment_site_models import (
     TreatmentSiteResponse,
     TreatmentSites,
@@ -23,6 +24,8 @@ async def initialize_treatment_site(
     treatment_sites: TreatmentSites = Body(...),
     context: dict = Depends(get_valid_context),
 ) -> Dict[str, Any]:
-    data = tasks.initialize_treatment_sites(treatment_sites.dict(), context=context)
+    data = tasks.initialize_treatment_sites(
+        model_dump(treatment_sites), context=context
+    )
 
     return {"data": data}

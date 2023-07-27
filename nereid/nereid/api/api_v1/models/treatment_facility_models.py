@@ -1,14 +1,34 @@
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, root_validator, validator
+from pydantic import BaseModel, Field
 
+from nereid._compat import PYDANTIC_V2, model_dump, model_json_schema
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_with_discriminator
+
+if PYDANTIC_V2:
+    from pydantic import field_validator, model_validator
+
+else:
+    from pydantic import root_validator, validator
 
 
 class _Base(BaseModel):
     node_id: str
     facility_type: str
+
+    if PYDANTIC_V2:
+
+        @field_validator("node_id", mode="before")
+        @classmethod
+        def node_id_str(cls, v):
+            return str(v)
+
+    else:
+
+        @validator("node_id", pre=True, always=True, check_fields=False)
+        def node_id_str(cls, v):
+            return str(v)
 
 
 class SimpleFacilityBase(_Base):
@@ -16,57 +36,110 @@ class SimpleFacilityBase(_Base):
     retained_pct: Optional[float] = None
     _constructor: str = "simple_facility_constructor"
 
-    @validator("captured_pct", pre=True, always=True, check_fields=False)
-    def captured_default(cls, v):
-        if v is None:
-            v = 0.0
-        else:
-            assert (
-                0.0 <= v <= 100.0
-            ), "Error: This value must be a number between 0.0 - 100.0."
-        return v
+    if PYDANTIC_V2:
+        model_config = {"extra": "allow"}
+    else:
 
-    class Config:
-        extra = "allow"
+        @validator("captured_pct", pre=True, always=True, check_fields=False)
+        def captured_default(cls, v):
+            if v is None:
+                v = 0.0
+            else:
+                assert (
+                    0.0 <= v <= 100.0
+                ), "Error: This value must be a number between 0.0 - 100.0."
+            return v
+
+        class Config:
+            extra = "allow"
 
 
 class SimpleFacility(SimpleFacilityBase):
-    @validator("retained_pct", pre=True, always=True, check_fields=False)
-    def retained_default(cls, v, values):
-        if v is None:
-            v = 0.0
-        else:
-            assert (
-                0.0 <= v <= 100.0
-            ), "Error: This value must be a number between 0.0 - 100.0."
-            assert v <= values.get("captured_pct", 0.0), (
-                "Error: Percent volume retained must be less than "
-                "or equal to the overall percent volume captured."
-            )
-        return v
+    if PYDANTIC_V2:
+
+        @model_validator(mode="before")
+        @classmethod
+        def retained_default(cls, data):
+            if isinstance(data, dict):
+                v = data.get("retained_pct")
+                if v is None:
+                    data["retained_pct"] = 0.0
+                else:
+                    assert (
+                        0.0 <= v <= 100.0
+                    ), "retained percent must be between 0.0-100.0"
+                    assert v <= data.get(
+                        "captured_pct", 0.0
+                    ), "retained percent must be less than or equal to captured percent"
+            return data
+
+    else:
+
+        @validator("retained_pct", pre=True, always=True, check_fields=False)
+        def retained_default(cls, v, values):
+            if v is None:
+                v = 0.0
+            else:
+                assert (
+                    0.0 <= v <= 100.0
+                ), "Error: This value must be a number between 0.0 - 100.0."
+                assert v <= values.get("captured_pct", 0.0), (
+                    "Error: Percent volume retained must be less than "
+                    "or equal to the overall percent volume captured."
+                )
+            return v
 
 
 class SimpleTmntFacility(SimpleFacilityBase):
-    @validator("retained_pct", pre=True, always=True, check_fields=False)
-    def retained_default(cls, v):
-        if v is not None:
-            assert abs(v) <= 1e-6, (
-                "Error: This facility type cannot retain runoff. "
-                "Retained volume percentage must be set to zero."
-            )
-        return 0.0
+    if PYDANTIC_V2:
+
+        @model_validator(mode="before")
+        @classmethod
+        def retained_default(cls, data):
+            if isinstance(data, dict):
+                v = data.get("retained_pct")
+                if v is not None:
+                    assert abs(v) <= 1e-6, "retained percent must be zero."
+                data["retained_pct"] = 0.0
+            return data
+
+    else:
+
+        @validator("retained_pct", pre=True, always=True, check_fields=False)
+        def retained_default(cls, v):
+            if v is not None:
+                assert abs(v) <= 1e-6, (
+                    "Error: This facility type cannot retain runoff. "
+                    "Retained volume percentage must be set to zero."
+                )
+            return 0.0
 
 
 class SimpleRetFacility(SimpleFacilityBase):
-    @validator("retained_pct", pre=True, always=True, check_fields=False)
-    def retained_default(cls, v, values):
-        if v is not None:
+    if PYDANTIC_V2:
+
+        @model_validator(mode="before")
+        @classmethod
+        def retained_default(cls, data):
+            if isinstance(data, dict):
+                v = data.get("retained_pct")
+                if v is not None:
+                    assert v == data.get(
+                        "captured_pct"
+                    ), "retained must equal captured for retention BMPs"
+                data["retained_pct"] = data.get("captured_pct", 0.0)
+            return data
+
+    else:
+
+        @validator("retained_pct", pre=True, always=True, check_fields=False)
+        def retained_default(cls, v, values):
             assert v == values.get("captured_pct"), (
                 "Error: This facility type only performs retention. "
                 "Retained volume percentage must be equal to the captured "
                 "volume percentage."
             )
-        return values.get("captured_pct", 0.0)
+            return values.get("captured_pct", 0.0)
 
 
 class FacilityBase(_Base):
@@ -93,8 +166,12 @@ and set the performance to 'fully eliminates all dry weather flow'. (default=Fal
 class NTFacility(_Base):
     _constructor: str = "nt_facility_constructor"
 
-    class Config:
-        extra = "allow"
+    if PYDANTIC_V2:
+        model_config = {"extra": "allow"}
+    else:
+
+        class Config:
+            extra = "allow"
 
 
 class FlowFacility(FacilityBase):
@@ -107,20 +184,42 @@ class LowFlowFacility(FacilityBase):
     treatment_rate_cfs: Optional[float] = None
     design_capacity_cfs: Optional[float] = None
     tributary_area_tc_min: float = Field(5.0, le=60)
-    months_operational: str = Field("both", regex="summer$|winter$|both$")
+    if PYDANTIC_V2:
+        months_operational: str = Field("both", pattern="summer$|winter$|both$")
+    else:
+        months_operational: str = Field("both", regex="summer$|winter$|both$")
     _constructor: str = "dw_and_low_flow_facility_constructor"
 
-    @root_validator(pre=True)
-    def one_or_both(cls, values):
-        _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
-        if all(values.get(v) is None for v in _fields):
-            raise ValueError(
-                "Error: Specify one of 'treatment_rate_cfs' and 'design_capacity_cfs'."
-            )
-        else:
-            values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
-            values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
-        return values
+    if PYDANTIC_V2:
+
+        @model_validator(mode="before")
+        @classmethod
+        def one_or_both(cls, values):
+            if not isinstance(values, dict):
+                return values
+            _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
+            if all(values.get(v) is None for v in _fields):
+                raise ValueError(
+                    "One or both of 'treatment_rate_cfs' and 'design_capacity_cfs' are required."
+                )
+            else:
+                values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
+                values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
+            return values
+
+    else:
+
+        @root_validator(pre=True)
+        def one_or_both(cls, values):
+            _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
+            if all(values.get(v) is None for v in _fields):
+                raise ValueError(
+                    "Error: Specify one of 'treatment_rate_cfs' and 'design_capacity_cfs'."
+                )
+            else:
+                values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
+                values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
+            return values
 
 
 class DryWeatherDiversionLowFlowFacility(LowFlowFacility):
@@ -136,15 +235,29 @@ class OnlineFacilityBase(FacilityBase):  # pragma: no cover
     tributary_area_tc_min: float = Field(5.0, le=60)
     offline_diversion_rate_cfs: Optional[float] = None
 
-    @validator("offline_diversion_rate_cfs", pre=True, always=True)
-    def required_if_offline(cls, v, values):
-        if not values.get("is_online") and v is None:
-            _node_id = values["node_id"]
-            raise ValueError(
-                "Error: 'offline_diversion_rate_cfs' is required if "
-                f"facility [{_node_id}] is offline."
-            )
-        return v
+    if PYDANTIC_V2:
+
+        @field_validator("offline_diversion_rate_cfs")
+        @classmethod
+        def required_if_offline(cls, v, info):
+            if not info.data.get("is_online") and v is None:
+                _node_id = info.data["node_id"]
+                raise ValueError(
+                    f"'offline_diversion_rate_cfs' is required if facility [{_node_id}] is offline."
+                )
+            return v
+
+    else:
+
+        @validator("offline_diversion_rate_cfs", pre=True, always=True)
+        def required_if_offline(cls, v, values):
+            if not values.get("is_online") and v is None:
+                _node_id = values["node_id"]
+                raise ValueError(
+                    "Error: 'offline_diversion_rate_cfs' is required if "
+                    f"facility [{_node_id}] is offline."
+                )
+            return v
 
 
 class RetentionFacility(FacilityBase):
@@ -471,9 +584,14 @@ EXAMPLE_TREATMENT_FACILITIES = {
 class TreatmentFacilities(BaseModel):
     treatment_facilities: List[Dict[str, Any]]
     errors: Optional[List[str]] = None
+    if PYDANTIC_V2:
+        model_config = {
+            "json_schema_extra": {"examples": [EXAMPLE_TREATMENT_FACILITIES]}
+        }
+    else:
 
-    class Config:
-        schema_extra = {"example": EXAMPLE_TREATMENT_FACILITIES}
+        class Config:
+            schema_extra = {"examples": [EXAMPLE_TREATMENT_FACILITIES]}
 
 
 class TreatmentFacilitiesStrict(BaseModel):
@@ -509,11 +627,11 @@ def validate_treatment_facility_models(
             fallback_mapping=fallback_map,
         )
 
-        valid_dct = model.dict()
+        valid_dct = model_dump(model)
         valid_dct["constructor"] = getattr(
             model, "_constructor", "nt_facility_constructor"
         )
-        valid_dct["valid_model"] = model.schema()["title"]
+        valid_dct["valid_model"] = model_json_schema(model)["title"]
         valid_dct["validator"] = model_map_str.get(facility_type)
         valid_dct["validation_fallback"] = fallback_map_str.get(facility_type)
         valid_dct["tmnt_performance_facility_type"] = tmnt_performance_map_str.get(
