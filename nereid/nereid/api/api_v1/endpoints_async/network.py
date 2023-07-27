@@ -5,6 +5,7 @@ from fastapi.requests import Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
+from nereid._compat import model_dump
 from nereid.api.api_v1.async_utils import (
     run_task,
     standard_json_response,
@@ -26,7 +27,7 @@ async def validate_network(
     request: Request,
     graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
 ) -> Dict[str, Any]:
-    task = bg.validate_network.s(graph=graph.dict(by_alias=True))
+    task = bg.validate_network.s(graph=model_dump(graph, by_alias=True))
     return run_task(request, task, "get_validate_network_result")
 
 
@@ -51,7 +52,7 @@ async def subgraph_network(
     request: Request,
     subgraph_req: network_models.SubgraphRequest = Body(...),
 ) -> Dict[str, Any]:
-    task = bg.network_subgraphs.s(**subgraph_req.dict(by_alias=True))
+    task = bg.network_subgraphs.s(**model_dump(subgraph_req, by_alias=True))
 
     return run_task(request, task, "get_subgraph_network_result")
 
@@ -125,7 +126,7 @@ async def network_solution_sequence(
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
     task = bg.solution_sequence.s(
-        graph=graph.dict(by_alias=True), min_branch_size=min_branch_size
+        graph=model_dump(graph, by_alias=True), min_branch_size=min_branch_size
     )
 
     return run_task(request, task, "get_network_solution_sequence")

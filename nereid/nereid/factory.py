@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 
+from nereid._compat import model_copy
 from nereid.api.api_v1.endpoints_sync import sync_router
 from nereid.api.api_v1.utils import get_valid_context
 from nereid.core.config import nereid_path, settings
@@ -15,13 +16,10 @@ def create_app(
     settings_override: Optional[Dict[str, Any]] = None,
     app_kwargs: Optional[Dict[str, Any]] = None,
 ) -> FastAPI:
-    _settings = settings.copy(deep=True)
-    if settings_override is not None:  # pragma: no branch
-        _settings.update(settings_override)
+    _settings = model_copy(settings, deep=True)
+    _settings.update(settings_override or {})
 
-    kwargs = {}
-    if app_kwargs is not None:  # pragma: no cover
-        kwargs = app_kwargs
+    kwargs = app_kwargs or {}
 
     _docs_url: Optional[str] = kwargs.pop("docs_url", None)
     _redoc_url: Optional[str] = kwargs.pop("redoc_url", None)
@@ -29,8 +27,8 @@ def create_app(
     app = FastAPI(
         title="nereid",
         version=_settings.VERSION,
-        docs_url=_docs_url,
-        redoc_url=_redoc_url,
+        # docs_url=_docs_url,
+        # redoc_url=_redoc_url,
         **kwargs,
     )
     app._settings = _settings  # type: ignore

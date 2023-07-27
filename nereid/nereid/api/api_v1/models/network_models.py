@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field, StrictStr
 
+from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 ## Network Request Models
@@ -112,12 +113,12 @@ GraphExamples = {
 
 class Graph(BaseModel):
     edges: List[Edge]
-    nodes: Optional[List[Node]]
+    nodes: Optional[List[Node]] = []
     directed: Optional[bool] = True
     multigraph: Optional[bool] = True
     type_: Optional[str] = Field(None, alias="type")
-    label: Optional[str]
-    metadata: Optional[dict]
+    label: Optional[str] = None
+    metadata: Optional[dict] = {}
 
 
 class Nodes(BaseModel):
@@ -132,13 +133,28 @@ class SubgraphRequest(BaseModel):
     graph: Graph
     nodes: List[Node]
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "graph": GraphExamples["complex"]["value"],
-                "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
-            },
+    if PYDANTIC_V2:
+        model_config = {
+            "json_schema_extra": {
+                "examples": [
+                    {
+                        "graph": GraphExamples["complex"]["value"],
+                        "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
+                    }
+                ],
+            }
         }
+    else:
+
+        class Config:
+            schema_extra = {
+                "examples": [
+                    {
+                        "graph": GraphExamples["complex"]["value"],
+                        "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
+                    }
+                ],
+            }
 
 
 class SeriesSequence(BaseModel):
@@ -155,10 +171,10 @@ class SolutionSequence(BaseModel):
 
 class NetworkValidation(BaseModel):
     isvalid: bool
-    node_cycles: Optional[List[List[str]]]
-    edge_cycles: Optional[List[List[str]]]
-    multiple_out_edges: Optional[List[List[str]]]
-    duplicate_edges: Optional[List[List[str]]]
+    node_cycles: Optional[List[List[str]]] = []
+    edge_cycles: Optional[List[List[str]]] = []
+    multiple_out_edges: Optional[List[List[str]]] = []
+    duplicate_edges: Optional[List[List[str]]] = []
 
 
 ## Network Response Models

@@ -3,6 +3,7 @@ from typing import Any, Dict, Tuple, Union
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
+from nereid._compat import model_construct, model_dump
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,
@@ -21,12 +22,12 @@ def validate_facility_request(
     ),
     context: dict = Depends(get_valid_context),
 ) -> Tuple[TreatmentFacilities, Dict[str, Any]]:
-    unvalidated_data = treatment_facilities.dict()["treatment_facilities"]
+    unvalidated_data = model_dump(treatment_facilities)["treatment_facilities"]
 
     valid_models = validate_treatment_facility_models(unvalidated_data, context)
 
     return (
-        TreatmentFacilities.construct(treatment_facilities=valid_models),
+        model_construct(TreatmentFacilities, treatment_facilities=valid_models),
         context,
     )
 
@@ -45,7 +46,7 @@ async def initialize_treatment_facility_parameters(
     treatment_facilities, context = tmnt_facility_req
 
     data = tasks.initialize_treatment_facilities(
-        treatment_facilities=treatment_facilities.dict(),
+        treatment_facilities=model_dump(treatment_facilities),
         pre_validated=True,
         context=context,
     )

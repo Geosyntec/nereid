@@ -4,6 +4,7 @@ from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
+from nereid._compat import model_dump
 from nereid.api.api_v1.async_utils import run_task, standard_json_response
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
@@ -22,7 +23,7 @@ def validate_facility_request(
     ),
     context: dict = Depends(get_valid_context),
 ) -> Tuple[TreatmentFacilities, Dict[str, Any]]:
-    unvalidated_data = treatment_facilities.dict()["treatment_facilities"]
+    unvalidated_data = model_dump(treatment_facilities)["treatment_facilities"]
 
     valid_models = validate_treatment_facility_models(unvalidated_data, context)
 
@@ -47,7 +48,7 @@ async def initialize_treatment_facility_parameters(
     treatment_facilities, context = tmnt_facility_req
 
     task = bg.initialize_treatment_facilities.s(
-        treatment_facilities=treatment_facilities.dict(),
+        treatment_facilities=model_dump(treatment_facilities),
         pre_validated=True,
         context=context,
     )
