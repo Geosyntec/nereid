@@ -84,3 +84,6 @@ down: ## bring down the containers and detach volumes
 
 dev-server: ## start a development server that runs all tasks in foreground
 	docker-compose run -e NEREID_FORCE_FOREGROUND=1 -p 8080:80 nereid bash /start-reload.sh
+
+bump-deps:
+	bash scripts/bump_deps.sh

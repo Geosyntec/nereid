@@ -4,7 +4,6 @@ https://travis-ci.org/Geosyntec/nereid
 
 https://codecov.io/gh/Geosyntec/nereid
 
-
 ## Quick Start
 
 First, ensure you are in the right directory by `cd`-ing into the top level directory of this repo, which contains many docker-compose files (i.e., one level up from this one).
@@ -26,12 +25,14 @@ We aren't using a vanilla docker-compose.yml file for our build stack here, so f
 COMPOSE_PATH_SEPARATOR=:
 COMPOSE_FILE=docker-compose.shared.depends.yml:docker-compose.dev.ports.yml:docker-compose.dev.build.yml:docker-compose.dev.env.yml
 ```
+
 With these enviroment variables set, you can control the stack without the `-f` jazz.
 
 Check that everything is ok by listing the containers:
 `docker-compose ps`
 
 You should see four containers, `redis`, `celeryworker`, `nereid` and `nereid-tests` and look roughly exactly like this:
+
 ```
 Name                           Command               State                Ports
     ---------------------------------------------------------------------------------------------------------
@@ -54,28 +55,56 @@ check coverage with:
 then:
 `docker-compose run  nereid-tests  coverage report -m`
 
-__to run the service, use:__
+**to run the service, use:**
 `docker-compose run -d -p 8080:80 nereid bash /start.sh`
 
-__and navigate to:__
+**and navigate to:**
 http://localhost:8080/docs
 or wherever you defined your host, port, and run command.
 
 If something went wrong, try the above commands without the `-d` flag. This will log the running image to `stdout` so you can see what happened.
 
 ## Configuration for Development and Deployment
+
 There is a lot of flexibility here while we develop the deployment pattern. I've prepped several environment variables to be easily configurable, but your mileage may vary. Please add issues to the repo with requests for other configuration variables and the `nereid` maintainer will address them.
 
 ### Build-Time Environment Variables
+
 `CELERY_BROKER_URL=redis://guest@redis:6379/0`
 `CELERY_RESULT_BACKEND=redis://guest@redis:6379/0`
 
 ### Run-Time Environment Variables
+
 `HOST=${HOST:-0.0.0.0}`
 `PORT=${PORT:-80}`
 `BIND=${BIND:-"$HOST:$PORT"}`
 `LOG_LEVEL=${LOG_LEVEL:-info}`
 
+### Requirements
+
+**worker**
+
+- -r requirements_base_unpinned.txt
+- -r requirements_base_extras_unpinned.txt
+- -r requirements_app_async_unpinned.txt
+
+**nereid**
+
+- -r requirements_worker_unpinned.txt
+- -r requirements_app_unpinned.txt
+
+**dev**
+
+- -r requirements_nereid_unpinned.txt
+- -r requirements_lint_unpinned.txt
+- coverage
+- httpx
+- pytest
+- pytest-cov
+- pytest-xdist
+- watchfiles
+
 ## Contact Info
+
 Austin Orr
 github username: austinorr

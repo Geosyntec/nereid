@@ -1,5 +1,6 @@
-fastapi
+fastapi==0.98.0
 Jinja2
 uvicorn
 uvloop
 websockets
+brotli-asgi
