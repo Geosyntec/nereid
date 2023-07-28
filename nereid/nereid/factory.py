@@ -16,7 +16,7 @@ logging.basicConfig(level=settings.LOGLEVEL)
 logger = logging.getLogger(__name__)
 
 timing_asgi = None
-if settings.ASGI_TIMING:
+if settings.ASGI_TIMING:  # pragma: no cover
     try:
         import timing_asgi  # type: ignore[import, no-redef]
         from timing_asgi import TimingClient, TimingMiddleware
@@ -42,7 +42,7 @@ def create_app(
 
     kwargs = app_kwargs or {}
 
-    if _settings.STATIC_DOCS:
+    if _settings.STATIC_DOCS:  # pragma: no branch
         kwargs["docs_url"] = None
         kwargs["redoc_url"] = None
 
@@ -109,7 +109,7 @@ def create_app(
     app.add_middleware(BrotliMiddleware)
 
     if timing_asgi is not None:
-        app.add_middleware(
+        app.add_middleware(  # pragma: no cover
             TimingMiddleware,
             client=PrintTimings(),
             metric_namer=StarletteScopeToName(prefix="nereid", starlette_app=app),
