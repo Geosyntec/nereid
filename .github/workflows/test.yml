@@ -100,7 +100,7 @@ jobs:
           pytest nereid/tests -xs -n 4 --cov=nereid/ --cov-append --cov-report=xml
           coverage report -mi
       - name: upload coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           directory: ./nereid/
 
