@@ -97,21 +97,12 @@ module = "nereid.tests.*"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
-module = "pandas.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "networkx.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "celery.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "matplotlib.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "scipy.interpolate.*"
+module = [
+    "brotli_asgi",
+    "celery",
+    "matplotlib",
+    "networkx",
+    "pandas",
+    "scipy.interpolate",
+]
 ignore_missing_imports = true

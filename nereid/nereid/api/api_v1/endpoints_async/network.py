@@ -25,7 +25,9 @@ router = APIRouter()
 )
 async def validate_network(
     request: Request,
-    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
+    graph: network_models.Graph = Body(
+        ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
+    ),
 ) -> Dict[str, Any]:
     task = bg.validate_network.s(graph=model_dump(graph, by_alias=True))
     return run_task(request, task, "get_validate_network_result")
@@ -122,7 +124,9 @@ async def get_subgraph_network_as_img(
 )
 async def network_solution_sequence(
     request: Request,
-    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
+    graph: network_models.Graph = Body(
+        ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
+    ),
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
     task = bg.solution_sequence.s(
