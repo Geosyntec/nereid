@@ -60,7 +60,7 @@ class SimpleFacility(SimpleFacilityBase):
         @model_validator(mode="before")
         @classmethod
         def retained_default(cls, data):
-            if isinstance(data, dict):
+            if isinstance(data, dict):  # pragma: no branch
                 v = data.get("retained_pct")
                 if v is None:
                     data["retained_pct"] = 0.0
@@ -96,7 +96,7 @@ class SimpleTmntFacility(SimpleFacilityBase):
         @model_validator(mode="before")
         @classmethod
         def retained_default(cls, data):
-            if isinstance(data, dict):
+            if isinstance(data, dict):  # pragma: no branch
                 v = data.get("retained_pct")
                 if v is not None:
                     assert abs(v) <= 1e-6, "retained percent must be zero."
@@ -121,7 +121,7 @@ class SimpleRetFacility(SimpleFacilityBase):
         @model_validator(mode="before")
         @classmethod
         def retained_default(cls, data):
-            if isinstance(data, dict):
+            if isinstance(data, dict):  # pragma: no branch
                 v = data.get("retained_pct")
                 if v is not None:
                     assert v == data.get(
@@ -196,7 +196,7 @@ class LowFlowFacility(FacilityBase):
         @classmethod
         def one_or_both(cls, values):
             if not isinstance(values, dict):
-                return values
+                return values  # pragma: no cover
             _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
             if all(values.get(v) is None for v in _fields):
                 raise ValueError(
