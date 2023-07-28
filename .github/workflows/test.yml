@@ -90,9 +90,9 @@ jobs:
         with:
           python-version: 3.11
       - name: Install Deps
-        run: |
-          pip install -r nereid/requirements_dev.txt
-          pip install fastapi>0.100.0 pydantic>2.0.0 pydantic-settings
+        run: pip install -r nereid/requirements_dev.txt
+      - name: Install Dep updates
+        run: pip install -U "fastapi>0.100.0" "pydantic>2.0.0" pydantic-settings
       - name: run python coverage (fastapi > 0.100, pydantic > 2.0)
         run: |
           cd nereid
