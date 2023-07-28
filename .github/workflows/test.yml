@@ -83,7 +83,7 @@ jobs:
         run: |
           docker compose exec -T nereid-tests pytest nereid/tests -xs -n 2 --cov=nereid/
           docker compose exec -T nereid-tests pytest nereid/tests/test_api -xs -n 2 --cov=nereid/ --cov-append --async
-          docker-compose exec nereid-tests cat .coverage > ./nereid/.coverage
+          docker-compose exec -T nereid-tests cat .coverage > ./nereid/.coverage
       - run: sudo apt-get install graphviz
       - uses: actions/checkout@v3
       - name: Set up Python
