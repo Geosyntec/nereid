@@ -170,7 +170,7 @@ class LowFlowFacility(FacilityBase):
     if PYDANTIC_V2:
         months_operational: str = Field("both", pattern="summer$|winter$|both$")
     else:
-        months_operational: str = Field("both", regex="summer$|winter$|both$")
+        months_operational: str = Field("both", regex="summer$|winter$|both$")  # type: ignore[no-redef]
     _constructor: str = "dw_and_low_flow_facility_constructor"
 
     if PYDANTIC_V2:

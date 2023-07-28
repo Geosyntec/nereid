@@ -17,7 +17,9 @@ router = APIRouter()
     response_class=ORJSONResponse,
 )
 async def validate_network(
-    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
+    graph: network_models.Graph = Body(
+        ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
+    ),
 ) -> Dict[str, Any]:
     g: Dict[str, Any] = model_dump(graph, by_alias=True)
     data = tasks.validate_network(graph=g)
@@ -45,7 +47,9 @@ async def subgraph_network(
     response_class=ORJSONResponse,
 )
 async def network_solution_sequence(
-    graph: network_models.Graph = Body(..., examples=network_models.GraphExamples),
+    graph: network_models.Graph = Body(
+        ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
+    ),
     min_branch_size: int = Query(4),
 ) -> Dict[str, Any]:
     g = model_dump(graph, by_alias=True)
