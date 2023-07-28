@@ -2,6 +2,7 @@
 [run]
 source = nereid
 branch = True
+relative_files = True
 
 [report]
 ignore_errors = True
