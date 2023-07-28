@@ -1,2 +1,2 @@
--r requirements_worker.txt
+-r requirements_worker_unpinned.txt
 -r requirements_app_unpinned.txt
