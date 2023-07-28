@@ -11,19 +11,21 @@ if PYDANTIC_V2:
     from pydantic_settings import BaseSettings as BaseSettings
 
     def model_copy(model: M, **kwargs) -> M:
-        return model.model_copy(**kwargs)
+        return model.model_copy(**kwargs)  # type: ignore[attr-defined]
 
     def model_dump(model: BaseModel, **kwargs) -> dict[str, Any]:
-        return model.model_dump(**kwargs)
+        return model.model_dump(**kwargs)  # type: ignore[attr-defined]
 
     def model_construct(model: type[M], *args, **unvalidated_data) -> M:
-        return model.model_construct(*args, **unvalidated_data)
+        return model.model_construct(*args, **unvalidated_data)  # type: ignore[attr-defined]
 
     def model_json_schema(model: type[BaseModel], *args, **kwargs) -> dict[str, Any]:
-        return model.model_json_schema(*args, **kwargs)
+        return model.model_json_schema(*args, **kwargs)  # type: ignore[attr-defined]
 
 else:
-    from pydantic import BaseSettings as BaseSettings  # type: ignore[no-redef]
+    from pydantic import (  # type: ignore[no-redef, assignment]
+        BaseSettings as BaseSettings,
+    )
 
     def model_copy(model: M, **kwargs) -> M:
         return model.copy(**kwargs)

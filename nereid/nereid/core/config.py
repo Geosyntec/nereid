@@ -6,7 +6,7 @@ from nereid.core.io import load_cfg
 from nereid.core.utils import get_nereid_path
 
 if PYDANTIC_V2:
-    from pydantic import AnyHttpUrl, field_validator
+    from pydantic import AnyHttpUrl, field_validator  # type: ignore[attr-defined]
 else:
     from pydantic import AnyHttpUrl, validator
 
@@ -48,7 +48,11 @@ class Settings(BaseSettings):
                 return v
             raise ValueError(v)  # pragma: no cover
 
-        model_config = {"env_prefix": "NEREID_", "env_file": ".env", "extra": "allow"}
+        model_config = {
+            "env_prefix": "NEREID_",
+            "env_file": ".env",
+            "extra": "allow",  # type: ignore[typeddict-item]
+        }
 
     else:
 

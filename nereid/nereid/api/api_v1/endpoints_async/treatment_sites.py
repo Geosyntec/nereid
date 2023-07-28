@@ -21,48 +21,12 @@ router = APIRouter()
     response_class=ORJSONResponse,
 )
 async def initialize_treatment_site(
-    treatment_sites: TreatmentSites = Body(
-        ...,
-        examples=[
-            {
-                "treatment_sites": [
-                    {
-                        "node_id": "WQMP-1a-tmnt",
-                        "facility_type": "bioretention",
-                        "area_pct": 75,
-                        "captured_pct": 80,
-                        "retained_pct": 10,
-                    },
-                    {
-                        "node_id": "WQMP-1a-tmnt",
-                        "facility_type": "nt",
-                        "area_pct": 25,
-                        "captured_pct": 0,
-                        "retained_pct": 0,
-                    },
-                    {
-                        "node_id": "WQMP-1b-tmnt",
-                        "facility_type": "bioretention",
-                        "area_pct": 75,
-                        "captured_pct": 50,
-                        "retained_pct": 10,
-                    },
-                    {
-                        "node_id": "WQMP-1b-tmnt",
-                        "facility_type": "nt",
-                        "area_pct": 25,
-                        "captured_pct": 0,
-                        "retained_pct": 0,
-                    },
-                ]
-            }
-        ],
-    ),
+    treatment_sites: TreatmentSites = Body(...),
     context: dict = Depends(get_valid_context),
 ) -> Dict[str, Any]:
-    return {
-        "data": initialize_treatment_sites(model_dump(treatment_sites), context=context)
-    }
+    data = initialize_treatment_sites(model_dump(treatment_sites), context=context)
+
+    return {"data": data}
 
     # task = bg.background_initialize_treatment_facilities.s(
     #     treatment_facilities=treatment_facilities.dict(),
