@@ -68,7 +68,10 @@ coverage: clean restart ## check code coverage quickly with the default Python
 coverage-all: clean restart ## check complete code coverage
 	docker compose exec nereid-tests pytest nereid/tests -xs -n 4 --cov=nereid/
 	docker compose exec nereid-tests pytest nereid/tests/test_api -xs -n 4 --cov=nereid/ --cov-append --async
-	docker compose exec nereid-tests coverage report -m
+	docker-compose exec nereid-tests cat .coverage > ./nereid/.coverage
+	cd nereid && \
+	pytest nereid/tests -xs -n 4 --cov=nereid/ --cov-append && \
+	coverage report -mi --fail-under=100
 
 typecheck: clean ## run static type checker
 	mypy --config-file=nereid/mypy.ini nereid/nereid
