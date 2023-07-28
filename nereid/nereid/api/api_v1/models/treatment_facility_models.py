@@ -7,7 +7,7 @@ from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_with_discriminator
 
 if PYDANTIC_V2:
-    from pydantic import field_validator, model_validator
+    from pydantic import field_validator, model_validator  # type: ignore[attr-defined]
 
 else:
     from pydantic import root_validator, validator
