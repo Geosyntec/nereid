@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, Optional
 
-from brotli_asgi import BrotliMiddleware
+from brotli_asgi import BrotliMiddleware  # type: ignore
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
@@ -18,9 +18,11 @@ logger = logging.getLogger(__name__)
 timing_asgi = None
 if settings.ASGI_TIMING:
     try:
-        import timing_asgi
+        import timing_asgi  # type: ignore[import, no-redef]
         from timing_asgi import TimingClient, TimingMiddleware
-        from timing_asgi.integrations import StarletteScopeToName
+        from timing_asgi.integrations import (  # type: ignore[import]
+            StarletteScopeToName,  # type: ignore[import]
+        )
 
         class PrintTimings(TimingClient):
             def timing(self, metric_name, timing, tags):

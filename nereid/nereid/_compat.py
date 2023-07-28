@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel
 from pydantic.version import VERSION as PYDANTIC_VERSION
@@ -6,9 +6,6 @@ from pydantic.version import VERSION as PYDANTIC_VERSION
 PYDANTIC_V2 = PYDANTIC_VERSION.startswith("2.")
 
 M = TypeVar("M", bound="BaseModel")
-
-if TYPE_CHECKING:
-    PYDANTIC_V2 = True
 
 if PYDANTIC_V2:
     from pydantic_settings import BaseSettings as BaseSettings
@@ -26,7 +23,7 @@ if PYDANTIC_V2:
         return model.model_json_schema(*args, **kwargs)
 
 else:
-    from pydantic import BaseSettings as BaseSettings
+    from pydantic import BaseSettings as BaseSettings  # type: ignore[no-redef]
 
     def model_copy(model: M, **kwargs) -> M:
         return model.copy(**kwargs)
