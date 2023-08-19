@@ -12,8 +12,8 @@ class _Base(BaseModel):
 
 
 class SimpleFacilityBase(_Base):
-    captured_pct: Optional[float] = 0.0
-    retained_pct: Optional[float] = 0.0
+    captured_pct: float = 0.0
+    retained_pct: Optional[float] = None
     _constructor: str = "simple_facility_constructor"
 
     @validator("captured_pct", pre=True, always=True, check_fields=False)
