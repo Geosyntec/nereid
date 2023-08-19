@@ -12,9 +12,19 @@ class _Base(BaseModel):
 
 
 class SimpleFacilityBase(_Base):
-    captured_pct: float = Field(0.0, le=100.0, ge=0.0)
-    retained_pct: Optional[float] = None
+    captured_pct: Optional[float] = 0.0
+    retained_pct: Optional[float] = 0.0
     _constructor: str = "simple_facility_constructor"
+
+    @validator("captured_pct", pre=True, always=True, check_fields=False)
+    def captured_default(cls, v):
+        if v is None:
+            v = 0.0
+        else:
+            assert (
+                0.0 <= v <= 100.0
+            ), "Error: This value must be a number between 0.0 - 100.0."
+        return v
 
     class Config:
         extra = "allow"
@@ -26,10 +36,13 @@ class SimpleFacility(SimpleFacilityBase):
         if v is None:
             v = 0.0
         else:
-            assert 0.0 <= v <= 100.0, "retained percent must be between 0.0-100.0"
-            assert v <= values.get(
-                "captured_pct", 0.0
-            ), "retained percent must be less than or equal to captured percent"
+            assert (
+                0.0 <= v <= 100.0
+            ), "Error: This value must be a number between 0.0 - 100.0."
+            assert v <= values.get("captured_pct", 0.0), (
+                "Error: Percent volume retained must be less than "
+                "or equal to the overall percent volume captured."
+            )
         return v
 
 
@@ -37,7 +50,10 @@ class SimpleTmntFacility(SimpleFacilityBase):
     @validator("retained_pct", pre=True, always=True, check_fields=False)
     def retained_default(cls, v):
         if v is not None:
-            assert abs(v) <= 1e-6, "retained percent must be zero."
+            assert abs(v) <= 1e-6, (
+                "Error: This facility type cannot retain runoff. "
+                "Retained volume percentage must be set to zero."
+            )
         return 0.0
 
 
@@ -45,9 +61,11 @@ class SimpleRetFacility(SimpleFacilityBase):
     @validator("retained_pct", pre=True, always=True, check_fields=False)
     def retained_default(cls, v, values):
         if v is not None:
-            assert v == values.get(
-                "captured_pct"
-            ), "retained must equal captured for retention BMPs"
+            assert v == values.get("captured_pct"), (
+                "Error: This facility type only performs retention. "
+                "Retained volume percentage must be equal to the captured "
+                "volume percentage."
+            )
         return values.get("captured_pct", 0.0)
 
 
@@ -67,7 +85,7 @@ capture performance of the facility."""
         False,
         description=(
             """Whether to override the dr weather flow capture calculation
-and set the performance to 'fully elimates all dry weather flow'. (default=False)"""
+and set the performance to 'fully eliminates all dry weather flow'. (default=False)"""
         ),
     )
 
@@ -97,7 +115,7 @@ class LowFlowFacility(FacilityBase):
         _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
         if all(values.get(v) is None for v in _fields):
             raise ValueError(
-                "One or both of 'treatment_rate_cfs' and 'design_capacity_cfs' are required."
+                "Error: Specify one of 'treatment_rate_cfs' and 'design_capacity_cfs'."
             )
         else:
             values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
@@ -123,7 +141,8 @@ class OnlineFacilityBase(FacilityBase):  # pragma: no cover
         if not values.get("is_online") and v is None:
             _node_id = values["node_id"]
             raise ValueError(
-                f"'offline_diversion_rate_cfs' is required if facility [{_node_id}] is offline."
+                "Error: 'offline_diversion_rate_cfs' is required if "
+                f"facility [{_node_id}] is offline."
             )
         return v
 
@@ -187,7 +206,7 @@ class TmntFacilityWithRetentionOverride(TmntFacility):
             "This parameter can be used to set the long term retention "
             "performance to a fixed percentage of the long-term inflow volume. "
             "This is useful for taking retention credit for ET in a "
-            "vegetated sytem that is lined. "
+            "vegetated system that is lined. "
         ),
     )
 
