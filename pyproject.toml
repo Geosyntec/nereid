@@ -2,9 +2,6 @@
 requires = ["setuptools>=64.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-package-dir = { nereid = "nereid/nereid" }
-
 [project]
 name = "nereid-engine"
 description = "Water quality engine for computing graph-based land surface load aggregation and BMP effectiveness."
@@ -43,6 +40,15 @@ dynamic = ["version"]
 
 [tool.setuptools.dynamic]
 version = { attr = "nereid.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["nereid"]
+
+[tool.setuptools.package-data]
+"*" = ["*"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["_no_git*"]
 
 [project.optional-dependencies]
 extras = ["graphviz", "matplotlib", "pydot"]
