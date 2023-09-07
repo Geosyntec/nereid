@@ -1,17 +1,17 @@
 [build-system]
-requires = ["hatchling >= 1.13.0"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
 
-[tool.hatch.build.targets.wheel]
-packages = ["nereid/nereid"]
+[tool.setuptools]
+package-dir = { nereid = "nereid/nereid" }
 
 [project]
 name = "nereid-engine"
 description = "Water quality engine for computing graph-based land surface load aggregation and BMP effectiveness."
 readme = "README.md"
-requires-python = ">=3.10"
-license = "BSD-3-Clause"
-url = "https://github.com/Geosyntec/nereid"
+requires-python = ">=3.11"
+license = { "text" = "BSD-3-Clause" }
+# url = "https://github.com/Geosyntec/nereid"
 authors = [{ name = "Austin Orr", email = "aorr@geosyntec.com" }]
 classifiers = [
     "Intended Audience :: Developers",
@@ -19,7 +19,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
     "Development Status :: 5 - Production/Stable",
@@ -42,6 +41,9 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[tool.setuptools.dynamic]
+version = { attr = "nereid.__version__" }
+
 [project.optional-dependencies]
 extras = ["graphviz", "matplotlib", "pydot"]
 base-async-worker = ["celery[redis]"]
@@ -62,9 +64,6 @@ dev = [
     "ruff==0.0.275",
     "watchfiles",
 ]
-
-[tool.hatch.version]
-path = "nereid/nereid/__init__.py"
 
 [tool.pytest.ini_options]
 filterwarnings = [
