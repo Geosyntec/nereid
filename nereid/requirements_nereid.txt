@@ -23,7 +23,7 @@ numpy==1.25.0
 orjson==3.9.1
 packaging==23.1
 pandas==2.0.2
-Pillow==9.5.0
+Pillow==10.0.1
 Pint==0.22
 prompt-toolkit==3.0.38
 pydantic==1.10.9
