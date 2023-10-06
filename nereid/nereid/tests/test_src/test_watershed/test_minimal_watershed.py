@@ -84,7 +84,7 @@ TMNT_FACILITIES = [
     ## invalid input should have no load reduction and no capture
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "bioretention_simple",
             "captured_pct": 80,
             "retained_pct": -15,  # must be 0-100
@@ -95,7 +95,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "bioretention_simple",
             "captured_pct": 80,
             "retained_pct": 81,  # must be <= capture
@@ -106,7 +106,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "bioretention_simple",
             "captured_pct": None,  # capture is required
             "retained_pct": 81,
@@ -117,7 +117,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "bioretention_simple",
             "captured_pct": 101,  # must be 0-100
             "retained_pct": 81,
@@ -128,7 +128,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "infiltration_simple",
             "captured_pct": 80,
             "retained_pct": 81,  # must be equal to capture
@@ -139,7 +139,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "infiltration_simple",
             "captured_pct": None,  # capture is required
             "retained_pct": 81,
@@ -150,7 +150,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "sand_filter_simple",
             "captured_pct": 80,
             "retained_pct": 5,  # cannot retain
@@ -161,7 +161,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "sand_filter_simple",
             "captured_pct": 101,  # must be 0-100
             "retained_pct": 0,
@@ -172,7 +172,7 @@ TMNT_FACILITIES = [
     ),
     (
         {
-            "node_id": 2,
+            "node_id": "1",
             "facility_type": "sand_filter_simple",
             "captured_pct": None,  # capture is required
             "retained_pct": 0,
@@ -221,6 +221,6 @@ def test_minimal_watershed(
     lr = tmnt_results.get("TSS_load_lbs_removed", 0) > 0.0
     vol_ret = tmnt_results.get("runoff_volume_cuft_retained", 0) > 0.0
     vol_trt = tmnt_results.get("runoff_volume_cuft_treated", 0) > 0.0
-    assert reduces_load == lr, tmnt_results
-    assert does_retention == vol_ret, tmnt_results
-    assert does_treatment == vol_trt, tmnt_results
+    assert reduces_load == lr, tmnt_results.get("TSS_load_lbs_removed", 0)
+    assert does_retention == vol_ret, tmnt_results.get("runoff_volume_cuft_retained", 0)
+    assert does_treatment == vol_trt, tmnt_results.get("runoff_volume_cuft_treated", 0)
