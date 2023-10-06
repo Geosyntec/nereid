@@ -52,6 +52,7 @@ def create_app(
         **kwargs,
     )
     app._settings = _settings  # type: ignore
+    app._context_cache = {}  # type: ignore
 
     static_path = nereid_path / "static"
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
