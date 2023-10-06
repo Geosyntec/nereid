@@ -43,8 +43,7 @@ def validate_with_discriminator(
 
     except ValidationError as e:
         unvalidated_data["errors"] = "ERROR: " + str(e) + "  \n"
-        model = fallback
-        valid = model_construct(model, **unvalidated_data)
+        valid = model_construct(fallback, **unvalidated_data)
 
     return valid
 
