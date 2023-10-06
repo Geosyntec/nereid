@@ -3,13 +3,13 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from nereid._compat import PYDANTIC_V2
+from nereid.api.api_v1.models.node import Node
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 ## Land Surface Request Models
 
 
-class LandSurface(BaseModel):
-    node_id: str
+class LandSurface(Node):
     surface_key: str = Field(..., examples=["104506-RESSFH-B-5"])
     area_acres: float = Field(..., gt=0.0)
     imp_area_acres: float = Field(..., ge=0.0)
