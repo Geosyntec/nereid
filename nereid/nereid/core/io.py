@@ -13,7 +13,7 @@ PathType = Union[Path, str]
 
 @lru_cache
 def _load_file(filepath: PathType) -> bytes:
-    """returns bytes for redis cache compatability"""
+    """returns bytes for redis cache compatibility"""
     fp = Path(filepath)
     return fp.read_bytes()
 
