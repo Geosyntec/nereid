@@ -1,15 +1,14 @@
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple
 
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
-from nereid._compat import model_dump
+from nereid._compat import model_construct, model_dump
 from nereid.api.api_v1.async_utils import run_task, standard_json_response
 from nereid.api.api_v1.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,
-    TreatmentFacilitiesStrict,
     validate_treatment_facility_models,
 )
 from nereid.api.api_v1.utils import get_valid_context
@@ -18,9 +17,7 @@ router = APIRouter()
 
 
 def validate_facility_request(
-    treatment_facilities: Union[TreatmentFacilities, TreatmentFacilitiesStrict] = Body(
-        ...
-    ),
+    treatment_facilities: TreatmentFacilities = Body(...),
     context: dict = Depends(get_valid_context),
 ) -> Tuple[TreatmentFacilities, Dict[str, Any]]:
     unvalidated_data = model_dump(treatment_facilities)["treatment_facilities"]
@@ -28,7 +25,7 @@ def validate_facility_request(
     valid_models = validate_treatment_facility_models(unvalidated_data, context)
 
     return (
-        TreatmentFacilities.construct(treatment_facilities=valid_models),
+        model_construct(TreatmentFacilities, treatment_facilities=valid_models),
         context,
     )
 
