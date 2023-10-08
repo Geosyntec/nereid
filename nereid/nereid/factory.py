@@ -1,15 +1,16 @@
 import logging
 from typing import Any, Dict, Optional
 
-from brotli_asgi import BrotliMiddleware  # type: ignore
+from brotli_asgi import BrotliMiddleware
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
+from fastapi.openapi.docs import get_redoc_html
 from fastapi.staticfiles import StaticFiles
 
 from nereid._compat import model_copy
 from nereid.api.api_v1.endpoints_sync import sync_router
 from nereid.api.api_v1.utils import get_valid_context
+from nereid.api.docs import get_better_swagger_ui_html
 from nereid.core.config import nereid_path, settings
 
 logging.basicConfig(level=settings.LOGLEVEL)
@@ -76,7 +77,7 @@ def create_app(
 
         @app.get("/docs", include_in_schema=False)
         async def custom_swagger_ui_html():
-            return get_swagger_ui_html(
+            return get_better_swagger_ui_html(
                 openapi_url=str(app.openapi_url),
                 title=app.title + " - Swagger UI",
                 oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
