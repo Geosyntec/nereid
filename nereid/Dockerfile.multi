@@ -13,12 +13,12 @@ WORKDIR /nereid
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM redis:6.2.8-alpine3.17 as redis
+FROM redis:6.2.13-alpine3.18 as redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:3.11-alpine3.17 as flower
+FROM python:3.11.6-alpine3.18 as flower
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 RUN pip install --no-cache-dir redis==4.1.0 flower==1.0.0 celery==5.2.3
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
@@ -39,7 +39,7 @@ EXPOSE 5555
 CMD ["celery", "flower"]
 
 
-FROM python:3.11.1-bullseye as builder
+FROM python:3.11.6-bullseye as builder
 COPY requirements_dev.txt /requirements_dev.txt
 COPY requirements_server.txt /requirements_server.txt
 RUN mkdir /wheels && \
@@ -49,7 +49,7 @@ RUN mkdir /wheels && \
     -r /requirements_server.txt
 
 
-FROM python:3.11.1-slim-bullseye as core-runtime
+FROM python:3.11.6-slim-bullseye as core-runtime
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
@@ -58,7 +58,7 @@ ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
 
 # you are here, trying to get the requirements loaded, and rearranging the shared containers.
-FROM python:3.11.1-slim-bullseye as core-env
+FROM python:3.11.6-slim-bullseye as core-env
 COPY --from=builder /wheels /core
 COPY requirements_worker.txt /requirements_worker.txt
 RUN python -m venv /opt/venv
