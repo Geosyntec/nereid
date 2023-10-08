@@ -2,7 +2,8 @@ networkx
 orjson
 pandas
 Pint
-pydantic<2.0.0
+pydantic>=2.4,<2.5
+pydantic_settings
 python-dotenv
 pytz
 PyYAML
