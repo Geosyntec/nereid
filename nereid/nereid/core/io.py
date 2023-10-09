@@ -65,7 +65,7 @@ def load_ref_data(
         ]
 
     filepath = data_path / table_context["file"]
-    ref_table = pandas.read_json(load_file(filepath), orient="table", typ="frame")
+    ref_table = pandas.read_json(filepath, orient="table", typ="frame")
 
     df, msg = parse_configuration_logic(
         df=ref_table,
