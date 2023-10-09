@@ -56,7 +56,7 @@ class LandSurfaces(BaseModel):
 
     if PYDANTIC_V2:
         model_config = {"json_schema_extra": {"examples": [LS_EXAMPLE]}}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             schema_extra = {"examples": [LS_EXAMPLE]}
@@ -70,7 +70,7 @@ class LandSurfaceBase(BaseModel):
 
     if PYDANTIC_V2:
         model_config = {"extra": "allow"}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             extra = "allow"

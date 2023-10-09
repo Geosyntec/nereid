@@ -7,7 +7,7 @@ from nereid.core.utils import get_nereid_path
 
 if PYDANTIC_V2:
     from pydantic import AnyHttpUrl, field_validator  # type: ignore[attr-defined]
-else:
+else:  # pragma: no cover
     from pydantic import AnyHttpUrl, validator
 
 nereid_path = get_nereid_path()
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
             "extra": "allow",  # type: ignore[typeddict-item]
         }
 
-    else:
+    else:  # pragma: no cover
 
         @validator("ALLOW_CORS_ORIGINS", pre=True)
         def assemble_cors_origins(

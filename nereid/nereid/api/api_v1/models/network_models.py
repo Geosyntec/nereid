@@ -144,7 +144,7 @@ class SubgraphRequest(BaseModel):
                 ],
             }
         }
-    else:
+    else:  # pragma: no cover
 
         class Config:
             schema_extra = {

@@ -405,7 +405,7 @@ class Watershed(BaseModel):
 
     if PYDANTIC_V2:
         model_config = {"json_schema_extra": {"examples": [EXAMPLE_WATERSHED]}}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             schema_extra = {"examples": [EXAMPLE_WATERSHED]}

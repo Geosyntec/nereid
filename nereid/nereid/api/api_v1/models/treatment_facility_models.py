@@ -10,7 +10,7 @@ from nereid.core.utils import validate_with_discriminator
 if PYDANTIC_V2:
     from pydantic import field_validator, model_validator  # type: ignore[attr-defined]
 
-else:
+else:  # pragma: no cover
     from pydantic import root_validator, validator
 
 
@@ -18,7 +18,7 @@ class _Base(Node):
     facility_type: str
     if PYDANTIC_V2:
         model_config = {"extra": "allow"}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             extra = "allow"
@@ -42,7 +42,7 @@ class SimpleFacilityBase(_Base):
                 ), "Error: This value must be a number between 0.0 - 100.0."
             return v
 
-    else:
+    else:  # pragma: no cover
 
         @validator("captured_pct", pre=True, always=True, check_fields=False)
         def captured_default(cls, v):
@@ -74,7 +74,7 @@ class SimpleFacility(SimpleFacilityBase):
                     ), "retained percent must be less than or equal to captured percent"
             return data
 
-    else:
+    else:  # pragma: no cover
 
         @validator("retained_pct", pre=True, always=True, check_fields=False)
         def retained_default(cls, v, values):
@@ -108,7 +108,7 @@ class SimpleTmntFacility(SimpleFacilityBase):
                 data["retained_pct"] = 0.0
             return data
 
-    else:
+    else:  # pragma: no cover
 
         @validator("retained_pct", pre=True, always=True, check_fields=False)
         def retained_default(cls, v):
@@ -139,7 +139,7 @@ class SimpleRetFacility(SimpleFacilityBase):
                 data["retained_pct"] = data.get("captured_pct", 0.0)
             return data
 
-    else:
+    else:  # pragma: no cover
 
         @validator("retained_pct", pre=True, always=True, check_fields=False)
         def retained_default(cls, v, values):
@@ -181,7 +181,7 @@ class NTFacility(_Base):
 
     if PYDANTIC_V2:
         model_config = {"extra": "allow"}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             extra = "allow"
@@ -207,7 +207,7 @@ class LowFlowFacility(FacilityBase):
     tributary_area_tc_min: float = Field(5.0, le=60)
     if PYDANTIC_V2:
         months_operational: str = Field("both", pattern="summer$|winter$|both$")
-    else:
+    else:  # pragma: no cover
         months_operational: str = Field("both", regex="summer$|winter$|both$")  # type: ignore[no-redef]
     _constructor: str = "dw_and_low_flow_facility_constructor"
 
@@ -228,7 +228,7 @@ class LowFlowFacility(FacilityBase):
                 values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
             return values
 
-    else:
+    else:  # pragma: no cover
 
         @root_validator(pre=True)
         def one_or_both(cls, values):
@@ -674,7 +674,7 @@ class TreatmentFacilities(BaseModel):
         model_config = {
             "json_schema_extra": {"examples": [EXAMPLE_TREATMENT_FACILITIES]}
         }
-    else:
+    else:  # pragma: no cover
 
         class Config:
             schema_extra = {"examples": [EXAMPLE_TREATMENT_FACILITIES]}
