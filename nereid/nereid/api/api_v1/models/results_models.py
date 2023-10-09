@@ -10,7 +10,7 @@ class Result(BaseModel):
 
     if PYDANTIC_V2:
         model_config = {"extra": "allow"}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             extra = "allow"

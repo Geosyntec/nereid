@@ -22,7 +22,7 @@ if PYDANTIC_V2:
     def model_json_schema(model: type[BaseModel], *args, **kwargs) -> dict[str, Any]:
         return model.model_json_schema(*args, **kwargs)  # type: ignore[attr-defined]
 
-else:
+else:  # pragma: no cover
     from pydantic import (  # type: ignore[no-redef, assignment]
         BaseSettings as BaseSettings,
     )

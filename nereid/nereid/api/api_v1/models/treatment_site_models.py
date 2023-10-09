@@ -54,7 +54,7 @@ class TreatmentSites(BaseModel):
 
     if PYDANTIC_V2:
         model_config = {"json_schema_extra": {"examples": [TMNT_SITES_EXAMPLE]}}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             schema_extra = {"examples": [TMNT_SITES_EXAMPLE]}
@@ -66,7 +66,7 @@ class TreatmentSites(BaseModel):
 class TreatmentSiteGroupBase(TreatmentSite):
     if PYDANTIC_V2:
         model_config = {"extra": "allow"}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             extra = "allow"
@@ -80,7 +80,7 @@ class TreatmentSiteGroup(BaseModel):
 
     if PYDANTIC_V2:
         model_config = {"extra": "allow"}
-    else:
+    else:  # pragma: no cover
 
         class Config:
             extra = "allow"

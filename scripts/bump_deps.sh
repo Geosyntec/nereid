@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 cleanup_pip () {
@@ -10,6 +12,16 @@ fi
 
 }
 
+
+# setup env
+eval "$(conda shell.bash hook)"
+conda activate base
+conda remove -n nereid-install --all -y
+conda create -n nereid-install python=3.11 -y
+conda activate nereid-install
+
+
+# start building deps
 cleanup_pip
 
 # dev
