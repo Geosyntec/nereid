@@ -49,7 +49,7 @@ async def initialize_treatment_facility_parameters(
         pre_validated=True,
         context=context,
     )
-    return run_task(request, task, "get_treatment_facility_parameters")
+    return await run_task(request, task, "get_treatment_facility_parameters")
 
 
 @router.get(
@@ -62,4 +62,6 @@ async def get_treatment_facility_parameters(
     request: Request, task_id: str
 ) -> Dict[str, Any]:
     task = bg.initialize_treatment_facilities.AsyncResult(task_id, app=router)
-    return standard_json_response(request, task, "get_treatment_facility_parameters")
+    return await standard_json_response(
+        request, task, "get_treatment_facility_parameters"
+    )

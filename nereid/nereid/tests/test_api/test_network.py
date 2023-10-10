@@ -4,6 +4,7 @@ import pytest
 from nereid.api.api_v1.models import network_models
 from nereid.core.config import settings
 from nereid.src.network.utils import clean_graph_dict
+from nereid.tests.utils import poll_testclient_url
 
 
 @pytest.mark.parametrize(
@@ -118,7 +119,7 @@ def test_get_finished_network_subgraph(
     result_route = prjson.get("result_route")
 
     if result_route:
-        get_response = client.get(result_route)
+        get_response = poll_testclient_url(client, result_route)
         assert get_response.status_code == 200
 
         grjson = get_response.json()
@@ -159,7 +160,7 @@ def test_get_render_subgraph_svg_fast(
     result_route = rjson.get("result_route")
 
     if result_route:
-        svg_response = client.get(result_route + "/img")
+        svg_response = poll_testclient_url(client, result_route + "/img")
         assert svg_response.status_code == 200
         assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
 
@@ -168,9 +169,7 @@ def test_get_render_subgraph_svg_fast(
         assert svg_response.status_code == 200
 
 
-def test_get_render_subgraph_svg_slow(
-    client,
-):
+def test_get_render_subgraph_svg_slow(client):
     route = settings.API_LATEST + "/network/subgraph"
 
     slow_graph = clean_graph_dict(nx.gnr_graph(200, p=0.05, seed=42))

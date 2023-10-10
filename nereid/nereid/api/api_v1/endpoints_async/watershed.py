@@ -45,11 +45,10 @@ async def post_solve_watershed(
     ),
 ) -> Dict[str, Any]:
     watershed, context = watershed_pkg
-
     task = bg.solve_watershed.s(
         watershed=watershed, treatment_pre_validated=True, context=context
     )
-    return run_task(request, task, "get_watershed_result")
+    return await run_task(request, task, "get_watershed_result")
 
 
 @router.get(
@@ -60,4 +59,4 @@ async def post_solve_watershed(
 )
 async def get_watershed_result(request: Request, task_id: str) -> Dict[str, Any]:
     task = bg.solve_watershed.AsyncResult(task_id, app=router)
-    return standard_json_response(request, task, "get_watershed_result")
+    return await standard_json_response(request, task, "get_watershed_result")

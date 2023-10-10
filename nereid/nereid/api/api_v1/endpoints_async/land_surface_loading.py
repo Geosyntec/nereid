@@ -33,7 +33,7 @@ async def calculate_loading(
         land_surfaces=land_surfaces_req, details=details, context=context
     )
 
-    return run_task(request, task, "get_land_surface_loading_result")
+    return await run_task(request, task, "get_land_surface_loading_result")
 
 
 @router.get(
@@ -47,4 +47,6 @@ async def get_land_surface_loading_result(
     task_id: str,
 ) -> Dict[str, Any]:
     task = bg.land_surface_loading.AsyncResult(task_id, app=router)
-    return standard_json_response(request, task, "get_land_surface_loading_result")
+    return await standard_json_response(
+        request, task, "get_land_surface_loading_result"
+    )
