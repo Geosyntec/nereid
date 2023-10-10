@@ -1,26 +1,37 @@
+import asyncio
 from typing import Any, Dict, Optional, Union
 
 from celery import Task
-from celery.exceptions import TimeoutError
 from celery.result import AsyncResult
 from fastapi import Request
 
 from nereid.core.config import settings
 
 
-def wait_a_sec_and_see_if_we_can_return_some_data(
-    task: AsyncResult, timeout: float = 0.2
-) -> Optional[Dict[str, Any]]:
-    result = None
-    try:
-        result = task.get(timeout=timeout)
-    except TimeoutError:
-        pass
+async def wait_a_sec_and_see_if_we_can_return_some_data(
+    task: AsyncResult,
+    timeout: float | None = None,
+    exp: float | None = None,
+) -> None:
+    if timeout is None:  # pragma: no cover
+        timeout = 0.5
 
-    return result
+    if exp is None:  # pragma: no cover
+        exp = 1
+
+    t = 0.0
+    inc = 0.05  # check back every inc seconds
+    while t < timeout:
+        if task.ready():  # exit even if the task failed
+            return
+        else:
+            inc *= exp
+            t += inc
+            await asyncio.sleep(inc)
+    return
 
 
-def run_task(
+async def run_task(
     request: Request,
     task: Task,
     get_route: str = "get_task",
@@ -36,20 +47,20 @@ def run_task(
         }
 
     else:
-        response = standard_json_response(
+        response = await standard_json_response(
             request, task.apply_async(), get_route=get_route, timeout=timeout
         )
 
     return response
 
 
-def standard_json_response(
+async def standard_json_response(
     request: Request,
     task: AsyncResult,
     get_route: str = "get_task",
     timeout: float = 0.2,
 ) -> Dict[str, Any]:
-    _ = wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=timeout)
+    _ = await wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=timeout)
     result_route = str(request.url_for(get_route, task_id=task.id))
 
     response = {

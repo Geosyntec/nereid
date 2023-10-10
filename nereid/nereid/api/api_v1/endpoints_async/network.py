@@ -30,7 +30,7 @@ async def validate_network(
     ),
 ) -> Dict[str, Any]:
     task = bg.validate_network.s(graph=model_dump(graph, by_alias=True))
-    return run_task(request, task, "get_validate_network_result")
+    return await run_task(request, task, "get_validate_network_result")
 
 
 @router.get(
@@ -41,7 +41,7 @@ async def validate_network(
 )
 async def get_validate_network_result(request: Request, task_id: str) -> Dict[str, Any]:
     task = bg.validate_network.AsyncResult(task_id, app=router)
-    return standard_json_response(request, task, "get_validate_network_result")
+    return await standard_json_response(request, task, "get_validate_network_result")
 
 
 @router.post(
@@ -56,7 +56,7 @@ async def subgraph_network(
 ) -> Dict[str, Any]:
     task = bg.network_subgraphs.s(**model_dump(subgraph_req, by_alias=True))
 
-    return run_task(request, task, "get_subgraph_network_result")
+    return await run_task(request, task, "get_subgraph_network_result")
 
 
 @router.get(
@@ -67,7 +67,7 @@ async def subgraph_network(
 )
 async def get_subgraph_network_result(request: Request, task_id: str) -> Dict[str, Any]:
     task = bg.network_subgraphs.AsyncResult(task_id, app=router)
-    return standard_json_response(request, task, "get_subgraph_network_result")
+    return await standard_json_response(request, task, "get_subgraph_network_result")
 
 
 @router.get(
@@ -96,8 +96,8 @@ async def get_subgraph_network_as_img(
                 render_task = bg.render_subgraph_svg.apply_async(
                     args=(result, npi), task_id=render_task_id
                 )
-                _ = wait_a_sec_and_see_if_we_can_return_some_data(
-                    render_task, timeout=0.2
+                _ = await wait_a_sec_and_see_if_we_can_return_some_data(
+                    render_task, timeout=0.5
                 )
 
             svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
@@ -133,7 +133,7 @@ async def network_solution_sequence(
         graph=model_dump(graph, by_alias=True), min_branch_size=min_branch_size
     )
 
-    return run_task(request, task, "get_network_solution_sequence")
+    return await run_task(request, task, "get_network_solution_sequence")
 
 
 @router.get(
@@ -146,7 +146,7 @@ async def get_network_solution_sequence(
     request: Request, task_id: str
 ) -> Dict[str, Any]:
     task = bg.solution_sequence.AsyncResult(task_id, app=router)
-    return standard_json_response(request, task, "get_network_solution_sequence")
+    return await standard_json_response(request, task, "get_network_solution_sequence")
 
 
 @router.get(
@@ -177,8 +177,8 @@ async def get_network_solution_sequence_as_img(
                 render_task = bg.render_solution_sequence_svg.apply_async(
                     args=(result, npi), task_id=render_task_id
                 )
-                _ = wait_a_sec_and_see_if_we_can_return_some_data(
-                    render_task, timeout=0.2
+                _ = await wait_a_sec_and_see_if_we_can_return_some_data(
+                    render_task, timeout=0.5
                 )
 
             svgresponse = {"task_id": render_task.task_id, "status": render_task.status}

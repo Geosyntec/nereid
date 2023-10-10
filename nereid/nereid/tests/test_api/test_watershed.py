@@ -8,7 +8,7 @@ from nereid.core.config import settings
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.src.watershed.utils import attrs_to_resubmit
-from nereid.tests.utils import check_subgraph_response_equal
+from nereid.tests.utils import check_subgraph_response_equal, poll_testclient_url
 
 
 @pytest.mark.parametrize("size", [50, 100])
@@ -61,7 +61,16 @@ def test_post_solve_watershed_stable(
     watershed_request = watershed_requests[size, pct_tmnt]
     post_response = watershed_responses[size, pct_tmnt]
 
-    results = post_response.json()["data"]["results"]
+    post_response_json = post_response.json()
+
+    data = post_response_json.get("data", None)
+
+    if not data:
+        result_route = post_response_json["result_route"]
+        task_response = poll_testclient_url(client, result_route)
+        data = task_response.json()["data"]
+
+    results = data["results"]
 
     reqd_min_attrs = attrs_to_resubmit(results)
     previous_results = {
@@ -83,7 +92,14 @@ def test_post_solve_watershed_stable(
     payload = new_request
     route = settings.API_LATEST + "/watershed/solve"
     response = client.post(route, json=payload)
+    response_json = response.json()
+    data = response_json.get("data", None)
 
-    subgraph_results = response.json()["data"]["results"]
+    if not data:
+        result_route = post_response_json["result_route"]
+        task_response = poll_testclient_url(client, result_route)
+        data = task_response.json()["data"]
+
+    subgraph_results = data["results"]
 
     check_subgraph_response_equal(subgraph_results, results)

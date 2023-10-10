@@ -6,4 +6,4 @@ relative_files = True
 
 [report]
 ignore_errors = True
-omit = nereid/data/*,*main.py
+omit = nereid/data/*,*main.py,*_no_git*

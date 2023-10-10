@@ -31,15 +31,20 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
 
     while timer() < timeout:
         response = testclient.get(url)
-        status = response.json()["status"]
+        if "html" in response.headers["content-type"]:
+            return response
+        status = response.json().get("status")
+        if status is None:
+            raise ValueError(
+                f"Status is missing from url: {url} \nresponse{response.json()}"
+            )
         if status.lower() == "success":
             if verbose:
                 print(f"\nget request polling tried: {tries} times")
             return response
         tries += 1
         time.sleep(0.1)
-
-    return
+    raise TimeoutError("Task did not return in time.")
 
 
 def is_equal_subset(
@@ -126,9 +131,9 @@ def create_random_model_dict(
         value: Any = None
 
         anyOf = v.get("anyOf", [])
-        for dct in anyOf:
-            if dct["type"] in ["string", "number"]:
-                v["type"] = dct["type"]
+        for d in anyOf:
+            if d.get("type", "") in ["string", "number"]:
+                v["type"] = d["type"]
 
         if v.get("default") is not None:
             value = v["default"]
