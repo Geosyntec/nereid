@@ -1,14 +1,14 @@
 from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, TypeAlias
 
 import numpy
 import orjson as json
 import pandas
 import yaml
 
-PathType = Union[Path, str]
+PathType: TypeAlias = Path | str
 
 
 @lru_cache
@@ -24,31 +24,31 @@ def load_file(filepath: PathType) -> str:
     return contents
 
 
-def load_cfg(filepath: PathType) -> Dict[str, Any]:
+def load_cfg(filepath: PathType) -> dict[str, Any]:
     """load cached yaml file"""
     f = load_file(filepath)
-    contents: Dict[str, Any] = yaml.safe_load(f)
+    contents: dict[str, Any] = yaml.safe_load(f)
     return contents
 
 
-def load_multiple_cfgs(files: List[PathType]) -> Dict[str, Any]:
+def load_multiple_cfgs(files: list[PathType]) -> dict[str, Any]:
     """load and combine multiple cached config files"""
-    conf: Dict[str, Any] = {}
+    conf: dict[str, Any] = {}
     for file in files:
         conf.update(load_cfg(file))
     return conf
 
 
-def load_json(filepath: PathType) -> Dict[str, Any]:
+def load_json(filepath: PathType) -> dict[str, Any]:
     """load cached json file"""
     f = load_file(filepath)
-    contents: Dict[str, Any] = json.loads(f)
+    contents: dict[str, Any] = json.loads(f)
     return contents
 
 
 def load_ref_data(
     tablename: str, context: dict
-) -> Tuple[Optional[pandas.DataFrame], List[str]]:
+) -> tuple[pandas.DataFrame | None, list[str]]:
     data_path = Path(context["data_path"])
     project_reference_data = context.get("project_reference_data", {})
 
@@ -79,12 +79,12 @@ def load_ref_data(
 
 def parse_expand_fields(
     df: pandas.DataFrame,
-    params: List[Dict[str, Any]],
+    params: list[dict[str, Any]],
     config_section: str,
     config_object: str,
-    context: Dict[str, Any],
-    messages: List[str],
-) -> Tuple[pandas.DataFrame, List[str]]:
+    context: dict[str, Any],
+    messages: list[str],
+) -> tuple[pandas.DataFrame, list[str]]:
     for f in deepcopy(params):
         try:
             field = f.get("field")
@@ -110,12 +110,12 @@ def parse_expand_fields(
 
 def parse_collapse_fields(
     df: pandas.DataFrame,
-    params: List[Dict[str, Any]],
+    params: list[dict[str, Any]],
     config_section: str,
     config_object: str,
-    context: Dict[str, Any],
-    messages: List[str],
-) -> Tuple[pandas.DataFrame, List[str]]:
+    context: dict[str, Any],
+    messages: list[str],
+) -> tuple[pandas.DataFrame, list[str]]:
     for f in deepcopy(params):
         try:
             field = f.get("new_column_name")
@@ -144,12 +144,12 @@ def parse_collapse_fields(
 
 def parse_joins(
     df: pandas.DataFrame,
-    params: List[Dict[str, Any]],
+    params: list[dict[str, Any]],
     config_section: str,
     config_object: str,
-    context: Dict[str, Any],
-    messages: List[str],
-) -> Tuple[pandas.DataFrame, List[str]]:
+    context: dict[str, Any],
+    messages: list[str],
+) -> tuple[pandas.DataFrame, list[str]]:
     df_input = df.copy()
 
     for j in deepcopy(params):
@@ -217,12 +217,12 @@ def parse_joins(
 
 def parse_remaps(
     df: pandas.DataFrame,
-    params: List[Dict[str, Any]],
+    params: list[dict[str, Any]],
     config_section: str,
     config_object: str,
-    context: Dict[str, Any],
-    messages: List[str],
-) -> Tuple[pandas.DataFrame, List[str]]:
+    context: dict[str, Any],
+    messages: list[str],
+) -> tuple[pandas.DataFrame, list[str]]:
     for remap in deepcopy(params):
         left = remap["left"]
         if left not in df:
@@ -274,8 +274,8 @@ def parse_configuration_logic(
     df: pandas.DataFrame,
     config_section: str,
     config_object: str,
-    context: Dict[str, Any],
-) -> Tuple[pandas.DataFrame, List[str]]:
+    context: dict[str, Any],
+) -> tuple[pandas.DataFrame, list[str]]:
     obj_context = context.get(config_section, {}).get(config_object)
 
     if obj_context is None:
@@ -287,7 +287,7 @@ def parse_configuration_logic(
         ]
         return df, messages
 
-    msg: List[str] = []
+    msg: list[str] = []
     if obj_context.get("preprocess") is None:
         return df, msg
 

@@ -1,13 +1,13 @@
-from typing import Any, Callable, Dict, List, Mapping
+from typing import Any, Callable
 
 from nereid.core.utils import safe_divide
 from nereid.src.watershed.design_functions import design_intensity_inhr
 
 
 def compute_volume_capture_with_nomograph(
-    data: Dict[str, Any],
-    nomograph_map: Mapping[str, Callable],
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    nomograph_map: dict[str, Callable],
+) -> dict[str, Any]:
     """Compute volume captured by a treatment facility if it treats wet weather flow
     via either volume or flow-based calculation strategies.
 
@@ -108,9 +108,9 @@ def compute_volume_capture_with_nomograph(
 
 
 def compute_volume_based_standalone_facility(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     volume_nomo: Callable,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Calculate treatment and retention volume for a standalone volume-based
     treatment facility. Standalone means that there are not volume-based facilities
     upstream of the current facility that are performing volume reductions.
@@ -180,9 +180,9 @@ def compute_volume_based_standalone_facility(
 
 
 def solve_volume_based_compartments(
-    compartments: List[Dict[str, float]],
+    compartments: list[dict[str, float]],
     volume_nomo: Callable,
-) -> List[Dict[str, float]]:
+) -> list[dict[str, float]]:
     """Traverse a series of volume-based nomographs from the bottom compartment (retention)
     to the top compartment (treatment). This function accumulates the x-offset from
     each nomograph traversal so that subsequent traversals account for previous compartments.
@@ -217,9 +217,9 @@ def solve_volume_based_compartments(
 
 
 def compute_volume_based_nested_facility(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     volume_nomo: Callable,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Process a volume based treatment facility whose performance
     is influenced by upstream volume based facilities.
 
@@ -362,10 +362,10 @@ def detention_vol(
 
 
 def compute_flow_based_facility(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     flow_nomo: Callable,
     volume_nomo: Callable,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Solves volume balance for flow based treatment. these facilities *can* perform both
     treatment via treatment rate nomographs to reduce the effluent concentration and/or
     volume reduction via volume capture nomographs to retain volume. an example of a
@@ -418,10 +418,10 @@ def compute_flow_based_facility(
 
 
 def compute_dry_well_facility(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     flow_nomo: Callable,
     volume_nomo: Callable,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """best of flow-based and volume based nomographs for bmp volume and treatment rate.
 
     the fate of all of the treatment for a drywell is _always_ retention.
@@ -478,9 +478,9 @@ def compute_dry_well_facility(
 
 
 def compute_peak_flow_reduction(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     peak_nomo: Callable,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     ret_vol_cuft = data["retention_volume_cuft"]
     trt_vol_cuft = data["treatment_volume_cuft"]
 

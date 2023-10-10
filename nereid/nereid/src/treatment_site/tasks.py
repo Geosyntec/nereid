@@ -1,12 +1,12 @@
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas
 
 
 def initialize_treatment_sites(
-    treatment_sites: Dict[str, List[Dict[str, Any]]], context: Dict[str, Any]
-) -> Dict[str, Any]:
-    response: Dict[str, Any] = {"errors": []}
+    treatment_sites: dict[str, list[dict[str, Any]]], context: dict[str, Any]
+) -> dict[str, Any]:
+    response: dict[str, Any] = {"errors": []}
 
     try:
         sites = treatment_sites.get("treatment_sites") or []

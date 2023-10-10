@@ -1,8 +1,5 @@
-from typing import List, Optional
-
 from pydantic import BaseModel, Field
 
-from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.api.api_v1.models.treatment_facility_models import SimpleFacilityBase
 
@@ -50,45 +47,30 @@ TMNT_SITES_EXAMPLE = {
 
 
 class TreatmentSites(BaseModel):
-    treatment_sites: List[TreatmentSite]
+    treatment_sites: list[TreatmentSite]
 
-    if PYDANTIC_V2:
-        model_config = {"json_schema_extra": {"examples": [TMNT_SITES_EXAMPLE]}}
-    else:  # pragma: no cover
-
-        class Config:
-            schema_extra = {"examples": [TMNT_SITES_EXAMPLE]}
+    model_config = {"json_schema_extra": {"examples": [TMNT_SITES_EXAMPLE]}}
 
 
 ## Treatment Site Response Models
 
 
 class TreatmentSiteGroupBase(TreatmentSite):
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
+    model_config = {"extra": "allow"}
 
 
 class TreatmentSiteGroup(BaseModel):
     node_id: str
     node_type: str
-    treatment_facilities: List[TreatmentSiteGroupBase]
-    errors: Optional[List[str]] = None
+    treatment_facilities: list[TreatmentSiteGroupBase]
+    errors: list[str] | None = None
 
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
+    model_config = {"extra": "allow"}
 
 
 class TreatmentSiteGroups(BaseModel):
-    treatment_sites: List[TreatmentSiteGroup]
+    treatment_sites: list[TreatmentSiteGroup]
 
 
 class TreatmentSiteResponse(JSONAPIResponse):
-    data: Optional[TreatmentSiteGroups] = None
+    data: TreatmentSiteGroups | None = None

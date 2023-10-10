@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from celery import Task
 from celery.result import AsyncResult
@@ -35,11 +35,11 @@ async def run_task(
     request: Request,
     task: Task,
     get_route: str = "get_task",
-    force_foreground: Optional[bool] = False,
+    force_foreground: bool = False,
     timeout: float = 0.2,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     if force_foreground or settings.FORCE_FOREGROUND:  # pragma: no cover
-        task_ret: Union[bytes, str] = task()
+        task_ret: bytes | str = task()
         response = {
             "data": task_ret,
             "task_id": "foreground",
@@ -59,7 +59,7 @@ async def standard_json_response(
     task: AsyncResult,
     get_route: str = "get_task",
     timeout: float = 0.2,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     _ = await wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=timeout)
     result_route = str(request.url_for(get_route, task_id=task.id))
 

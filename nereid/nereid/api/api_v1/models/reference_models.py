@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -13,4 +13,4 @@ class ReferenceData(BaseModel):
 
 
 class ReferenceDataResponse(JSONAPIResponse):
-    data: Optional[ReferenceData] = None
+    data: ReferenceData | None = None

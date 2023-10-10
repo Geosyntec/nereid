@@ -1,8 +1,7 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel
 
-from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.land_surface_models import LandSurface
 from nereid.api.api_v1.models.network_models import Graph
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
@@ -396,31 +395,26 @@ EXAMPLE_WATERSHED = {
 
 class Watershed(BaseModel):
     graph: Graph
-    land_surfaces: Optional[List[LandSurface]] = None
-    treatment_facilities: Optional[
-        Union[List[Dict[str, Any]], List[STRUCTURAL_FACILITY_TYPE]]
-    ] = None
-    treatment_sites: Optional[List[TreatmentSite]] = None
-    previous_results: Optional[List[PreviousResult]] = None
+    land_surfaces: list[LandSurface] | None = None
+    treatment_facilities: list[dict[str, Any]] | list[
+        STRUCTURAL_FACILITY_TYPE
+    ] | None = None
+    treatment_sites: list[TreatmentSite] | None = None
+    previous_results: list[PreviousResult] | None = None
 
-    if PYDANTIC_V2:
-        model_config = {"json_schema_extra": {"examples": [EXAMPLE_WATERSHED]}}
-    else:  # pragma: no cover
-
-        class Config:
-            schema_extra = {"examples": [EXAMPLE_WATERSHED]}
+    model_config = {"json_schema_extra": {"examples": [EXAMPLE_WATERSHED]}}
 
 
 ## Response Models
 
 
 class WatershedResults(BaseModel):
-    results: Optional[List[Result]] = None
-    leaf_results: Optional[List[Result]] = None
-    previous_results_keys: Optional[List[str]] = None
-    errors: Optional[List[str]] = None
-    warnings: Optional[List[str]] = None
+    results: list[Result] | None = None
+    leaf_results: list[Result] | None = None
+    previous_results_keys: list[str] | None = None
+    errors: list[str] | None = None
+    warnings: list[str] | None = None
 
 
 class WatershedResponse(JSONAPIResponse):
-    data: Optional[WatershedResults] = None
+    data: WatershedResults | None = None

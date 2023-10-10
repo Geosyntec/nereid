@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, Optional
+from typing import Iterable
 
 import pandas
 
@@ -61,7 +61,7 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
 
 
 def detailed_dry_weather_volume_loading_results(
-    df: pandas.DataFrame, seasons: Dict[str, Optional[Iterable[str]]]
+    df: pandas.DataFrame, seasons: dict[str, Iterable[str] | None]
 ) -> pandas.DataFrame:
     """This function aggregates the dry weather flowrate (dwf) by season according
     to the config file spec.
@@ -90,8 +90,8 @@ def detailed_dry_weather_volume_loading_results(
 
 def detailed_pollutant_loading_results(
     df: pandas.DataFrame,
-    wet_weather_parameters: Iterable[Dict[str, str]],
-    dry_weather_parameters: Iterable[Dict[str, str]],
+    wet_weather_parameters: Iterable[dict[str, str]],
+    dry_weather_parameters: Iterable[dict[str, str]],
     season_names: Iterable[str],
 ) -> pandas.DataFrame:
     """convert the washoff concentration to load for both wet and dry seasons.
@@ -132,9 +132,9 @@ def detailed_pollutant_loading_results(
 
 def detailed_loading_results(
     land_surfaces_df: pandas.DataFrame,
-    wet_weather_parameters: Iterable[Dict[str, str]],
-    dry_weather_parameters: Iterable[Dict[str, str]],
-    seasons: Dict[str, Iterable[str]],
+    wet_weather_parameters: Iterable[dict[str, str]],
+    dry_weather_parameters: Iterable[dict[str, str]],
+    seasons: dict[str, Iterable[str]],
 ) -> pandas.DataFrame:
     results = (
         land_surfaces_df.pipe(clean_land_surface_dataframe)
@@ -153,8 +153,8 @@ def detailed_loading_results(
 
 def summary_loading_results(
     detailed_results: pandas.DataFrame,
-    wet_weather_parameters: Iterable[Dict[str, str]],
-    dry_weather_parameters: Iterable[Dict[str, str]],
+    wet_weather_parameters: Iterable[dict[str, str]],
+    dry_weather_parameters: Iterable[dict[str, str]],
     season_names: Iterable[str],
 ) -> pandas.DataFrame:
     groupby_cols = ["node_id"]

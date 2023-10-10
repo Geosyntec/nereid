@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas
 
@@ -13,16 +13,16 @@ from nereid.src.wq_parameters import init_wq_parameters
 
 @update_unit_registry
 def land_surface_loading(
-    land_surfaces: Dict[str, Any], details: bool, context: Dict[str, Any]
-) -> Dict[str, List]:
+    land_surfaces: dict[str, Any], details: bool, context: dict[str, Any]
+) -> dict[str, list]:
     """computes loading for volume runoff and pollutants for each land
     surface 'sliver' and aggregates values for each node. Returning results
-    for the slivers is toggled by the `details` kwarg. if 'true' the resonse
+    for the slivers is toggled by the `details` kwarg. if 'true' the response
     includes a 'details' key with the sliver loading. the 'summary' values
     aggregate the load to each node_id, and are always returned.
     """
 
-    response: Dict[str, Any] = {"errors": []}
+    response: dict[str, Any] = {"errors": []}
 
     land_surface_list = land_surfaces.get("land_surfaces") or []
 

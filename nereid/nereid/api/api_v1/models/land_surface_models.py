@@ -2,7 +2,6 @@ from typing import Annotated
 
 from pydantic import BaseModel, BeforeValidator, Field
 
-from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.node import Node
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
@@ -56,12 +55,7 @@ LS_EXAMPLE = {
 class LandSurfaces(BaseModel):
     land_surfaces: list[LandSurface]
 
-    if PYDANTIC_V2:
-        model_config = {"json_schema_extra": {"examples": [LS_EXAMPLE]}}
-    else:  # pragma: no cover
-
-        class Config:
-            schema_extra = {"examples": [LS_EXAMPLE]}
+    model_config = {"json_schema_extra": {"examples": [LS_EXAMPLE]}}
 
 
 ## Land Surface Response Models
@@ -70,12 +64,7 @@ class LandSurfaces(BaseModel):
 class LandSurfaceBase(Node):
     node_type: str = "land_surface"
 
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
+    model_config = {"extra": "allow"}
 
 
 class LandSurfaceSummary(LandSurfaceBase):

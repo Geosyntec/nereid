@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 from nereid.core.config import settings
 from nereid.core.units import update_unit_registry
@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 
 @update_unit_registry
 def solve_watershed(
-    watershed: Dict[str, Any],
+    watershed: dict[str, Any],
     treatment_pre_validated: bool,
-    context: Dict[str, Any],
-) -> Dict[str, Any]:
+    context: dict[str, Any],
+) -> dict[str, Any]:
     """Main program function. This function builds the network and solves for water quality
     at each node in the input graph.
 
@@ -46,7 +46,7 @@ def solve_watershed(
     try:  # pragma: no branch
         solve_watershed_loading(g, context=context)
 
-        all_results: List[Any] = [dct for n, dct in g.nodes(data=True)]
+        all_results: list[Any] = [dct for n, dct in g.nodes(data=True)]
         results = [dct for dct in all_results if not dct["_is_leaf"]]
         leafs = [dct for dct in all_results if dct["_is_leaf"]]
         previous_results_keys = attrs_to_resubmit(all_results)

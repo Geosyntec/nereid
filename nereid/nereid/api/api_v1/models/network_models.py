@@ -1,23 +1,24 @@
-from typing import List, Optional
+from typing import Annotated
 
 from pydantic import BaseModel, Field, StrictStr
 
-from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 ## Network Request Models
 
+Metadata = Annotated[dict, Field(default_factory=dict)]
+
 
 # https://github.com/jsongraph/json-graph-specification
 class Node(BaseModel):
-    id_: Optional[StrictStr] = Field(None, alias="id")
-    metadata: Optional[dict] = {}
+    id_: StrictStr | None = Field(None, alias="id")
+    metadata: Metadata
 
 
 class Edge(BaseModel):
     source: StrictStr
     target: StrictStr
-    metadata: Optional[dict] = {}
+    metadata: Metadata
 
 
 GraphExamples = {
@@ -112,57 +113,45 @@ GraphExamples = {
 
 
 class Graph(BaseModel):
-    edges: List[Edge]
-    nodes: Optional[List[Node]] = []
-    directed: Optional[bool] = True
-    multigraph: Optional[bool] = True
-    type_: Optional[str] = Field(None, alias="type")
-    label: Optional[str] = None
-    metadata: Optional[dict] = {}
+    edges: list[Edge]
+    nodes: list[Node] | None = []
+    directed: bool | None = True
+    multigraph: bool | None = True
+    type_: str | None = Field(None, alias="type")
+    label: str | None = None
+    metadata: Metadata
 
 
 class Nodes(BaseModel):
-    nodes: List[Node]
+    nodes: list[Node]
 
 
 class SubgraphNodes(BaseModel):
-    subgraph_nodes: List[Nodes]
+    subgraph_nodes: list[Nodes]
 
 
 class SubgraphRequest(BaseModel):
     graph: Graph
-    nodes: List[Node]
+    nodes: list[Node]
 
-    if PYDANTIC_V2:
-        model_config = {
-            "json_schema_extra": {
-                "examples": [
-                    {
-                        "graph": GraphExamples["complex"]["value"],
-                        "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
-                    }
-                ],
-            }
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "graph": GraphExamples["complex"]["value"],
+                    "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
+                }
+            ],
         }
-    else:  # pragma: no cover
-
-        class Config:
-            schema_extra = {
-                "examples": [
-                    {
-                        "graph": GraphExamples["complex"]["value"],
-                        "nodes": [{"id": "3"}, {"id": "29"}, {"id": "18"}],
-                    }
-                ],
-            }
+    }
 
 
 class SeriesSequence(BaseModel):
-    series: List[Nodes]
+    series: list[Nodes]
 
 
 class ParallelSeriesSequence(BaseModel):
-    parallel: List[SeriesSequence]
+    parallel: list[SeriesSequence]
 
 
 class SolutionSequence(BaseModel):
@@ -171,22 +160,22 @@ class SolutionSequence(BaseModel):
 
 class NetworkValidation(BaseModel):
     isvalid: bool
-    node_cycles: Optional[List[List[str]]] = []
-    edge_cycles: Optional[List[List[str]]] = []
-    multiple_out_edges: Optional[List[List[str]]] = []
-    duplicate_edges: Optional[List[List[str]]] = []
+    node_cycles: list[list[str]] | None = []
+    edge_cycles: list[list[str]] | None = []
+    multiple_out_edges: list[list[str]] | None = []
+    duplicate_edges: list[list[str]] | None = []
 
 
 ## Network Response Models
 
 
 class NetworkValidationResponse(JSONAPIResponse):
-    data: Optional[NetworkValidation] = None
+    data: NetworkValidation | None = None
 
 
 class SubgraphResponse(JSONAPIResponse):
-    data: Optional[SubgraphNodes] = None
+    data: SubgraphNodes | None = None
 
 
 class SolutionSequenceResponse(JSONAPIResponse):
-    data: Optional[SolutionSequence] = None
+    data: SolutionSequence | None = None

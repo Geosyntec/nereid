@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import APIRouter, Request
 from fastapi.responses import ORJSONResponse
@@ -11,6 +11,6 @@ router = APIRouter(prefix="/task", default_response_class=ORJSONResponse)
 
 
 @router.get("/{task_id}", response_model=JSONAPIResponse)
-async def get_task(request: Request, task_id: str) -> Dict[str, Any]:
+async def get_task(request: Request, task_id: str) -> dict[str, Any]:
     task = celery_app.AsyncResult(task_id)
     return await standard_json_response(request, task)

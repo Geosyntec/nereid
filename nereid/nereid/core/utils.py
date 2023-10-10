@@ -1,11 +1,9 @@
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any
 
 import numpy
 import pandas
 from pydantic import BaseModel, ValidationError
-
-from nereid._compat import PYDANTIC_V2, model_construct, model_json_schema
 
 
 def get_nereid_path():
@@ -13,18 +11,13 @@ def get_nereid_path():
 
 
 def validate_with_discriminator(
-    unvalidated_data: Dict[str, Any],
+    unvalidated_data: dict[str, Any],
     discriminator: str,
-    model_mapping: Dict[str, Any],
-    fallback_mapping: Dict[str, Any],
+    model_mapping: dict[str, Any],
+    fallback_mapping: dict[str, Any],
 ) -> Any:
     class NullModel(BaseModel):
-        if PYDANTIC_V2:
-            model_config = {"extra": "allow"}
-        else:  # pragma: no cover
-
-            class Config:
-                extra = "allow"
+        model_config = {"extra": "allow"}
 
     attr = unvalidated_data[discriminator]
     model = model_mapping.get(attr, None)
@@ -33,7 +26,7 @@ def validate_with_discriminator(
     if model is None:
         e = (
             f"ERROR: the key '{attr}' is not in `model_mapping`. "
-            f"Using `fallback` value: {model_json_schema(fallback)['title']}"
+            f"Using `fallback` value: {fallback.model_json_schema()['title']}"
         )
 
         unvalidated_data["errors"] = str(e) + "  \n"
@@ -43,7 +36,7 @@ def validate_with_discriminator(
 
     except ValidationError as e:
         unvalidated_data["errors"] = "ERROR: " + str(e) + "  \n"
-        valid = model_construct(fallback, **unvalidated_data)
+        valid = fallback.model_construct(**unvalidated_data)
 
     return valid
 
@@ -56,7 +49,7 @@ def safe_divide(x: float, y: float) -> float:
 
 
 def safe_array_divide(
-    x: Union[numpy.ndarray, pandas.Series], y: Union[numpy.ndarray, pandas.Series]
+    x: numpy.ndarray | pandas.Series, y: numpy.ndarray | pandas.Series
 ) -> numpy.ndarray:
     return numpy.divide(x, y, out=numpy.zeros_like(x), where=y != 0)
 

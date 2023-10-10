@@ -1,9 +1,8 @@
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import APIRouter, Body, Query
 from fastapi.responses import ORJSONResponse
 
-from nereid._compat import model_dump
 from nereid.api.api_v1.models import network_models
 from nereid.src import tasks
 
@@ -20,8 +19,8 @@ async def validate_network(
     graph: network_models.Graph = Body(
         ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
     ),
-) -> Dict[str, Any]:
-    g: Dict[str, Any] = model_dump(graph, by_alias=True)
+) -> dict[str, Any]:
+    g: dict[str, Any] = graph.model_dump(by_alias=True)
     data = tasks.validate_network(graph=g)
     return {"data": data}
 
@@ -34,8 +33,8 @@ async def validate_network(
 )
 async def subgraph_network(
     subgraph_req: network_models.SubgraphRequest = Body(...),
-) -> Dict[str, Any]:
-    kwargs = model_dump(subgraph_req, by_alias=True)
+) -> dict[str, Any]:
+    kwargs = subgraph_req.model_dump(by_alias=True)
     data = tasks.network_subgraphs(**kwargs)
     return {"data": data}
 
@@ -51,7 +50,7 @@ async def network_solution_sequence(
         ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
     ),
     min_branch_size: int = Query(4),
-) -> Dict[str, Any]:
-    g = model_dump(graph, by_alias=True)
+) -> dict[str, Any]:
+    g = graph.model_dump(by_alias=True)
     data = tasks.solution_sequence(graph=g, min_branch_size=min_branch_size)
     return {"data": data}

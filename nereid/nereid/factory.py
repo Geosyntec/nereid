@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from brotli_asgi import BrotliMiddleware
 from fastapi import Depends, FastAPI
@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.staticfiles import StaticFiles
 
-from nereid._compat import model_copy
 from nereid.api.api_v1.endpoints_sync import sync_router
 from nereid.api.api_v1.utils import get_valid_context
 from nereid.api.docs import get_better_swagger_ui_html
@@ -16,29 +15,13 @@ from nereid.core.config import nereid_path, settings
 logging.basicConfig(level=settings.LOGLEVEL)
 logger = logging.getLogger(__name__)
 
-timing_asgi = None
-if settings.ASGI_TIMING:  # pragma: no cover
-    try:
-        import timing_asgi  # type: ignore[import, no-redef]
-        from timing_asgi import TimingClient, TimingMiddleware
-        from timing_asgi.integrations import (  # type: ignore[import]
-            StarletteScopeToName,  # type: ignore[import]
-        )
-
-        class PrintTimings(TimingClient):
-            def timing(self, metric_name, timing, tags):
-                print(metric_name, timing, tags)
-
-    except ImportError:
-        logger.warn("`timing-asgi` not installed. Use `pip install timing-asgi`.")
-
 
 def create_app(
     *,
-    settings_override: Optional[Dict[str, Any]] = None,
-    app_kwargs: Optional[Dict[str, Any]] = None,
+    settings_override: dict[str, Any] | None = None,
+    app_kwargs: dict[str, Any] | None = None,
 ) -> FastAPI:
-    _settings = model_copy(settings, deep=True)
+    _settings = settings.model_copy(deep=True)
     _settings.update(settings_override or {})
 
     kwargs = app_kwargs or {}
@@ -109,12 +92,5 @@ def create_app(
     )
 
     app.add_middleware(BrotliMiddleware)
-
-    if timing_asgi is not None:
-        app.add_middleware(  # pragma: no cover
-            TimingMiddleware,
-            client=PrintTimings(),
-            metric_namer=StarletteScopeToName(prefix="nereid", starlette_app=app),
-        )
 
     return app

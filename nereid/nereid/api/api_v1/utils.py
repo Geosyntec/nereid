@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import HTTPException, Request
 from fastapi.templating import Jinja2Templates
@@ -13,7 +13,7 @@ def get_valid_context(
     request: Request,
     state: str = "state",
     region: str = "region",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """This will redirect the context data directory according to the application instantiation."""
 
     key = f"{state}/{region}"
@@ -21,7 +21,7 @@ def get_valid_context(
         return request.app._context_cache[key]
 
     datadir = request.app._settings.DATA_DIRECTORY
-    context: Dict[str, Any] = request.app._settings.APP_CONTEXT
+    context: dict[str, Any] = request.app._settings.APP_CONTEXT
     context = get_request_context(state, region, datadir=datadir, context=context)
     isvalid, msg = validate_request_context(context)
     if not isvalid:

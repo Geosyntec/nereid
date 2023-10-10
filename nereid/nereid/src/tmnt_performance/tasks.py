@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple
+from typing import Any, Callable, Mapping
 
 from nereid.core import io
 from nereid.core.units import update_unit_registry
@@ -7,8 +7,8 @@ from nereid.src.tmnt_performance.tmnt import build_effluent_function_map
 
 @update_unit_registry
 def effluent_function_map(
-    tablename: str, context: Dict[str, Any]
-) -> Optional[Mapping[Tuple[str, str], Callable]]:
+    tablename: str, context: dict[str, Any]
+) -> Mapping[tuple[str, str], Callable] | None:
     tmnt_context = context.get("project_reference_data", {}).get(tablename, {})
 
     if not tmnt_context:

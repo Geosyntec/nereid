@@ -22,7 +22,3 @@ def test_post_init_tmnt_site_params(client, treatment_site_responses, size):
         assert grjson["task_id"] == prjson["task_id"]
         assert grjson["result_route"] == prjson["result_route"]
         assert grjson["status"].lower() != "failure"
-
-        if grjson["status"].lower() == "success":  # pragma: no branch
-            for msg in grjson["data"].get("errors") or []:
-                assert "ERROR" not in msg

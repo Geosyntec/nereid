@@ -9,7 +9,6 @@ import pandas
 from pydantic import BaseModel
 
 import nereid.tests.test_data
-from nereid._compat import model_json_schema
 from nereid.api.api_v1.models import treatment_facility_models
 from nereid.src.network.utils import clean_graph_dict
 
@@ -107,7 +106,7 @@ def create_random_model_dict(
         letters = list(string.ascii_letters)
         return "".join([numpy.random.choice(letters) for i in range(nchars)])
 
-    schema = model_json_schema(model)
+    schema = model.model_json_schema()
     reqds = schema["required"]
     props = schema["properties"]
     optionalprops = list(set(props.keys()) - set(reqds))
