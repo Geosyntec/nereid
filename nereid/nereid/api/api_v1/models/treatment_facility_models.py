@@ -16,12 +16,6 @@ else:  # pragma: no cover
 
 class _Base(Node):
     facility_type: str
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
 
 
 class SimpleFacilityBase(_Base):
@@ -30,6 +24,7 @@ class SimpleFacilityBase(_Base):
     _constructor: str = "simple_facility_constructor"
 
     if PYDANTIC_V2:
+        model_config = {"extra": "allow"}
 
         @field_validator("captured_pct", mode="before")
         @classmethod
@@ -43,6 +38,9 @@ class SimpleFacilityBase(_Base):
             return v
 
     else:  # pragma: no cover
+
+        class Config:
+            extra = "allow"
 
         @validator("captured_pct", pre=True, always=True, check_fields=False)
         def captured_default(cls, v):
