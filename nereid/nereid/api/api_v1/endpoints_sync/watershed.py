@@ -1,9 +1,8 @@
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import ORJSONResponse
 
-from nereid._compat import model_dump
 from nereid.api.api_v1.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
@@ -17,8 +16,8 @@ router = APIRouter()
 def validate_watershed_request(
     watershed_req: Watershed,
     context: dict = Depends(get_valid_context),
-) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    watershed: Dict[str, Any] = model_dump(watershed_req, by_alias=True)
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    watershed: dict[str, Any] = watershed_req.model_dump(by_alias=True)
 
     unvalidated_treatment_facilities = watershed.get("treatment_facilities")
     if unvalidated_treatment_facilities is not None:
@@ -38,10 +37,10 @@ def validate_watershed_request(
     response_class=ORJSONResponse,
 )
 async def post_solve_watershed(
-    watershed_pkg: Tuple[Dict[str, Any], Dict[str, Any]] = Depends(
+    watershed_pkg: tuple[dict[str, Any], dict[str, Any]] = Depends(
         validate_watershed_request
     ),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     watershed, context = watershed_pkg
 
     data = tasks.solve_watershed(

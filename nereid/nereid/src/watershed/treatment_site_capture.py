@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable
 
 from nereid.core.utils import safe_divide
 from nereid.src.watershed.loading import compute_pollutant_load_reduction
@@ -9,15 +9,13 @@ from nereid.src.watershed.simple_facility_capture import (
 
 
 def solve_treatment_site(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     *,
-    wet_weather_parameters: List[Dict[str, Any]],
-    dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
-    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
-    dry_weather_facility_performance_map: Optional[
-        dict[Tuple[str, str], Callable]
-    ] = None,
-) -> Dict[str, Any]:
+    wet_weather_parameters: list[dict[str, Any]],
+    dry_weather_parameters: list[dict[str, Any]] | None = None,
+    wet_weather_facility_performance_map: dict[tuple[str, str], Callable],
+    dry_weather_facility_performance_map: dict[tuple[str, str], Callable] | None = None,
+) -> dict[str, Any]:
     """This function computes the volume reduction/capture performance and the
     load reduction for each individual facility of a treatment site. Treatment sites
     are a list of facility types on the site, and for each the user has specified
@@ -82,7 +80,7 @@ def compute_site_volume_capture(data):
     return data
 
 
-def _compute_site_volume_capture(data: Dict[str, Any], vol_col: str) -> Dict[str, Any]:
+def _compute_site_volume_capture(data: dict[str, Any], vol_col: str) -> dict[str, Any]:
     site_inflow_volume = data.get(f"{vol_col}_inflow", 0)
     facilities = data.get("treatment_facilities", [])
 
@@ -122,10 +120,10 @@ def _compute_site_volume_capture(data: Dict[str, Any], vol_col: str) -> Dict[str
 
 
 def compute_site_wet_weather_load_reduction(
-    data: Dict[str, Any],
-    wet_weather_parameters: List[Dict[str, Any]],
-    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    wet_weather_parameters: list[dict[str, Any]],
+    wet_weather_facility_performance_map: dict[tuple[str, str], Callable],
+) -> dict[str, Any]:
     facilities = data.get("treatment_facilities", [])
     vol_col = "runoff_volume_cuft"
 
@@ -208,10 +206,10 @@ def compute_site_wet_weather_load_reduction(
 
 
 def compute_site_dry_weather_load_reduction(
-    data: Dict[str, Any],
-    dry_weather_parameters: List[Dict[str, Any]],
-    dry_weather_facility_performance_map: dict[Tuple[str, str], Callable],
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    dry_weather_parameters: list[dict[str, Any]],
+    dry_weather_facility_performance_map: dict[tuple[str, str], Callable],
+) -> dict[str, Any]:
     facilities = data.get("treatment_facilities", [])
     seasons = ["summer", "winter"]
 

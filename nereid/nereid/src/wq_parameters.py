@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from nereid.core.units import (
     conversion_factor_conc_to_load,
@@ -10,7 +10,7 @@ def make_wq_column_name(type: str, poc: str, unit: str) -> str:
     return "_".join([poc, type, unit.lower().replace("_", "")])
 
 
-def init_wq_parameters(tablename: str, context: Dict[str, Any]) -> List[Dict[str, Any]]:
+def init_wq_parameters(tablename: str, context: dict[str, Any]) -> list[dict[str, Any]]:
     """Gets a list of parameter specifications from the config.yml and reference data files.
 
     See also config.yml::project_reference_data::land_surface_emc_table which defines what pollutants
@@ -55,7 +55,7 @@ def init_wq_parameters(tablename: str, context: Dict[str, Any]) -> List[Dict[str
 
     """
 
-    parameters: List[Dict[str, Any]] = (
+    parameters: list[dict[str, Any]] = (
         context.get("project_reference_data", {})
         .get(tablename, {})
         .get("parameters", [])

@@ -1,12 +1,12 @@
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any
 
 from nereid.core.config import settings
 from nereid.core.io import load_cfg
 
 
-def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
+def validate_request_context(context: dict[str, Any]) -> tuple[bool, str]:
     dp = context.get("data_path")
     state = context["state"]
     region = context["region"]
@@ -48,9 +48,9 @@ def validate_request_context(context: Dict[str, Any]) -> Tuple[bool, str]:
 def get_request_context(
     state: str = "state",
     region: str = "region",
-    datadir: Optional[Union[str, Path]] = None,
-    context: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    datadir: str | Path | None = None,
+    context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     if context is None:
         context = settings.APP_CONTEXT
 

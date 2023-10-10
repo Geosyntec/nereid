@@ -1,17 +1,10 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, TypeAlias
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-from nereid._compat import PYDANTIC_V2, model_dump, model_json_schema
 from nereid.api.api_v1.models.node import Node
 from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_with_discriminator
-
-if PYDANTIC_V2:
-    from pydantic import field_validator, model_validator  # type: ignore[attr-defined]
-
-else:  # pragma: no cover
-    from pydantic import root_validator, validator
 
 
 class _Base(Node):
@@ -20,137 +13,63 @@ class _Base(Node):
 
 class SimpleFacilityBase(_Base):
     captured_pct: float = 0.0
-    retained_pct: Optional[float] = None
+    retained_pct: float | None = None
     _constructor: str = "simple_facility_constructor"
 
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
+    model_config = {"extra": "allow"}
 
-        @field_validator("captured_pct", mode="before")
-        @classmethod
-        def captured_default(cls, v):
-            if v is None:
-                v = 0.0
-            else:
-                assert (
-                    0.0 <= v <= 100.0
-                ), "Error: This value must be a number between 0.0 - 100.0."
-            return v
-
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
-
-        @validator("captured_pct", pre=True, always=True, check_fields=False)
-        def captured_default(cls, v):
-            if v is None:
-                v = 0.0
-            else:
-                assert (
-                    0.0 <= v <= 100.0
-                ), "Error: This value must be a number between 0.0 - 100.0."
-            return v
+    @field_validator("captured_pct", mode="before")
+    @classmethod
+    def captured_default(cls, v):
+        if v is None:
+            v = 0.0
+        else:
+            assert (
+                0.0 <= v <= 100.0
+            ), "Error: This value must be a number between 0.0 - 100.0."
+        return v
 
 
 class SimpleFacility(SimpleFacilityBase):
-    if PYDANTIC_V2:
-
-        @model_validator(mode="before")
-        @classmethod
-        def retained_default(cls, data):
-            if isinstance(data, dict):  # pragma: no branch
-                v = data.get("retained_pct")
-                if v is None:
-                    data["retained_pct"] = 0.0
-                else:
-                    assert (
-                        0.0 <= v <= 100.0
-                    ), "retained percent must be between 0.0-100.0"
-                    assert v <= data.get(
-                        "captured_pct", 0.0
-                    ), "retained percent must be less than or equal to captured percent"
-            return data
-
-    else:  # pragma: no cover
-
-        @validator("retained_pct", pre=True, always=True, check_fields=False)
-        def retained_default(cls, v, values):
+    @model_validator(mode="before")
+    @classmethod
+    def retained_default(cls, data):
+        if isinstance(data, dict):  # pragma: no branch
+            v = data.get("retained_pct")
             if v is None:
-                v = 0.0
+                data["retained_pct"] = 0.0
             else:
-                assert (
-                    0.0 <= v <= 100.0
-                ), "Error: This value must be a number between 0.0 - 100.0."
-                assert v <= values.get("captured_pct", 0.0), (
-                    "Error: Percent volume retained must be less than "
-                    "or equal to the overall percent volume captured."
-                )
-            return v
-
-
-# class SimpleFacilityV(SimpleFacility):
-#     validator: Literal["SimpleFacility"] = Field("SimpleFacility", exclude=True)
+                assert 0.0 <= v <= 100.0, "retained percent must be between 0.0-100.0"
+                assert v <= data.get(
+                    "captured_pct", 0.0
+                ), "retained percent must be less than or equal to captured percent"
+        return data
 
 
 class SimpleTmntFacility(SimpleFacilityBase):
-    if PYDANTIC_V2:
-
-        @model_validator(mode="before")
-        @classmethod
-        def retained_default(cls, data):
-            if isinstance(data, dict):  # pragma: no branch
-                v = data.get("retained_pct")
-                if v is not None:
-                    assert abs(v) <= 1e-6, "retained percent must be zero."
-                data["retained_pct"] = 0.0
-            return data
-
-    else:  # pragma: no cover
-
-        @validator("retained_pct", pre=True, always=True, check_fields=False)
-        def retained_default(cls, v):
+    @model_validator(mode="before")
+    @classmethod
+    def retained_default(cls, data):
+        if isinstance(data, dict):  # pragma: no branch
+            v = data.get("retained_pct")
             if v is not None:
-                assert abs(v) <= 1e-6, (
-                    "Error: This facility type cannot retain runoff. "
-                    "Retained volume percentage must be set to zero."
-                )
-            return 0.0
-
-
-# class SimpleTmntFacilityV(SimpleTmntFacility):
-#     validator: Literal["SimpleTmntFacility"] = Field("SimpleTmntFacility", exclude=True)
+                assert abs(v) <= 1e-6, "retained percent must be zero."
+            data["retained_pct"] = 0.0
+        return data
 
 
 class SimpleRetFacility(SimpleFacilityBase):
-    if PYDANTIC_V2:
-
-        @model_validator(mode="before")
-        @classmethod
-        def retained_default(cls, data):
-            if isinstance(data, dict):  # pragma: no branch
-                v = data.get("retained_pct")
-                if v is not None:
-                    assert v == data.get(
-                        "captured_pct"
-                    ), "retained must equal captured for retention BMPs"
-                data["retained_pct"] = data.get("captured_pct", 0.0)
-            return data
-
-    else:  # pragma: no cover
-
-        @validator("retained_pct", pre=True, always=True, check_fields=False)
-        def retained_default(cls, v, values):
-            assert v == values.get("captured_pct"), (
-                "Error: This facility type only performs retention. "
-                "Retained volume percentage must be equal to the captured "
-                "volume percentage."
-            )
-            return values.get("captured_pct", 0.0)
-
-
-# class SimpleRetFacilityV(SimpleRetFacility):
-#     validator: Literal["SimpleRetFacility"] = Field("SimpleRetFacility", exclude=True)
+    @model_validator(mode="before")
+    @classmethod
+    def retained_default(cls, data):
+        if isinstance(data, dict):  # pragma: no branch
+            v = data.get("retained_pct")
+            if v is not None:
+                assert v == data.get(
+                    "captured_pct"
+                ), "retained must equal captured for retention BMPs"
+            data["retained_pct"] = data.get("captured_pct", 0.0)
+        return data
 
 
 class FacilityBase(_Base):
@@ -177,16 +96,7 @@ and set the performance to 'fully eliminates all dry weather flow'. (default=Fal
 class NTFacility(_Base):
     _constructor: str = "nt_facility_constructor"
 
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
-
-
-# class NTFacilityV(NTFacility):
-#     validator: Literal["NTFacility"] = Field("NTFacility", exclude=True)
+    model_config = {"extra": "allow"}
 
 
 class FlowFacility(FacilityBase):
@@ -200,69 +110,35 @@ class FlowFacility(FacilityBase):
 
 
 class LowFlowFacility(FacilityBase):
-    treatment_rate_cfs: Optional[float] = None
-    design_capacity_cfs: Optional[float] = None
+    treatment_rate_cfs: float | None = None
+    design_capacity_cfs: float | None = None
     tributary_area_tc_min: float = Field(5.0, le=60)
-    if PYDANTIC_V2:
-        months_operational: str = Field("both", pattern="summer$|winter$|both$")
-    else:  # pragma: no cover
-        months_operational: str = Field("both", regex="summer$|winter$|both$")  # type: ignore[no-redef]
+    months_operational: str = Field("both", pattern="summer$|winter$|both$")
+
     _constructor: str = "dw_and_low_flow_facility_constructor"
 
-    if PYDANTIC_V2:
-
-        @model_validator(mode="before")
-        @classmethod
-        def one_or_both(cls, values):
-            if not isinstance(values, dict):
-                return values  # pragma: no cover
-            _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
-            if all(values.get(v) is None for v in _fields):
-                raise ValueError(
-                    "One or both of 'treatment_rate_cfs' and 'design_capacity_cfs' are required."
-                )
-            else:
-                values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
-                values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
-            return values
-
-    else:  # pragma: no cover
-
-        @root_validator(pre=True)
-        def one_or_both(cls, values):
-            _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
-            if all(values.get(v) is None for v in _fields):
-                raise ValueError(
-                    "Error: Specify one of 'treatment_rate_cfs' and 'design_capacity_cfs'."
-                )
-            else:
-                values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
-                values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
-            return values
-
-
-# class LowFlowFacilityV(LowFlowFacility):
-#     validator: Literal["LowFlowFacility"] = Field("LowFlowFacility", exclude=True)
+    @model_validator(mode="before")
+    @classmethod
+    def one_or_both(cls, values):
+        if not isinstance(values, dict):
+            return values  # pragma: no cover
+        _fields = ["treatment_rate_cfs", "design_capacity_cfs"]
+        if all(values.get(v) is None for v in _fields):
+            raise ValueError(
+                "One or both of 'treatment_rate_cfs' and 'design_capacity_cfs' are required."
+            )
+        else:
+            values[_fields[0]] = values.get(_fields[0], values.get(_fields[1]))
+            values[_fields[1]] = values.get(_fields[1], values.get(_fields[0]))
+        return values
 
 
 class DryWeatherDiversionLowFlowFacility(LowFlowFacility):
     _constructor: str = "dry_weather_diversion_low_flow_facility_constructor"
 
 
-# class DryWeatherDiversionLowFlowFacilityV(DryWeatherDiversionLowFlowFacility):
-#     validator: Literal["DryWeatherDiversionLowFlowFacility"] = Field(
-#         "DryWeatherDiversionLowFlowFacility", exclude=True
-#     )
-
-
 class DryWeatherTreatmentLowFlowFacility(LowFlowFacility):
     _constructor: str = "dry_weather_treatment_low_flow_facility_constructor"
-
-
-# class DryWeatherTreatmentLowFlowFacilityV(DryWeatherTreatmentLowFlowFacility):
-#     validator: Literal["DryWeatherTreatmentLowFlowFacility"] = Field(
-#         "DryWeatherTreatmentLowFlowFacility", exclude=True
-#     )
 
 
 class RetentionFacility(FacilityBase):
@@ -272,21 +148,11 @@ class RetentionFacility(FacilityBase):
     _constructor: str = "retention_facility_constructor"
 
 
-# class RetentionFacilityV(RetentionFacility):
-#     validator: Literal["RetentionFacility"] = Field("RetentionFacility", exclude=True)
-
-
 class RetentionFacilityHSG(FacilityBase):
     total_volume_cuft: float
     area_sqft: float
     hsg: str
     _constructor: str = "retention_facility_constructor"
-
-
-# class RetentionFacilityHSGV(RetentionFacilityHSG):
-#     validator: Literal["RetentionFacilityHSG"] = Field(
-#         "RetentionFacilityHSG", exclude=True
-#     )
 
 
 class DryWellFacility(FacilityBase):
@@ -295,18 +161,8 @@ class DryWellFacility(FacilityBase):
     _constructor: str = "dry_well_facility_constructor"
 
 
-# class DryWellFacilityV(DryWellFacility):
-#     validator: Literal["DryWellFacility"] = Field("DryWellFacility", exclude=True)
-
-
 class DryWellFacilityFlowOrVolume(FlowFacility, DryWellFacility):
     _constructor: str = "dry_well_facility_flow_or_volume_constructor"
-
-
-# class DryWellFacilityFlowOrVolumeV(DryWellFacilityFlowOrVolume):
-#     validator: Literal["DryWellFacilityFlowOrVolume"] = Field(
-#         "DryWellFacilityFlowOrVolume", exclude=True
-#     )
 
 
 class BioInfFacility(FacilityBase):
@@ -318,10 +174,6 @@ class BioInfFacility(FacilityBase):
     _constructor: str = "bioinfiltration_facility_constructor"
 
 
-# class BioInfFacilityV(BioInfFacility):
-#     validator: Literal["BioInfFacility"] = Field("BioInfFacility", exclude=True)
-
-
 class RetAndTmntFacility(FacilityBase):
     total_volume_cuft: float
     retention_volume_cuft: float
@@ -331,19 +183,11 @@ class RetAndTmntFacility(FacilityBase):
     _constructor: str = "retention_and_treatment_facility_constructor"
 
 
-# class RetAndTmntFacilityV(RetAndTmntFacility):
-#     validator: Literal["RetAndTmntFacility"] = Field("RetAndTmntFacility", exclude=True)
-
-
 class TmntFacility(FacilityBase):
     total_volume_cuft: float
     area_sqft: float
     media_filtration_rate_inhr: float
     _constructor: str = "treatment_facility_constructor"
-
-
-# class TmntFacilityV(TmntFacility):
-#     validator: Literal["TmntFacility"] = Field("TmntFacility", exclude=True)
 
 
 class TmntFacilityWithRetentionOverride(TmntFacility):
@@ -361,21 +205,11 @@ class TmntFacilityWithRetentionOverride(TmntFacility):
     )
 
 
-# class TmntFacilityWithRetentionOverrideV(TmntFacilityWithRetentionOverride):
-#     validator: Literal["TmntFacilityWithRetentionOverride"] = Field(
-#         "TmntFacilityWithRetentionOverride", exclude=True
-#     )
-
-
 class FlowAndRetFacility(FlowFacility, FacilityBase):
     area_sqft: float
     depth_ft: float
     hsg: str
     _constructor: str = "flow_and_retention_facility_constructor"
-
-
-# class FlowAndRetFacilityV(FlowAndRetFacility):
-#     validator: Literal["FlowAndRetFacility"] = Field("FlowAndRetFacility", exclude=True)
 
 
 class CisternFacility(FacilityBase):
@@ -385,70 +219,34 @@ class CisternFacility(FacilityBase):
     _constructor: str = "cistern_facility_constructor"
 
 
-# class CisternFacilityV(CisternFacility):
-#     validator: Literal["CisternFacility"] = Field("CisternFacility", exclude=True)
-
-
 class PermPoolFacility(FacilityBase):
     pool_volume_cuft: float = 0.0
     treatment_volume_cuft: float = 0.0
     _constructor: str = "perm_pool_facility_constructor"
 
 
-# class PermPoolFacilityV(PermPoolFacility):
-#     validator: Literal["PermPoolFacility"] = Field("PermPoolFacility", exclude=True)
+STRUCTURAL_FACILITY_TYPE: TypeAlias = (  # Used only for the openapi spec, not for validation
+    PermPoolFacility
+    | RetAndTmntFacility
+    | BioInfFacility
+    | FlowAndRetFacility
+    | RetentionFacility
+    | RetentionFacilityHSG
+    | TmntFacility
+    | TmntFacilityWithRetentionOverride
+    | CisternFacility
+    | DryWellFacility
+    | DryWellFacilityFlowOrVolume
+    | DryWeatherTreatmentLowFlowFacility
+    | DryWeatherDiversionLowFlowFacility
+    | LowFlowFacility
+    | FlowFacility
+    | SimpleFacility
+    | SimpleTmntFacility
+    | SimpleRetFacility
+    | NTFacility
+)
 
-
-STRUCTURAL_FACILITY_TYPE = Union[  # Used only for the openapi spec, not for validation
-    PermPoolFacility,
-    RetAndTmntFacility,
-    BioInfFacility,
-    FlowAndRetFacility,
-    RetentionFacility,
-    RetentionFacilityHSG,
-    TmntFacility,
-    TmntFacilityWithRetentionOverride,
-    CisternFacility,
-    DryWellFacility,
-    DryWellFacilityFlowOrVolume,
-    DryWeatherTreatmentLowFlowFacility,
-    DryWeatherDiversionLowFlowFacility,
-    LowFlowFacility,
-    FlowFacility,
-    SimpleFacility,
-    SimpleTmntFacility,
-    SimpleRetFacility,
-    NTFacility,
-]
-
-
-# STRUCTURAL_FACILITY_TYPE_V = (
-#     Annotated[
-#         Union[  # Used only for the openapi spec, not for validation
-#             PermPoolFacilityV,
-#             RetAndTmntFacilityV,
-#             BioInfFacilityV,
-#             FlowAndRetFacilityV,
-#             RetentionFacilityV,
-#             RetentionFacilityHSGV,
-#             TmntFacilityV,
-#             TmntFacilityWithRetentionOverrideV,
-#             CisternFacilityV,
-#             DryWellFacilityV,
-#             DryWellFacilityFlowOrVolumeV,
-#             DryWeatherTreatmentLowFlowFacilityV,
-#             DryWeatherDiversionLowFlowFacilityV,
-#             LowFlowFacilityV,
-#             FlowFacilityV,
-#             SimpleFacilityV,
-#             SimpleTmntFacilityV,
-#             SimpleRetFacilityV,
-#             NTFacilityV,
-#         ],
-#         Field(discriminator="validator"),
-#     ]
-#     | NTFacilityV
-# )
 
 TREATMENT_FACILITY_MODELS = [
     PermPoolFacility,
@@ -666,30 +464,18 @@ EXAMPLE_TREATMENT_FACILITIES = {
 
 
 class TreatmentFacilities(BaseModel):
-    treatment_facilities: List[Dict[str, Any] | STRUCTURAL_FACILITY_TYPE]
-    errors: Optional[List[str]] = None
-    if PYDANTIC_V2:
-        model_config = {
-            "json_schema_extra": {"examples": [EXAMPLE_TREATMENT_FACILITIES]}
-        }
-    else:  # pragma: no cover
-
-        class Config:
-            schema_extra = {"examples": [EXAMPLE_TREATMENT_FACILITIES]}
-
-
-# class TreatmentFacilitiesStrict(BaseModel):
-#     treatment_facilities: List[STRUCTURAL_FACILITY_TYPE_V]
-#     errors: Optional[List[str]] = None
+    treatment_facilities: list[dict[str, Any] | STRUCTURAL_FACILITY_TYPE]
+    errors: list[str] | None = None
+    model_config = {"json_schema_extra": {"examples": [EXAMPLE_TREATMENT_FACILITIES]}}
 
 
 class TreatmentFacilitiesResponse(JSONAPIResponse):
-    data: Optional[TreatmentFacilities] = None
+    data: TreatmentFacilities | None = None
 
 
 def validate_treatment_facility_models(
-    unvalidated_data: List[Dict[str, Any]], context: Dict[str, Any]
-) -> List[Dict[str, Any]]:
+    unvalidated_data: list[dict[str, Any]], context: dict[str, Any]
+) -> list[dict[str, Any]]:
     mapping = context["api_recognize"]["treatment_facility"]["facility_type"]
     model_map_str = {k: v.get("validator") for k, v in mapping.items()}
     fallback_map_str = {k: v.get("validation_fallback") for k, v in mapping.items()}
@@ -711,11 +497,11 @@ def validate_treatment_facility_models(
             fallback_mapping=fallback_map,
         )
 
-        valid_dct = model_dump(model)
+        valid_dct = model.model_dump()
         valid_dct["constructor"] = getattr(
             model, "_constructor", "nt_facility_constructor"
         )
-        valid_dct["valid_model"] = model_json_schema(model)["title"]
+        valid_dct["valid_model"] = model.model_json_schema()["title"]
         valid_dct["validator"] = model_map_str.get(facility_type)
         valid_dct["validation_fallback"] = fallback_map_str.get(facility_type)
         valid_dct["tmnt_performance_facility_type"] = tmnt_performance_map_str.get(

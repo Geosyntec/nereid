@@ -4,7 +4,6 @@ from itertools import product
 import numpy
 import pytest
 
-from nereid._compat import model_json_schema
 from nereid.api.api_v1.models.treatment_facility_models import (
     EXAMPLE_TREATMENT_FACILITIES,
     TREATMENT_FACILITY_MODELS,
@@ -390,7 +389,7 @@ def treatment_facility_dicts():
     responses = {}
 
     for model in TREATMENT_FACILITY_MODELS:
-        model_str = model_json_schema(model)["title"]
+        model_str = model.model_json_schema()["title"]
         dct = generate_random_treatment_facility_request_node(
             model_str, model_str, "10101200", node_id="default"
         )
@@ -410,7 +409,7 @@ def valid_treatment_facility_dicts(contexts):
     responses = {}
 
     for model in TREATMENT_FACILITY_MODELS:
-        model_str = model_json_schema(model)["title"]
+        model_str = model.model_json_schema()["title"]
         facility_type = [
             ft
             for ft, dct in facility_type_dict.items()

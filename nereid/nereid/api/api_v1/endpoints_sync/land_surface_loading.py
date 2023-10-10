@@ -1,9 +1,8 @@
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
-from nereid._compat import model_dump
 from nereid.api.api_v1.models.land_surface_models import (
     LandSurfaceResponse,
     LandSurfaces,
@@ -24,8 +23,8 @@ async def calculate_loading(
     land_surfaces: LandSurfaces = Body(...),
     details: bool = False,
     context: dict = Depends(get_valid_context),
-) -> Dict[str, Any]:
-    land_surfaces_req = model_dump(land_surfaces, by_alias=True)
+) -> dict[str, Any]:
+    land_surfaces_req = land_surfaces.model_dump(by_alias=True)
 
     data = tasks.land_surface_loading(
         land_surfaces=land_surfaces_req, details=details, context=context

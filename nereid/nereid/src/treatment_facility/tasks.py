@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas
 
@@ -12,11 +12,11 @@ from nereid.src.treatment_facility.constructors import build_treatment_facility_
 
 @update_unit_registry
 def initialize_treatment_facilities(
-    treatment_facilities: Dict[str, List[Dict[str, Any]]],
+    treatment_facilities: dict[str, list[dict[str, Any]]],
     pre_validated: bool,
-    context: Dict[str, Any],
-) -> Dict[str, Any]:
-    response: Dict[str, Any] = {"errors": []}
+    context: dict[str, Any],
+) -> dict[str, Any]:
+    response: dict[str, Any] = {"errors": []}
 
     try:
         treatment_facility_list = treatment_facilities.get("treatment_facilities") or []

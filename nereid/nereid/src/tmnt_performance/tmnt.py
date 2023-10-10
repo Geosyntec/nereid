@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Callable, Dict, Mapping, Optional
+from typing import Any, Callable, Mapping
 
 import numpy
 import pandas
@@ -18,8 +18,8 @@ def effluent_conc(
     D: float = 0,
     E: float = 0,
     dl: float = 0,
-    unit: Optional[str] = None,
-    **kwargs: Dict,
+    unit: str | None = None,
+    **kwargs: dict,
 ) -> float:
     """
     This function applies the NCHRP formula for computing stormwater treatment facility

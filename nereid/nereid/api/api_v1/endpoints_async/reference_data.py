@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.requests import Request
@@ -38,13 +38,13 @@ async def get_reference_data_file(
 )
 async def get_reference_data_json(
     context: dict = Depends(get_valid_context), filename: str = ""
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     filepath = Path(context.get("data_path", "")) / filename
     state, region = context["state"], context["region"]
 
     if filepath.is_file():
-        filedata: Union[Dict[str, Any], str] = ""
-        loader: Callable[[Union[Path, str]], Union[Dict[str, Any], str]] = load_file
+        filedata: dict[str, Any] | str = ""
+        loader: Callable[[Path | str], dict[str, Any] | str] = load_file
         if "json" in filepath.suffix.lower():
             loader = load_json
         filedata = loader(filepath)
@@ -71,8 +71,8 @@ async def get_nomograph(
     request: Request,
     context: dict = Depends(get_valid_context),
     filename: str = "",
-    type: Optional[str] = None,
-) -> Union[Dict[str, Any], Any]:
+    type: str | None = None,
+) -> dict[str, Any] | Any:
     mapping = load_nomograph_mapping(context) or {}
     state, region = context["state"], context["region"]
     nomo = mapping.get(filename) or None
@@ -110,7 +110,7 @@ async def get_nomograph(
 )
 async def get_reference_data_table(
     table: str, context: dict = Depends(get_valid_context)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     state, region = context["state"], context["region"]
     tables = context.get("project_reference_data", {}).keys()
     if table in tables:

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable
 
 import networkx as nx
 
@@ -10,10 +10,10 @@ from nereid.src.watershed.loading import compute_pollutant_load_reduction
 
 def accumulate_wet_weather_loading(
     g: nx.DiGraph,
-    data: Dict[str, Any],
-    predecessors: List[str],
-    wet_weather_parameters: List[Dict[str, Any]],
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    predecessors: list[str],
+    wet_weather_parameters: list[dict[str, Any]],
+) -> dict[str, Any]:
     """This function helps aggregate the state of the watershed upstream of
     the current node for wet weather conditions.
 
@@ -212,7 +212,7 @@ def accumulate_wet_weather_loading(
     return data
 
 
-def compute_wet_weather_volume_discharge(data: Dict[str, Any]) -> Dict[str, Any]:
+def compute_wet_weather_volume_discharge(data: dict[str, Any]) -> dict[str, Any]:
     """this function aggregates wet weather volume results to prepare them for summarization
     and to prepare the effects of the current node to influence the input to downstream nodes.
 
@@ -269,10 +269,10 @@ def compute_wet_weather_volume_discharge(data: Dict[str, Any]) -> Dict[str, Any]
 
 
 def compute_wet_weather_load_reduction(
-    data: Dict[str, Any],
-    wet_weather_parameters: List[Dict[str, Any]],
-    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    wet_weather_parameters: list[dict[str, Any]],
+    wet_weather_facility_performance_map: dict[tuple[str, str], Callable],
+) -> dict[str, Any]:
     """this function relies on the volume treated and volume retained to be set by
     other functions before computing the whole facility load reduction by considering
     influent->effluent concentration transformation, volume capture, and volume reduction
@@ -336,7 +336,7 @@ def compute_wet_weather_load_reduction(
     return data
 
 
-def check_node_results_close(data: Dict[str, Any]) -> Dict[str, Any]:
+def check_node_results_close(data: dict[str, Any]) -> dict[str, Any]:
     """Run a few mass balance checks on the node."""
     check1 = safe_divide(
         (

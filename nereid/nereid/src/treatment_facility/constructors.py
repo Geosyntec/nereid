@@ -1,18 +1,18 @@
 from copy import deepcopy
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas
 
 from nereid.core.utils import safe_divide
 
 
-def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]:
-    _treatment_facility_list: List[Dict[str, Any]] = [
+def build_treatment_facility_nodes(df: pandas.DataFrame) -> list[dict[str, Any]]:
+    _treatment_facility_list: list[dict[str, Any]] = [
         {str(k): v for k, v in m.items() if pandas.notnull(v)}
         for m in df.to_dict(orient="records")
     ]
 
-    treatment_facility_list: List[Dict[str, Any]] = list(
+    treatment_facility_list: list[dict[str, Any]] = list(
         map(construct_treatment_facility_node_context, _treatment_facility_list)
     )
 
@@ -20,9 +20,9 @@ def build_treatment_facility_nodes(df: pandas.DataFrame) -> List[Dict[str, Any]]
 
 
 def construct_treatment_facility_node_context(
-    node_context: Dict[str, Any]
-) -> Dict[str, Any]:
-    n_cxt: Dict[str, Any] = deepcopy(node_context)
+    node_context: dict[str, Any]
+) -> dict[str, Any]:
+    n_cxt: dict[str, Any] = deepcopy(node_context)
 
     constructor_str = n_cxt.get("constructor") or "nt_facility_constructor"
     fxn = getattr(TreatmentFacilityConstructor, constructor_str)
@@ -35,11 +35,11 @@ def construct_treatment_facility_node_context(
 
 class TreatmentFacilityConstructor:
     @staticmethod
-    def nt_facility_constructor(**kwargs: dict) -> Dict:
+    def nt_facility_constructor(**kwargs: dict) -> dict:
         return {"captured_pct": 0, "retained_pct": 0, "treated_pct": 0}
 
     @staticmethod
-    def simple_facility_constructor(**kwargs: dict) -> Dict:
+    def simple_facility_constructor(**kwargs: dict) -> dict:
         return {"node_type": "simple_facility"}
 
     @staticmethod
@@ -49,7 +49,7 @@ class TreatmentFacilityConstructor:
         area_sqft: float,
         inf_rate_inhr: float,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         retention_volume_cuft = total_volume_cuft
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
@@ -66,7 +66,7 @@ class TreatmentFacilityConstructor:
     @staticmethod
     def dry_well_facility_constructor(
         *, total_volume_cuft: float, treatment_rate_cfs: float, **kwargs: dict
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
 
@@ -85,7 +85,7 @@ class TreatmentFacilityConstructor:
     @staticmethod
     def dry_well_facility_flow_or_volume_constructor(
         *, total_volume_cuft: float, treatment_rate_cfs: float, **kwargs: dict
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
 
@@ -110,7 +110,7 @@ class TreatmentFacilityConstructor:
         media_filtration_rate_inhr: float,
         inf_rate_inhr: float,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """This facility has incidental infiltration and a raised underdrain."""
 
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
@@ -144,7 +144,7 @@ class TreatmentFacilityConstructor:
         treatment_drawdown_time_hr: float,
         inf_rate_inhr: float,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         retention_depth_ft = safe_divide(retention_volume_cuft, area_sqft)
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
 
@@ -172,7 +172,7 @@ class TreatmentFacilityConstructor:
         area_sqft: float,
         media_filtration_rate_inhr: float,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         treatment_volume_cuft = total_volume_cuft
         treatment_depth_ft = safe_divide(treatment_volume_cuft, area_sqft)
         treatment_ddt_hr = safe_divide(
@@ -191,7 +191,7 @@ class TreatmentFacilityConstructor:
     @staticmethod
     def flow_and_retention_facility_constructor(
         *, area_sqft: float, depth_ft: float, inf_rate_inhr: float, **kwargs: dict
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         retention_depth_ft = depth_ft
         retention_volume_cuft = area_sqft * retention_depth_ft
         retention_ddt_hr = safe_divide(retention_depth_ft * 12, inf_rate_inhr)
@@ -207,7 +207,7 @@ class TreatmentFacilityConstructor:
         return result
 
     @staticmethod
-    def flow_facility_constructor(**kwargs: dict) -> Dict[str, Any]:
+    def flow_facility_constructor(**kwargs: dict) -> dict[str, Any]:
         result = {"node_type": "flow_based_facility"}
 
         return result
@@ -219,7 +219,7 @@ class TreatmentFacilityConstructor:
         design_capacity_cfs: float,
         months_operational: str,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """These are diversions, so their 'treatment' eliminates volume from the system."""
 
         modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
@@ -253,7 +253,7 @@ class TreatmentFacilityConstructor:
         design_capacity_cfs: float,
         months_operational: str,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """These are treat and discharge facilities."""
 
         modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
@@ -287,7 +287,7 @@ class TreatmentFacilityConstructor:
         design_capacity_cfs: float,
         months_operational: str,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """These are diversions, so their 'treatment' eliminates volume from the system."""
 
         modeled_tmnt_rate = min(treatment_rate_cfs, design_capacity_cfs)
@@ -320,10 +320,10 @@ class TreatmentFacilityConstructor:
         total_volume_cuft: float,
         winter_demand_cfs: float,
         summer_demand_cfs: float,
-        winter_dry_weather_flow_cuft_psecond_inflow: Optional[float] = None,
-        summer_dry_weather_flow_cuft_psecond_inflow: Optional[float] = None,
+        winter_dry_weather_flow_cuft_psecond_inflow: float | None = None,
+        summer_dry_weather_flow_cuft_psecond_inflow: float | None = None,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         winter_dry_weather_flow_cuft_psecond_inflow = (
             winter_dry_weather_flow_cuft_psecond_inflow or 0.0
         )
@@ -368,7 +368,7 @@ class TreatmentFacilityConstructor:
         pool_volume_cuft: float,
         treatment_volume_cuft: float,
         **kwargs: dict,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         # TODO: wetponds are lined, thus they do not perform retention
         # during wet weather. The perm pool volume is treated during the hrt and
         # discharged. Therefore a future release will need to handle two nomograph

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import networkx as nx
 
@@ -12,7 +12,7 @@ from nereid.src.network.render import (
 from nereid.src.network.utils import graph_factory, thin_graph_dict
 
 
-def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
+def validate_network(graph: dict) -> dict[str, bool | list]:
     """
 
     Parameters
@@ -33,7 +33,7 @@ def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
 
     isvalid = validate.is_valid(g)
 
-    result: Dict[str, Union[bool, List]] = {"isvalid": isvalid}
+    result: dict[str, bool | list] = {"isvalid": isvalid}
 
     if isvalid:
         return result
@@ -47,8 +47,8 @@ def validate_network(graph: Dict) -> Dict[str, Union[bool, List]]:
 
 
 def network_subgraphs(
-    graph: Dict[str, Any], nodes: List[Dict[str, Any]]
-) -> Dict[str, Any]:
+    graph: dict[str, Any], nodes: list[dict[str, Any]]
+) -> dict[str, Any]:
     _graph = thin_graph_dict(graph)
 
     node_ids = [node["id"] for node in nodes]
@@ -62,14 +62,14 @@ def network_subgraphs(
         for nodes in nx.weakly_connected_components(sub_g)
     ]
 
-    result: Dict[str, Any] = {"graph": _graph}
+    result: dict[str, Any] = {"graph": _graph}
     result.update({"requested_nodes": nodes})
     result.update({"subgraph_nodes": subgraph_nodes})
 
     return result
 
 
-def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> bytes:
+def render_subgraph_svg(task_result: dict, npi: float | None = None) -> bytes:
     g = graph_factory(task_result["graph"])
 
     fig = render_subgraphs(
@@ -86,8 +86,8 @@ def render_subgraph_svg(task_result: dict, npi: Optional[float] = None) -> bytes
 
 
 def solution_sequence(
-    graph: Dict[str, Any], min_branch_size: int
-) -> Dict[str, Dict[str, List[Dict[str, List[Dict[str, Union[str, Dict]]]]]]]:
+    graph: dict[str, Any], min_branch_size: int
+) -> dict[str, dict[str, list[dict[str, list[dict[str, str | dict]]]]]]:
     _graph = thin_graph_dict(graph)  # strip unneeded metadata
 
     g = nx.DiGraph(graph_factory(_graph))
@@ -101,16 +101,14 @@ def solution_sequence(
         ]
     }
 
-    result: Dict[str, Any] = {"graph": _graph}
+    result: dict[str, Any] = {"graph": _graph}
     result["min_branch_size"] = min_branch_size
     result["solution_sequence"] = sequence
 
     return result
 
 
-def render_solution_sequence_svg(
-    task_result: dict, npi: Optional[float] = None
-) -> bytes:
+def render_solution_sequence_svg(task_result: dict, npi: float | None = None) -> bytes:
     _graph = thin_graph_dict(task_result["graph"])  # strip unneeded metadata
 
     g = nx.DiGraph(graph_factory(_graph))

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable
 
 import networkx as nx
 
@@ -9,10 +9,10 @@ from nereid.src.watershed.loading import compute_pollutant_load_reduction
 
 def accumulate_dry_weather_loading(
     g: nx.DiGraph,
-    data: Dict[str, Any],
-    predecessors: List[str],
-    dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    predecessors: list[str],
+    dry_weather_parameters: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """This function helps aggregate the state of the watershed upstream of
     the current node for dry weather conditions. This function considers dry weather
     for two seasons per year, summer and winter.
@@ -54,10 +54,10 @@ def accumulate_dry_weather_loading(
 
 def accumulate_dry_weather_volume_by_season(
     g: nx.DiGraph,
-    data: Dict[str, Any],
-    predecessors: List[str],
+    data: dict[str, Any],
+    predecessors: list[str],
     season: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """aggregate dry weather volume for a single season
 
     This function is called only by `accumulate_dry_weather_loading`
@@ -96,11 +96,11 @@ def accumulate_dry_weather_volume_by_season(
 
 def accumulate_dry_weather_pollutant_loading_by_season(
     g: nx.DiGraph,
-    data: Dict[str, Any],
-    predecessors: List[str],
-    dry_weather_parameters: List[Dict[str, Any]],
+    data: dict[str, Any],
+    predecessors: list[str],
+    dry_weather_parameters: list[dict[str, Any]],
     season: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """aggregate dry weather pollutant load for a single season
 
     This function is called only by `accumulate_dry_weather_loading`
@@ -163,8 +163,8 @@ def compute_dry_weather_volume_performance(data):
 
 
 def init_dry_weather_tmnt_rate_by_season(
-    data: Dict[str, Any], season: str
-) -> Dict[str, Any]:
+    data: dict[str, Any], season: str
+) -> dict[str, Any]:
     """This function helps normalize how the treatment rate for dry weather flow
     is credited, particularly for facilities that are volume-based and so have
     no treatment-rate type attributes. This function will consider the rate of
@@ -216,8 +216,8 @@ def init_dry_weather_tmnt_rate_by_season(
 
 
 def compute_dry_weather_volume_performance_by_season(
-    data: Dict[str, Any], season: str
-) -> Dict[str, Any]:
+    data: dict[str, Any], season: str
+) -> dict[str, Any]:
     """This function checks to see if the dry weather flow rate can be eliminated
     by the retention rate, and if not, applies treatment to the discharge volume
     up to the treatment rate capacity. discharge rates higher than the treatment
@@ -309,10 +309,10 @@ def compute_dry_weather_volume_performance_by_season(
 
 
 def compute_dry_weather_load_reduction(
-    data: Dict[str, Any],
-    dry_weather_parameters: List[Dict[str, Any]],
-    dry_weather_facility_performance_map: dict[Tuple[str, str], Callable],
-) -> Dict[str, Any]:
+    data: dict[str, Any],
+    dry_weather_parameters: list[dict[str, Any]],
+    dry_weather_facility_performance_map: dict[tuple[str, str], Callable],
+) -> dict[str, Any]:
     """This function computes how load reduction is effected by the volume reduced
     and/or treated by the current facility. This function requires that the volume
     balance is already computed.

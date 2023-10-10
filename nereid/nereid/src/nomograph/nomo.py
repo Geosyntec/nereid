@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable
 
 import pandas
 
@@ -11,7 +11,7 @@ from nereid.src.nomograph.interpolators import FlowNomograph, VolumeNomograph
 @lru_cache()
 def build_nomo(
     nomo_type: str,
-    path: Union[Path, str],
+    path: Path | str,
     x_col: str,
     t_col: str,
     y_col: str,
@@ -32,7 +32,7 @@ def build_nomo(
         raise NotImplementedError(f"unsupported nomograph type: {nomo_type}")
 
 
-def get_volume_nomograph(context: Dict[str, Any], nomo_path: str) -> VolumeNomograph:
+def get_volume_nomograph(context: dict[str, Any], nomo_path: str) -> VolumeNomograph:
     met_context = context.get("project_reference_data", {}).get("met_table", {})
     data_path = Path(context["data_path"])
     fpath = (data_path / nomo_path).resolve()
@@ -43,7 +43,7 @@ def get_volume_nomograph(context: Dict[str, Any], nomo_path: str) -> VolumeNomog
     return nomo
 
 
-def get_flow_nomograph(context: Dict[str, Any], nomo_path: str) -> FlowNomograph:
+def get_flow_nomograph(context: dict[str, Any], nomo_path: str) -> FlowNomograph:
     met_context = context.get("project_reference_data", {}).get("met_table", {})
     data_path = Path(context["data_path"])
     fpath = (data_path / nomo_path).resolve()
@@ -54,7 +54,7 @@ def get_flow_nomograph(context: Dict[str, Any], nomo_path: str) -> FlowNomograph
     return nomo
 
 
-def load_nomograph_mapping(context: Dict[str, Any]) -> Optional[Dict[str, Callable]]:
+def load_nomograph_mapping(context: dict[str, Any]) -> dict[str, Callable] | None:
     met_table, msg = load_ref_data("met_table", context)
 
     if met_table is None:

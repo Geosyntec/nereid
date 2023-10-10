@@ -1,19 +1,10 @@
-from typing import List
-
 from pydantic import BaseModel
-
-from nereid._compat import PYDANTIC_V2
 
 
 class Result(BaseModel):
     node_id: str
 
-    if PYDANTIC_V2:
-        model_config = {"extra": "allow"}
-    else:  # pragma: no cover
-
-        class Config:
-            extra = "allow"
+    model_config = {"extra": "allow"}
 
 
 class PreviousResult(Result):
@@ -21,4 +12,4 @@ class PreviousResult(Result):
 
 
 class PreviousResults(BaseModel):
-    previous_results: List[PreviousResult]
+    previous_results: list[PreviousResult]

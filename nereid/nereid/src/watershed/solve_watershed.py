@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable
 
 import networkx as nx
 
@@ -36,11 +36,11 @@ from nereid.src.wq_parameters import init_wq_parameters
 
 
 def initialize_graph(
-    watershed: Dict[str, Any],
+    watershed: dict[str, Any],
     treatment_pre_validated: bool,
-    context: Dict[str, Any],
-) -> Tuple[nx.DiGraph, List[str]]:
-    errors: List[str] = []
+    context: dict[str, Any],
+) -> tuple[nx.DiGraph, list[str]]:
+    errors: list[str] = []
 
     g = graph_factory(watershed["graph"])
 
@@ -63,7 +63,7 @@ def initialize_graph(
     treatment_sites = initialize_treatment_sites(watershed, context=context)
     errors.extend(treatment_sites["errors"])
 
-    data: Dict[str, Any] = {}
+    data: dict[str, Any] = {}
     for dictlist in [
         watershed.get("previous_results") or [],
         land_surface.get("summary") or [],
@@ -83,7 +83,7 @@ def initialize_graph(
 
 def solve_watershed_loading(
     g: nx.DiGraph,
-    context: Dict[str, Any],
+    context: dict[str, Any],
 ) -> None:
     wet_weather_parameters = init_wq_parameters(
         "land_surface_emc_table", context=context
@@ -129,15 +129,13 @@ def solve_watershed_loading(
 
 def solve_node(
     g: nx.DiGraph,
-    node: Union[str, int],
+    node: str | int,
     *,
-    wet_weather_parameters: List[Dict[str, Any]],
-    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
-    nomograph_map: Optional[dict[str, Callable]] = None,
-    dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
-    dry_weather_facility_performance_map: Optional[
-        dict[Tuple[str, str], Callable]
-    ] = None,
+    wet_weather_parameters: list[dict[str, Any]],
+    wet_weather_facility_performance_map: dict[tuple[str, str], Callable],
+    nomograph_map: dict[str, Callable] | None = None,
+    dry_weather_parameters: list[dict[str, Any]] | None = None,
+    dry_weather_facility_performance_map: dict[tuple[str, str], Callable] | None = None,
     solve_dw: bool = False,
 ) -> None:
     """Solve a single node of the graph data structure in place.
