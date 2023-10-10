@@ -204,7 +204,7 @@ def test_detailed_land_surface_pollutant_loading_results(
         else:
             return 0
 
-    result = detailed_pollutant_loading_results(input_df, parameters, [], []).applymap(
+    result = detailed_pollutant_loading_results(input_df, parameters, [], []).map(  # type: ignore
         lambda x: sigfigs(x, 4)
     )
     known = known_land_surface_pollutant_loading_result

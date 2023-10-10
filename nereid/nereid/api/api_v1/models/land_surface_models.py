@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, BeforeValidator, Field
 
 from nereid._compat import PYDANTIC_V2
 from nereid.api.api_v1.models.node import Node
@@ -10,7 +10,9 @@ from nereid.api.api_v1.models.response_models import JSONAPIResponse
 
 
 class LandSurface(Node):
-    surface_key: str = Field(..., examples=["104506-RESSFH-B-5"])
+    surface_key: Annotated[
+        str, Field(..., examples=["104506-RESSFH-B-5"]), BeforeValidator(str)
+    ]
     area_acres: float = Field(..., gt=0.0)
     imp_area_acres: float = Field(..., ge=0.0)
 
@@ -52,7 +54,7 @@ LS_EXAMPLE = {
 
 
 class LandSurfaces(BaseModel):
-    land_surfaces: List[LandSurface]
+    land_surfaces: list[LandSurface]
 
     if PYDANTIC_V2:
         model_config = {"json_schema_extra": {"examples": [LS_EXAMPLE]}}
@@ -65,7 +67,7 @@ class LandSurfaces(BaseModel):
 ## Land Surface Response Models
 
 
-class LandSurfaceBase(BaseModel):
+class LandSurfaceBase(Node):
     node_type: str = "land_surface"
 
     if PYDANTIC_V2:
@@ -77,7 +79,6 @@ class LandSurfaceBase(BaseModel):
 
 
 class LandSurfaceSummary(LandSurfaceBase):
-    node_id: str
     area_acres: float
     imp_area_acres: float
     perv_area_acres: float
@@ -91,11 +92,10 @@ class LandSurfaceSummary(LandSurfaceBase):
 
 
 class LandSurfaceDetails(LandSurfaceBase):
-    node_id: str
-    surface_key: str
+    surface_key: Annotated[str, Field(...), BeforeValidator(str)]
     area_acres: float
     imp_area_acres: float
-    surface_id: str
+    surface_id: Annotated[str, Field(...), BeforeValidator(str)]
     perv_ro_depth_inches: float
     imp_ro_depth_inches: float
     perv_ro_coeff: float
@@ -114,10 +114,10 @@ class LandSurfaceDetails(LandSurfaceBase):
 
 
 class LandSurfaceResults(BaseModel):
-    summary: Optional[List[LandSurfaceSummary]] = None
-    details: Optional[List[LandSurfaceDetails]] = None
-    errors: Optional[List[str]] = None
+    summary: list[LandSurfaceSummary] | None = None
+    details: list[LandSurfaceDetails] | None = None
+    errors: list[str] | None = None
 
 
 class LandSurfaceResponse(JSONAPIResponse):
-    data: Optional[LandSurfaceResults] = None
+    data: LandSurfaceResults | None = None
