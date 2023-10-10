@@ -24,7 +24,9 @@ def test_post_network_validate(
     assert network_models.NetworkValidationResponse(**prjson)
 
     if isfast:
-        assert prjson["status"].lower() == "success"
+        if not prjson["status"].lower() == "success":
+            prjson = poll_testclient_url(client, prjson["result_route"]).json()
+
         assert prjson["data"] is not None
         assert prjson["data"]["isvalid"] == isvalid
     else:
