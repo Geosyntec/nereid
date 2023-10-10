@@ -1,7 +1,7 @@
 import string
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Set, Union
+from typing import Any
 
 import networkx as nx
 import numpy
@@ -47,9 +47,7 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
     raise TimeoutError("Task did not return in time.")
 
 
-def is_equal_subset(
-    subset: Union[Dict, List, Set], superset: Union[Dict, List, Set]
-) -> bool:
+def is_equal_subset(subset: dict | list | set, superset: dict | list | set) -> bool:
     """determine if all shared keys have equal value"""
 
     if isinstance(subset, dict):
@@ -104,7 +102,7 @@ def generate_n_random_valid_watershed_graphs(
 
 def create_random_model_dict(
     model: type[BaseModel], can_fail: bool = True
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     def random_string(nchars: int) -> str:
         letters = list(string.ascii_letters)
         return "".join([numpy.random.choice(letters) for i in range(nchars)])
@@ -114,7 +112,7 @@ def create_random_model_dict(
     props = schema["properties"]
     optionalprops = list(set(props.keys()) - set(reqds))
 
-    extras: List = []
+    extras = []
     if can_fail:  # pragma: no cover
         if len(optionalprops) > 1:
             extras = [numpy.random.choice(optionalprops)]
@@ -366,7 +364,7 @@ def generate_random_watershed_solve_request(
     pct_tmnt=0.5,
     seed=42,
 ):
-    g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=seed), lambda x: str(x))
+    g = nx.relabel_nodes(nx.gnr_graph(n=n_nodes, p=0.0, seed=seed), lambda x: str(x))  # type: ignore
 
     request = generate_random_watershed_solve_request_from_graph(
         g,

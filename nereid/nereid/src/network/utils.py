@@ -1,12 +1,12 @@
 import copy
-from typing import Any, Collection, Dict, Union
+from typing import Any, Collection, TypeAlias
 
 import networkx as nx
 
-GraphType = Union[nx.MultiGraph, nx.Graph, nx.MultiDiGraph, nx.DiGraph]
+GraphType: TypeAlias = nx.MultiDiGraph | nx.MultiGraph | nx.Graph | nx.DiGraph
 
 
-def graph_factory(graph: Dict[str, Any]) -> GraphType:
+def graph_factory(graph: dict[str, Any]) -> GraphType:
     """
     Parameters
     ----------
@@ -77,7 +77,7 @@ def graph_factory(graph: Dict[str, Any]) -> GraphType:
     return g
 
 
-def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
+def thin_graph_dict(graph_dict: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(graph_dict)
 
     nodes = result.get("nodes", None)
@@ -98,8 +98,8 @@ def thin_graph_dict(graph_dict: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
-def nxGraph_to_dict(g: GraphType) -> Dict[str, Any]:
-    """Convert a networkx garph object into a dictionary
+def nxGraph_to_dict(g: GraphType) -> dict[str, Any]:
+    """Convert a networkx graph object into a dictionary
     suitable for serialization.
 
     Example:
@@ -129,7 +129,7 @@ def nxGraph_to_dict(g: GraphType) -> Dict[str, Any]:
         ]
     }
     """
-    result: Dict[str, Any] = nx.node_link_data(g, link="edges")
+    result: dict[str, Any] = nx.node_link_data(g, link="edges")  # type: ignore
     for dct in result["nodes"]:
         id_ = dct.pop("id")
         dct["metadata"] = copy.deepcopy(dct)
@@ -146,12 +146,12 @@ def nxGraph_to_dict(g: GraphType) -> Dict[str, Any]:
     return result
 
 
-def clean_graph_dict(g: GraphType) -> Dict[str, Any]:
+def clean_graph_dict(g: GraphType) -> dict[str, Any]:
     """
     Converts a graph to a dictionary, ensuring all node labels
     are converted to strings
     """
-    return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))
+    return nxGraph_to_dict(nx.relabel_nodes(g, lambda x: str(x)))  # type: ignore
 
 
 def sum_node_attr(g: GraphType, nodes: Collection, attr: str) -> float:

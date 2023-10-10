@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from nereid.core.utils import safe_divide
 from nereid.src.watershed.loading import compute_pollutant_load_reduction
@@ -13,9 +13,9 @@ def solve_treatment_site(
     *,
     wet_weather_parameters: List[Dict[str, Any]],
     dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
-    wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
+    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
     dry_weather_facility_performance_map: Optional[
-        Mapping[Tuple[str, str], Callable]
+        dict[Tuple[str, str], Callable]
     ] = None,
 ) -> Dict[str, Any]:
     """This function computes the volume reduction/capture performance and the
@@ -124,7 +124,7 @@ def _compute_site_volume_capture(data: Dict[str, Any], vol_col: str) -> Dict[str
 def compute_site_wet_weather_load_reduction(
     data: Dict[str, Any],
     wet_weather_parameters: List[Dict[str, Any]],
-    wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
+    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
     facilities = data.get("treatment_facilities", [])
     vol_col = "runoff_volume_cuft"
@@ -210,7 +210,7 @@ def compute_site_wet_weather_load_reduction(
 def compute_site_dry_weather_load_reduction(
     data: Dict[str, Any],
     dry_weather_parameters: List[Dict[str, Any]],
-    dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
+    dry_weather_facility_performance_map: dict[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
     facilities = data.get("treatment_facilities", [])
     seasons = ["summer", "winter"]

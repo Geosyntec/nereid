@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
 
@@ -132,11 +132,11 @@ def solve_node(
     node: Union[str, int],
     *,
     wet_weather_parameters: List[Dict[str, Any]],
-    wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
-    nomograph_map: Optional[Mapping[str, Callable]] = None,
+    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
+    nomograph_map: Optional[dict[str, Callable]] = None,
     dry_weather_parameters: Optional[List[Dict[str, Any]]] = None,
     dry_weather_facility_performance_map: Optional[
-        Mapping[Tuple[str, str], Callable]
+        dict[Tuple[str, str], Callable]
     ] = None,
     solve_dw: bool = False,
 ) -> None:

@@ -94,7 +94,7 @@ def test_clean_graph_object(graph_obj_isvalid):
     assert all(isinstance(e["source"], str) for e in clean_graph_dict["edges"])
     assert all(isinstance(e["target"], str) for e in clean_graph_dict["edges"])
 
-    clean_graph_obj = nx.relabel_nodes(graph_obj, lambda x: str(x))
+    clean_graph_obj = nx.relabel_nodes(graph_obj, lambda x: str(x))  # type: ignore
     _g = utils.graph_factory(clean_graph_dict)
 
     assert nx.is_isomorphic(_g, clean_graph_obj)

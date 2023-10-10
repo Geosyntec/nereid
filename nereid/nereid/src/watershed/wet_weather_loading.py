@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 import networkx as nx
 
@@ -271,7 +271,7 @@ def compute_wet_weather_volume_discharge(data: Dict[str, Any]) -> Dict[str, Any]
 def compute_wet_weather_load_reduction(
     data: Dict[str, Any],
     wet_weather_parameters: List[Dict[str, Any]],
-    wet_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
+    wet_weather_facility_performance_map: dict[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
     """this function relies on the volume treated and volume retained to be set by
     other functions before computing the whole facility load reduction by considering

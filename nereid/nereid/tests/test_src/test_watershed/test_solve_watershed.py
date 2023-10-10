@@ -359,7 +359,7 @@ tmnt_facilities = [
 def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
     context = contexts["default"]
 
-    g = nx.relabel_nodes(nx.gnr_graph(n=3, p=0.0, seed=0), lambda x: str(x))
+    g = nx.relabel_nodes(nx.gnr_graph(n=3, p=0.0, seed=0), lambda x: str(x))  # type: ignore
     data = {
         "2": {
             "area_acres": 9.58071049103565,

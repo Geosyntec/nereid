@@ -1,11 +1,11 @@
-from typing import Any, Callable, Dict, Mapping, Tuple
+from typing import Any, Callable
 
 from nereid.core.utils import safe_divide
 
 
 def compute_pollutant_load_reduction(
-    data: Dict[str, Any],
-    effluent_function_map: Mapping[Tuple[str, str], Callable],
+    data: dict[str, Any],
+    effluent_function_map: dict[tuple[str, str], Callable],
     tmnt_facility_type: str,
     conc_unit: str,
     poc_long: str,
@@ -16,7 +16,7 @@ def compute_pollutant_load_reduction(
     conc_to_load_factor: float,
     inflow_load: float,
     influent_conc: float,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """This function takes an irritating number of parameters, but helps to make the following
     recipe for calculating the loads given the volume and the concentration much more
     reusable, if verbose.
@@ -47,7 +47,9 @@ def compute_pollutant_load_reduction(
 
     """
 
-    tmnt_fxn = effluent_function_map.get((tmnt_facility_type, poc_long), None)
+    tmnt_fxn = effluent_function_map.get(
+        (tmnt_facility_type, poc_long), None  # type:ignore
+    )
 
     if tmnt_fxn is None:
 
