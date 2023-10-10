@@ -57,6 +57,14 @@ def initialize_treatment_facilities(
 
 
 @celery_app.task(acks_late=True, track_started=True)
+def initialize_treatment_sites(treatment_sites, context):  # pragma: no cover
+    return tasks.initialize_treatment_sites(
+        treatment_sites=treatment_sites,
+        context=context,
+    )
+
+
+@celery_app.task(acks_late=True, track_started=True)
 def solve_watershed(watershed, treatment_pre_validated, context):  # pragma: no cover
     return tasks.solve_watershed(
         watershed=watershed,
