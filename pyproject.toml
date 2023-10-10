@@ -75,7 +75,7 @@ dev = [
     "httpx",
     "mypy",
     "pre-commit>=3.3.3,<4.0.0",
-    "ruff==0.0.280",
+    "ruff==0.0.292",
     "watchfiles",
 ]
 
@@ -84,6 +84,9 @@ filterwarnings = [
     # todo: remove after networkx.drawing.nx_pylab is updated for numpy>=2.0.0
     "ignore:`alltrue` is deprecated.:DeprecationWarning",
 ]
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:"]
 
 [tool.ruff]
 select = [
