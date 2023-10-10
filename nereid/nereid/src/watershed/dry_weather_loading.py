@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import networkx as nx
 
@@ -311,7 +311,7 @@ def compute_dry_weather_volume_performance_by_season(
 def compute_dry_weather_load_reduction(
     data: Dict[str, Any],
     dry_weather_parameters: List[Dict[str, Any]],
-    dry_weather_facility_performance_map: Mapping[Tuple[str, str], Callable],
+    dry_weather_facility_performance_map: dict[Tuple[str, str], Callable],
 ) -> Dict[str, Any]:
     """This function computes how load reduction is effected by the volume reduced
     and/or treated by the current facility. This function requires that the volume

@@ -2,59 +2,47 @@ import warnings
 from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
-from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import IO, TYPE_CHECKING, Any, cast
 
 import networkx as nx
 import orjson as json
 
-try:
-    import matplotlib.pyplot as plt
-    from matplotlib import colormaps, figure  # type: ignore
-except ImportError:  # pragma: no cover
-    pass
+Axes = Any
+Figure = Any
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
-else:
-    Axes = Any
-    Figure = Any
 
 
-def pydot_layout(*args, **kwargs):
+def pydot_layout(*args, **kwargs) -> dict:
     with warnings.catch_warnings():
         warnings.filterwarnings(action="ignore", message="nx.nx_pydot")
-        v = nx.nx_pydot.pydot_layout(*args, **kwargs)
+        v = cast(dict, nx.nx_pydot.pydot_layout(*args, **kwargs))
     return v
 
 
 @lru_cache(maxsize=100)
-def _cached_layout(
-    edge_json: str, prog: str
-) -> Dict[Union[str, int], Tuple[float, float]]:
+def _cached_layout(edge_json: str, prog: str) -> dict[str | int, tuple[float, float]]:
     g = nx.from_edgelist(json.loads(edge_json), create_using=nx.MultiDiGraph)
-    layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = pydot_layout(
-        g, prog=prog
-    )
-    if layout is None:  # pragma: no cover
-        layout = {}
+    layout: dict[str | int, tuple[float, float]] = pydot_layout(g, prog=prog)
     return layout
 
 
 def cached_layout(
     g: nx.Graph, prog: str = "dot"
-) -> Dict[Union[str, int], Tuple[float, float]]:
+) -> dict[str | int, tuple[float, float]]:
     edges = sorted(g.edges(), key=lambda x: str(x))
     edge_json = json.dumps(list(edges))
     return _cached_layout(edge_json, prog=prog)
 
 
 def get_figure_width_height_from_graph_layout(
-    layout_dict: Dict[Union[str, int], Tuple[float, float]],
-    npi: Optional[float] = None,
+    layout_dict: dict[str | int, tuple[float, float]],
+    npi: float | None = None,
     min_width: float = 1.0,
     min_height: float = 1.0,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Parameters
     ----------
@@ -85,12 +73,14 @@ def render_subgraphs(
     g: nx.Graph,
     request_nodes: list,
     subgraph_nodes: list,
-    layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = None,
-    npi: Optional[float] = None,
+    layout: dict[str | int, tuple[float, float]] | None = None,
+    npi: float | None = None,
     node_size: int = 200,
-    ax: Optional[Axes] = None,
-    fig_kwargs: Optional[Dict] = None,
+    ax: Axes | None = None,
+    fig_kwargs: dict | None = None,
 ) -> Figure:
+    import matplotlib.pyplot as plt
+
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
 
@@ -102,10 +92,7 @@ def render_subgraphs(
         fig_kwargs["figsize"] = width, height
 
     if ax is None:  # pragma: no branch
-        _, ax = plt.subplots(**fig_kwargs)  # type: ignore
-
-    if ax is None:  # pragma: no cover
-        return figure.Figure()
+        _, ax = cast(tuple[Figure, Axes], plt.subplots(**fig_kwargs))
 
     sgs = [[n["id"] for n in ng["nodes"]] for ng in subgraph_nodes]
     req = [n["id"] for n in request_nodes]
@@ -152,22 +139,27 @@ def render_subgraphs(
     ax.set_yticks([])
     ax.axis("off")
 
-    return ax.get_figure()
+    fig = ax.get_figure() or Figure()
+
+    return fig
 
 
 def render_solution_sequence(
     G: nx.DiGraph,
-    solution_sequence: List[List[List]],
-    ax: Optional[Axes] = None,
-    layout: Optional[Dict[Union[str, int], Tuple[float, float]]] = None,
-    npi: Optional[float] = None,
+    solution_sequence: list[list[list]],
+    ax: Axes | None = None,
+    layout: dict[str | int, tuple[float, float]] | None = None,
+    npi: float | None = None,
     min_marker_size: float = 40.0,
     max_marker_size: float = 600.0,
-    cmap_str: Optional[str] = None,
+    cmap_str: str | None = None,
     marker_cycle_str: str = "^ovs>",
-    nx_draw_kwargs: Optional[Dict] = None,
-    fig_kwargs: Optional[Dict] = None,
+    nx_draw_kwargs: dict | None = None,
+    fig_kwargs: dict | None = None,
 ) -> Figure:
+    import matplotlib.pyplot as plt
+    from matplotlib import colormaps
+
     if layout is None:  # pragma: no branch
         layout = cached_layout(G, prog="dot")
     if cmap_str is None:  # pragma: no branch
@@ -182,10 +174,7 @@ def render_solution_sequence(
         fig_kwargs["figsize"] = width, height
 
     if ax is None:  # pragma: no branch
-        _, ax = plt.subplots(**fig_kwargs)  # type: ignore
-
-    if ax is None:  # pragma: no cover
-        return figure.Figure()
+        _, ax = cast(tuple[Figure, Axes], plt.subplots(**fig_kwargs))
 
     marker_cycle = cycle(marker_cycle_str)
     cmap = colormaps.get(cmap_str)
@@ -198,7 +187,7 @@ def render_solution_sequence(
             size_inc = (max_marker_size - min_marker_size) / len(series_graphs) * i
             group_size = max_marker_size - size_inc
 
-            color = cmap(color_frac)
+            color = cmap(color_frac) if cmap else "C0"
             font_color = "k"
 
             sg = G.subgraph(g)
@@ -225,7 +214,9 @@ def render_solution_sequence(
 
     ax.legend(loc="center right", bbox_to_anchor=(-0.05, 0.5))
 
-    return ax.get_figure()
+    fig = ax.get_figure() or Figure()
+
+    return fig
 
 
 def fig_to_image(fig: Figure, **kwargs: Any) -> IO:

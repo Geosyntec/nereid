@@ -101,6 +101,10 @@ ignore = [
 ]
 
 [[tool.mypy.overrides]]
+module = "nereid.*"
+disable_error_code = ["func-returns-value"]
+
+[[tool.mypy.overrides]]
 module = "nereid.tests.*"
 ignore_errors = true
 

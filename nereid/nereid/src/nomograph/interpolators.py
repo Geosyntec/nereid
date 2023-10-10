@@ -2,16 +2,14 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    Dict,
-    List,
-    Optional,
     Sequence,
-    Tuple,
-    Union,
+    TypeVar,
+    cast,
 )
 
 import numpy
 import pandas
+from numpy.typing import ArrayLike
 from scipy.interpolate import CloughTocher2DInterpolator as CT2DI
 
 try:
@@ -24,14 +22,16 @@ if TYPE_CHECKING:  # pragma: no cover
 else:
     Axes = Any
 
+DIM = TypeVar("DIM", Sequence[float | int], pandas.Series, ArrayLike)
+
 
 def bisection_search(
     function: Callable[[float], float],
     seek_value: float,
-    bounds: Optional[Tuple[float, float]] = None,
-    atol: Optional[float] = None,
-    max_iters: Optional[int] = None,
-) -> Tuple[float, bool]:
+    bounds: tuple[float, float] | None = None,
+    atol: float | None = None,
+    max_iters: int | None = None,
+) -> tuple[float, bool]:
     """bounded goalseek of a function using bisection search.
 
     Parameters
@@ -101,10 +101,10 @@ class NomographBase:
     def __init__(
         self,
         *,
-        x: Union[Sequence[float], pandas.Series, numpy.ndarray],
-        t: Union[Sequence[float], pandas.Series, numpy.ndarray],
-        y: Union[Sequence[float], pandas.Series, numpy.ndarray],
-        interp_kwargs: Optional[Dict[str, Any]] = None,
+        x: DIM,
+        t: DIM,
+        y: DIM,
+        interp_kwargs: dict[str, Any] | None = None,
     ) -> None:
         """This class manages 2D interpolations of stormwater treatment facility performance
         across the size, drawdown time, and long term capture.
@@ -166,15 +166,15 @@ class NomographBase:
             x = Design Intensity in/hr
 
         """
-        self.x_data = x
-        self.t_data = t
-        self.y_data = y
+        self.x_data = numpy.array(x)
+        self.t_data = numpy.array(t)
+        self.y_data = numpy.array(y)
         self._interp_kwargs = interp_kwargs
 
         self._nomo = None
 
     @property
-    def interp_kwargs(self) -> Dict[str, Any]:  # pragma: no cover
+    def interp_kwargs(self) -> dict[str, Any]:  # pragma: no cover
         if self._interp_kwargs is None:
             self._interp_kwargs = {"rescale": False}
         return self._interp_kwargs
@@ -193,9 +193,9 @@ class NomographBase:
         self,
         at_y: float,
         t: float,
-        atol: Optional[float] = None,
-        max_iters: Optional[int] = None,
-    ) -> Tuple[float, bool]:
+        atol: float | None = None,
+        max_iters: int | None = None,
+    ) -> tuple[float, bool]:
         """Goal seek at 'y' to find x at a given value of t
 
         This method answers the question 'how big do i make a facility to achieve
@@ -229,11 +229,11 @@ class NomographBase:
     def __call__(
         self,
         *,
-        x: Optional[Any] = None,
-        t: Optional[Any] = None,
-        y: Optional[Any] = None,
-        atol: Optional[float] = None,
-        max_iters: Optional[int] = None,
+        x: Any | None = None,
+        t: Any | None = None,
+        y: Any | None = None,
+        atol: float | None = None,
+        max_iters: int | None = None,
     ) -> Any:
         """This calls the underlying 2d interpolator with any two of the inputs x, t, or y.
 
@@ -255,7 +255,7 @@ class NomographBase:
         # solve for y via regular nomograph given size and which trace
         if y is None and x is not None:
             x = numpy.clip(x, numpy.nanmin(self.x_data), numpy.nanmax(self.x_data))
-            result: Union[float, Sequence[float]] = self.nomo(x, t)
+            result: float | Sequence[float] = self.nomo(x, t)
             return result
 
         # goal seek x via search
@@ -266,7 +266,7 @@ class NomographBase:
                 t_iter = numpy.array(t)
                 y_iter = numpy.array(y)
                 if t_iter.size == y_iter.size:
-                    res: List[float] = []
+                    res: list[float] = []
                     for _y, _t in zip(y_iter, t_iter, strict=True):
                         guess, _ = self.get_x(
                             at_y=_y, t=_t, atol=atol, max_iters=max_iters
@@ -287,9 +287,9 @@ class NomographBase:
         else:
             raise ValueError("must call with `t` and either `x` or `y`")
 
-    def _baseplot(self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]) -> Axes:
+    def _baseplot(self, ax: Axes | None = None, **kwargs: dict[str, Any]) -> Axes:
         if ax is None:  # pragma: no branch
-            fig, ax = plt.subplots()
+            _, ax = cast(tuple[Any, Axes], plt.subplots())
 
         xmin, xmax = numpy.nanmin(self.x_data), numpy.nanmax(self.x_data)
         xline = numpy.linspace(xmin, xmax, 100)
@@ -319,9 +319,9 @@ class NomographBase:
 
         return ax
 
-    def _basesurface(self, ax: Optional[Axes] = None, **kwargs: Dict[str, Any]) -> Axes:
+    def _basesurface(self, ax: Axes | None = None, **kwargs: dict[str, Any]) -> Axes:
         if ax is None:  # pragma: no branch
-            fig, ax = plt.subplots()
+            _, ax = cast(tuple[Any, Axes], plt.subplots())
 
         ax.tricontourf(self.x_data, self.t_data, self.y_data, levels=255)
 
@@ -332,11 +332,11 @@ class NomographBase:
 
         return ax
 
-    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:  # pragma: no cover
+    def plot(self, *args: tuple, **kwargs: dict[str, Any]) -> Axes:  # pragma: no cover
         return self._baseplot(*args, **kwargs)  # type: ignore
 
     def surfaceplot(
-        self, *args: Tuple, **kwargs: Dict[str, Any]
+        self, *args: tuple, **kwargs: dict[str, Any]
     ) -> Axes:  # pragma: no cover
         return self._basesurface(*args, **kwargs)  # type: ignore
 
@@ -344,11 +344,11 @@ class NomographBase:
 class VolumeNomograph:
     def __init__(
         self,
-        size: Union[pandas.Series, numpy.ndarray],
-        ddt: Union[pandas.Series, numpy.ndarray],
-        performance: Union[pandas.Series, numpy.ndarray],
-        interp_kwargs: Optional[Dict[str, Any]] = None,
-        source_data: Optional[str] = None,
+        size: DIM,
+        ddt: DIM,
+        performance: DIM,
+        interp_kwargs: dict[str, Any] | None = None,
+        source_data: str | None = None,
     ) -> None:
         self.nomo = NomographBase(
             x=size, t=ddt, y=performance, interp_kwargs=interp_kwargs
@@ -362,20 +362,20 @@ class VolumeNomograph:
     def __call__(
         self,
         *,
-        size: Optional[Any] = None,
-        ddt: Optional[Any] = None,
-        performance: Optional[Any] = None,
+        size: Any | None = None,
+        ddt: Any | None = None,
+        performance: Any | None = None,
     ) -> Any:
         return self.nomo(x=size, t=ddt, y=performance)
 
-    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+    def plot(self, *args: tuple, **kwargs: dict[str, Any]) -> Axes:
         ax = self.nomo._baseplot(*args, **kwargs)  # type: ignore
         ax.set_xlabel("size")
         ax.set_ylabel("performance")
         ax.legend(loc=6, bbox_to_anchor=(1.01, 0.5), ncol=2, title="ddt")
         return ax
 
-    def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+    def surface_plot(self, *args: tuple, **kwargs: dict[str, Any]) -> Axes:
         ax = self.nomo._basesurface(*args, **kwargs)  # type: ignore
         ax.set_xlabel("size")
         ax.set_ylabel("ddt")
@@ -386,11 +386,11 @@ class VolumeNomograph:
 class FlowNomograph:
     def __init__(
         self,
-        intensity: Union[pandas.Series, numpy.ndarray],
-        tc: Union[pandas.Series, numpy.ndarray],
-        performance: Union[pandas.Series, numpy.ndarray],
-        interp_kwargs: Optional[Dict[str, Any]] = None,
-        source_data: Optional[str] = None,
+        intensity: DIM,
+        tc: DIM,
+        performance: DIM,
+        interp_kwargs: dict[str, Any] | None = None,
+        source_data: str | None = None,
     ) -> None:
         self.nomo = NomographBase(
             x=intensity, t=tc, y=performance, interp_kwargs=interp_kwargs
@@ -404,20 +404,20 @@ class FlowNomograph:
     def __call__(
         self,
         *,
-        intensity: Optional[Any] = None,
-        tc: Optional[Any] = None,
-        performance: Optional[Any] = None,
+        intensity: Any | None = None,
+        tc: Any | None = None,
+        performance: Any | None = None,
     ) -> Any:
         return self.nomo(x=intensity, t=tc, y=performance)
 
-    def plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+    def plot(self, *args: tuple, **kwargs: dict[str, Any]) -> Axes:
         ax = self.nomo._baseplot(*args, **kwargs)  # type: ignore
         ax.set_xlabel("intensity")
         ax.set_ylabel("performance")
         ax.legend(ncol=2, title="tc")
         return ax
 
-    def surface_plot(self, *args: Tuple, **kwargs: Dict[str, Any]) -> Axes:
+    def surface_plot(self, *args: tuple, **kwargs: dict[str, Any]) -> Axes:
         ax = self.nomo._basesurface(*args, **kwargs)  # type: ignore
         ax.set_xlabel("intensity")
         ax.set_ylabel("tc")
