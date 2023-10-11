@@ -5,11 +5,11 @@ from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
 from nereid.api.api_v1.async_utils import run_task, standard_json_response
-from nereid.api.api_v1.models.treatment_site_models import (
+from nereid.api.api_v1.utils import get_valid_context
+from nereid.models.treatment_site_models import (
     TreatmentSiteResponse,
     TreatmentSites,
 )
-from nereid.api.api_v1.utils import get_valid_context
 
 router = APIRouter()
 

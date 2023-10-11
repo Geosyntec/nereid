@@ -9,7 +9,7 @@ import pandas
 from pydantic import BaseModel
 
 import nereid.tests.test_data
-from nereid.api.api_v1.models import treatment_facility_models
+from nereid.models import treatment_facility_models
 from nereid.src.network.utils import clean_graph_dict
 
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()

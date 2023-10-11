@@ -3,11 +3,11 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
-from nereid.api.api_v1.models.land_surface_models import (
+from nereid.api.api_v1.utils import get_valid_context
+from nereid.models.land_surface_models import (
     LandSurfaceResponse,
     LandSurfaces,
 )
-from nereid.api.api_v1.utils import get_valid_context
 from nereid.src import tasks
 
 router = APIRouter()

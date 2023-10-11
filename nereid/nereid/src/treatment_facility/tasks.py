@@ -2,11 +2,11 @@ from typing import Any
 
 import pandas
 
-from nereid.api.api_v1.models.treatment_facility_models import (
-    validate_treatment_facility_models,
-)
 from nereid.core.io import parse_configuration_logic
 from nereid.core.units import update_unit_registry
+from nereid.models.treatment_facility_models import (
+    validate_treatment_facility_models,
+)
 from nereid.src.treatment_facility.constructors import build_treatment_facility_nodes
 
 

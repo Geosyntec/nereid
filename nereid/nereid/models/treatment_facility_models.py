@@ -2,9 +2,9 @@ from typing import Any, TypeAlias
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from nereid.api.api_v1.models.node import Node
-from nereid.api.api_v1.models.response_models import JSONAPIResponse
 from nereid.core.utils import validate_with_discriminator
+from nereid.models.node import Node
+from nereid.models.response_models import JSONAPIResponse
 
 
 class _Base(Node):

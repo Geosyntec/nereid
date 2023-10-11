@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Body, Query
 from fastapi.responses import ORJSONResponse
 
-from nereid.api.api_v1.models import network_models
+from nereid.models import network_models
 from nereid.src import tasks
 
 router = APIRouter()
