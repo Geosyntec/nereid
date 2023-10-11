@@ -40,8 +40,8 @@ CMD ["celery", "flower"]
 
 
 FROM python:3.11.6-bullseye as builder
-COPY requirements_dev.txt /requirements_dev.txt
-COPY requirements_server.txt /requirements_server.txt
+COPY requirements/requirements_dev.txt /requirements_dev.txt
+COPY requirements/requirements_server.txt /requirements_server.txt
 RUN mkdir /wheels && \
     pip wheel \
     --wheel-dir=/wheels \
@@ -60,7 +60,7 @@ ENV PATH=/opt/venv/bin:$PATH
 # you are here, trying to get the requirements loaded, and rearranging the shared containers.
 FROM python:3.11.6-slim-bullseye as core-env
 COPY --from=builder /wheels /core
-COPY requirements_worker.txt /requirements_worker.txt
+COPY requirements/requirements_worker.txt /requirements_worker.txt
 RUN python -m venv /opt/venv
 # Make sure we use the virtualenv:
 ENV PATH=/opt/venv/bin:$PATH
@@ -87,8 +87,8 @@ COPY --chown=${IMG_USER} ./nereid /nereid/nereid
 
 
 FROM core-env as server-env
-COPY requirements_nereid.txt /requirements_nereid.txt
-COPY requirements_server.txt /requirements_server.txt
+COPY requirements/requirements_nereid.txt /requirements_nereid.txt
+COPY requirements/requirements_server.txt /requirements_server.txt
 COPY --from=builder /wheels /core
 RUN python -m venv /opt/venv
 # Make sure we use the virtualenv:
@@ -115,7 +115,7 @@ COPY ./nereid /nereid/nereid
 
 
 FROM core-env as test-env
-COPY requirements_dev.txt /requirements_dev.txt
+COPY requirements/requirements_dev.txt /requirements_dev.txt
 COPY --from=builder /wheels /core
 RUN python -m venv /opt/venv
 # Make sure we use the virtualenv:
@@ -140,7 +140,7 @@ COPY ./nereid /nereid/nereid
 
 FROM python:3.11-bullseye as nereid-edge
 RUN apt-get update && apt-get install -y graphviz
-COPY requirements_dev.txt /requirements_dev.txt
+COPY requirements/requirements_dev.txt /requirements_dev.txt
 RUN awk -F"==" '{print $1}' /requirements_dev.txt > /requirements_edge.txt
 RUN cat requirements_edge.txt
 RUN pip install -r /requirements_edge.txt
