@@ -3,11 +3,11 @@ from typing import Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import ORJSONResponse
 
-from nereid.api.api_v1.models.treatment_facility_models import (
+from nereid.api.api_v1.utils import get_valid_context
+from nereid.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
-from nereid.api.api_v1.models.watershed_models import Watershed, WatershedResponse
-from nereid.api.api_v1.utils import get_valid_context
+from nereid.models.watershed_models import Watershed, WatershedResponse
 from nereid.src import tasks
 
 router = APIRouter()

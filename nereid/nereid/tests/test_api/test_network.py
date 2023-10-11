@@ -1,8 +1,8 @@
 import networkx as nx
 import pytest
 
-from nereid.api.api_v1.models import network_models
 from nereid.core.config import settings
+from nereid.models import network_models
 from nereid.src.network.utils import clean_graph_dict
 from nereid.tests.utils import poll_testclient_url
 
@@ -24,9 +24,9 @@ def test_post_network_validate(
     assert network_models.NetworkValidationResponse(**prjson)
 
     if isfast:
-        if not prjson["status"].lower() == "success":
+        if prjson.get("result_route"):
             prjson = poll_testclient_url(client, prjson["result_route"]).json()
-
+        assert prjson["status"].lower() == "success"
         assert prjson["data"] is not None
         assert prjson["data"]["isvalid"] == isvalid
     else:

@@ -10,8 +10,8 @@ from nereid.api.api_v1.async_utils import (
     standard_json_response,
     wait_a_sec_and_see_if_we_can_return_some_data,
 )
-from nereid.api.api_v1.models import network_models
 from nereid.api.api_v1.utils import templates
+from nereid.models import network_models
 
 router = APIRouter()
 

@@ -1,6 +1,6 @@
 import pytest
 
-from nereid.api.api_v1.models import treatment_facility_models
+from nereid.models import treatment_facility_models
 
 names = [
     i.model_json_schema()["title"]

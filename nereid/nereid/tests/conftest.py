@@ -4,12 +4,12 @@ from itertools import product
 import numpy
 import pytest
 
-from nereid.api.api_v1.models.treatment_facility_models import (
+from nereid.core.context import get_request_context
+from nereid.models.treatment_facility_models import (
     EXAMPLE_TREATMENT_FACILITIES,
     TREATMENT_FACILITY_MODELS,
     validate_treatment_facility_models,
 )
-from nereid.core.context import get_request_context
 from nereid.tests.utils import (
     generate_random_land_surface_request_sliver,
     generate_random_treatment_facility_request_node,

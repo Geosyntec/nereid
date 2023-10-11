@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from nereid.api.api_v1.models import land_surface_models
+from nereid.models import land_surface_models
 
 
 @pytest.mark.parametrize("details", ["true", "false"])

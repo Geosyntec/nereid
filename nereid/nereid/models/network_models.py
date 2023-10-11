@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field, StrictStr
 
-from nereid.api.api_v1.models.response_models import JSONAPIResponse
+from nereid.models.response_models import JSONAPIResponse
 
 ## Network Request Models
 

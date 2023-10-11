@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
-from nereid.api.api_v1.models.response_models import JSONAPIResponse
-from nereid.api.api_v1.models.treatment_facility_models import SimpleFacilityBase
+from nereid.models.response_models import JSONAPIResponse
+from nereid.models.treatment_facility_models import SimpleFacilityBase
 
 ## Treatment Site Request Models
 

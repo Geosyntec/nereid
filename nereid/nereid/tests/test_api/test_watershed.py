@@ -3,8 +3,8 @@ from copy import deepcopy
 import networkx as nx
 import pytest
 
-from nereid.api.api_v1.models import watershed_models
 from nereid.core.config import settings
+from nereid.models import watershed_models
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.src.watershed.utils import attrs_to_resubmit
@@ -65,9 +65,8 @@ def test_post_solve_watershed_stable(
 
     data = post_response_json.get("data", None)
 
-    if not data:
-        result_route = post_response_json["result_route"]
-        task_response = poll_testclient_url(client, result_route)
+    if post_response_json["result_route"]:
+        task_response = poll_testclient_url(client, post_response_json["result_route"])
         data = task_response.json()["data"]
 
     results = data["results"]
@@ -95,9 +94,8 @@ def test_post_solve_watershed_stable(
     response_json = response.json()
     data = response_json.get("data", None)
 
-    if not data:
-        result_route = post_response_json["result_route"]
-        task_response = poll_testclient_url(client, result_route)
+    if response_json["result_route"]:
+        task_response = poll_testclient_url(client, response_json["result_route"])
         data = task_response.json()["data"]
 
     subgraph_results = data["results"]

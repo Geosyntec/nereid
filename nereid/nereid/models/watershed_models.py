@@ -2,12 +2,12 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from nereid.api.api_v1.models.land_surface_models import LandSurface
-from nereid.api.api_v1.models.network_models import Graph
-from nereid.api.api_v1.models.response_models import JSONAPIResponse
-from nereid.api.api_v1.models.results_models import PreviousResult, Result
-from nereid.api.api_v1.models.treatment_facility_models import STRUCTURAL_FACILITY_TYPE
-from nereid.api.api_v1.models.treatment_site_models import TreatmentSite
+from nereid.models.land_surface_models import LandSurface
+from nereid.models.network_models import Graph
+from nereid.models.response_models import JSONAPIResponse
+from nereid.models.results_models import PreviousResult, Result
+from nereid.models.treatment_facility_models import STRUCTURAL_FACILITY_TYPE
+from nereid.models.treatment_site_models import TreatmentSite
 
 EXAMPLE_WATERSHED = {
     "graph": {

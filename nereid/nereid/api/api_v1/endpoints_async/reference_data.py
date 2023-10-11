@@ -7,9 +7,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import FileResponse, ORJSONResponse
 
-from nereid.api.api_v1.models.reference_models import ReferenceDataResponse
 from nereid.api.api_v1.utils import get_valid_context, templates
 from nereid.core.io import load_file, load_json, load_ref_data
+from nereid.models.reference_models import ReferenceDataResponse
 from nereid.src.nomograph.nomo import load_nomograph_mapping
 
 router = APIRouter()

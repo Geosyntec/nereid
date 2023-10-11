@@ -2,8 +2,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, BeforeValidator, Field
 
-from nereid.api.api_v1.models.node import Node
-from nereid.api.api_v1.models.response_models import JSONAPIResponse
+from nereid.models.node import Node
+from nereid.models.response_models import JSONAPIResponse
 
 ## Land Surface Request Models
 

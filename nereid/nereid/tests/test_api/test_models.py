@@ -1,6 +1,6 @@
 import pytest
 
-from nereid.api.api_v1.models.treatment_facility_models import (
+from nereid.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )
 

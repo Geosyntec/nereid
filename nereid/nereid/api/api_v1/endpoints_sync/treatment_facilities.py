@@ -3,12 +3,12 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import ORJSONResponse
 
-from nereid.api.api_v1.models.treatment_facility_models import (
+from nereid.api.api_v1.utils import get_valid_context
+from nereid.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,
     validate_treatment_facility_models,
 )
-from nereid.api.api_v1.utils import get_valid_context
 from nereid.src import tasks
 
 router = APIRouter()
