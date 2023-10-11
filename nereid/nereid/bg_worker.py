@@ -1,7 +1,20 @@
 import logging
+import os
 
-from nereid.core.celery_app import celery_app
+from celery import Celery
+
 from nereid.src import tasks
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+
+celery_app = Celery("tasks", backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
+
+celery_app.conf.update(
+    task_serializer="json",
+    accept_content=["json"],  # Ignore other content
+    result_serializer="json",
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

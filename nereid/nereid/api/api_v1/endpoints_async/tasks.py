@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import ORJSONResponse
 
 from nereid.api.api_v1.async_utils import standard_json_response
-from nereid.core.celery_app import celery_app
+from nereid.bg_worker import celery_app
 from nereid.models.response_models import JSONAPIResponse
 
 router = APIRouter(prefix="/task", default_response_class=ORJSONResponse)
