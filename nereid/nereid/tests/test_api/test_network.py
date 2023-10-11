@@ -235,7 +235,7 @@ def test_get_solution_sequence(
     grjson = prjson
     result_route = prjson.get("result_route")
     if result_route:
-        get_response = client.get(result_route)
+        get_response = poll_testclient_url(client, result_route)
         assert get_response.status_code == 200
 
         grjson = get_response.json()
