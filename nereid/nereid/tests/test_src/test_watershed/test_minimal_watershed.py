@@ -221,6 +221,8 @@ def test_minimal_watershed(
     lr = tmnt_results.get("TSS_load_lbs_removed", 0) > 0.0
     vol_ret = tmnt_results.get("runoff_volume_cuft_retained", 0) > 0.0
     vol_trt = tmnt_results.get("runoff_volume_cuft_treated", 0) > 0.0
+    ds_node_id = tmnt_results.get("_ds_node_id")
     assert reduces_load == lr, tmnt_results.get("TSS_load_lbs_removed", 0)
     assert does_retention == vol_ret, tmnt_results.get("runoff_volume_cuft_retained", 0)
     assert does_treatment == vol_trt, tmnt_results.get("runoff_volume_cuft_treated", 0)
+    assert "0" == ds_node_id, ds_node_id

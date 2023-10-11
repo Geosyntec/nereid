@@ -162,7 +162,7 @@ def solve_node(
     node : str or int
         the node id to be analyzed
     *_parameters: list of dicts
-        this contains information aabout each parameter, like long_name, short_name and
+        this contains information about each parameter, like long_name, short_name and
         conversion factor information. see the *land_surface_emc_tables in the config file.
         these dicts are pre-processed to cache some helpful unit conversions too prior to
         being passed to this function.
@@ -204,17 +204,20 @@ def solve_node(
             "WARNING: This node is missing from all input tables."
         )
 
+    next_ds = list(g.successors(node))
+    data["_ds_node_id"] = ",".join(map(str, next_ds))
+
+    predecessors = list(g.predecessors(node))
+
     # leaf nodes are read only
-    deg = g.in_degree(node)
-    if isinstance(deg, int) and deg < 1:
+    if not predecessors:
         data["_is_leaf"] = True
         return
 
-    node_type = data.get("node_type", None) or "virtual"
-    predecessors = list(g.predecessors(node))
-
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
     accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
+
+    node_type = data.get("node_type", None) or "virtual"
 
     if "site_based" in node_type:
         # This sequence handles volume capture, load reductions, and also delivers
