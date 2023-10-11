@@ -25,26 +25,26 @@ conda activate nereid-install
 cleanup_pip
 
 # dev
-pip install -r nereid/requirements_dev_unpinned.txt
-pip freeze > nereid/requirements_dev.txt
+pip install -r nereid/requirements/requirements_dev_unpinned.txt
+pip freeze > nereid/requirements/requirements_dev.txt
 
 
 cleanup_pip
 
 # nereid
-pip install -r nereid/requirements_nereid_unpinned.txt
-pip freeze > nereid/requirements_nereid.txt
+pip install -r nereid/requirements/requirements_nereid_unpinned.txt
+pip freeze > nereid/requirements/requirements_nereid.txt
 
 cleanup_pip
 
 # worker
-pip install -r nereid/requirements_worker_unpinned.txt
-pip freeze > nereid/requirements_worker.txt
+pip install -r nereid/requirements/requirements_worker_unpinned.txt
+pip freeze > nereid/requirements/requirements_worker.txt
 
 cleanup_pip
 
 # lint
-pip install -r nereid/requirements_lint_unpinned.txt
-pip freeze > nereid/requirements_lint.txt
+pip install -r nereid/requirements/requirements_lint_unpinned.txt
+pip freeze > nereid/requirements/requirements_lint.txt
 
 cleanup_pip
