@@ -80,7 +80,7 @@ jobs:
       - name: build stack
         run: |
           docker --version
-          bash ./scripts/build_dev.sh
+          make develop
           docker compose up -d nereid-tests
       - name: run docker coverage
         run: |
@@ -102,6 +102,7 @@ jobs:
         run: |
           docker --version
           bash ./scripts/build_edge.sh
+          docker compose build
           docker compose up -d nereid-tests
       - name: run edge tests
         continue-on-error: true
