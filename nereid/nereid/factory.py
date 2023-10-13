@@ -89,6 +89,12 @@ def create_app(
     async def check_config(context=Depends(get_valid_context)):
         return context
 
+    @app.get("/ping")
+    @app.get("/")
+    async def ping():
+        logger.info("nereid engine ready.")
+        return {"status": "ok"}
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_settings.ALLOW_CORS_ORIGINS,

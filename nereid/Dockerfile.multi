@@ -82,7 +82,7 @@ USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
 COPY --chown=${IMG_USER} ./scripts/run-worker.sh /run-worker.sh
 RUN chmod gu+x /run-worker.sh
-CMD ["bash", "/run-worker.sh"]
+CMD /run-worker.sh
 COPY --chown=${IMG_USER} ./nereid /nereid/nereid
 
 
@@ -106,11 +106,10 @@ FROM core-runtime as nereid
 COPY --from=server-env /opt/venv /opt/venv
 COPY gunicorn_conf.py /gunicorn_conf.py
 COPY ./scripts/start.sh /start.sh
-RUN chmod +x /start.sh
 COPY ./scripts/start-reload.sh /start-reload.sh
-RUN chmod +x /start-reload.sh
-EXPOSE 8888
+RUN chmod +x /start.sh /start-reload.sh
 EXPOSE 80
+CMD /start.sh
 COPY ./nereid /nereid/nereid
 
 
