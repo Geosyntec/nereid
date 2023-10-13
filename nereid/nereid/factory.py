@@ -12,7 +12,6 @@ from nereid.api.api_v1.utils import get_valid_context
 from nereid.api.docs import get_better_swagger_ui_html
 from nereid.core.config import nereid_path, settings
 
-logging.basicConfig(level=settings.LOGLEVEL)
 logger = logging.getLogger(__name__)
 
 
