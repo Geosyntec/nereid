@@ -105,10 +105,6 @@ class FlowFacility(FacilityBase):
     _constructor: str = "flow_facility_constructor"
 
 
-# class FlowFacilityV(FlowFacility):
-#     validator: Literal["FlowFacility"] = Field("FlowFacility", exclude=True)
-
-
 class LowFlowFacility(FacilityBase):
     treatment_rate_cfs: float | None = None
     design_capacity_cfs: float | None = None
