@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     VERSION: str = nereid.__version__
     DATA_DIRECTORY: str | None = None
     LOG_LEVEL: str = "WARNING"
-    ASGI_TIMING: bool = False
-    STATIC_DOCS: bool = True
+
+    STATIC_DOCS: bool = False
 
     FORCE_FOREGROUND: bool = False
     ENABLE_ASYNC_ROUTES: bool = False

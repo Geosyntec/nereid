@@ -25,13 +25,11 @@ def create_app(
 
     kwargs = app_kwargs or {}
 
-    if _settings.STATIC_DOCS:  # pragma: no branch
-        kwargs["docs_url"] = None
-        kwargs["redoc_url"] = None
-
     app = FastAPI(
         title="nereid",
         version=_settings.VERSION,
+        docs_url=None,
+        redoc_url=None,
         **kwargs,
     )
     app._settings = _settings  # type: ignore
@@ -55,27 +53,37 @@ def create_app(
                 tags=["async"],
             )
 
-    if _settings.STATIC_DOCS:  # pragma: no branch
+    @app.get("/docs", include_in_schema=False)
+    async def custom_swagger_ui_html():
+        kwargs: dict[str, Any] = {
+            "openapi_url": str(app.openapi_url),
+            "title": app.title + " - Swagger UI",
+            "oauth2_redirect_url": app.swagger_ui_oauth2_redirect_url,
+            "swagger_favicon_url": "/static/logo/trident_neptune_logo.ico",
+        }
 
-        @app.get("/docs", include_in_schema=False)
-        async def custom_swagger_ui_html():
-            return get_better_swagger_ui_html(
-                openapi_url=str(app.openapi_url),
-                title=app.title + " - Swagger UI",
-                oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        if _settings.STATIC_DOCS:  # pragma: no branch
+            kwargs.update(
                 swagger_js_url="/static/swagger-ui-bundle.js",
                 swagger_css_url="/static/swagger-ui.css",
-                swagger_favicon_url="/static/logo/trident_neptune_logo.ico",
             )
 
-        @app.get("/redoc", include_in_schema=False)
-        async def redoc_html():
-            return get_redoc_html(
-                openapi_url=str(app.openapi_url),
-                title=app.title + " - ReDoc",
+        return get_better_swagger_ui_html(**kwargs)
+
+    @app.get("/redoc", include_in_schema=False)
+    async def redoc_html():
+        kwargs: dict[str, Any] = {
+            "openapi_url": str(app.openapi_url),
+            "title": app.title + " - ReDoc",
+            "redoc_favicon_url": "/static/logo/trident_neptune_logo.ico",
+        }
+
+        if _settings.STATIC_DOCS:  # pragma: no branch
+            kwargs.update(
                 redoc_js_url="/static/redoc.standalone.js",
-                redoc_favicon_url="/static/logo/trident_neptune_logo.ico",
             )
+
+        return get_redoc_html(**kwargs)
 
     @app.get("/config")
     async def check_config(context=Depends(get_valid_context)):
