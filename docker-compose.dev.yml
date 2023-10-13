@@ -1,11 +1,17 @@
 version: '3.7'
 services:
   nereid:
+    command: /start-reload.sh
     volumes:
       - ./nereid/nereid:/nereid/nereid
+    ports:
+      - published: 8080
+        target: 80
+
   celeryworker:
     volumes:
       - ./nereid/nereid:/nereid/nereid
+
   nereid-tests:
     volumes:
       - ./nereid/nereid:/nereid/nereid
