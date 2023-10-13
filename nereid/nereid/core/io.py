@@ -293,25 +293,17 @@ def parse_configuration_logic(
 
     sections = obj_context["preprocess"]
 
+    ops = {
+        "joins": parse_joins,
+        "remaps": parse_remaps,
+        "expand_fields": parse_expand_fields,
+        "collapse_fields": parse_collapse_fields,
+    }
+
     for section in sections:
         for directive, params in section.items():
-            if directive == "joins":
-                df, msg = parse_joins(
-                    df, params, config_section, config_object, context, msg
-                )
+            func = ops.get(directive)
+            if func:
+                df, msg = func(df, params, config_section, config_object, context, msg)
 
-            if directive == "remaps":
-                df, msg = parse_remaps(
-                    df, params, config_section, config_object, context, msg
-                )
-
-            if directive == "expand_fields":
-                df, msg = parse_expand_fields(
-                    df, params, config_section, config_object, context, msg
-                )
-
-            if directive == "collapse_fields":
-                df, msg = parse_collapse_fields(
-                    df, params, config_section, config_object, context, msg
-                )
     return df, msg
