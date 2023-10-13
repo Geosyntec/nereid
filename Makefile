@@ -24,6 +24,7 @@ endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+export COMPOSE_DOCKER_CLI_BUILD=1
 export COMPOSE_FILE=docker-stack.yml
 
 help:
@@ -53,15 +54,15 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .mypy_cache
 
 restart: ## restart the redis server and the background workers
-	docker-compose restart redis celeryworker
+	docker compose restart redis celeryworker nereid
 
 test: clean restart ## run tests quickly with the default Python
-	docker-compose exec nereid-tests pytest -n 4
+	docker compose exec nereid-tests pytest -n 4
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --async
 
 coverage: clean restart ## check code coverage quickly with the default Python
-	docker-compose exec nereid-tests coverage run -m pytest
-	docker-compose exec nereid-tests coverage report -m
+	docker compose exec nereid-tests coverage run -m pytest
+	docker compose exec nereid-tests coverage report -m
 # 	coverage html
 # 	$(BROWSER) htmlcov/index.html
 
@@ -70,20 +71,35 @@ coverage-all: clean restart ## check complete code coverage
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --cov=nereid/ --cov-append --async
 	docker compose exec nereid-tests coverage report -m
 
-typecheck: clean ## run static type checker
-	mypy --config-file=nereid/mypy.ini nereid/nereid
+lint: clean ## run static type checker
+	bash scripts/lint.sh
 
-develop: clean ## build the development environment and launch containers in background
-	bash scripts/build_dev.sh
+stack:
+	docker compose \
+		-f docker-compose.shared.depends.yml \
+		-f docker-compose.shared.env.yml \
+		-f docker-compose.shared.volumes.yml \
+		-f docker-compose.shared.ports.yml \
+		-f docker-compose.shared.build.yml \
+		-f docker-compose.dev.yml \
+		config > docker-stack.yml
 
-up: ## bring up the containers in '-d' mode
-	docker-compose up -d
+build:
+	docker compose build
+
+develop: clean stack build ## build the development environment and launch containers in background
+
+up: stack ## bring up the containers in '-d' mode
+	docker compose up
+
+up-d: stack
+	docker compose up -d
 
 down: ## bring down the containers and detach volumes
-	docker-compose down -v
+	docker compose down -v
 
-dev-server: ## start a development server that runs all tasks in foreground
-	docker-compose run -e NEREID_FORCE_FOREGROUND=1 -p 8080:80 nereid bash /start-reload.sh
+dev-server: stack ## start a development server that runs all tasks in foreground
+	docker compose up nereid
 
 bump-deps: ## bump project python dependencies
 	bash scripts/bump_deps.sh
