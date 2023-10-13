@@ -16,8 +16,7 @@ celery_app.conf.update(
     result_serializer="json",
 )
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("nereid-celery-worker")
 
 
 @celery_app.task(acks_late=True, track_started=True)

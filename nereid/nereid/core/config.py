@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     APP_CONTEXT.update({"version": nereid.__version__})
     VERSION: str = nereid.__version__
     DATA_DIRECTORY: str | None = None
-    LOGLEVEL: str = "WARNING"
+    LOG_LEVEL: str = "WARNING"
     ASGI_TIMING: bool = False
     STATIC_DOCS: bool = True
 

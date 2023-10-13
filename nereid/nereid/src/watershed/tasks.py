@@ -1,7 +1,6 @@
 import logging
 from typing import Any
 
-from nereid.core.config import settings
 from nereid.core.units import update_unit_registry
 from nereid.src.watershed.solve_watershed import (
     initialize_graph,
@@ -9,7 +8,6 @@ from nereid.src.watershed.solve_watershed import (
 )
 from nereid.src.watershed.utils import attrs_to_resubmit
 
-logging.basicConfig(level=settings.LOGLEVEL)
 logger = logging.getLogger(__name__)
 
 
