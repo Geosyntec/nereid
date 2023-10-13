@@ -14,6 +14,7 @@ celery_app.conf.update(
     task_serializer="json",
     accept_content=["json"],  # Ignore other content
     result_serializer="json",
+    broker_connection_retry_on_startup=True,
 )
 
 logger = logging.getLogger("nereid-celery-worker")
