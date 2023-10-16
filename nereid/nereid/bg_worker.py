@@ -17,12 +17,24 @@ celery_app.conf.update(
     broker_connection_retry_on_startup=True,
 )
 
+inspector = celery_app.control.inspect()
+
 logger = logging.getLogger("nereid-celery-worker")
 
 
 @celery_app.task(acks_late=True, track_started=True)
 def background_ping():  # pragma: no cover
     logger.info("background pinged")
+    return True
+
+
+@celery_app.task(acks_late=True, track_started=True)
+def background_sleep(seconds: int = 1):  # pragma: no cover
+    logger.info("background worker sleeping...")
+    import time
+
+    time.sleep(seconds)
+    logger.info("background worker sleep complete.")
     return True
 
 
