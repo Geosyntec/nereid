@@ -43,7 +43,7 @@ jobs:
         run: python -c "from nereid.src import tasks"
       - name: Run Tests
         run: |
-          pip install .[base-dev]
+          pip install .[test]
           pytest nereid/nereid/tests/test_src -v -n 2
 
   python-edge-test:
