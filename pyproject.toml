@@ -68,14 +68,13 @@ app = [
     "nereid-engine[base-app]",
     "nereid-engine[extras]",
 ]
-base-dev = ["coverage", "pytest", "pytest-cov", "pytest-xdist"]
+test = ["coverage", "httpx", "pytest", "pytest-cov", "pytest-xdist"]
 dev = [
     "nereid-engine[app]",
-    "nereid-engine[base-dev]",
-    "httpx",
+    "nereid-engine[test]",
     "mypy",
     "pre-commit>=3.3.3,<4.0.0",
-    "ruff==0.0.292",
+    "ruff==0.1.0",
     "watchfiles",
 ]
 
