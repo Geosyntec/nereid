@@ -58,7 +58,9 @@ def solve_treatment_site(
         for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
     ):
         compute_site_dry_weather_load_reduction(
-            data, dry_weather_parameters, dry_weather_facility_performance_map  # type: ignore
+            data,
+            dry_weather_parameters,  # type: ignore
+            dry_weather_facility_performance_map,  # type: ignore
         )
 
     return data
