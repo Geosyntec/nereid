@@ -11,7 +11,7 @@ PORT=${PORT:-80}
 LOG_LEVEL=${LOG_LEVEL:-info}
 
 # If there's a prestart.sh script in the /app directory, run it before starting
-PRE_START_PATH=/nereid/nereid/prestart.sh
+PRE_START_PATH=/prestart.sh
 echo "Checking for script in $PRE_START_PATH"
 if [ -f $PRE_START_PATH ] ; then
     echo "Running script $PRE_START_PATH"
@@ -22,5 +22,3 @@ fi
 
 # Start Uvicorn with live reload
 uvicorn --reload --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE"
-
-# uvicorn nereid.main:app --debug --reload
