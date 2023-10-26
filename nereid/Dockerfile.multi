@@ -20,7 +20,7 @@ CMD ["redis-server", "/redis.conf"]
 
 FROM python:3.11.6-alpine3.18 as flower
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
-RUN pip install --no-cache-dir redis==4.1.0 flower==1.0.0 celery==5.2.3
+RUN pip install --no-cache-dir redis==4.6.0 flower==1.0.0 celery==5.3.4
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
 ENV FLOWER_DATA_DIR=/data
 ENV PYTHONPATH=${FLOWER_DATA_DIR}
@@ -54,8 +54,11 @@ RUN apt-get update -y \
     && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
+COPY ./scripts /
+RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
 ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
+
 
 # you are here, trying to get the requirements loaded, and rearranging the shared containers.
 FROM python:3.11.6-slim-bullseye as core-env
@@ -80,10 +83,8 @@ RUN addgroup --gid 1000 ${IMG_USER} \
     && chown -R ${IMG_USER}:${IMG_USER} /nereid
 USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
-COPY --chown=${IMG_USER} ./scripts/run-worker.sh /run-worker.sh
-RUN chmod gu+x /run-worker.sh
-CMD /run-worker.sh
 COPY --chown=${IMG_USER} ./nereid /nereid/nereid
+CMD /run-worker.sh
 
 
 FROM core-env as server-env
@@ -105,9 +106,6 @@ RUN pip install \
 FROM core-runtime as nereid
 COPY --from=server-env /opt/venv /opt/venv
 COPY gunicorn_conf.py /gunicorn_conf.py
-COPY ./scripts/start.sh /start.sh
-COPY ./scripts/start-reload.sh /start-reload.sh
-RUN chmod +x /start.sh /start-reload.sh
 EXPOSE 80
 CMD /start.sh
 COPY ./nereid /nereid/nereid
@@ -133,7 +131,6 @@ COPY .coveragerc /nereid/.coveragerc
 COPY conftest.py /nereid/conftest.py
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
-EXPOSE 8888
 COPY ./nereid /nereid/nereid
 
 
@@ -144,6 +141,8 @@ RUN awk -F"==" '{print $1}' /requirements_dev.txt > /requirements_edge.txt
 RUN cat requirements_edge.txt
 RUN pip install -r /requirements_edge.txt
 COPY ./nereid /nereid/nereid
+COPY ./scripts /
+RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
 
@@ -154,6 +153,4 @@ CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 FROM nereid-edge as celeryworker-edge
 ENV C_FORCE_ROOT=1
-COPY ./scripts/run-worker.sh /run-worker.sh
-RUN chmod +x /run-worker.sh
-CMD ["bash", "/run-worker.sh"]
+CMD /run-worker.sh

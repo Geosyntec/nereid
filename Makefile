@@ -56,17 +56,21 @@ clean-test: ## remove test and coverage artifacts
 restart: ## restart the redis server and the background workers
 	docker compose restart redis celeryworker nereid
 
-test: clean restart ## run tests quickly with the default Python
+init-test:
+	docker compose up -d nereid-tests redis celeryworker
+	docker compose exec nereid-tests bash /prestart.sh
+
+test: clean restart init-test ## run tests quickly with the default Python
 	docker compose exec nereid-tests pytest -n 4
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --async
 
-coverage: clean restart ## check code coverage quickly with the default Python
+coverage: clean restart init-test ## check code coverage quickly with the default Python
 	docker compose exec nereid-tests coverage run -m pytest
 	docker compose exec nereid-tests coverage report -m
 # 	coverage html
 # 	$(BROWSER) htmlcov/index.html
 
-coverage-all: clean restart ## check complete code coverage
+coverage-all: clean restart init-test ## check complete code coverage
 	docker compose exec nereid-tests pytest nereid/tests -n 4 --cov=nereid/
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --cov=nereid/ --cov-append --async
 	docker compose exec nereid-tests coverage report -m
