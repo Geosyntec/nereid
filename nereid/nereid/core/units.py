@@ -1,9 +1,10 @@
-import logging
 from functools import lru_cache, wraps
 from pathlib import Path
 from typing import Any, Callable
 
 import pint
+
+from nereid.core.log import logging
 
 logging.getLogger("pint").setLevel(logging.ERROR)
 ureg = pint.UnitRegistry()
