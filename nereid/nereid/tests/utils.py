@@ -340,7 +340,9 @@ def generate_random_watershed_solve_request_from_graph(
     if treatment_facility_nodes:
         request.update(
             generate_random_treatment_facility_request(
-                treatment_facility_nodes, context, ref_data_keys=ref_data_keys  # type: ignore
+                treatment_facility_nodes,
+                context,
+                ref_data_keys=ref_data_keys,  # type: ignore
             )
         )
     if treatment_site_nodes:

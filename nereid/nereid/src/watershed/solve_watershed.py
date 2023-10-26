@@ -276,7 +276,9 @@ def solve_node(
                 compute_dry_weather_volume_performance(data)
 
             compute_dry_weather_load_reduction(
-                data, dry_weather_parameters, dry_weather_facility_performance_map  # type: ignore
+                data,
+                dry_weather_parameters,  # type: ignore
+                dry_weather_facility_performance_map,  # type: ignore
             )
 
     else:
