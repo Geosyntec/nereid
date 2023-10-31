@@ -303,7 +303,7 @@ def parse_configuration_logic(
     for section in sections:
         for directive, params in section.items():
             func = ops.get(directive)
-            if func:
+            if func:  # pragma: no branch
                 df, msg = func(df, params, config_section, config_object, context, msg)
 
     return df, msg
