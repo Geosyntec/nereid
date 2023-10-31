@@ -91,7 +91,7 @@ def create_app(
 
     @app.get("/ping")
     @app.get("/")
-    async def ping():
+    async def ping():  # pragma: no cover
         logger.info("nereid engine ready.")
         return {"status": "ok"}
 
