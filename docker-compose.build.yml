@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 services:
   nereid:
     build:
@@ -10,7 +10,8 @@ services:
     env_file:
       - env.env
     ports:
-      - '80:80'
+      - 80:80
+
   celeryworker:
     build:
       context: ./nereid
@@ -18,6 +19,7 @@ services:
       target: celeryworker
     env_file:
       - env.env
+
   nereid-tests:
     build:
       context: ./nereid
@@ -25,11 +27,13 @@ services:
       target: nereid-tests
     env_file:
       - env.env
+
   redis:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: redis
+
   flower:
     build:
       context: ./nereid

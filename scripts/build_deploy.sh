@@ -2,7 +2,7 @@ set -e
 export COMPOSE_FILE=docker-stack.yml
 export COMPOSE_DOCKER_CLI_BUILD=1
 
-docker compose
+docker compose \
 -f docker-compose.build.yml \
--f docker-compose.images.yml \
+-f docker-compose.image.yml \
 config > docker-stack.yml
