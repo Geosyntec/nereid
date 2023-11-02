@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  nereid:
+    image: ${NEREID_ARTIFACT_REGISTRY_PATH:-nereid-}nereid:${NEREID_IMAGE_TAG:-latest}
+
+  celeryworker:
+    image: ${NEREID_ARTIFACT_REGISTRY_PATH:-nereid-}celeryworker:${NEREID_IMAGE_TAG:-latest}
+
+  nereid-tests:
+    image: ${NEREID_ARTIFACT_REGISTRY_PATH:-nereid-}nereid-tests:${NEREID_IMAGE_TAG:-latest}
+
+  redis:
+    image: ${NEREID_ARTIFACT_REGISTRY_PATH:-nereid-}redis:${NEREID_IMAGE_TAG:-latest}
+
+  flower:
+    image: ${NEREID_ARTIFACT_REGISTRY_PATH:-nereid-}flower:${NEREID_IMAGE_TAG:-latest}
