@@ -4,6 +4,7 @@ services:
     command: /start-reload.sh
     volumes:
       - ./nereid/nereid:/nereid/nereid
+      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data:ro
     ports:
       - published: 8080
         target: 80
@@ -11,7 +12,9 @@ services:
   celeryworker:
     volumes:
       - ./nereid/nereid:/nereid/nereid
+      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data:ro
 
   nereid-tests:
     volumes:
       - ./nereid/nereid:/nereid/nereid
+      - ${PROJECT_DATA_DIRECTORY:-./_project_data}:/nereid/nereid/data/project_data:ro

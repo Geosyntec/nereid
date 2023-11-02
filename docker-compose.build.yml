@@ -5,16 +5,26 @@ services:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: nereid
+    environment:
+      - NEREID_ASYNC_MODE=replace
+    env_file:
+      - env.env
+    ports:
+      - '80:80'
   celeryworker:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: celeryworker
+    env_file:
+      - env.env
   nereid-tests:
     build:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: nereid-tests
+    env_file:
+      - env.env
   redis:
     build:
       context: ./nereid
@@ -25,3 +35,7 @@ services:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: flower
+    env_file:
+      - env.env
+    ports:
+      - 5555:5555
