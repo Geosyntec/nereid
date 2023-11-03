@@ -23,12 +23,12 @@ async def wait_a_sec_and_see_if_we_can_return_some_data(
     inc = 0.05  # check back every inc seconds
     while t < timeout:
         if task.ready():  # exit even if the task failed
-            return None
+            return None  # pragma: no cover ; we're not testing timings.
         else:
             inc *= exp
             t += inc
             await asyncio.sleep(inc)
-    return None
+    return None  # pragma: no cover ; we're not testing timings.
 
 
 async def run_task(
