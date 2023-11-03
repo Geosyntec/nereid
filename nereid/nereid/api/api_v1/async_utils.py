@@ -14,7 +14,7 @@ async def wait_a_sec_and_see_if_we_can_return_some_data(
     exp: float | None = None,
 ) -> None:
     if timeout is None:  # pragma: no cover
-        timeout = 0.5
+        return None
 
     if exp is None:  # pragma: no cover
         exp = 1
@@ -36,7 +36,7 @@ async def run_task(
     task: Task,
     get_route: str = "get_task",
     force_foreground: bool = False,
-    timeout: float = 0.2,
+    timeout: float | None = None,
 ) -> dict[str, Any]:
     if force_foreground or settings.FORCE_FOREGROUND:  # pragma: no cover
         task_ret: bytes | str = task()
@@ -58,7 +58,7 @@ async def standard_json_response(
     request: Request,
     task: AsyncResult,
     get_route: str = "get_task",
-    timeout: float = 0.2,
+    timeout: float | None = None,
 ) -> dict[str, Any]:
     _ = await wait_a_sec_and_see_if_we_can_return_some_data(task, timeout=timeout)
     result_route = str(request.url_for(get_route, task_id=task.id))
