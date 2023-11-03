@@ -21,29 +21,32 @@ def get_payload(file):
 
 
 def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: no cover
-    ts = time.perf_counter()
-
-    def timer():
-        return time.perf_counter() - ts
-
     tries = 0
+    t = 0
+    inc = 0.1
 
-    while timer() < timeout:
+    while t < timeout:
+        tries += 1
+        if verbose:
+            print(f"\nget request polling tried: {tries} times")
         response = testclient.get(url)
+        if response.status_code >= 400:
+            return response
         if "html" in response.headers["content-type"]:
             return response
         status = response.json().get("status")
+        if "fail" in status.lower():
+            raise ValueError(f"Task failed. Task url: {url}")
         if status is None:
             raise ValueError(
                 f"Status is missing from url: {url} \nresponse{response.json()}"
             )
         if status.lower() == "success":
-            if verbose:
-                print(f"\nget request polling tried: {tries} times")
             return response
-        tries += 1
-        time.sleep(0.1)
-    raise TimeoutError("Task did not return in time.")
+        t += inc
+        time.sleep(inc)
+
+    raise TimeoutError(f"Task did not return in time. Tried {tries} times")
 
 
 def is_equal_subset(subset: dict | list | set, superset: dict | list | set) -> bool:

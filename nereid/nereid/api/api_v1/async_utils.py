@@ -13,7 +13,7 @@ async def wait_a_sec_and_see_if_we_can_return_some_data(
     timeout: float | None = None,
     exp: float | None = None,
 ) -> None:
-    if timeout is None:  # pragma: no cover
+    if timeout is None:
         return None
 
     if exp is None:  # pragma: no cover

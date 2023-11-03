@@ -1,6 +1,7 @@
 import pytest
 
 from nereid.models import treatment_facility_models
+from nereid.tests.utils import poll_testclient_url
 
 names = [
     i.model_json_schema()["title"]
@@ -53,7 +54,7 @@ def test_get_default_context_tmnt_facility_params(
         result_route = prjson.get("result_route")
 
         if result_route:
-            get_response = client.get(result_route)
+            get_response = poll_testclient_url(client, result_route)
             assert get_response.status_code == 200
 
             grjson = get_response.json()

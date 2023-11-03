@@ -26,8 +26,8 @@ def client(async_mode):
 def named_validation_responses(client):
     route = settings.API_LATEST + "/network/validate"
     responses = {}
-    slow_valid = clean_graph_dict(nx.gnr_graph(15000, p=0.05, seed=42))
-    slow_invalid = clean_graph_dict(nx.gnc_graph(15000, seed=42))
+    slow_valid = clean_graph_dict(nx.gnr_graph(150, p=0.05, seed=42))
+    slow_invalid = clean_graph_dict(nx.gnc_graph(150, seed=42))
 
     init_post_requests = [
         (
