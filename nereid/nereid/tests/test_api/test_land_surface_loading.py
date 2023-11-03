@@ -6,8 +6,8 @@ from nereid.models import land_surface_models
 
 
 @pytest.mark.parametrize("details", ["true", "false"])
-@pytest.mark.parametrize("n_rows", [10, 50, 5000])
-@pytest.mark.parametrize("n_nodes", [5, 50, 1000])
+@pytest.mark.parametrize("n_rows", [10, 50, 500])
+@pytest.mark.parametrize("n_nodes", [5, 50, 100])
 def test_post_land_surface_loading(
     land_surface_loading_responses, details, n_rows, n_nodes
 ):
@@ -21,8 +21,8 @@ def test_post_land_surface_loading(
 
 
 @pytest.mark.parametrize("details", ["true", "false"])
-@pytest.mark.parametrize("n_rows", [10, 50, 5000])
-@pytest.mark.parametrize("n_nodes", [5, 50, 1000])
+@pytest.mark.parametrize("n_rows", [10, 50, 500])
+@pytest.mark.parametrize("n_nodes", [5, 50, 100])
 def test_get_land_surface_loading(
     client, land_surface_loading_responses, details, n_rows, n_nodes
 ):

@@ -22,15 +22,13 @@ def test_post_network_validate(
     post_response = named_validation_responses[post_response_name]
     prjson = post_response.json()
     assert network_models.NetworkValidationResponse(**prjson)
+    assert prjson["status"].lower() != "failure"
 
-    if isfast:
-        if prjson.get("result_route"):
-            prjson = poll_testclient_url(client, prjson["result_route"]).json()
-        assert prjson["status"].lower() == "success"
-        assert prjson["data"] is not None
-        assert prjson["data"]["isvalid"] == isvalid
-    else:
-        assert prjson["status"].lower() != "failure"
+    if prjson.get("result_route"):
+        prjson = poll_testclient_url(client, prjson["result_route"]).json()
+    assert prjson["status"].lower() == "success"
+    assert prjson["data"] is not None
+    assert prjson["data"]["isvalid"] == isvalid
 
 
 @pytest.mark.parametrize(
@@ -146,12 +144,7 @@ def test_post_network_subgraph(client, named_subgraph_responses, post_response_n
     assert prjson["status"].lower() != "failure"
 
 
-@pytest.mark.parametrize(
-    "post_response_name",
-    [
-        ("subgraph_response_fast"),
-    ],
-)
+@pytest.mark.parametrize("post_response_name", ["subgraph_response_fast"])
 def test_get_render_subgraph_svg_fast(
     client, named_subgraph_responses, post_response_name
 ):
@@ -190,11 +183,12 @@ def test_get_render_subgraph_svg_slow(client):
 
 
 @pytest.mark.parametrize(
-    "post_response_name, isfast",
-    [("subgraph_response_fast", True), ("subgraph_response_slow", False)],
+    "post_response_name", ["subgraph_response_fast", "subgraph_response_slow"]
 )
 def test_get_render_subgraph_svg_bad_media_type(
-    client, named_subgraph_responses, post_response_name, isfast
+    client,
+    named_subgraph_responses,
+    post_response_name,
 ):
     post_response = named_subgraph_responses[post_response_name]
     assert post_response.status_code == 200
@@ -260,18 +254,16 @@ def test_get_render_solution_sequence(
     result_route = prjson.get("result_route")
 
     if result_route:
-        _ = client.get(result_route + "/img")
-        svg_response = client.get(result_route + "/img")
+        response = client.get(result_route + "/img")
+        assert response.status_code == 200
 
-        assert svg_response.status_code == 200
-
-        if "html" in svg_response.headers["content-type"]:
-            assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
-
-        else:
-            srjson = svg_response.json()
+        if "html" not in response.headers["content-type"]:
+            srjson = response.json()
             assert srjson["status"].lower() != "failure"
             assert srjson["task_id"] is not None
+            response = poll_testclient_url(client, result_route + "/img")
+
+        assert "DOCTYPE svg PUBLIC" in response.content.decode()
 
 
 def test_get_render_solution_sequence_bad_media_type(

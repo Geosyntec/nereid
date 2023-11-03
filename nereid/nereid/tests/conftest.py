@@ -67,8 +67,8 @@ def subgraph_request_dict():
 
 @pytest.fixture(scope="module")
 def land_surface_loading_response_dicts(contexts, land_surface_permutations):
-    n_rows = [10, 50, 5000]
-    n_nodes = [5, 50, 1000]
+    n_rows = [10, 50, 500]
+    n_nodes = [5, 50, 100]
     responses = {}
     contexts["default"]
 

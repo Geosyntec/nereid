@@ -81,38 +81,36 @@ async def get_subgraph_network_as_img(
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
 ) -> dict[str, Any] | Any:
+    if media_type != "svg":
+        detail = f"media_type not supported: '{media_type}'."
+        raise HTTPException(status_code=400, detail=detail)
+
     task = bg.network_subgraphs.AsyncResult(task_id, app=router)
     response = {"task_id": task.task_id, "status": task.status}
 
-    if task.successful():  # pragma: no branch
+    if task.successful():
         result = task.result
         response["data"] = task.result
         render_task_id = task.task_id + f"-{media_type}-{npi}"
 
-        if media_type == "svg":
-            render_task = bg.render_subgraph_svg.AsyncResult(render_task_id, app=router)
-            if render_task.status.lower() != "started":  # pragma: no branch
-                render_task = bg.render_subgraph_svg.apply_async(
-                    args=(result, npi), task_id=render_task_id
-                )
-                _ = await wait_a_sec_and_see_if_we_can_return_some_data(
-                    render_task, timeout=0.5
-                )
+        render_task = bg.render_subgraph_svg.AsyncResult(render_task_id, app=router)
+        if render_task.status.lower() != "started" and not render_task.ready():
+            render_task = bg.render_subgraph_svg.apply_async(
+                args=(result, npi), task_id=render_task_id
+            )
+            _ = await wait_a_sec_and_see_if_we_can_return_some_data(
+                render_task, timeout=0.2
+            )
 
-            svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
+        if render_task.successful():
+            svg = render_task.result
 
-            if render_task.successful():
-                svg = render_task.result
+            return templates.TemplateResponse(
+                "display_svg.html", {"request": request, "svg": svg}
+            )
+        return {"task_id": render_task.task_id, "status": render_task.status}
 
-                return templates.TemplateResponse(
-                    "display_svg.html", {"request": request, "svg": svg}
-                )
-            return svgresponse
-
-        detail = f"media_type not supported: '{media_type}'."
-        raise HTTPException(status_code=400, detail=detail)
-
-    return response  # pragma: no cover
+    return response
 
 
 @router.post(
@@ -160,37 +158,36 @@ async def get_network_solution_sequence_as_img(
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
 ) -> dict[str, Any] | Any:
+    if media_type != "svg":
+        detail = f"media_type not supported: '{media_type}'."
+        raise HTTPException(status_code=400, detail=detail)
+
     task = bg.solution_sequence.AsyncResult(task_id, app=router)
     response = {"task_id": task.task_id, "status": task.status}
 
-    if task.successful():  # pragma: no branch
+    if task.successful():
         result = task.result
         response["data"] = task.result
         render_task_id = task.task_id + f"-{media_type}-{npi}"
 
-        if media_type == "svg":
-            render_task = bg.render_solution_sequence_svg.AsyncResult(
-                render_task_id, app=router
+        render_task = bg.render_solution_sequence_svg.AsyncResult(
+            render_task_id, app=router
+        )
+        if render_task.status.lower() != "started" and not render_task.ready():
+            render_task = bg.render_solution_sequence_svg.apply_async(
+                args=(result, npi), task_id=render_task_id
             )
-            if render_task.status.lower() != "started":  # pragma: no branch
-                render_task = bg.render_solution_sequence_svg.apply_async(
-                    args=(result, npi), task_id=render_task_id
-                )
-                _ = await wait_a_sec_and_see_if_we_can_return_some_data(
-                    render_task, timeout=0.5
-                )
+            _ = await wait_a_sec_and_see_if_we_can_return_some_data(
+                render_task, timeout=0.2
+            )
 
-            svgresponse = {"task_id": render_task.task_id, "status": render_task.status}
+        if render_task.successful():
+            svg = render_task.result
 
-            if render_task.successful():
-                svg = render_task.result
+            return templates.TemplateResponse(
+                "display_svg.html", {"request": request, "svg": svg}
+            )
 
-                return templates.TemplateResponse(
-                    "display_svg.html", {"request": request, "svg": svg}
-                )
-            return svgresponse
+        return {"task_id": render_task.task_id, "status": render_task.status}
 
-        detail = f"media_type not supported: '{media_type}'."
-        raise HTTPException(status_code=400, detail=detail)
-
-    return response  # pragma: no cover
+    return response
