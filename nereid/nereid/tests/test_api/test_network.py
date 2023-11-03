@@ -257,13 +257,16 @@ def test_get_render_solution_sequence(
         response = client.get(result_route + "/img")
         assert response.status_code == 200
 
-        if "html" not in response.headers["content-type"]:
+        if "html" not in response.headers["content-type"]:  # pragma: no branch
             srjson = response.json()
             assert srjson["status"].lower() != "failure"
             assert srjson["task_id"] is not None
             response = poll_testclient_url(client, result_route + "/img")
 
         assert "DOCTYPE svg PUBLIC" in response.content.decode()
+
+        response = client.get(result_route + "/img")
+        assert response.status_code == 200
 
 
 def test_get_render_solution_sequence_bad_media_type(
