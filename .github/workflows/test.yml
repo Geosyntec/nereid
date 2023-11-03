@@ -87,6 +87,7 @@ jobs:
         run: |
           docker compose exec -T nereid-tests pytest nereid/tests -s -n 2 --cov=nereid/
           docker compose exec -T nereid-tests pytest nereid/tests/test_api -s -n 2 --cov=nereid/ --cov-append --async
+          docker compose exec -T nereid-tests coverage report -m
           docker compose exec -T nereid-tests coverage xml
           docker compose exec -T nereid-tests cat coverage.xml > ./nereid/coverage.xml
       - name: upload coverage
