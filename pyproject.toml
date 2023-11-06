@@ -30,7 +30,7 @@ dependencies = [
     "orjson",
     "pandas",
     "Pint",
-    "pydantic",
+    "pydantic>=2",
     "pydantic_settings",
     "python-dotenv",
     "pytz",
@@ -72,10 +72,10 @@ test = ["coverage", "httpx", "pytest", "pytest-cov", "pytest-xdist"]
 dev = [
     "nereid-engine[app]",
     "nereid-engine[test]",
+    "black==23.3.0",
     "mypy",
     "pre-commit>=3.3.3,<4.0.0",
-    "ruff==0.1.0",
-    "watchfiles",
+    "ruff",
 ]
 
 [tool.pytest.ini_options]
