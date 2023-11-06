@@ -31,7 +31,7 @@ def compute_pollutant_load_reduction(
     ----------
     data : dict
         information about the current node, especially treatment performance (if any), and
-        incoming flow volume and concentraiton
+        incoming flow volume and concentration
     effluent_function_map : mapping
         This mapping uses a facility type and a pollutant as the keys to retrieve a function
         that returns effluent concentration as output when given influent concentration as input.
@@ -48,7 +48,8 @@ def compute_pollutant_load_reduction(
     """
 
     tmnt_fxn = effluent_function_map.get(
-        (tmnt_facility_type, poc_long), None  # type:ignore
+        (tmnt_facility_type, poc_long),
+        None,  # type: ignore[arg-type]
     )
 
     if tmnt_fxn is None:

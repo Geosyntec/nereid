@@ -4,6 +4,7 @@ from brotli_asgi import BrotliMiddleware
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from nereid.api.api_v1.endpoints_sync import sync_router
@@ -55,7 +56,7 @@ def create_app(
             )
 
     @app.get("/docs", include_in_schema=False)
-    async def custom_swagger_ui_html():
+    async def custom_swagger_ui_html() -> HTMLResponse:
         kwargs: dict[str, Any] = {
             "openapi_url": str(app.openapi_url),
             "title": app.title + " - Swagger UI",
@@ -72,7 +73,7 @@ def create_app(
         return get_better_swagger_ui_html(**kwargs)
 
     @app.get("/redoc", include_in_schema=False)
-    async def redoc_html():
+    async def redoc_html() -> HTMLResponse:
         kwargs: dict[str, Any] = {
             "openapi_url": str(app.openapi_url),
             "title": app.title + " - ReDoc",
