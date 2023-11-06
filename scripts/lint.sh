@@ -5,5 +5,5 @@ set -x
 
 mkdir -p .mypy_cache
 mypy nereid/nereid --install-types --non-interactive
-black nereid --check --diff
-ruff nereid
+ruff format nereid --check --diff
+ruff check nereid

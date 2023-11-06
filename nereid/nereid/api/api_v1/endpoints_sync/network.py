@@ -17,7 +17,8 @@ router = APIRouter()
 )
 async def validate_network(
     graph: network_models.Graph = Body(
-        ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
+        ...,
+        examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),
 ) -> dict[str, Any]:
     g: dict[str, Any] = graph.model_dump(by_alias=True)
@@ -47,7 +48,8 @@ async def subgraph_network(
 )
 async def network_solution_sequence(
     graph: network_models.Graph = Body(
-        ..., examples=network_models.GraphExamples  # type: ignore[arg-type]
+        ...,
+        examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),
     min_branch_size: int = Query(4),
 ) -> dict[str, Any]:
