@@ -26,7 +26,7 @@ async def validate_network(
     request: Request,
     graph: network_models.Graph = Body(
         ...,
-        examples=network_models.GraphExamples,  # type: ignore[arg-type]
+        openapi_examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),
 ) -> dict[str, Any]:
     task = bg.validate_network.s(graph=graph.model_dump(by_alias=True))
@@ -124,7 +124,7 @@ async def network_solution_sequence(
     request: Request,
     graph: network_models.Graph = Body(
         ...,
-        examples=network_models.GraphExamples,  # type: ignore[arg-type]
+        openapi_examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),
     min_branch_size: int = Query(4),
 ) -> dict[str, Any]:
