@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Iterable
 
 INCLUDE_TAGS = [
     "node_id",
@@ -11,14 +11,13 @@ INCLUDE_TAGS = [
 EXCLUDE_TAGS = ["_total_discharged"]
 
 
-def minimum_attrs(dct: dict[str, Any]) -> list[str]:
-    def f(x):
-        return any(i in x for i in INCLUDE_TAGS) and not any(
-            i in x for i in EXCLUDE_TAGS
-        )
+def f(x):
+    return any(i in x for i in INCLUDE_TAGS) and not any(i in x for i in EXCLUDE_TAGS)
 
-    return list(filter(f, dct.keys()))
+
+def minimum_attrs(keys: Iterable[str]) -> list[str]:
+    return list(filter(f, keys))
 
 
 def attrs_to_resubmit(collection: list[dict[str, Any]]) -> list[str]:
-    return list({k for data in collection for k in minimum_attrs(data)})
+    return minimum_attrs({k for data in collection for k in data})
