@@ -277,7 +277,7 @@ def test_watershed_vs_swmm(contexts, realistic_graph, swmm_results):
 
     g = realistic_graph
 
-    for node in nx.lexicographical_topological_sort(g):
+    for node in nx.topological_sort(g):
         solve_node(
             g,
             node,

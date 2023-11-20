@@ -109,7 +109,7 @@ def solve_watershed_loading(
         for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
     )
 
-    for node in nx.lexicographical_topological_sort(g):
+    for node in nx.topological_sort(g):
         g.nodes[node]["_version"] = nereid_version
         g.nodes[node]["_config_version"] = cfg_version
 
