@@ -18,17 +18,18 @@ def get_subset(g: nx.DiGraph, nodes: Hashable | Iterable[Hashable]) -> set:
     """This algorithm is for determining which nodes in a graph must be re-solved if
     `nodes` are dirty. It looks for the immediate parents of each dirty node, all
     descendants of the dirty nodes down to the root node (no 'out' edge connections),
-    and the immediate parents of _each_ descdendant. This algorithm only works on
+    and the immediate parents of _each_ descendant. This algorithm only works on
     directed acyclic graphs (DAGs).
     """
     if isinstance(nodes, Hashable):
         nodes = [nodes]
 
-    node_parents = {s for n in nodes for s in g.predecessors(n)}
-    desc = {s for n in nodes for s in get_all_successors(g, n)}
+    nodes_ = set(nodes) & set(g.nodes())
+    node_parents = {s for n in nodes_ for s in g.predecessors(n)}
+    desc = {s for n in nodes_ for s in get_all_successors(g, n)}
     desc_parents = {s for d in desc for s in g.predecessors(d)}
 
-    return set(nodes) | node_parents | desc | desc_parents
+    return nodes_ | node_parents | desc | desc_parents
 
 
 def get_all_predecessors(
