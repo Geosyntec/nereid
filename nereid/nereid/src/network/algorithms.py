@@ -73,7 +73,7 @@ def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGra
 
     # Start at the leaves and work through branches.
     # Return first subgraph larger than or equal to `size`.
-    for node in nx.lexicographical_topological_sort(g):  # pragma: no branch
+    for node in nx.topological_sort(g):  # pragma: no branch
         us = get_all_predecessors(g, node)
         us.add(node)
         if len(us) >= size:
@@ -97,12 +97,11 @@ def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> list[list[Hashable]]:
     while len(g.nodes()) > 1:
         sg = find_leafy_branch_larger_than_size(g, size)
 
-        sg_nodes = list(nx.lexicographical_topological_sort(sg))
-        graphs.append(sg_nodes)
+        graphs.append(list(sg.nodes()))
 
         # trim the upstream nodes out of the graph, except the upstream root
-        us_nodes = [n for n, deg in sg.out_degree if deg > 0]
-        g = g.subgraph([n for n in g.nodes() if n not in us_nodes])
+        us_nodes = {n for n, deg in sg.out_degree if deg > 0}
+        g = g.subgraph(g.nodes() - us_nodes)
 
         # rinse and repeat until there's one or fewer nodes left in the graph
 
