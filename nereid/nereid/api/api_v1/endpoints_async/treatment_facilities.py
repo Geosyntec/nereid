@@ -4,8 +4,8 @@ from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.async_utils import run_task, standard_json_response
-from nereid.api.api_v1.utils import get_valid_context
+from nereid.api.async_utils import run_task, standard_json_response
+from nereid.api.utils import get_valid_context
 from nereid.models.treatment_facility_models import (
     TreatmentFacilities,
     TreatmentFacilitiesResponse,

@@ -7,9 +7,9 @@ from fastapi.openapi.docs import get_redoc_html
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from nereid.api.api_v1.endpoints_sync import sync_router
-from nereid.api.api_v1.utils import get_valid_context
+from nereid.api import sync_router
 from nereid.api.docs import get_better_swagger_ui_html
+from nereid.api.utils import get_valid_context
 from nereid.core.config import nereid_path, settings
 from nereid.core.log import logging
 from nereid.models.response_models import JSONAPIResponse
@@ -41,17 +41,17 @@ def create_app(
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 
     if _settings.ASYNC_MODE == "replace":  # pragma: no cover
-        from nereid.api.api_v1.endpoints_async import async_router
+        from nereid.api import async_router
 
-        app.include_router(async_router, prefix=_settings.API_V1_STR, tags=["async"])
+        app.include_router(async_router, tags=["async"])
     else:
-        app.include_router(sync_router, prefix=_settings.API_V1_STR)
+        app.include_router(sync_router)
         if _settings.ASYNC_MODE == "add":  # pragma: no cover
-            from nereid.api.api_v1.endpoints_async import async_router
+            from nereid.api import async_router
 
             app.include_router(
                 async_router,
-                prefix=_settings.API_V1_STR + _settings.ASYNC_ROUTE_PREFIX,
+                prefix=_settings.ASYNC_ROUTE_PREFIX,
                 tags=["async"],
             )
 

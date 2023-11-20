@@ -16,7 +16,7 @@ from nereid.api.api_v1.endpoints_async.treatment_sites import (
 )
 from nereid.api.api_v1.endpoints_async.watershed import router as watershed_router
 
-async_router = APIRouter()
+async_router = APIRouter(prefix="/v1")
 async_router.include_router(network_router)
 async_router.include_router(reference_data_router)
 async_router.include_router(land_surface_loading_router)

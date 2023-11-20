@@ -5,12 +5,12 @@ from fastapi.requests import Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.async_utils import (
+from nereid.api.async_utils import (
     run_task,
     standard_json_response,
     wait_a_sec_and_see_if_we_can_return_some_data,
 )
-from nereid.api.api_v1.utils import templates
+from nereid.api.utils import templates
 from nereid.models import network_models
 
 router = APIRouter()

@@ -1,7 +1,6 @@
 import networkx as nx
 import pytest
 
-from nereid.core.config import settings
 from nereid.models import network_models
 from nereid.src.network.utils import clean_graph_dict
 from nereid.tests.utils import poll_testclient_url
@@ -50,7 +49,7 @@ def test_get_network_validate(
     result_route = prjson.get("result_route")
 
     if result_route:
-        get_route = f"{settings.API_LATEST}/task/{prjson.get('task_id', 'error$!#*&^')}"
+        get_route = f"api/v1/task/{prjson.get('task_id', 'error$!#*&^')}"
         get_response = client.get(get_route)
         assert get_response.status_code == 200, (prjson, get_route)
 
@@ -165,7 +164,7 @@ def test_get_render_subgraph_svg_fast(
 
 
 def test_get_render_subgraph_svg_slow(client):
-    route = settings.API_LATEST + "/network/subgraph"
+    route = "api/v1/network/subgraph"
 
     slow_graph = clean_graph_dict(nx.gnr_graph(200, p=0.05, seed=42))
     nodes = [{"id": "3"}, {"id": "29"}, {"id": "18"}]
