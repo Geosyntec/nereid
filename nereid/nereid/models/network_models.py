@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from pydantic import BaseModel, Field, StrictStr
+from pydantic import BaseModel, Field, StrictStr, model_validator
 
 from nereid.models.response_models import JSONAPIResponse
+from nereid.src.tasks import validate_network
 
 ## Network Request Models
 
@@ -122,6 +123,14 @@ class Graph(BaseModel):
     metadata: Metadata
 
 
+class ValidGraph(Graph):
+    @model_validator(mode="after")
+    def validate_graph(self) -> "ValidGraph":
+        result = validate_network(self.model_dump(by_alias=True))
+        assert result.get("isvalid"), result
+        return self
+
+
 class Nodes(BaseModel):
     nodes: list[Node]
 
@@ -131,7 +140,7 @@ class SubgraphNodes(BaseModel):
 
 
 class SubgraphRequest(BaseModel):
-    graph: Graph
+    graph: ValidGraph
     nodes: list[Node]
 
     model_config = {

@@ -122,7 +122,7 @@ async def get_subgraph_network_as_img(
 )
 async def network_solution_sequence(
     request: Request,
-    graph: network_models.Graph = Body(
+    graph: network_models.ValidGraph = Body(
         ...,
         openapi_examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),

@@ -47,7 +47,7 @@ async def subgraph_network(
     response_class=ORJSONResponse,
 )
 async def network_solution_sequence(
-    graph: network_models.Graph = Body(
+    graph: network_models.ValidGraph = Body(
         ...,
         openapi_examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),
