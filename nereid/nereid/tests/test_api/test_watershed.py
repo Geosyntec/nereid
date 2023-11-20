@@ -3,7 +3,6 @@ from copy import deepcopy
 import networkx as nx
 import pytest
 
-from nereid.core.config import settings
 from nereid.models import watershed_models
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
@@ -32,7 +31,7 @@ def test_get_solve_watershed(client, watershed_responses, size, pct_tmnt):
     result_route = prjson.get("result_route")
 
     if result_route:
-        get_route = f"{settings.API_LATEST}/task/{prjson.get('task_id', 'error$!#*&^')}"
+        get_route = f"api/v1/task/{prjson.get('task_id', 'error$!#*&^')}"
         get_response = client.get(get_route)
         assert get_response.status_code == 200, (prjson, get_route)
 
@@ -89,7 +88,7 @@ def test_post_solve_watershed_stable(
     new_request.update(previous_results)
 
     payload = new_request
-    route = settings.API_LATEST + "/watershed/solve"
+    route = "api/v1/watershed/solve"
     response = client.post(route, json=payload)
     response_json = response.json()
     data = response_json.get("data", None)

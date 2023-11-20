@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import ORJSONResponse
 
-from nereid.api.api_v1.utils import get_valid_context
+from nereid.api.utils import get_valid_context
 from nereid.models.treatment_facility_models import (
     validate_treatment_facility_models,
 )

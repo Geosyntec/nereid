@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import ORJSONResponse
 
 import nereid.bg_worker as bg
-from nereid.api.api_v1.async_utils import standard_json_response
+from nereid.api.async_utils import standard_json_response
 from nereid.models.response_models import JSONAPIResponse
 
 router = APIRouter(prefix="/task", default_response_class=ORJSONResponse)

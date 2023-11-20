@@ -1,8 +1,6 @@
 import matplotlib
 import pytest
 
-from nereid.core.config import settings
-
 matplotlib.use("agg")
 
 
@@ -22,7 +20,7 @@ matplotlib.use("agg")
     ],
 )
 def test_ref_data(client, query, isvalid):
-    url = settings.API_LATEST + "/reference_data" + query
+    url = "api/v1/reference_data" + query
 
     response = client.get(url)
 
@@ -57,7 +55,7 @@ def test_ref_data(client, query, isvalid):
     ],
 )
 def test_ref_data_file(client, query, isvalid):
-    url = settings.API_LATEST + "/reference_data_file" + query
+    url = "api/v1/reference_data_file" + query
 
     response = client.get(url)
 
@@ -76,7 +74,7 @@ def test_ref_data_file(client, query, isvalid):
     ],
 )
 def test_ref_data_table(client, table, isvalid):
-    url = settings.API_LATEST + f"/reference_data/{table}"
+    url = f"api/v1/reference_data/{table}"
 
     response = client.get(url)
 
@@ -106,6 +104,6 @@ def test_ref_data_table(client, table, isvalid):
     ],
 )
 def test_ref_data_nomograph(client, nomo, type, status_code):
-    url = settings.API_LATEST + f"/reference_data/nomograph?filename={nomo}&type={type}"
+    url = f"api/v1/reference_data/nomograph?filename={nomo}&type={type}"
     response = client.get(url)
     assert response.status_code == status_code

@@ -61,3 +61,12 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
 
     check_db = pandas.DataFrame(results).set_index("node_id").sort_index(axis=0)
     check_results_dataframes(db.sort_index(axis=0), check_db)
+
+    for df in [check_db, db]:
+        ro_generated = df.query('node_type == "land_surface"').runoff_volume_cuft.sum()
+        ro_discharged = df.query(
+            "node_id == '0'"
+        ).runoff_volume_cuft_total_discharged.sum()
+        ro_retained = df.query("node_id == '0'").runoff_volume_cuft_total_retained.sum()
+
+        assert abs(ro_generated - (ro_discharged + ro_retained)) <= 1  # +- 1 cuft
