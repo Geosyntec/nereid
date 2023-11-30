@@ -164,7 +164,7 @@ def compute_volume_based_standalone_facility(
     compartments = solve_volume_based_compartments(input_compartments, volume_nomo)
 
     retained_percent = min(100, 100 * compartments[0]["performance"])
-    # min retention pct is meant to estimate incidental retention perforance of
+    # min retention pct is meant to estimate incidental retention performance of
     # vegetated tmnt-only BMPs.
     minimum_retention_pct_override = data.get("minimum_retention_pct_override", 0.0)
     retained_percent = max(retained_percent, minimum_retention_pct_override)
