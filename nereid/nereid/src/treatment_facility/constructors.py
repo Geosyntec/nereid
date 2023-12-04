@@ -88,14 +88,16 @@ class TreatmentFacilityConstructor:
     ) -> dict[str, Any]:
         retention_volume_cuft = total_volume_cuft
         retention_ddt_hr = safe_divide(total_volume_cuft, treatment_rate_cfs * 3600)
+        retention_rate = treatment_rate_cfs
 
         result = {
             "retention_volume_cuft": retention_volume_cuft,
             "retention_ddt_hr": retention_ddt_hr,
             # We need to override this because dry wells don't perform treatment
             # in either wet weather or dry weather, only retention/volume reduction.
-            # ini_treatment_rate_cfs=treatment_rate_cfs,
-            "retention_rate_cfs": treatment_rate_cfs,
+            "ini_treatment_rate_cfs": treatment_rate_cfs,
+            "retention_rate_cfs": retention_rate,
+            "treatment_rate_cfs": 0.0,
             "node_type": "dry_well_facility",
         }
 

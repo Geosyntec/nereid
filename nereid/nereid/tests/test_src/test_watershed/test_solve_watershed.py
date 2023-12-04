@@ -4,6 +4,7 @@ import networkx as nx
 import numpy
 import pytest
 
+from nereid.models.treatment_facility_models import TREATMENT_FACILITY_MODELS
 from nereid.src.network.algorithms import get_subset
 from nereid.src.watershed.solve_watershed import (
     initialize_graph,
@@ -520,6 +521,97 @@ def test_facility_load_reduction(contexts, tmnt_facility, dwf_override):
     for _n, dct in g.nodes(data=True):
         if "_nomograph_solution_status" in dct:
             assert "successful" in dct["_nomograph_solution_status"]
+
+
+@pytest.mark.parametrize(
+    "facility_data",
+    [
+        {
+            "test_model": "DryWellFacilityFlowOrVolume",
+            "treatment_rate_cfs": 0.001,
+            "total_volume_cuft": 40,
+        },
+        {
+            "test_model": "DryWellFacilityFlowOrVolume",
+            "treatment_rate_cfs": 0.001,
+            "total_volume_cuft": 0,
+        },
+        {
+            "test_model": "DryWellFacility",
+            "treatment_rate_cfs": 0.001,
+            "total_volume_cuft": 40,
+        },
+    ]
+    + [
+        {"test_model": i.model_json_schema()["title"]}
+        for i in TREATMENT_FACILITY_MODELS
+    ],
+)
+def test_single_facility_watershed(
+    contexts, valid_treatment_facility_dicts, facility_data
+):
+    tmnt = deepcopy(valid_treatment_facility_dicts[facility_data["test_model"]])
+    tmnt.update(facility_data)
+    tmnt["node_id"] = "0"
+    tmnt["months_operational"] = "both"
+    wshd = {
+        "graph": {
+            "directed": True,
+            "edges": [
+                {"source": "1", "target": "0"},
+            ],
+        },
+        "land_surfaces": [
+            {
+                "area_acres": 12,
+                "imp_area_acres": 7.5,
+                "node_id": "1",
+                "surface_key": "10101200-RESSFH-C-5",
+            },
+        ],
+        "treatment_facilities": [tmnt],
+    }
+
+    g, _ = initialize_graph(
+        wshd, treatment_pre_validated=False, context=contexts["default"]
+    )
+    solve_watershed_loading(g, context=contexts["default"])
+
+    tmnt_node = g.nodes["0"]
+
+    node_type = tmnt_node.get("node_type", "")
+    valid_model = tmnt_node.get("valid_model", "")
+
+    if "flow based" in tmnt_node.get("_nomograph_solution_status", ""):
+        assert tmnt_node.get("design_intensity_inhr", 0) > 0
+
+    if "drywell" in valid_model.lower():
+        assert tmnt_node.get("runoff_volume_cuft_retained", 0) > 0.0
+        assert tmnt_node.get("winter_dry_weather_flow_cuft_retained", 0) > 0
+        assert tmnt_node.get("summer_dry_weather_flow_cuft_retained", 0) > 0
+
+        assert tmnt_node.get("treated_pct", 0) < 0.1
+        assert tmnt_node.get("winter_dry_weather_flow_cuft_treated", 0) == 0
+        assert tmnt_node.get("summer_dry_weather_flow_cuft_treated", 0) == 0
+
+    if any(t in node_type for t in ["dry_weather_only", "diversion_facility"]):
+        assert tmnt_node.get("runoff_volume_cuft_captured", 0) == 0.0  # no wet weather
+        assert tmnt_node.get("winter_dry_weather_flow_cuft_captured", 0) > 0
+        assert tmnt_node.get("summer_dry_weather_flow_cuft_captured", 0) > 0
+
+    elif node_type:
+        assert tmnt_node.get("runoff_volume_cuft_captured", 0) > 0.0
+        assert tmnt_node.get("winter_dry_weather_flow_cuft_captured", 0) > 0
+        assert tmnt_node.get("summer_dry_weather_flow_cuft_captured", 0) > 0
+
+        assert tmnt_node.get("design_volume_cuft_cumul", 0) > 0
+        if "dry_well" in node_type:
+            assert tmnt_node.get("design_intensity_inhr", 0) > 0
+
+    else:
+        assert tmnt_node.get("runoff_volume_cuft_captured", 0) == 0.0
+        assert tmnt_node.get("winter_dry_weather_flow_cuft_captured", 0) == 0
+        assert tmnt_node.get("summer_dry_weather_flow_cuft_captured", 0) == 0
 
 
 @pytest.mark.parametrize(
