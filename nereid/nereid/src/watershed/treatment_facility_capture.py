@@ -392,10 +392,7 @@ def compute_flow_based_facility(
         data["node_warnings"].append(msg)
 
     intensity = data["design_intensity_inhr"] = design_intensity_inhr(
-        max(
-            data.get("treatment_rate_cfs", 0.0), data.get("ini_treatment_rate_cfs", 0.0)
-        ),
-        data["eff_area_acres_cumul"],
+        data.get("treatment_rate_cfs", 0.0), data["eff_area_acres_cumul"]
     )
 
     captured_fraction = float(flow_nomo(intensity=intensity, tc=tc) or 0.0)
