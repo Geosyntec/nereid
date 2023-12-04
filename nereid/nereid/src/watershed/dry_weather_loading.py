@@ -186,21 +186,22 @@ def init_dry_weather_tmnt_rate_by_season(
             data.get(f"{season}_dry_weather_flow_cuft_psecond_inflow") or 0.0
         )
         dw_retention_rate_cfs = dw_inflow_cfs
-        data[f"{season}_dry_weather_retention_rate_cfs"] = dw_retention_rate_cfs
+        data[f"{season}_dry_weather_retention_rate_cfs"] = dw_retention_rate_cfs or 0.0
 
-    if dw_retention_rate_cfs is None:
-        retention_vol = data.get("retention_volume_cuft", 0.0)
-        retention_ddt_seconds = data.get("retention_ddt_hr", 0.0) * 3600
+    elif dw_retention_rate_cfs is None:
+        dw_retention_rate_cfs = data.get("retention_rate_cfs")
+        if dw_retention_rate_cfs is None:
+            retention_vol = data.get("retention_volume_cuft", 0.0)
+            retention_ddt_seconds = data.get("retention_ddt_hr", 0.0) * 3600
 
-        dw_retention_rate_cfs = safe_divide(retention_vol, retention_ddt_seconds)
-        data[f"{season}_dry_weather_retention_rate_cfs"] = dw_retention_rate_cfs
+            dw_retention_rate_cfs = safe_divide(retention_vol, retention_ddt_seconds)
+        data[f"{season}_dry_weather_retention_rate_cfs"] = dw_retention_rate_cfs or 0.0
 
     dw_treatment_rate_cfs = data.get(f"{season}_dry_weather_treatment_rate_cfs")
     if dw_treatment_rate_cfs is None:
         dw_treatment_rate_cfs = data.get("treatment_rate_cfs")
-        treatment_volume_cuft = data.get("treatment_volume_cuft", 0.0)
-
         if dw_treatment_rate_cfs is None:
+            treatment_volume_cuft = data.get("treatment_volume_cuft", 0.0)
             if treatment_volume_cuft > 1e-3:
                 treatment_ddt_seconds = data.get("treatment_ddt_hr", 0.0) * 3600
 
