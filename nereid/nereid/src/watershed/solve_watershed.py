@@ -206,17 +206,20 @@ def solve_node(
             "WARNING: This node is missing from all input tables."
         )
 
+    next_ds = list(g.successors(node))
+    data["_ds_node_id"] = ",".join(map(str, next_ds))
+
+    predecessors = list(g.predecessors(node))
+
     # leaf nodes are read only
-    deg = g.in_degree(node)
-    if isinstance(deg, int) and deg < 1:
+    if not predecessors:
         data["_is_leaf"] = True
         return
 
-    node_type = data.get("node_type", None) or "virtual"
-    predecessors = list(g.predecessors(node))
-
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
     accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
+
+    node_type = data.get("node_type", None) or "virtual"
 
     if "site_based" in node_type:
         # This sequence handles volume capture, load reductions, and also delivers
