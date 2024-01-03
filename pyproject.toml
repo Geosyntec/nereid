@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "nereid-engine"
 description = "Water quality engine for computing graph-based land surface load aggregation and BMP effectiveness."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 license = { "text" = "BSD-3-Clause" }
 # url = "https://github.com/Geosyntec/nereid"
 authors = [{ name = "Austin Orr", email = "aorr@geosyntec.com" }]
@@ -16,7 +16,9 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
@@ -53,8 +55,7 @@ where = ["nereid"]
 
 [project.optional-dependencies]
 extras = ["graphviz", "matplotlib", "pydot"]
-base-async-worker = ["celery[redis]"]
-async-worker = ["nereid-engine[base-async-worker]", "nereid-engine[extras]"]
+async-worker = ["celery[redis]", "nereid-engine[extras]"]
 base-app = [
     "fastapi",
     "brotli-asgi",
@@ -63,16 +64,12 @@ base-app = [
     "uvloop",
     "websockets",
 ]
-app = [
-    "nereid-engine[async-worker]",
-    "nereid-engine[base-app]",
-    "nereid-engine[extras]",
-]
+app = ["nereid-engine[async-worker]", "nereid-engine[base-app]"]
 test = ["coverage", "httpx", "pytest", "pytest-cov", "pytest-xdist"]
 dev = [
     "nereid-engine[app]",
     "nereid-engine[test]",
-    "black==23.3.0",
+    "black>=23.3.0,<24.0",
     "mypy",
     "pre-commit>=3.3.3,<4.0.0",
     "ruff",
