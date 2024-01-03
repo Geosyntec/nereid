@@ -1,7 +1,17 @@
-from typing import Any, Callable
+from typing import Any, Callable, TypedDict, cast
+
+import numpy
 
 from nereid.core.utils import safe_divide
 from nereid.src.watershed.design_functions import design_intensity_inhr
+
+
+class Compartment(TypedDict):
+    volume: float
+    ddt: float
+    performance: float
+    xoffset: float
+    error: str
 
 
 def compute_volume_capture_with_nomograph(
@@ -137,15 +147,15 @@ def compute_volume_based_standalone_facility(
     design_volume = data["design_volume_cuft_cumul"]
 
     if ret_vol_cuft > 0 and trt_vol_cuft > 0:
-        q_ret = ret_vol_cuft / (ret_ddt_hr * 3600)
-        q_trt = trt_vol_cuft / (trt_ddt_hr * 3600)
+        q_ret = safe_divide(ret_vol_cuft, (ret_ddt_hr * 3600))
+        q_trt = safe_divide(trt_vol_cuft, (trt_ddt_hr * 3600))
         q_tot = q_ret + q_trt
 
-        ret_mvol = (trt_vol_cuft * (q_ret / q_tot)) + ret_vol_cuft
+        ret_mvol = (trt_vol_cuft * safe_divide(q_ret, q_tot)) + ret_vol_cuft
         trt_mvol = trt_vol_cuft + ret_vol_cuft - ret_mvol
 
-        ret_mddt = ret_mvol / (q_ret * 3600)
-        trt_mddt = trt_mvol / (q_trt * 3600)
+        ret_mddt = safe_divide(ret_mvol, (q_ret * 3600))
+        trt_mddt = safe_divide(trt_mvol, (q_trt * 3600))
 
     else:
         ret_mvol = ret_vol_cuft
@@ -153,15 +163,33 @@ def compute_volume_based_standalone_facility(
         ret_mddt = ret_ddt_hr
         trt_mddt = trt_ddt_hr
 
+    data["_ret_mvol"] = ret_mvol
+    data["_trt_mvol"] = trt_mvol
+    data["_ret_mddt"] = ret_mddt
+    data["_trt_mddt"] = trt_mddt
+
     retention_vol_frac = safe_divide(ret_mvol, design_volume)
     treatment_vol_frac = safe_divide(trt_mvol, design_volume)
 
     input_compartments = [
-        {"volume": retention_vol_frac, "ddt": ret_mddt},  # retention compartment is [0]
-        {"volume": treatment_vol_frac, "ddt": trt_mddt},  # treatment compartment is [1]
+        cast(
+            Compartment,
+            {
+                "volume": retention_vol_frac,
+                "ddt": float(ret_mddt),
+            },
+        ),  # retention compartment is [0]
+        cast(
+            Compartment,
+            {
+                "volume": treatment_vol_frac,
+                "ddt": float(trt_mddt),
+            },
+        ),  # treatment compartment is [1]
     ]
 
     compartments = solve_volume_based_compartments(input_compartments, volume_nomo)
+    data["compartments"] = compartments
 
     retained_percent = min(100, 100 * compartments[0]["performance"])
     # min retention pct is meant to estimate incidental retention performance of
@@ -175,14 +203,17 @@ def compute_volume_based_standalone_facility(
     data["captured_pct"] = captured_percent
     data["treated_pct"] = treated_percent
     data["_nomograph_solution_status"] = "successful; volume based; standalone"
-
+    for i, c in enumerate(compartments):
+        if c["error"]:  # pragma: no cover
+            data["_nomograph_solution_status"] += f'; c{i}[{c["error"]}]'
+            data["node_errors"].append(f'c{i}[{c["error"]}]')
     return data
 
 
 def solve_volume_based_compartments(
-    compartments: list[dict[str, float]],
+    compartments: list[Compartment],
     volume_nomo: Callable,
-) -> list[dict[str, float]]:
+) -> list[Compartment]:
     """Traverse a series of volume-based nomographs from the bottom compartment (retention)
     to the top compartment (treatment). This function accumulates the x-offset from
     each nomograph traversal so that subsequent traversals account for previous compartments.
@@ -200,6 +231,7 @@ def solve_volume_based_compartments(
 
     prev_performance = 0.0
     for c in compartments:
+        c["error"] = ""
         size = c["volume"]
         ddt = c["ddt"] if size > 1e-6 else 0.0
 
@@ -207,11 +239,11 @@ def solve_volume_based_compartments(
         if prev_performance > 0:
             xoffset = volume_nomo(performance=prev_performance, ddt=ddt)
 
-        performance = float(volume_nomo(size=size + xoffset, ddt=ddt))
-        c["performance"] = performance
+        performance = volume_nomo(size=size + xoffset, ddt=ddt)
+        if numpy.isnan(performance):  # pragma: no cover
+            c["error"] = "size and ddt are out of bounds."
+        c["performance"] = prev_performance = numpy.nanmax([0.0, performance])
         c["xoffset"] = xoffset
-
-        prev_performance = performance
 
     return compartments
 
