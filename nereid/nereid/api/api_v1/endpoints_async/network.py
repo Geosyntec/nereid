@@ -105,10 +105,7 @@ async def get_subgraph_network_as_img(
 
         if render_task.successful():
             svg = render_task.result
-
-            return templates.TemplateResponse(
-                "display_svg.html", {"request": request, "svg": svg}
-            )
+            return templates.TemplateResponse(request, "display_svg.html", {"svg": svg})
         return {"task_id": render_task.task_id, "status": render_task.status}
 
     return response
@@ -185,11 +182,7 @@ async def get_network_solution_sequence_as_img(
 
         if render_task.successful():
             svg = render_task.result
-
-            return templates.TemplateResponse(
-                "display_svg.html", {"request": request, "svg": svg}
-            )
-
+            return templates.TemplateResponse(request, "display_svg.html", {"svg": svg})
         return {"task_id": render_task.task_id, "status": render_task.status}
 
     return response
