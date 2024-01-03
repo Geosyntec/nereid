@@ -28,13 +28,16 @@ jobs:
 
   python-test-install:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
       - name: Install nereid as library
         run: |
@@ -50,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
@@ -58,6 +61,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "pip"
       - name: Install Edge Deps
         run: |
           pip install --upgrade pip
