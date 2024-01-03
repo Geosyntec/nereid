@@ -1,4 +1,4 @@
-from typing import Any, TypeAlias
+from typing import Annotated, Any, TypeAlias
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -9,6 +9,9 @@ from nereid.models.response_models import JSONAPIResponse
 
 class _Base(Node):
     facility_type: str
+
+
+FLOAT_NON_ZERO = Annotated[float, Field(..., gt=0.0)]
 
 
 class SimpleFacilityBase(_Base):
@@ -76,19 +79,20 @@ class FacilityBase(_Base):
     ref_data_key: str = Field(
         ...,
         description=(
-            """This attribute is used to determine which nomographs
-to reference in order to compute the long-term volume
-capture performance of the facility."""
+            "This attribute is used to determine which nomographs "
+            "to reference in order to compute the long-term volume "
+            "capture performance of the facility."
         ),
     )
     design_storm_depth_inches: float = Field(
-        ..., gt=0, description="""85th percentile design storm depth in inches"""
+        ..., gt=0, description="85th percentile design storm depth in inches"
     )
     eliminate_all_dry_weather_flow_override: bool = Field(
         False,
         description=(
-            """Whether to override the dr weather flow capture calculation
-and set the performance to 'fully eliminates all dry weather flow'. (default=False)"""
+            "Whether to override the dry weather flow capture calculation "
+            "and set the performance to 'fully eliminates all dry weather flow'. "
+            "(default=False)"
         ),
     )
 
@@ -138,22 +142,22 @@ class DryWeatherTreatmentLowFlowFacility(LowFlowFacility):
 
 
 class RetentionFacility(FacilityBase):
-    total_volume_cuft: float
-    area_sqft: float
-    inf_rate_inhr: float
+    total_volume_cuft: FLOAT_NON_ZERO
+    area_sqft: FLOAT_NON_ZERO
+    inf_rate_inhr: FLOAT_NON_ZERO
     _constructor: str = "retention_facility_constructor"
 
 
 class RetentionFacilityHSG(FacilityBase):
-    total_volume_cuft: float
-    area_sqft: float
+    total_volume_cuft: FLOAT_NON_ZERO
+    area_sqft: FLOAT_NON_ZERO
     hsg: str
     _constructor: str = "retention_facility_constructor"
 
 
 class DryWellFacility(FacilityBase):
-    total_volume_cuft: float
-    treatment_rate_cfs: float
+    total_volume_cuft: FLOAT_NON_ZERO
+    treatment_rate_cfs: FLOAT_NON_ZERO
     _constructor: str = "dry_well_facility_constructor"
 
 
@@ -162,27 +166,27 @@ class DryWellFacilityFlowOrVolume(FlowFacility, DryWellFacility):
 
 
 class BioInfFacility(FacilityBase):
-    total_volume_cuft: float
-    retention_volume_cuft: float
-    area_sqft: float
-    media_filtration_rate_inhr: float
+    total_volume_cuft: FLOAT_NON_ZERO
+    retention_volume_cuft: FLOAT_NON_ZERO
+    area_sqft: FLOAT_NON_ZERO
+    media_filtration_rate_inhr: FLOAT_NON_ZERO
     hsg: str
     _constructor: str = "bioinfiltration_facility_constructor"
 
 
 class RetAndTmntFacility(FacilityBase):
-    total_volume_cuft: float
-    retention_volume_cuft: float
-    area_sqft: float
-    treatment_drawdown_time_hr: float
+    total_volume_cuft: FLOAT_NON_ZERO
+    retention_volume_cuft: FLOAT_NON_ZERO
+    area_sqft: FLOAT_NON_ZERO
+    treatment_drawdown_time_hr: FLOAT_NON_ZERO
     hsg: str
     _constructor: str = "retention_and_treatment_facility_constructor"
 
 
 class TmntFacility(FacilityBase):
-    total_volume_cuft: float
-    area_sqft: float
-    media_filtration_rate_inhr: float
+    total_volume_cuft: FLOAT_NON_ZERO
+    area_sqft: FLOAT_NON_ZERO
+    media_filtration_rate_inhr: FLOAT_NON_ZERO
     _constructor: str = "treatment_facility_constructor"
 
 
@@ -202,15 +206,15 @@ class TmntFacilityWithRetentionOverride(TmntFacility):
 
 
 class FlowAndRetFacility(FlowFacility, FacilityBase):
-    area_sqft: float
-    depth_ft: float
+    area_sqft: FLOAT_NON_ZERO
+    depth_ft: FLOAT_NON_ZERO
     hsg: str
     _constructor: str = "flow_and_retention_facility_constructor"
 
 
 class CisternFacility(FacilityBase):
-    total_volume_cuft: float
-    winter_demand_cfs: float = 0.0
+    total_volume_cuft: FLOAT_NON_ZERO
+    winter_demand_cfs: FLOAT_NON_ZERO
     summer_demand_cfs: float = 0.0
     _constructor: str = "cistern_facility_constructor"
 
@@ -219,6 +223,15 @@ class PermPoolFacility(FacilityBase):
     pool_volume_cuft: float = 0.0
     treatment_volume_cuft: float = 0.0
     _constructor: str = "perm_pool_facility_constructor"
+
+    @model_validator(mode="before")
+    @classmethod
+    def non_zero_volume(cls, data):
+        if isinstance(data, dict):  # pragma: no branch
+            pool = data.get("pool_volume_cuft") or 0.0
+            tmnt = data.get("treatment_volume_cuft") or 0.0
+            assert (pool + tmnt) > 0.0, "facility must have pool or treatment volume."
+        return data
 
 
 STRUCTURAL_FACILITY_TYPE: TypeAlias = (  # Used only for the openapi spec, not for validation
