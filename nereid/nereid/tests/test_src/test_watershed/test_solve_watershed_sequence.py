@@ -6,7 +6,6 @@ import pytest
 
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.src.tasks import land_surface_loading, solution_sequence, solve_watershed
-from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import check_results_dataframes
 
 
@@ -33,12 +32,9 @@ def test_watershed_solve_sequence(contexts, watershed_requests, n_nodes, pct_tmn
         # this subgraph is empty, has no data.
         subg = nx.DiGraph(g.subgraph(branch_nodes).edges)
         subgraph = {"graph": nxGraph_to_dict(subg)}
-        reqd_min_attrs = attrs_to_resubmit(presults)
         previous_results = {
             "previous_results": [
-                {k: dct[k] for k in dct.keys() if k in reqd_min_attrs + ["node_id"]}
-                for dct in presults
-                if dct["node_id"] in subg.nodes()
+                dct for dct in presults if dct["node_id"] in subg.nodes()
             ]
         }
 

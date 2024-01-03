@@ -6,7 +6,6 @@ import pytest
 from nereid.src.network.algorithms import get_subset
 from nereid.src.network.utils import graph_factory, nxGraph_to_dict
 from nereid.src.watershed.tasks import solve_watershed
-from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import check_subgraph_response_equal
 
 
@@ -131,13 +130,7 @@ def test_stable_watershed_stable_subgraph_solutions(
     )
     results = response_dict["results"]
 
-    reqd_min_attrs = attrs_to_resubmit(results)
-    previous_results = {
-        "previous_results": [
-            {k: dct[k] for k in dct.keys() if k in reqd_min_attrs + ["node_id"]}
-            for dct in results
-        ]
-    }
+    previous_results = {"previous_results": results}
 
     g = nx.DiGraph(graph_factory(watershed_request["graph"]))
 
