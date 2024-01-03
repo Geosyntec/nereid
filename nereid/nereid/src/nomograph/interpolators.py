@@ -171,7 +171,8 @@ class NomographBase:
         self.y_data = numpy.array(y)
         self._interp_kwargs = interp_kwargs
 
-        self._nomo = None
+        self._nomo: Callable | None = None
+        self._ct2di: Callable | None = None
 
     @property
     def interp_kwargs(self) -> dict[str, Any]:  # pragma: no cover
@@ -180,13 +181,25 @@ class NomographBase:
         return self._interp_kwargs
 
     @property
-    def nomo(self) -> CT2DI:
-        if self._nomo is None:
-            self._nomo = CT2DI(
+    def ct2di(self):
+        if self._ct2di is None:
+            self._ct2di = CT2DI(
                 points=numpy.column_stack((self.x_data, self.t_data)),
                 values=self.y_data,
                 **self.interp_kwargs,
             )
+        return self._ct2di
+
+    @property
+    def nomo(self) -> Callable:
+        if self._nomo is None:
+
+            def clipped_nomo(*args, **kwargs):
+                res = self.ct2di(*args, **kwargs)
+                return numpy.clip(res, a_min=0, a_max=None)
+
+            self._nomo = clipped_nomo
+
         return self._nomo
 
     def get_x(
