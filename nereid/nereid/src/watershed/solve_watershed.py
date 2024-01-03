@@ -221,6 +221,7 @@ def solve_node(
 
     next_ds = sorted(g.successors(node))
     data["_ds_node_id"] = ",".join(map(str, next_ds))
+    data["_us_node_ids"] = ",".join(map(str, predecessors))
 
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
     accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
