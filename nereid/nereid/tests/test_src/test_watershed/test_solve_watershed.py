@@ -10,7 +10,6 @@ from nereid.src.watershed.solve_watershed import (
     initialize_graph,
     solve_watershed_loading,
 )
-from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.tests.utils import (
     check_graph_data_equal,
     generate_random_watershed_solve_request_from_graph,
@@ -64,11 +63,7 @@ def test_solve_watershed_stable_with_subsets(
 
     # from the previous solution, we only need the keys which contain the accumulated keys.
     # keys = ["_direct", "_upstream", "_cumul", "_inflow", "_discharged"]
-    reqd_min_attrs = attrs_to_resubmit([data for n, data in g.nodes(data=True)])
-    prev_solve_data = {
-        n: {k: dct[k] for k in dct.keys() if k in reqd_min_attrs}
-        for n, dct in g.nodes(data=True)
-    }
+    prev_solve_data = dict(g.nodes(data=True))
 
     # check single dirty nodes
     for dirty_node in g.nodes():

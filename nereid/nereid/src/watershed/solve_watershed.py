@@ -26,6 +26,7 @@ from nereid.src.watershed.treatment_facility_capture import (
     compute_volume_capture_with_nomograph,
 )
 from nereid.src.watershed.treatment_site_capture import solve_treatment_site
+from nereid.src.watershed.utils import attrs_to_resubmit
 from nereid.src.watershed.wet_weather_loading import (
     accumulate_wet_weather_loading,
     check_node_results_close,
@@ -63,9 +64,17 @@ def initialize_graph(
     treatment_sites = initialize_treatment_sites(watershed, context=context)
     errors.extend(treatment_sites["errors"])
 
+    previous_results_submitted = watershed.get("previous_results") or []
+    reqd_min_attrs = attrs_to_resubmit(previous_results_submitted)
+
+    previous_results = [
+        {k: dct[k] for k in dct.keys() if k in reqd_min_attrs}
+        for dct in previous_results_submitted
+    ]
+
     data: dict[str, Any] = {}
     for dictlist in [
-        watershed.get("previous_results") or [],
+        previous_results,
         land_surface.get("summary") or [],
         treatment_facilities.get("treatment_facilities") or [],
         treatment_sites.get("treatment_sites") or [],
@@ -203,16 +212,15 @@ def solve_node(
         data["node_warnings"].append(
             "WARNING: This node is missing from all input tables."
         )
-
-    next_ds = list(g.successors(node))
-    data["_ds_node_id"] = ",".join(map(str, next_ds))
-
-    predecessors = list(g.predecessors(node))
+    predecessors = sorted(g.predecessors(node))
 
     # leaf nodes are read only
     if not predecessors:
         data["_is_leaf"] = True
         return
+
+    next_ds = sorted(g.successors(node))
+    data["_ds_node_id"] = ",".join(map(str, next_ds))
 
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
     accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
