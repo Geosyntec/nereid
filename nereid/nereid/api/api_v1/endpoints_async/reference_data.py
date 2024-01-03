@@ -92,9 +92,7 @@ async def get_nomograph(
             f.seek(0)
             img = f.read().decode()
 
-        return templates.TemplateResponse(
-            "display_svg.html", {"request": request, "svg": img}
-        )
+        return templates.TemplateResponse(request, "display_svg.html", {"svg": img})
 
     else:
         detail = (
