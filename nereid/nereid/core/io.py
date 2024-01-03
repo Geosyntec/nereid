@@ -46,6 +46,16 @@ def load_json(filepath: PathType) -> dict[str, Any]:
     return contents
 
 
+@lru_cache
+def _load_table(filepath: PathType) -> pandas.DataFrame:
+    ref_table = pandas.read_json(filepath, orient="table", typ="frame")
+    return ref_table
+
+
+def load_table(filepath: PathType) -> pandas.DataFrame:
+    return _load_table(Path(filepath).resolve()).copy()
+
+
 def load_ref_data(
     tablename: str, context: dict
 ) -> tuple[pandas.DataFrame | None, list[str]]:
@@ -65,7 +75,7 @@ def load_ref_data(
         ]
 
     filepath = data_path / table_context["file"]
-    ref_table = pandas.read_json(filepath, orient="table", typ="frame")
+    ref_table = load_table(filepath)
 
     df, msg = parse_configuration_logic(
         df=ref_table,
