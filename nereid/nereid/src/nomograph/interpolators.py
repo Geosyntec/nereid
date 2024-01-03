@@ -11,6 +11,7 @@ import numpy
 import pandas
 from numpy.typing import ArrayLike
 from scipy.interpolate import CloughTocher2DInterpolator as CT2DI
+from scipy.interpolate import griddata
 
 try:
     import matplotlib.pyplot as plt
@@ -304,9 +305,6 @@ class NomographBase:
         if ax is None:  # pragma: no branch
             _, ax = cast(tuple[Any, Axes], plt.subplots())
 
-        xmin, xmax = numpy.nanmin(self.x_data), numpy.nanmax(self.x_data)
-        xline = numpy.linspace(xmin, xmax, 100)
-
         fits = self(x=self.x_data, t=self.t_data)
 
         ax.scatter(
@@ -336,10 +334,25 @@ class NomographBase:
         if ax is None:  # pragma: no branch
             _, ax = cast(tuple[Any, Axes], plt.subplots())
 
-        ax.tricontourf(self.x_data, self.t_data, self.y_data, levels=255)
+        ymax = numpy.nanmax(self.t_data)
+        grid_x, grid_y = numpy.mgrid[
+            0 : int(numpy.nanmax(self.x_data)) : 700j, 0 : int(ymax) : 700j  # type: ignore[misc]
+        ]
+        grid_z = griddata(
+            numpy.column_stack((self.x_data, self.t_data)),
+            self.y_data,
+            (grid_x, grid_y),
+            method="cubic",
+        )
+        ax.imshow(
+            grid_z.T,
+            extent=(0, numpy.nanmax(self.x_data), 0, ymax),
+            origin="lower",
+            aspect="auto",
+        )
 
-        t = numpy.linspace(1, numpy.max(self.t_data), 100)
-        for i, perf in enumerate([0.2, 0.4, 0.6, 0.8, 0.9, 0.95, 0.97]):
+        t = numpy.linspace(1, ymax, 100)
+        for i, perf in enumerate([0.2, 0.4, 0.6, 0.8, 0.9, 0.95, 0.97, 0.99]):
             x = [self(t=_t, y=perf) for _t in t]
             ax.plot(x, t, c=f"C{i}", label=f"{perf:.0%}")
 
