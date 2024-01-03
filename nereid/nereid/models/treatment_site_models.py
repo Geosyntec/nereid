@@ -12,7 +12,7 @@ class TreatmentSite(SimpleFacilityBase):
     eliminate_all_dry_weather_flow_override: bool = False
 
 
-TMNT_SITES_EXAMPLE = {
+TMNT_SITES_EXAMPLE: dict = {
     "treatment_sites": [
         {
             "node_id": "WQMP-1a-tmnt",
@@ -49,7 +49,7 @@ TMNT_SITES_EXAMPLE = {
 class TreatmentSites(BaseModel):
     treatment_sites: list[TreatmentSite]
 
-    model_config = {"json_schema_extra": {"examples": [TMNT_SITES_EXAMPLE]}}
+    model_config = {"json_schema_extra": {"example": TMNT_SITES_EXAMPLE}}
 
 
 ## Treatment Site Response Models

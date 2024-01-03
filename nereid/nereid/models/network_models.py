@@ -22,7 +22,7 @@ class Edge(BaseModel):
     metadata: Metadata
 
 
-GraphExamples = {
+GraphExamples: dict = {
     "simple": {
         "summary": "A normal simple graph",
         "description": "This should work correctly.",
