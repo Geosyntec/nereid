@@ -53,7 +53,7 @@ def compute_simple_facility_volume_capture(
 
 
 def compute_simple_facility_wet_weather_volume_capture(
-    data: dict[str, Any]
+    data: dict[str, Any],
 ) -> dict[str, Any]:
     compute_simple_facility_volume_capture(data, "runoff_volume_cuft")
     for attr in ["captured", "treated", "retained", "bypassed"]:
