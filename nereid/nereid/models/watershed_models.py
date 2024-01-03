@@ -9,7 +9,7 @@ from nereid.models.results_models import PreviousResult, Result
 from nereid.models.treatment_facility_models import STRUCTURAL_FACILITY_TYPE
 from nereid.models.treatment_site_models import TreatmentSite
 
-EXAMPLE_WATERSHED = {
+EXAMPLE_WATERSHED: dict = {
     "graph": {
         "directed": True,
         "multigraph": False,
@@ -402,7 +402,7 @@ class Watershed(BaseModel):
     treatment_sites: list[TreatmentSite] | None = None
     previous_results: list[PreviousResult] | None = None
 
-    model_config = {"json_schema_extra": {"examples": [EXAMPLE_WATERSHED]}}
+    model_config = {"json_schema_extra": {"example": EXAMPLE_WATERSHED}}
 
 
 ## Response Models

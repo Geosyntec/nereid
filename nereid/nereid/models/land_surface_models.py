@@ -16,7 +16,7 @@ class LandSurface(Node):
     imp_area_acres: float = Field(..., ge=0.0)
 
 
-LS_EXAMPLE = {
+LS_EXAMPLE: dict = {
     "land_surfaces": [
         {
             "node_id": "1",
@@ -55,7 +55,7 @@ LS_EXAMPLE = {
 class LandSurfaces(BaseModel):
     land_surfaces: list[LandSurface]
 
-    model_config = {"json_schema_extra": {"examples": [LS_EXAMPLE]}}
+    model_config = {"json_schema_extra": {"example": LS_EXAMPLE}}
 
 
 ## Land Surface Response Models

@@ -279,7 +279,7 @@ TREATMENT_FACILITY_MODELS = [
     NTFacility,
 ]
 
-EXAMPLE_TREATMENT_FACILITIES = {
+EXAMPLE_TREATMENT_FACILITIES: dict = {
     "treatment_facilities": [
         {
             "node_id": "1",
@@ -475,7 +475,7 @@ EXAMPLE_TREATMENT_FACILITIES = {
 class TreatmentFacilities(BaseModel):
     treatment_facilities: list[dict[str, Any] | STRUCTURAL_FACILITY_TYPE]
     errors: list[str] | None = None
-    model_config = {"json_schema_extra": {"examples": [EXAMPLE_TREATMENT_FACILITIES]}}
+    model_config = {"json_schema_extra": {"example": EXAMPLE_TREATMENT_FACILITIES}}
 
 
 class TreatmentFacilitiesResponse(JSONAPIResponse):

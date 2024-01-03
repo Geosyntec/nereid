@@ -1,4 +1,4 @@
-black==23.3.0
+black>=23.3,<24.0
 mypy
 pre-commit
 ruff
