@@ -20,7 +20,7 @@ def build_treatment_facility_nodes(df: pandas.DataFrame) -> list[dict[str, Any]]
 
 
 def construct_treatment_facility_node_context(
-    node_context: dict[str, Any]
+    node_context: dict[str, Any],
 ) -> dict[str, Any]:
     n_cxt: dict[str, Any] = deepcopy(node_context)
 
