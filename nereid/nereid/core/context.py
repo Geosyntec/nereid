@@ -12,7 +12,10 @@ def validate_request_context(context: dict[str, Any]) -> tuple[bool, str]:
     region = context["region"]
 
     if not dp:
-        message = f"No configuration exists for the requested state: '{state}' and/or region: '{region}'."
+        message = (
+            "No configuration exists for the requested state: "
+            f"'{state}' and/or region: '{region}'."
+        )
         return False, message
 
     data_path = Path(dp)
@@ -35,7 +38,7 @@ def validate_request_context(context: dict[str, Any]) -> tuple[bool, str]:
                     )
                     return False, message
 
-        except Exception as e:
+        except Exception as e:  # noqa: PERF203
             message = (
                 f"Error in section '{tablename}' with entries: '{attrs}' "
                 f"Exception: {e}"

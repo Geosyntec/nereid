@@ -81,11 +81,8 @@ def vol_nomo():
 
 
 def construct_vol_nomos():
-    ls = []
     nomo = construct_vol_nomo()
-    for ddt in set(nomo.nomo.t_data):
-        ls.append((ddt, nomo))
-
+    ls = [(ddt, nomo) for ddt in set(nomo.nomo.t_data)]
     return ls
 
 
@@ -113,11 +110,8 @@ def flow_nomo():
 
 
 def construct_flow_nomos():
-    ls = []
     nomo = construct_flow_nomo()
-    for ddt in set(nomo.nomo.t_data):
-        ls.append((ddt, nomo))
-
+    ls = [(ddt, nomo) for ddt in set(nomo.nomo.t_data)]
     return ls
 
 

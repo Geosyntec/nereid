@@ -48,7 +48,7 @@ def test_get_default_context_tmnt_facility_params(
         "facility_type"
     ]
 
-    for _name, post_response in default_context_treatment_facility_responses.items():
+    for post_response in default_context_treatment_facility_responses.values():
         prjson = post_response.json()
         grjson = prjson
         result_route = prjson.get("result_route")
