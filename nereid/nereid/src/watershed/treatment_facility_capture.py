@@ -105,8 +105,8 @@ def compute_volume_capture_with_nomograph(
     # writeup step 3-a. This volume reduction is calculated, but is
     # not used until the next-downstream facility.
     # NOTE: This doesn't make sense yet if the retention volume > design vol direct.
-    # suggest using the design vol cumul? consider a flow-based facility draining to a volume based one,
-    # there is no direct runoff in this case.
+    # suggest using the design vol cumul? consider a flow-based facility draining to a
+    # volume based one, there is no direct runoff in this case.
     data["vol_reduction_cuft"] = max(
         0,
         (data["retained_pct"] / 100)
