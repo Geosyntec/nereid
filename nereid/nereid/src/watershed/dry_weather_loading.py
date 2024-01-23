@@ -87,6 +87,7 @@ def accumulate_dry_weather_volume_by_season(
         )
 
         # initialize with assumption of no volume reduction
+        data[f"{dw_col}_bypassed"] = data[f"{dw_col}_inflow"]
         data[f"{dw_col}_discharged"] = data[f"{dw_col}_inflow"]
         data[f"{dw_col}_total_discharged"] = data[f"{dw_col}_inflow"] + data[dw_col]
         data[f"{dw_col}_total_retained"] = data[f"{dw_col}_retained_upstream"]
