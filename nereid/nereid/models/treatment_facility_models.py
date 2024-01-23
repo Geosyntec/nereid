@@ -12,6 +12,7 @@ class _Base(Node):
 
 
 FLOAT_NON_ZERO = Annotated[float, Field(..., gt=0.0)]
+FLOAT_GE_ZERO = Annotated[float, Field(0.0, ge=0.0)]
 
 
 class SimpleFacilityBase(_Base):
@@ -161,13 +162,13 @@ class DryWellFacility(FacilityBase):
     _constructor: str = "dry_well_facility_constructor"
 
 
-class DryWellFacilityFlowOrVolume(FlowFacility, DryWellFacility):
+class DryWellFacilityFlowOrVolume(DryWellFacility, FlowFacility):
     _constructor: str = "dry_well_facility_flow_or_volume_constructor"
 
 
 class BioInfFacility(FacilityBase):
     total_volume_cuft: FLOAT_NON_ZERO
-    retention_volume_cuft: FLOAT_NON_ZERO
+    retention_volume_cuft: FLOAT_GE_ZERO
     area_sqft: FLOAT_NON_ZERO
     media_filtration_rate_inhr: FLOAT_NON_ZERO
     hsg: str
@@ -176,7 +177,7 @@ class BioInfFacility(FacilityBase):
 
 class RetAndTmntFacility(FacilityBase):
     total_volume_cuft: FLOAT_NON_ZERO
-    retention_volume_cuft: FLOAT_NON_ZERO
+    retention_volume_cuft: FLOAT_GE_ZERO
     area_sqft: FLOAT_NON_ZERO
     treatment_drawdown_time_hr: FLOAT_NON_ZERO
     hsg: str
