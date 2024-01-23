@@ -1,6 +1,6 @@
-from functools import lru_cache, wraps
+from functools import lru_cache
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import pint
 
@@ -36,24 +36,12 @@ def conversion_factor_from_to(from_unit: str, to_unit: str) -> float:
 def update_reg_from_context(context: dict[str, Any]) -> None:
     for reg in context.get("pint_unit_registry", []):
         ureg.define(reg)
-
-
-def update_unit_registry(fxn: Callable) -> Callable:
-    @wraps(fxn)
-    def ureg_wrapper(*args, **kwargs):
-        context = kwargs.get("context")
-        if not context:  # pragma: no cover
-            raise ValueError("Context is required as a named keyword argument")
-        update_reg_from_context(context=context)
-        for cached_fxn in [
-            conversion_factor_load_to_conc,
-            conversion_factor_conc_to_load,
-            conversion_factor_from_to,
-        ]:
-            cached_fxn.cache_clear()
-        return fxn(*args, **kwargs)
-
-    return ureg_wrapper
+    for cached_fxn in [
+        conversion_factor_load_to_conc,
+        conversion_factor_conc_to_load,
+        conversion_factor_from_to,
+    ]:
+        cached_fxn.cache_clear()
 
 
 class Constants:
