@@ -15,11 +15,11 @@ def test_land_surface_loading(
     result = land_surface_loading(land_surfaces, details, context=get_request_context())
 
     assert result.get("summary") is not None
-    assert len(result.get("summary")) <= len(land_surfaces["land_surfaces"])
+    assert len(result.get("summary", [])) <= len(land_surfaces["land_surfaces"])
 
     if details:
         assert result.get("details") is not None
-        assert len(result.get("details")) == len(land_surfaces["land_surfaces"])
+        assert len(result.get("details", [])) == len(land_surfaces["land_surfaces"])
 
 
 @pytest.mark.parametrize("details", [True, False])
@@ -36,8 +36,8 @@ def test_land_surface_loading_with_err(
 
     assert "warning" in result.get("errors", ["nope"])[0].lower()
     assert result.get("summary") is not None
-    assert len(result.get("summary")) <= len(land_surfaces["land_surfaces"])
+    assert len(result.get("summary", [])) <= len(land_surfaces["land_surfaces"])
 
     if details:
         assert result.get("details") is not None
-        assert len(result.get("details")) == len(land_surfaces["land_surfaces"])
+        assert len(result.get("details", [])) == len(land_surfaces["land_surfaces"])

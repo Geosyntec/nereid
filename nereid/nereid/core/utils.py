@@ -29,13 +29,13 @@ def validate_with_discriminator(
             f"Using `fallback` value: {fallback.model_json_schema()['title']}"
         )
 
-        unvalidated_data["errors"] = str(e) + "  \n"
+        unvalidated_data["errors"] = str(e).strip()
         model = fallback
     try:
         valid = model(**unvalidated_data)
 
     except ValidationError as e:
-        unvalidated_data["errors"] = "ERROR: " + str(e) + "  \n"
+        unvalidated_data["errors"] = "ERROR: " + str(e).strip()
         valid = fallback.model_construct(**unvalidated_data)
 
     return valid
