@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from nereid.factory import create_app
 from nereid.src.network.utils import clean_graph_dict
-from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_payload
+from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_test_data
 
 
 @pytest.fixture(scope="module")
@@ -31,11 +31,11 @@ def named_validation_responses(client):
     init_post_requests = [
         (
             "valid_graph_response_fast",
-            json.loads(get_payload("network_validate_is_valid.json")),
+            json.loads(get_test_data("network_validate_is_valid.json")),
         ),
         (
             "invalid_graph_response_fast",
-            json.loads(get_payload("network_validate_is_invalid_cycle.json")),
+            json.loads(get_test_data("network_validate_is_invalid_cycle.json")),
         ),
         ("valid_graph_response_slow", slow_valid),
         ("invalid_graph_response_slow", slow_invalid),
@@ -60,7 +60,7 @@ def named_subgraph_responses(client):
         # name, file or object, is-fast
         (
             "subgraph_response_fast",
-            json.loads(get_payload("network_subgraph_request.json")),
+            json.loads(get_test_data("network_subgraph_request.json")),
             # True
         ),
         (

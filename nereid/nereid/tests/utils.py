@@ -15,7 +15,7 @@ from nereid.src.network.utils import clean_graph_dict
 TEST_PATH = Path(nereid.tests.test_data.__file__).parent.resolve()
 
 
-def get_payload(file):
+def get_test_data(file):
     path = TEST_PATH / file
     return path.read_text()
 
