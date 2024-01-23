@@ -3,7 +3,7 @@ from typing import Any
 import pandas
 
 from nereid.core.io import parse_configuration_logic
-from nereid.core.units import update_unit_registry
+from nereid.core.units import update_reg_from_context
 from nereid.src.land_surface.loading import (
     detailed_loading_results,
     summary_loading_results,
@@ -11,7 +11,6 @@ from nereid.src.land_surface.loading import (
 from nereid.src.wq_parameters import init_wq_parameters
 
 
-@update_unit_registry
 def land_surface_loading(
     land_surfaces: dict[str, Any], details: bool, context: dict[str, Any]
 ) -> dict[str, list]:
@@ -21,6 +20,8 @@ def land_surface_loading(
     includes a 'details' key with the sliver loading. the 'summary' values
     aggregate the load to each node_id, and are always returned.
     """
+
+    update_reg_from_context(context=context)
 
     response: dict[str, Any] = {"errors": []}
 

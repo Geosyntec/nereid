@@ -1,7 +1,7 @@
 from typing import Any
 
 from nereid.core.log import logging
-from nereid.core.units import update_unit_registry
+from nereid.core.units import update_reg_from_context
 from nereid.src.watershed.solve_watershed import (
     initialize_graph,
     solve_watershed_loading,
@@ -11,7 +11,6 @@ from nereid.src.watershed.utils import attrs_to_resubmit
 logger = logging.getLogger(__name__)
 
 
-@update_unit_registry
 def solve_watershed(
     watershed: dict[str, Any],
     treatment_pre_validated: bool,
@@ -26,10 +25,12 @@ def solve_watershed(
         watersheds have 5 data entities:
             1. graph : defines the connectivity of each component part of the watershed. These
                 components can be any of: land surface, treatment facility, treatment site,
-                other/nothing/null. See `src.network.
+                other/nothing/null. See src.network.
             2. land_surfaces :  which load the graph with
 
     """
+
+    update_reg_from_context(context)
 
     response = {}
 
