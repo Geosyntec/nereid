@@ -54,11 +54,11 @@ def get_flow_nomograph(context: dict[str, Any], nomo_path: str) -> FlowNomograph
     return nomo
 
 
-def load_nomograph_mapping(context: dict[str, Any]) -> dict[str, Callable] | None:
+def load_nomograph_mapping(context: dict[str, Any]) -> dict[str, Callable]:
     met_table, msg = load_ref_data("met_table", context)
-
+    nomo_map = {}
     if met_table is None:
-        return None
+        return nomo_map
 
     data_path = Path(context["data_path"])
 
@@ -66,7 +66,6 @@ def load_nomograph_mapping(context: dict[str, Any]) -> dict[str, Callable] | Non
 
     nomos = met_context["nomographs"]
 
-    nomo_map = {}
     for nomo in nomos:
         file_key = nomo["file_key"]
         obj_name = nomo["constructor"]

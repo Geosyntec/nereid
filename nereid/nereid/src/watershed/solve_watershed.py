@@ -113,11 +113,6 @@ def solve_watershed_loading(
     nereid_version = context.get("version", "error: no version info")
     cfg_version = context.get("config_date", "error: no config version info")
 
-    solve_dw = all(
-        _ is not None
-        for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
-    )
-
     for node in nx.topological_sort(g):
         g.nodes[node]["_version"] = nereid_version
         g.nodes[node]["_config_version"] = cfg_version
@@ -130,7 +125,6 @@ def solve_watershed_loading(
             nomograph_map=nomograph_map,
             dry_weather_parameters=dry_weather_parameters,
             dry_weather_facility_performance_map=dry_weather_facility_performance_map,
-            solve_dw=solve_dw,
         )
 
     return
@@ -142,10 +136,9 @@ def solve_node(
     *,
     wet_weather_parameters: list[dict[str, Any]],
     wet_weather_facility_performance_map: dict[tuple[str, str], Callable],
-    nomograph_map: dict[str, Callable] | None = None,
-    dry_weather_parameters: list[dict[str, Any]] | None = None,
-    dry_weather_facility_performance_map: dict[tuple[str, str], Callable] | None = None,
-    solve_dw: bool = False,
+    nomograph_map: dict[str, Callable],
+    dry_weather_parameters: list[dict[str, Any]],
+    dry_weather_facility_performance_map: dict[tuple[str, str], Callable],
 ) -> None:
     """Solve a single node of the graph data structure in place.
 
@@ -226,7 +219,7 @@ def solve_node(
     accumulate_wet_weather_loading(g, data, predecessors, wet_weather_parameters)
     accumulate_dry_weather_loading(g, data, predecessors, dry_weather_parameters)
 
-    node_type = data.get("node_type", None) or "virtual"
+    node_type = str(data.get("node_type", None) or "virtual")
 
     if "site_based" in node_type:
         # This sequence handles volume capture, load reductions, and also delivers
@@ -277,7 +270,9 @@ def solve_node(
             # This catches diversions that don't do wet weather tmnt.
             compute_wet_weather_volume_discharge(data)
 
-        if solve_dw:
+        if all(
+            map(len, [dry_weather_parameters, dry_weather_facility_performance_map])
+        ):
             if "simple" in node_type:
                 compute_simple_facility_dry_weather_volume_capture(data)
 

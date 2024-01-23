@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, cast
 
 import numpy
 import pandas
@@ -71,9 +71,12 @@ def effluent_conc(
 
 def build_effluent_function_map(
     df: pandas.DataFrame, facility_column: str, pollutant_column: str
-) -> Mapping[Any, Callable]:
+) -> dict[tuple[str, str], Callable]:
     # this is close to what we want, but it has a lot of nans.
-    _facility_dict = df.set_index([facility_column, pollutant_column]).to_dict("index")
+    _facility_dict = cast(
+        dict[tuple[str, str], dict[str, Any]],
+        df.set_index([facility_column, pollutant_column]).to_dict("index"),
+    )
 
     # this gives a lookup table in the form {(facility, pollutant) : **args}
     # with no nans.

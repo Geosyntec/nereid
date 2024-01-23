@@ -12,9 +12,9 @@ def solve_treatment_site(
     data: dict[str, Any],
     *,
     wet_weather_parameters: list[dict[str, Any]],
-    dry_weather_parameters: list[dict[str, Any]] | None = None,
+    dry_weather_parameters: list[dict[str, Any]],
     wet_weather_facility_performance_map: dict[tuple[str, str], Callable],
-    dry_weather_facility_performance_map: dict[tuple[str, str], Callable] | None = None,
+    dry_weather_facility_performance_map: dict[tuple[str, str], Callable],
 ) -> dict[str, Any]:
     """This function computes the volume reduction/capture performance and the
     load reduction for each individual facility of a treatment site. Treatment sites
@@ -53,10 +53,7 @@ def solve_treatment_site(
     compute_site_wet_weather_load_reduction(
         data, wet_weather_parameters, wet_weather_facility_performance_map
     )
-    if all(
-        _ is not None
-        for _ in [dry_weather_parameters, dry_weather_facility_performance_map]
-    ):
+    if all(map(len, [dry_weather_parameters, dry_weather_facility_performance_map])):
         compute_site_dry_weather_load_reduction(
             data,
             dry_weather_parameters,  # type: ignore
