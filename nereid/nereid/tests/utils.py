@@ -206,6 +206,9 @@ def generate_random_treatment_facility_request_node(
         del dct["retained_pct"]
     dct["design_storm_depth_inches"] = numpy.random.uniform(0.75, 1.5)
 
+    if "total_volume_cuft" in dct:
+        dct["total_volume_cuft"] = 50000 * numpy.random.random()
+
     if "tributary_area_tc_min" in dct:
         dct["tributary_area_tc_min"] = int(numpy.random.choice(range(5, 60, 5)))
 
@@ -215,12 +218,15 @@ def generate_random_treatment_facility_request_node(
     if "inf_rate_inhr" in dct:
         dct["inf_rate_inhr"] = 6 * numpy.random.random()
 
+    if "media_filtration_rate_inhr" in dct:
+        dct["media_filtration_rate_inhr"] = 12 * numpy.random.random()
+
     if "hsg" in dct:
         dct["hsg"] = numpy.random.choice(["a", "b", "c", "d"])
 
     if "area_sqft" in dct:
         if "total_volume_cuft" in dct:
-            dct["area_sqft"] = dct["total_volume_cuft"] * numpy.random.uniform(4, 8)
+            dct["area_sqft"] = dct["total_volume_cuft"] * numpy.random.uniform(1, 4)
         else:
             dct["area_sqft"] = numpy.random.uniform(500, 2500)
 

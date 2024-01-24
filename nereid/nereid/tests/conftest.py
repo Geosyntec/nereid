@@ -460,7 +460,7 @@ def valid_treatment_site_requests(contexts):
     return reqs
 
 
-SIZE = [50, 100]
+SIZE = [50, 100, 500]
 PCT_TMNT = [0, 0.3, 0.6]
 
 
