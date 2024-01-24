@@ -61,16 +61,13 @@ init-test:
 	docker compose exec nereid-tests bash /prestart.sh
 
 test: clean restart init-test ## run tests quickly with the default Python
-	docker compose exec nereid-tests pytest -n 4
+	docker compose exec nereid-tests pytest nereid/tests/ -n 4
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --async
 
-coverage: clean restart init-test ## check code coverage quickly with the default Python
-	docker compose exec nereid-tests coverage run -m pytest
-	docker compose exec nereid-tests coverage report -m
-# 	coverage html
-# 	$(BROWSER) htmlcov/index.html
+test-integration:
+	docker compose exec nereid-tests pytest -k 'integration' -n 4 --dist loadscope
 
-coverage-all: clean restart init-test ## check complete code coverage
+coverage: clean restart init-test ## check code coverage quickly with the default Python
 	docker compose exec nereid-tests pytest nereid/tests -n 4 --cov=nereid/
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --cov=nereid/ --cov-append --async
 	docker compose exec nereid-tests coverage report -m
