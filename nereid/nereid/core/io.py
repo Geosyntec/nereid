@@ -1,5 +1,5 @@
 from copy import deepcopy
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import Any, TypeAlias
 
@@ -11,7 +11,7 @@ import yaml
 PathType: TypeAlias = Path | str
 
 
-@lru_cache
+@cache
 def _load_file(filepath: PathType) -> bytes:
     """returns bytes for redis cache compatibility"""
     fp = Path(filepath)
@@ -46,7 +46,7 @@ def load_json(filepath: PathType) -> dict[str, Any]:
     return contents
 
 
-@lru_cache
+@cache
 def _load_table(filepath: PathType) -> pandas.DataFrame:
     ref_table = pandas.read_json(filepath, orient="table", typ="frame")
     return ref_table
