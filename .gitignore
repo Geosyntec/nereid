@@ -66,6 +66,9 @@ dump.rdb
 # docker stuff:
 docker-stack*
 
+# node stuff:
+node_modules
+
 # Flask stuff:
 instance/
 .webassets-cache
