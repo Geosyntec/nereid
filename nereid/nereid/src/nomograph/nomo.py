@@ -1,4 +1,4 @@
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import Any, Callable
 
@@ -8,7 +8,7 @@ from nereid.core.io import load_ref_data
 from nereid.src.nomograph.interpolators import FlowNomograph, VolumeNomograph
 
 
-@lru_cache()
+@cache
 def build_nomo(
     nomo_type: str,
     path: Path | str,

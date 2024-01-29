@@ -1,4 +1,4 @@
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +11,7 @@ ureg = pint.UnitRegistry()
 ureg.load_definitions(str(Path(__file__).parent / "unit_def.txt"))
 
 
-@lru_cache()
+@cache
 def conversion_factor_load_to_conc(
     load_unit: str, conc_unit: str, vol_unit: str = "cubic_feet"
 ) -> float:
@@ -19,7 +19,7 @@ def conversion_factor_load_to_conc(
     return factor
 
 
-@lru_cache()
+@cache
 def conversion_factor_conc_to_load(
     conc_unit: str, load_unit: str, vol_unit: str = "cubic_feet"
 ) -> float:
@@ -27,7 +27,7 @@ def conversion_factor_conc_to_load(
     return factor
 
 
-@lru_cache()
+@cache
 def conversion_factor_from_to(from_unit: str, to_unit: str) -> float:
     factor: float = ureg(from_unit).to(to_unit).magnitude
     return factor
