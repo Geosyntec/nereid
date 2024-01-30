@@ -41,6 +41,9 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.scripts]
+nereid-app = "nereid.main:main"
+
 [tool.setuptools.dynamic]
 version = { attr = "nereid.__version__" }
 
