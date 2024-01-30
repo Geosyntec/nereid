@@ -11,7 +11,7 @@ def effluent_function_map(
     update_reg_from_context(context=context)
 
     tmnt_context = context.get("project_reference_data", {}).get(tablename, {})
-    _default = {}
+    _default: dict[Any, Callable] = {}
 
     if not tmnt_context:
         return _default

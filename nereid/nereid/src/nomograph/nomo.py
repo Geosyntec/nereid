@@ -56,7 +56,7 @@ def get_flow_nomograph(context: dict[str, Any], nomo_path: str) -> FlowNomograph
 
 def load_nomograph_mapping(context: dict[str, Any]) -> dict[str, Callable]:
     met_table, msg = load_ref_data("met_table", context)
-    nomo_map = {}
+    nomo_map: dict[str, Callable] = {}
     if met_table is None:
         return nomo_map
 
