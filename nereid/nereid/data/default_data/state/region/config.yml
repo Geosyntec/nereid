@@ -338,3 +338,12 @@ project_reference_data:
         short_name: dwFC
         concentration_unit: MPN/_100mL
         load_unit: mpn
+project_spatial_data:
+  design_storm:
+    name: 85_percentile_design_storm_depth
+    url: "https://ocgis.com/arcpub/rest/services/Environmental_Resources/Hydrologic_Response_Unit/FeatureServer/3/query?where=1%3D1&outFields=*&returnGeometry=true&f=geojson"
+    field: RainfallZo
+  ref_data_key:
+    name: ref_data_key_rainzone
+    url: "https://ocgis.com/arcpub/rest/services/Environmental_Resources/Hydrologic_Response_Unit/FeatureServer/7/query?where=1%3D1&outFields=*&returnGeometry=true&f=geojson"
+    field: MODEL_BASIN

@@ -91,6 +91,12 @@ def create_app(
     async def check_config(context=Depends(get_valid_context)):
         return context
 
+    app.mount(
+        "/app",
+        StaticFiles(directory=str(static_path / "frontend/dist"), html=True),
+        name="app",
+    )
+
     @app.get("/ping")
     @app.get("/")
     async def ping():  # pragma: no cover

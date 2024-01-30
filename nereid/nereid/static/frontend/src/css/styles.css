@@ -1,0 +1,66 @@
+.graph-editor path.link {
+  fill: none;
+  stroke: #222;
+  stroke-width: 5px;
+  cursor: pointer;
+}
+
+.graph-editor text {
+  /* font: 12px sans-serif; */
+  pointer-events: none;
+}
+
+.graph-editor text.id {
+  text-anchor: middle;
+  /* font-weight: bold; */
+}
+
+.graph-editor path.link.selected {
+  stroke-dasharray: 10, 2;
+}
+
+.graph-editor path.link.dragline {
+  pointer-events: none;
+}
+
+.graph-editor circle.node {
+  stroke-width: 1.5px;
+  cursor: pointer;
+}
+
+.no-select {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+pre {
+  white-space: pre-wrap; /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+/* --  tailwind 2.2 does not style form inputs -- */
+#type-form input:checked + label {
+  border-color: black;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  color: white;
+  opacity: 1;
+}
+
+input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #48bb78;
+}
+
+.form-group.required .control-label:before {
+  content: "*";
+  color: red;
+  font-weight: bold;
+}
