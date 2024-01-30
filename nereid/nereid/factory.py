@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from brotli_asgi import BrotliMiddleware
@@ -11,7 +12,6 @@ from nereid.api import sync_router
 from nereid.api.docs import get_better_swagger_ui_html
 from nereid.api.utils import get_valid_context
 from nereid.core.config import nereid_path, settings
-from nereid.core.log import logging
 from nereid.models.response_models import JSONAPIResponse
 
 logger = logging.getLogger(__name__)
@@ -95,7 +95,6 @@ def create_app(
     @app.get("/")
     async def ping():  # pragma: no cover
         logger.info("nereid engine ready.")
-        logger.debug("nereid engine ready.")
         return JSONAPIResponse(**{"status": "ok", "data": "pong"})
 
     app.add_middleware(
