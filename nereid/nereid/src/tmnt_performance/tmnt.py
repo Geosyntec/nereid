@@ -86,6 +86,9 @@ def build_effluent_function_map(
     }
 
     # this gives a lookup table in the form {(facility, pollutant) : fxn(inf_conc, inf_conc_units)}
-    function_map = {k: partial(effluent_conc, **v) for k, v in facility_dict.items()}
+    function_map = cast(
+        dict[tuple[str, str], Callable],
+        {k: partial(effluent_conc, **v) for k, v in facility_dict.items()},
+    )
 
     return function_map
