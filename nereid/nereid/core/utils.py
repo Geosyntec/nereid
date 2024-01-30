@@ -1,3 +1,4 @@
+from functools import reduce
 from pathlib import Path
 from typing import Any
 
@@ -72,3 +73,24 @@ def dictlist_to_dict(dictlist, key):
         k = dct[key]
         result[k] = dct
     return result
+
+
+def _merge(a: dict, b: dict) -> dict:  # pragma: no cover # used only by main.py
+    """Recursive dictionary update of `a` with `b`.
+
+    `a` is modified, `b` is read-only.
+    """
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                _merge(a[key], b[key])
+        else:
+            a[key] = b[key]
+    return a
+
+
+def merge_dicts(*dicts: dict) -> dict:  # pragma: no cover # used only by main.py
+    """Deep merge of all dict keys. Later arg values overwrite earlier ones.
+    Returns a new dictionary without modifying passed dicts.
+    """
+    return reduce(_merge, ({}, *dicts))

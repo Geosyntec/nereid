@@ -1,5 +1,6 @@
 _no_git*
 _project_data/*
+.log*
 .vscode
 
 # Byte-compiled / optimized / DLL files
