@@ -1,0 +1,60 @@
+{
+  "name": "nereid",
+  "version": "0.11.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "watch": "vite build --watch --minify=false",
+    "build": "vite build",
+    "knip": "knip --workspace 'src/js'"
+  },
+  "author": "aorr@geosyntec.com",
+  "license": "ISC",
+  "//": {
+    "devDependencies": {
+      "@snowpack/plugin-postcss": "^1.4.1",
+      "@tailwindcss/typography": "^0.5.1",
+      "autoprefixer": "^10.4.2",
+      "cross-env": "^7.0.3",
+      "postcss": "^8.4.6",
+      "postcss-cli": "^8.3.1",
+      "snowpack": "^3.8.6",
+      "tailwindcss": "^3.0.22"
+    },
+    "dependencies": {
+      "d3": "^7.0.1",
+      "d3-require": "^1.2.4",
+      "d3-tile": "^1.0.0",
+      "dotenv": "^10.0.0",
+      "file-saver": "^2.0.5",
+      "tabulator-tables": "^4.9.3",
+      "topojson-client": "^3.1.0"
+    }
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/node": "^20.11.8",
+    "autoprefixer": "^10.4.17",
+    "knip": "^4.2.1",
+    "postcss": "^8.4.33",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  },
+  "dependencies": {
+    "@turf/rewind": "^6.5.0",
+    "d3": "^7.8.5",
+    "d3-tile": "^1.0.0",
+    "file-saver": "^2.0.5",
+    "tabulator-tables": "^4.9.3",
+    "topojson-client": "^3.1.0"
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {},
+      "autoprefixer": {}
+    }
+  }
+}
