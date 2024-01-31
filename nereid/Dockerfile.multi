@@ -1,8 +1,14 @@
 # Austin Orr 11/27/2019
 # This approach is the fastest to build and yields reasonably
-# small images at ~500mb each. The alipine+install variant of this
+# small images at ~500mb each. The alpine+install variant of this
 # pattern is able to reduce each image to ~250MB but takes considerable
 # time to build and is considerably more complex for scipy and pandas.
+
+FROM node:lts-bullseye as frontend
+WORKDIR /app
+COPY ./nereid/static/frontend .
+RUN npm install . && npm run build
+CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
 FROM python:3.11-bullseye as nereid_install
@@ -58,6 +64,8 @@ COPY ./scripts /
 RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
 ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
+COPY ./nereid /nereid/nereid
+COPY --from=frontend /app/dist /nereid/nereid/static/frontend
 
 
 # you are here, trying to get the requirements loaded, and rearranging the shared containers.
@@ -83,7 +91,6 @@ RUN addgroup --gid 1000 ${IMG_USER} \
     && chown -R ${IMG_USER}:${IMG_USER} /nereid
 USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
-COPY --chown=${IMG_USER} ./nereid /nereid/nereid
 CMD /run-worker.sh
 
 
@@ -108,7 +115,6 @@ COPY --from=server-env /opt/venv /opt/venv
 COPY gunicorn_conf.py /gunicorn_conf.py
 EXPOSE 80
 CMD /start.sh
-COPY ./nereid /nereid/nereid
 
 
 FROM core-env as test-env
@@ -131,7 +137,6 @@ COPY .coveragerc /nereid/.coveragerc
 COPY conftest.py /nereid/conftest.py
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
-COPY ./nereid /nereid/nereid
 
 
 FROM python:3.11-bullseye as nereid-edge
@@ -141,6 +146,7 @@ RUN awk -F"==" '{print $1}' /requirements_dev.txt > /requirements_edge.txt
 RUN cat requirements_edge.txt
 RUN pip install -r /requirements_edge.txt
 COPY ./nereid /nereid/nereid
+COPY --from=frontend /app/dist /nereid/nereid/static/frontend
 COPY ./scripts /
 RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
 WORKDIR /nereid

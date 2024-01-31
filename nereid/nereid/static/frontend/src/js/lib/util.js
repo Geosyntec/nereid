@@ -74,7 +74,7 @@ export const decr_waiting = () => {
 // fetch API wrappers for json retrieval
 
 export async function getJsonResponse(url) {
-  console.log("fetching with get", url);
+  console.debug("fetching with get", url);
   incr_waiting();
   const response = await fetch(url, { method: "GET" })
     // .catch((error) => {
@@ -82,7 +82,7 @@ export async function getJsonResponse(url) {
     //   return {};
     // })
     .then((resp) => {
-      console.log("getJsonResponse response:", resp);
+      console.debug("getJsonResponse response:", resp);
       if (resp.status == 200) {
         return resp.json();
       } else if (resp.status == 422) {
@@ -95,7 +95,7 @@ export async function getJsonResponse(url) {
       }
     })
     .then((data) => {
-      console.log("getJsonResponse data returned:", data);
+      console.debug("getJsonResponse data returned:", data);
       return data;
     })
     .finally(decr_waiting);
@@ -104,7 +104,7 @@ export async function getJsonResponse(url) {
 }
 
 export async function postJsonResponse(url, data) {
-  console.log("fetching with post", url, data);
+  console.debug("fetching with post", url, data);
   incr_waiting();
 
   const response = await fetch(url, {
@@ -115,7 +115,7 @@ export async function postJsonResponse(url, data) {
     body: JSON.stringify(data),
   })
     .then((resp) => {
-      console.log("postJsonResponse response:", resp);
+      console.debug("postJsonResponse response:", resp);
       if (resp.status == 200) {
         return resp.json();
       } else if (resp.status == 422) {
@@ -126,28 +126,29 @@ export async function postJsonResponse(url, data) {
       }
     })
     .then((data) => {
-      console.log("postJsonResponse data returned:", data);
+      console.debug("postJsonResponse data returned:", data);
       return data;
     })
     .finally(decr_waiting);
   return response;
 }
 
-export const poll = ({ fn, validate, interval, maxAttempts }) => {
-  console.log("Start poll...");
+export const poll = ({ fn, validate, interval_milli, maxAttempts }) => {
+  console.debug("Start poll...");
   let attempts = 0;
 
   const executePoll = async (resolve, reject) => {
-    console.log("- poll");
+    console.debug("- poll");
     const result = await fn();
     attempts++;
+    console.debug(attempts, result);
 
     if (validate(result)) {
       return resolve(result);
     } else if (maxAttempts && attempts === maxAttempts) {
       return reject(new Error("Exceeded max attempts"));
     } else {
-      setTimeout(executePoll, interval, resolve, reject);
+      setTimeout(executePoll, interval_milli, resolve, reject);
     }
   };
 
@@ -203,7 +204,7 @@ export const getConfigFromUrlQueryParams = async () => {
     nereid_region: region || store.state.nereid_region,
   });
   store.dispatch("updateConfig", cfg);
-  console.log(cfg);
+  console.debug(cfg);
 
   return false;
 };

@@ -140,7 +140,7 @@ export default class Points extends Component {
   // let found = null;
 
   addPoint = (longlat) => {
-    console.log("enter add point");
+    console.debug("enter add point");
 
     let self = this;
     if (!get(self, "store.state.add_node_mode")) {
@@ -157,7 +157,7 @@ export default class Points extends Component {
     )
       return;
     // event.preventDefault();
-    console.log("adding Point");
+    console.debug("adding Point");
 
     let id = data.length > 0 ? data[data.length - 1].id + 1 : 0;
     let point = [self.width() / 2 + id * 40, self.height() / 2 + id * 40];
@@ -236,7 +236,7 @@ export default class Points extends Component {
     let self = this;
     let scale = get(self, "store.state.initialScale");
     let center = get(self, "store.state.initialCenter");
-    console.log("reset");
+    console.debug("reset");
     let zoom_transform = get(self, "store.state.zoomTransform");
 
     self.svg
@@ -255,7 +255,7 @@ export default class Points extends Component {
   }
 
   zoom_to_group() {
-    console.log("z to g");
+    console.debug("z to g");
     let self = this;
     const bb = self.circle_group.node().getBBox();
     const [[x0, y0], [x1, y1]] = [

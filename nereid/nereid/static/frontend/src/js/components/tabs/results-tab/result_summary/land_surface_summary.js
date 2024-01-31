@@ -43,7 +43,7 @@ export const table_land_surface_load_summary = (data) => {
         ...new Set(util.flatten(summary.map((d) => Object.keys(d)))),
       ];
 
-      console.log("landsurface load summary:", summary);
+      console.debug("landsurface load summary:", summary);
 
       return [summary, summary_keys];
     },
