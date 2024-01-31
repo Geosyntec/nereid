@@ -120,7 +120,7 @@ export default class Map extends Component {
   toggleMapMode() {
     let self = this;
     self.image_group.classed("hidden", !self.store.state.map_mode);
-    console.log("map mode toggled!");
+    console.debug("map mode toggled!");
   }
 
   zoomed({ transform }) {

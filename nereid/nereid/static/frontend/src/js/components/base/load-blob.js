@@ -14,13 +14,13 @@ export default class LoadFileUIBase extends Component {
     self.data_callback =
       options.data_callback ||
       function (data) {
-        console.log("loaded data: ", data);
+        console.debug("loaded data: ", data);
       };
 
     self.primary_callback =
       options.primary_callback ||
       function () {
-        console.log(`clicked primary button load files UI ${self.id}`);
+        console.debug(`clicked primary button load files UI ${self.id}`);
       };
     self.primary_button_label = options.primary_button_label || "Apply";
 

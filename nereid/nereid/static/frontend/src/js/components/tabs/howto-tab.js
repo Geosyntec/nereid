@@ -21,7 +21,6 @@ export class HowTab extends Component {
   async fetch_page() {
     let self = this;
     let url = `${store.state.nereid_host}` + "/static/pages/how_to";
-    console.log(url);
     util.incr_waiting();
     fetch(url, { method: "GET" })
       .then((resp) => {

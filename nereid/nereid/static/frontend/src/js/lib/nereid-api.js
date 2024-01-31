@@ -101,6 +101,16 @@ const nereid = {
     }
   },
 
+  getTaskData: async (host, api, task_id) => {
+    let rsp;
+    try {
+      rsp = await util.getJsonResponse(`${host}${api}/task/${task_id}`);
+      return rsp;
+    } catch (err) {
+      console.error(err); // TypeError: failed to fetch
+    }
+  },
+
   postValidateNetwork: async (host, api, state, region, data) => {
     let route = `${host}${api}/network/validate?state=${state}&region=${region}`;
     let rsp;
@@ -184,6 +194,18 @@ const nereid = {
     try {
       rsp = await util.postJsonResponse(route, data);
       if (rsp?.data?.errors?.length == 0) {
+        return rsp;
+      } else if (
+        (rsp?.data == null) &
+        ["pending", "started"].includes(rsp?.status?.toLowerCase()) &
+        (rsp?.task_id != null)
+      ) {
+        rsp = await util.poll({
+          fn: () => nereid.getTaskData(host, api, rsp.task_id),
+          validate: (_result) => _result?.data != null,
+          interval_milli: 333,
+          maxAttempts: 20,
+        });
         return rsp;
       }
     } catch (e) {
@@ -292,7 +314,6 @@ export const getConfig = async ({
   nereid_state,
   nereid_region,
 }) => {
-  // console.log(nereid_host, nereid_state, nereid_region);
   if (!nereid_host) {
     nereid_host = window.location.origin; //await nereid.getHost();
   }

@@ -116,7 +116,7 @@ export class TreatmentFacilityNodeEditorUI extends Component {
           ) ||
           util.get(self, "store.state.treatment_facility_fields.state.region");
 
-        console.log("tmnt facility fields:", treatment_facility_fields);
+        console.debug("tmnt facility fields:", treatment_facility_fields);
 
         build_form(
           "#facility-form",
