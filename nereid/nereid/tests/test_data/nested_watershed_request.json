@@ -1,0 +1,60 @@
+{
+  "graph": {
+    "edges": [
+      { "source": "1", "target": "0" },
+      { "source": "e6nL8", "target": "1" },
+      { "source": "mAlB4", "target": "e6nL8" },
+      { "source": "w3C56", "target": "e6nL8" },
+      { "source": "yTuzF", "target": "w3C56" }
+    ],
+    "directed": true,
+    "multigraph": true
+  },
+  "land_surfaces": [
+    {
+      "node_id": "1",
+      "surface_key": "10101000-COMM-B-5",
+      "area_acres": 20,
+      "imp_area_acres": 10
+    },
+    {
+      "node_id": "e6nL8",
+      "surface_key": "10101000-COMM-B-5",
+      "area_acres": 15,
+      "imp_area_acres": 6
+    },
+    {
+      "node_id": "mAlB4",
+      "surface_key": "10101000-COMM-B-5",
+      "area_acres": 30,
+      "imp_area_acres": 25
+    },
+    {
+      "node_id": "yTuzF",
+      "surface_key": "10101000-COMM-B-5",
+      "area_acres": 150,
+      "imp_area_acres": 80
+    }
+  ],
+  "treatment_facilities": [
+    {
+      "facility_type": "biofiltration",
+      "node_id": "0",
+      "ref_data_key": "10101000",
+      "design_storm_depth_inches": 0.85,
+      "total_volume_cuft": 100000,
+      "area_sqft": 50000,
+      "media_filtration_rate_inhr": 5
+    },
+    {
+      "facility_type": "infiltration",
+      "node_id": "w3C56",
+      "ref_data_key": "10101000",
+      "design_storm_depth_inches": 0.8,
+      "total_volume_cuft": 100000,
+      "area_sqft": 25000,
+      "inf_rate_inhr": 2
+    }
+  ],
+  "treatment_sites": []
+}
