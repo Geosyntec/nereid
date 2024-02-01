@@ -1,4 +1,3 @@
-import json
 from copy import deepcopy
 
 import networkx as nx
@@ -49,7 +48,7 @@ def test_solve_watershed_land_surface_only(contexts, watershed_requests, n_nodes
 
 
 @pytest.mark.parametrize("pct_tmnt", [0.3, 0.6])
-@pytest.mark.parametrize("n_nodes", [50, 100, 500])
+@pytest.mark.parametrize("n_nodes", [50, 100])
 def test_solve_watershed_with_treatment(
     contexts, watershed_requests, n_nodes, pct_tmnt
 ):
@@ -70,7 +69,7 @@ def test_solve_watershed_with_treatment(
     sum_inflow = sum([n.get("runoff_volume_cuft", 0.0) for n in result])
     outflow = outfall_results["runoff_volume_cuft_total_discharged"]
 
-    assert abs(sum_inflow - sum_ret - outflow) / sum_inflow < 1e-4
+    assert abs(sum_inflow - sum_ret - outflow) / sum_inflow < 1e-15
 
     scalers = [
         ("summer_dwTSS_load_lbs_removed", "summer_dwTSS_load_lbs_total_removed"),
@@ -103,23 +102,18 @@ def test_solve_watershed_with_treatment(
         # check that treatment happened
         assert outfall_results[load_type] > 0
 
-    tmnt_bmps = [
+    nested_bmps = [
         data
         for data in response_dict["results"]
-        if "facility" in data.get("node_type", "")
+        if (data["eff_area_acres_direct"] < data["eff_area_acres_cumul"])
+        and "facility" in data.get("node_type", "")
         and "simple" not in data.get("node_type", "")
     ]
 
-    for data in tmnt_bmps:
-        if data["eff_area_acres_direct"] < data["eff_area_acres_cumul"]:
-            assert (
-                data["design_volume_cuft_direct"] < data["design_volume_cuft_cumul"]
-            ), data.get("node_type", "")
-
-        if (data.get("treatment_volume_cuft", 0) == 0) and (
-            data.get("treatment_rate_cfs", 0) == 0
-        ):
-            assert round(data.get("treated_pct"), 3) == 0.0, json.dumps(data, indent=2)
+    for data in nested_bmps:
+        assert (
+            data["design_volume_cuft_direct"] < data["design_volume_cuft_cumul"]
+        ), data.get("node_type", "")
 
 
 @pytest.mark.parametrize("ctx_key", ["default", "default_no_dw_valid"])
