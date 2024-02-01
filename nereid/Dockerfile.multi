@@ -65,7 +65,7 @@ RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-wo
 ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
 COPY ./nereid /nereid/nereid
-COPY --from=frontend /app/dist /nereid/nereid/static/frontend
+COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
 
 
 # you are here, trying to get the requirements loaded, and rearranging the shared containers.
