@@ -37,7 +37,7 @@ jobs:
             TAGS="$TAGS,${DOCKER_IMAGE}:latest"
           fi
           echo "tags: $TAGS"
-          echo ::set-output name=tags::${TAGS}
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         id: buildx
