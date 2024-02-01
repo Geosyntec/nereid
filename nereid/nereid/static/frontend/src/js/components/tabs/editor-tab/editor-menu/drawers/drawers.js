@@ -60,6 +60,6 @@ export class Drawers extends Component {
     `;
   }
   _render() {
-    d3.select("body").append("div").html(this._template());
+    d3.select(`#${this.parent_id}`).append("div").html(this._template());
   }
 }

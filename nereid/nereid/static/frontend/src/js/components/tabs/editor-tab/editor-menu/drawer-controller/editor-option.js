@@ -35,7 +35,7 @@ export default class EditorMenuOption extends Component {
     let parent_container = d3
       .select(`#${this.parent_id}-button-container`)
       .append("div")
-      .classed("flex", true);
+      .classed("flex ", true);
     // this.button = parent_container.append("div");
     // this.button.html(this._template());
     let html = parent_container.html();

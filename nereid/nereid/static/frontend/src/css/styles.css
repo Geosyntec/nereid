@@ -1,3 +1,9 @@
+/* Style overrides particularly for the graph editor */
+
+/* div {
+    box-shadow:inset 0px 0px 0px 1px black;
+} */
+
 .graph-editor path.link {
   fill: none;
   stroke: #222;

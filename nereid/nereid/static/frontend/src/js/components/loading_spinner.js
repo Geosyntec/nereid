@@ -76,7 +76,10 @@ class LoadingSpinner extends Component {
   }
   _render() {
     let self = this;
-    self.element = d3.select("body").append("div").attr("id", self.id);
+    self.element = d3
+      .select(`#${this.parent_id}`)
+      .append("div")
+      .attr("id", self.id);
     self.element.html(self._base_template());
 
     self.store.events.subscribe("Waiting", ({ waiting }) => {
@@ -86,7 +89,7 @@ class LoadingSpinner extends Component {
       if (waiting === 0) self.exit();
     });
 
-    d3.select("body");
+    // d3.select(self.parent);
   }
 }
 
