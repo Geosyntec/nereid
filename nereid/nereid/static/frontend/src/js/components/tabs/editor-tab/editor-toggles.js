@@ -3,11 +3,11 @@ import { ToggleBase } from "../../base/toggle.js";
 import Component from "../../base/component.js";
 import store from "../../../lib/state.js";
 
-const scale = "scale-75";
+const scale = "scale-75 sm:scale-100";
 
 const toggleMapMode = new ToggleBase({
   id: "map-edit-toggle",
-  text: "Show BaseMap",
+  text: "Base Map",
   isActive: getTruthy(store, "state.map_mode"),
   scale: scale,
   callback: function () {
@@ -31,7 +31,7 @@ const toggleAddNodeMode = new ToggleBase({
 
 const toggleShowStates = new ToggleBase({
   id: "states-vector-toggle",
-  text: "Show States",
+  text: "States",
   isActive: getTruthy(store, "state.show_states"),
   scale: scale,
   callback: function () {
@@ -43,7 +43,7 @@ const toggleShowStates = new ToggleBase({
 
 const toggleShowDesignStorm = new ToggleBase({
   id: "design-storm-vector-toggle",
-  text: "Show Design Storm",
+  text: "Design Storm",
   isActive: getTruthy(store, "state.show_design_storm"),
   scale: scale,
   callback: function () {
@@ -55,7 +55,7 @@ const toggleShowDesignStorm = new ToggleBase({
 
 const toggleShowRainZone = new ToggleBase({
   id: "rain-zone-vector-toggle",
-  text: "Show Rain Zones",
+  text: "Rain Zones",
   isActive: getTruthy(store, "state.show_rain_zone"),
   scale: scale,
   callback: function () {
@@ -67,7 +67,7 @@ const toggleShowRainZone = new ToggleBase({
 
 const toggleShowInfoTooltip = new ToggleBase({
   id: "into-tooltip-toggle",
-  text: "Show Node Info",
+  text: "Node Info",
   isActive: getTruthy(store, "state.show_info_tooltip"),
   scale: scale,
   callback: function () {
@@ -79,6 +79,7 @@ const toggleShowInfoTooltip = new ToggleBase({
 
 export const toggles = new Component({
   id: "toggle-container",
+  class: "",
   children: [
     toggleMapMode,
     toggleShowStates,

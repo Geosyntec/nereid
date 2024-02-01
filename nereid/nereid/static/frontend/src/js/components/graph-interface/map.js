@@ -123,13 +123,17 @@ export default class Map extends Component {
     console.debug("map mode toggled!");
   }
 
-  zoomed({ transform }) {
+  resize() {
     let self = this;
+    self.tile = d3
+      .tile()
+      .extent([
+        [0, 0],
+        [self.width(), self.height()],
+      ])
+      .tileSize(self.tilesize);
 
-    self.transform = transform;
-    self._k = transform.k;
-    // console.log(_k);
-    const tiles = self.tile(transform);
+    const tiles = self.tile(self.transform);
     // image_group.classed("hidden", !showMap());
     // if (showMap()) {
 
@@ -150,6 +154,16 @@ export default class Map extends Component {
       .attr("y", ([, y]) => (y + tiles.translate[1]) * tiles.scale)
       .attr("width", tiles.scale)
       .attr("height", tiles.scale);
+  }
+
+  zoomed({ transform }) {
+    let self = this;
+
+    self.transform = transform;
+    self._k = transform.k;
+    // console.log(_k);
+
+    self.resize();
 
     self.vector.attr("transform", transform);
   }

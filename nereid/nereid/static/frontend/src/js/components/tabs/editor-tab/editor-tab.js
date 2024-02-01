@@ -24,30 +24,33 @@ export class EditorTab extends Component {
 
   _template() {
     return `
-    <div class="flex justify-center text-lg font-bold p-4">
+    <div class="flex flex-row justify-center text-lg font-bold p-4">
       Scenario:&nbsp
-      <span id="scenario-name" contenteditable="true" class="border-b-2 border-black">
+      <span id="scenario-name" contenteditable="true" class="border-b-2 border-black bg-gray-100 px-2">
         ${this.scenario_name}
       </span>
     </div>
-    <div class="relative flex flex-row w-screen">
-      <div class="p-2 w-[200px]">
-        <div id="toggle-container" class="flex flex-col"></div>
-      </div>
-      <div class="flex flex-col">
-        <div id="map" class="has-tooltip w-[800px] h-[500px]"></div>
 
+    <div class="flex flex-row h-screen max-h-[650px]">
+      <div class="flex flex-col sm:w-full min-w-0 max-w-[175px] ">
+        <div id="toggle-container"></div>
       </div>
-      <div id="editor-menu"></div>
+      <div class="relative w-full ">
+        <div id="map" class="has-tooltip h-full max-w-screen"></div>
+        <div id="editor-menu"></div>
+      </div>
+
     </div>
+
     <div id="editor-info" class="grid grid-cols-2 gap-2 pl-12 py-2"></div>
+
     `;
   }
   _render() {
     let self = this;
     let element = d3
       .select(`#${self.id}`)
-      .classed("flex flex-col justify-center max-w-[1000px]", true)
+      .classed("flex flex-col ", true)
       .html(self._template());
 
     element.select("#scenario-name").on("input", () => {

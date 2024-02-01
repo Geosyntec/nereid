@@ -9,19 +9,25 @@ export default class EditorMenu extends Component {
 
   _template() {
     return `
-  <div class="absolute pr-12 top-0 right-0">
-    <div class="">
+  <div
+    class="absolute top-0 right-0 pointer-events-none
+      mr-1 sm:mr-3
+      mt-1 sm:mt-3
+      "
+    >
+    <div class="pointer-events-auto">
       <div id="${this.id}-button-container"
         class="
           menu
-          flex flex-col
+          flex
+          flex-row sm:flex-col
           items-center
-          w-16
-          py-3
-          gap-y-2
-          shadow-xl
-          bg-gray-50
+          p-1 sm:p-3
+          gap-2
           rounded-lg
+          shadow-xl
+          bg-white
+          bg-opacity-25 sm:bg-opacity-75
         "
       >
       </div>

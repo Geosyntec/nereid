@@ -13,17 +13,21 @@ export default class Editor extends Component {
     super({ store });
   }
 
+  resize() {
+    this.svg.attr("viewBox", [
+      0,
+      0,
+      d3.select(`#map`).node().getBoundingClientRect().width,
+      d3.select(`#map`).node().getBoundingClientRect().height,
+    ]);
+
+    this?.map?.resize();
+  }
+
   _render() {
     let self = this;
-    self.svg = d3
-      .select(`#map`)
-      .append("svg")
-      .attr("viewBox", [
-        0,
-        0,
-        d3.select(`#map`).node().getBoundingClientRect().width,
-        d3.select(`#map`).node().getBoundingClientRect().height,
-      ]);
+    self.svg = d3.select(`#map`).append("svg");
+    self.resize();
 
     self.map = new Map({ id: "map", svg: self.svg });
     const vector = self.map.vector;

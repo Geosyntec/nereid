@@ -23,14 +23,14 @@ export class ToggleBase extends Component {
     self.toggle = d3.select(`#${self.parent_id}`).append("div");
     self.toggle.html(`
     <!-- Toggle ${self.id} -->
-    <div class="m-2 transform ${self.scale}">
-      <label for="${self.id}-toggle" class="flex items-center cursor-pointer">
+    <div class="transform ${self.scale} m-0 sm:m-2 py-2">
+      <label for="${self.id}-toggle" class="flex flex-col sm:flex-row items-center align-center cursor-pointer min-w-0">
         <!-- toggle -->
         <div class="relative">
           <!-- input -->
           <input type="checkbox" id="${self.id}-toggle" class="sr-only" />
           <!-- line -->
-          <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+          <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
           <!-- dot -->
           <div
             class="
@@ -39,15 +39,15 @@ export class ToggleBase extends Component {
               left-1
               top-1
               bg-white
-              w-6
-              h-6
+              w-4
+              h-4
               rounded-full
               transition
             "
           ></div>
         </div>
         <!-- label -->
-        <div class="ml-3 text-gray-700 font-medium">${self.text}</div>
+        <div class="text-center sm:ml-3 text-gray-700 font-medium text-xs sm:text-sm">${self.text}</div>
       </label>
     </div>
     `);

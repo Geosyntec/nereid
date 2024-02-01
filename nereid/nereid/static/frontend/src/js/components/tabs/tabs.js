@@ -35,7 +35,7 @@ export class Tabs extends Component {
 
     <!-- tab content -->
 
-    <div class="${this.classname}">
+    <div class="${this.classname} h-screen">
       <div id="how-to-tab" class="tab-content"></div>
       <div id="treatment-facility-results-tab" class="tab-content"></div>
       <div id="land-surface-results-tab" class="tab-content"></div>
@@ -48,9 +48,9 @@ export class Tabs extends Component {
   _render() {
     let self = this;
     let element = d3
-      .select("body")
+      .select(`#${this.parent_id}`)
       .append("div")
-      .classed("min-w-[700px]", true)
+      // .classed("min-w-[700px]", true)
       .html(self._template());
     const tabSystem = new TabSystem(`.${this.classname}`);
     tabSystem.init();

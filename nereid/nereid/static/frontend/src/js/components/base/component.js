@@ -11,7 +11,19 @@ export default class Component {
     // We're setting a render function as the one set by whatever inherits this base
     // class or setting it to an empty by default. This is so nothing breaks if someone
     // forgets to set it.
-    this._render = this._render || props._render || function () {};
+    this._render =
+      this._render ||
+      props._render ||
+      function () {
+        if (self?.class != null) {
+          d3.select(self.element_string).classed(self.class, true);
+        }
+        console.debug(
+          `component ${
+            this.element_string || "unknown"
+          } called without a render method`
+        );
+      };
 
     // If there's a store passed in, subscribe to the state change
     if (props.store instanceof Store) {
@@ -43,6 +55,10 @@ export default class Component {
 
     if (props.hasOwnProperty("children")) {
       self.children = props.children;
+    }
+
+    if (props.hasOwnProperty("class")) {
+      self.class = props.class;
     }
   }
 

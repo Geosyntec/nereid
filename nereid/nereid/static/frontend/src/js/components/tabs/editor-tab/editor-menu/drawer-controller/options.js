@@ -71,7 +71,7 @@ export const clearScenarioOption = new EditorMenuOption({
   id: "clear_scenario",
   title: "Clear Scenario",
   icon: `
-<div class="pt-10 text-red-600 hover:text-gray-300">
+<div class="sm:pt-10 text-red-600 hover:text-gray-300">
 
   <!-- Heroicon name: x-circle -->
   <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,10 +90,10 @@ export const checkScenarioOption = new EditorMenuOption({
   id: "check_scenario",
   title: "Verify Inputs",
   icon: `
-<div class="pt-10 text-blue-600 hover:text-gray-300">
+<div class="sm:pt-10 text-blue-600 hover:text-gray-300">
 
   <!-- Heroicon name: check -->
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
   </svg>
 </div>
@@ -143,10 +143,10 @@ export const runScenarioOption = new EditorMenuOption({
   id: "run_scenario",
   title: "Run Scenario",
   icon: `
-<div class="pt-10 text-green-600 hover:text-gray-300">
+<div class="sm:pt-10 text-green-600 hover:text-gray-300">
 
   <!-- Heroicon name: play -->
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
