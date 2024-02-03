@@ -72,7 +72,7 @@ LOGGING_CONFIG: dict[str, Any] = {
             "format": "%(levelname)-9s %(name)s: %(message)s",
         },
         "nereid_detailed": {
-            "format": "[%(levelname)s|%(module)s|L%(lineno)d] %(asctime)s: %(message)s",
+            "format": "[%(levelname)s|%(name)s|%(module)s|L%(lineno)d] %(asctime)s: %(message)s",
             "datefmt": "%Y-%m-%dT%H:%M:%S%z",
         },
         "nereid_json": {
