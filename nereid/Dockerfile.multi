@@ -139,14 +139,14 @@ COPY conftest.py /nereid/conftest.py
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM python:3.11-bullseye as nereid-edge
+FROM python:3.12-bullseye as nereid-edge
 RUN apt-get update && apt-get install -y graphviz
 COPY requirements/requirements_dev.txt /requirements_dev.txt
 RUN awk -F"==" '{print $1}' /requirements_dev.txt > /requirements_edge.txt
 RUN cat requirements_edge.txt
 RUN pip install -r /requirements_edge.txt
 COPY ./nereid /nereid/nereid
-COPY --from=frontend /app/dist /nereid/nereid/static/frontend
+COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
 COPY ./scripts /
 RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
 WORKDIR /nereid
