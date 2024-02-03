@@ -266,7 +266,10 @@ def parse_remaps(
                 if right not in df:
                     df[right] = None
 
-                m = defaultdict(lambda d=fillna: d, mapping)
+                def default(d=fillna):  # use def for linter rather than lambda
+                    return d
+
+                m = defaultdict(default, mapping)
                 new_c = df[left].map(m)
                 df[right] = numpy.where(pandas.notnull(df[left]), new_c, df[right])
 
