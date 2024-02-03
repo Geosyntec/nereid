@@ -100,6 +100,18 @@ def test_parse_api_recognize(
     if recog == "land_surfaces":
         df["imp_pct"] = 100 * df["imp_area_acres"] / df["area_acres"]
     df, msg = io.parse_configuration_logic(df, "api_recognize", recog, context)
+    if key == "default" and recog == "land_surfaces":
+        # test how=addend
+        assert all(df.query('soil == "water"').imp_pct.ge(100).values), df.query(
+            'soil == "water"'
+        ).imp_pct
+
+        # test how=left
+        assert all(df.query('land_use == "COMM"').is_developed.values)
+        assert all((~df.query('land_use == "WATER"').is_developed).values), df.query(
+            'land_use == "WATER"'
+        )
+
     if recog in ["land_surfaces", "treatment_facility"] and not raises_msgs:
         assert len(msg) == 0, msg
     else:
