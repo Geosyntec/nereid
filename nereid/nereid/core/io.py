@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from copy import deepcopy
 from functools import cache
 from pathlib import Path
@@ -264,7 +265,9 @@ def parse_remaps(
                 right = remap["right"]
                 if right not in df:
                     df[right] = None
-                new_c = df[left].map(mapping).fillna(fillna)
+
+                m = defaultdict(lambda d=fillna: d, mapping)
+                new_c = df[left].map(m)
                 df[right] = numpy.where(pandas.notnull(df[left]), new_c, df[right])
 
             elif how == "replace":
