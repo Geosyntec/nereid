@@ -5,8 +5,6 @@ services:
       context: ./nereid
       dockerfile: Dockerfile.multi
       target: nereid
-    environment:
-      - NEREID_ASYNC_MODE=replace
     env_file:
       - env.env
     ports:
