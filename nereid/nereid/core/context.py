@@ -1,9 +1,12 @@
+import logging
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 from nereid.core.config import settings
 from nereid.core.io import load_cfg
+
+logger = logging.getLogger("nereid.core")
 
 
 def validate_request_context(context: dict[str, Any]) -> tuple[bool, str]:
@@ -36,14 +39,13 @@ def validate_request_context(context: dict[str, Any]) -> tuple[bool, str]:
                     message = (
                         f"Requested path to reference file: {filepath} does not exist."
                     )
+                    logger.error(message)
                     return False, message
 
         except Exception as e:  # noqa: PERF203
-            message = (
-                f"Error in section '{tablename}' with entries: '{attrs}' "
-                f"Exception: {e}"
-            )
-            return False, message
+            message = f"Error in section '{tablename}' with entries: '{attrs}' "
+            logger.exception(message, stack_info=True)
+            return False, message + f"Exception: {e}"
 
     return True, "valid"
 
