@@ -37,19 +37,13 @@ class Settings(BaseSettings):
     # ALLOW_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-    ALLOW_CORS_ORIGINS: list[AnyHttpUrl | Literal["*"]] = ["*"]
+    ALLOW_CORS_ORIGINS: list[str | Literal["*"]] = ["*"]
     ALLOW_CORS_ORIGIN_REGEX: str | None = None
 
-    @field_validator("ALLOW_CORS_ORIGINS", mode="before")
+    @field_validator("ALLOW_CORS_ORIGINS", mode="after")
     @classmethod
-    def assemble_cors_origins(
-        cls, v: str | list[str]
-    ) -> list[str] | str:  # pragma: no cover
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
-        raise ValueError(v)
+    def stringify_cors_origins(cls, v: list[str]) -> list[str]:  # pragma: no cover
+        return [str(AnyHttpUrl(url) if url != "*" else url) for url in v]
 
     model_config = {
         "env_prefix": "NEREID_",
