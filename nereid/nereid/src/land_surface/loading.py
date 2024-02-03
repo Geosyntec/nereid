@@ -55,7 +55,12 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
     df["eff_area_acres"] = df["imp_eff_area_acres"] + df["perv_eff_area_acres"]
     df["ro_coeff"] = df["eff_area_acres"] / df["area_acres"]
     df["developed_area_acres"] = numpy.where(
-        df["is_developed"].astype(int).eq(1), df["area_acres"], 0
+        df["is_developed"]
+        # Missing floats coerce to nan, which is not eq to 1.0. Missing ints raise.
+        .astype(float)
+        .eq(1.0),
+        df["area_acres"],
+        0,
     )
 
     return df
