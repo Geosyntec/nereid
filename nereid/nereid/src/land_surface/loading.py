@@ -1,5 +1,6 @@
 from typing import Iterable
 
+import numpy
 import pandas
 
 from nereid.core.utils import safe_array_divide
@@ -53,8 +54,8 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
     df["perv_eff_area_acres"] = df["perv_ro_coeff"] * df["perv_area_acres"]
     df["eff_area_acres"] = df["imp_eff_area_acres"] + df["perv_eff_area_acres"]
     df["ro_coeff"] = df["eff_area_acres"] / df["area_acres"]
-    df["developed_area_acres"] = df["area_acres"].mask(
-        ~df["is_developed"].fillna(False), other=0
+    df["developed_area_acres"] = numpy.where(
+        df["is_developed"].astype(int).eq(1), df["area_acres"], 0
     )
 
     return df
