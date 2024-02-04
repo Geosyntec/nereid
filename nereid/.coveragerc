@@ -6,6 +6,6 @@ relative_files = True
 
 [report]
 ignore_errors = True
-omit = nereid/data/*,*main.py,*startup.py,*_no_git*
+omit = nereid/data/*,log.py,*main.py,*startup.py,*_no_git*
 exclude_also =
     if TYPE_CHECKING:
