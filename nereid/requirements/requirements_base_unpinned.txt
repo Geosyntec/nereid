@@ -2,6 +2,7 @@ networkx
 orjson
 pandas
 Pint
+pyarrow
 pydantic>=2.4,<3.0
 pydantic_settings
 python-dotenv

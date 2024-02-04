@@ -1,3 +1,5 @@
+import logging
+from collections import defaultdict
 from copy import deepcopy
 from functools import cache
 from pathlib import Path
@@ -7,6 +9,8 @@ import numpy
 import orjson as json
 import pandas
 import yaml
+
+logger = logging.getLogger("nereid.core")
 
 PathType: TypeAlias = Path | str
 
@@ -110,10 +114,12 @@ def parse_expand_fields(
             for ix, col in enumerate(cols):
                 df[col] = df[field].str.split(sep).str[ix]
         except Exception:
-            messages.append(
+            _msg = (
                 f"unable to expand fields in {config_section}:{config_object} "
                 f"for instructions {f}"
             )
+            messages.append(_msg)
+            logger.exception(_msg, stack_info=True)
 
     return df, messages
 
@@ -259,7 +265,12 @@ def parse_remaps(
                 right = remap["right"]
                 if right not in df:
                     df[right] = None
-                new_c = df[left].map(mapping).fillna(fillna)
+
+                def default(d=fillna):  # use def for linter rather than lambda
+                    return d
+
+                m = defaultdict(default, mapping)
+                new_c = df[left].map(m)
                 df[right] = numpy.where(pandas.notnull(df[left]), new_c, df[right])
 
             elif how == "replace":
@@ -272,10 +283,12 @@ def parse_remaps(
                 )
 
         except Exception:
-            messages.append(
-                f"ERROR: unable to apply mapping '{remap}' in "
+            _msg = (
+                f"ERROR: unable to apply method '{how}' while mapping '{remap}' in "
                 f"{config_section}:{config_object}."
             )
+            messages.append(_msg)
+            logger.exception(_msg, stack_info=True)
 
     return df, messages
 

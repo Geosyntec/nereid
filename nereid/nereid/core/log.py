@@ -7,7 +7,7 @@ import queue
 
 from typing_extensions import override
 
-LOG_RECORD_BUILTIN_ATTRS = {
+LOG_RECORD_BUILTIN_ATTRS = {  # pragma: no cover
     "args",
     "asctime",
     "created",

@@ -1,6 +1,6 @@
+import logging
 from typing import Any
 
-from nereid.core.log import logging
 from nereid.core.units import update_reg_from_context
 from nereid.src.watershed.solve_watershed import (
     initialize_graph,

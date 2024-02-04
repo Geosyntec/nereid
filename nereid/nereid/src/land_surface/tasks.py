@@ -76,8 +76,8 @@ def land_surface_loading(
             response["summary"] = summary_results.fillna(0).to_dict(orient="records")
 
             if details:
-                response["details"] = detailed_results.fillna(0).to_dict(
-                    orient="records"
+                response["details"] = (
+                    detailed_results.infer_objects().fillna(0).to_dict(orient="records")
                 )
         else:  # pragma: no cover
             response["warning"].append("WARNING: no land surface input data provided.")

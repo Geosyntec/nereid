@@ -1,3 +1,4 @@
+import logging
 import os
 
 from tenacity import retry
@@ -5,8 +6,6 @@ from tenacity.after import after_log
 from tenacity.before import before_log
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_fixed
-
-from nereid.core.log import logging
 
 logger = logging.getLogger(__name__)
 
@@ -66,4 +65,5 @@ def start_worker():
 if __name__ == "__main__":
     import sys
 
-    globals()[sys.argv[1]]()
+    func_name = sys.argv[1]
+    globals()[func_name]()
