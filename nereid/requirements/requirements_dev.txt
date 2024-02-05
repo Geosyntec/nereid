@@ -17,7 +17,7 @@ coverage==7.4.0
 cycler==0.12.1
 distlib==0.3.8
 execnet==2.0.2
-fastapi==0.108.0
+fastapi==0.109.1
 filelock==3.13.1
 fonttools==4.47.0
 graphviz==0.20.1
