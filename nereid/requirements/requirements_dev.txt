@@ -2,7 +2,7 @@ amqp==5.2.0
 annotated-types==0.6.0
 anyio==4.2.0
 billiard==4.2.0
-black==23.12.1
+black==24.3.0
 Brotli==1.1.0
 brotli-asgi==1.4.0
 celery==5.3.6
