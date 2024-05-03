@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy
 import pandas
 import pytest
 
@@ -108,9 +109,11 @@ def test_parse_api_recognize(
 
         # test how=left
         assert all(df.query('land_use == "COMM"').is_developed.values)
-        assert all((~df.query('land_use == "WATER"').is_developed).values), df.query(
-            'land_use == "WATER"'
-        )
+        assert all(
+            numpy.invert(
+                df.query('land_use == "WATER"').is_developed.values.astype(bool)
+            )
+        ), df.query('land_use == "WATER"')
 
     if recog in ["land_surfaces", "treatment_facility"] and not raises_msgs:
         assert len(msg) == 0, msg
