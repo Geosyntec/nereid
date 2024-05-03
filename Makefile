@@ -86,10 +86,10 @@ build:
 
 develop: clean stack build ## build the development environment and launch containers in background
 
-up: stack ## bring up the containers in '-d' mode
+up: stack
 	docker compose up
 
-up-d: stack
+up-d: stack ## bring up the containers in '-d' mode
 	docker compose up -d
 
 down: ## bring down the containers and detach volumes

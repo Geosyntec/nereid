@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Self
 
 from pydantic import BaseModel, Field, StrictStr, model_validator
 
@@ -125,7 +125,7 @@ class Graph(BaseModel):
 
 class ValidGraph(Graph):
     @model_validator(mode="after")
-    def validate_graph(self) -> "ValidGraph":
+    def validate_graph(self) -> Self:
         result = validate_network(self.model_dump(by_alias=True))
         assert result.get("isvalid"), result
         return self
