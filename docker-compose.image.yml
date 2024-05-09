@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   nereid:
     image: ${NEREID_ARTIFACT_REGISTRY_PATH:-nereid-}nereid:${NEREID_IMAGE_TAG:-latest}
