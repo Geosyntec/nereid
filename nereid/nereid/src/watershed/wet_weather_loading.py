@@ -118,20 +118,22 @@ def accumulate_wet_weather_loading(
         data.get("retention_volume_cuft", 0.0) + data["retention_volume_cuft_upstream"]
     )
 
+    design_storm_depth_inches = float(data.get("design_storm_depth_inches", 0.0))
+
     # accumulate design volume
     data["design_volume_cuft_direct"] = design_volume_cuft(
-        data.get("design_storm_depth_inches", 0.0), data["eff_area_acres_direct"]
+        design_storm_depth_inches, data["eff_area_acres_direct"]
     )
 
-    data["design_volume_cuft_upstream"] = sum_node_attr(
-        g, predecessors, "design_volume_cuft_cumul"
+    data["design_volume_cuft_upstream"] = design_volume_cuft(
+        design_storm_depth_inches, data["eff_area_acres_upstream"]
     )
 
     # land surface nodes don't have a design depth, so we have to recalc this
     # if there is one set for this node, and it has to include the whole effective
     # area upstream. Patched 2022-03-14.
     data["design_volume_cuft_cumul"] = design_volume_cuft(
-        data.get("design_storm_depth_inches", 0.0), data["eff_area_acres_cumul"]
+        design_storm_depth_inches, data["eff_area_acres_cumul"]
     )
 
     # during storm detention doesn't exist for the 'current' node
@@ -226,15 +228,21 @@ def compute_wet_weather_volume_discharge(data: dict[str, Any]) -> dict[str, Any]
     """
     inflow = data.get("runoff_volume_cuft_inflow", 0.0)
 
-    retained_pct = data.get("retained_pct", 0.0)
-    captured_pct = data.get("captured_pct", 0.0)
-    treated_pct = data.get("treated_pct", 0.0)
-    bypassed_pct = data["bypassed_pct"] = 100 - captured_pct
+    prec = 2
+    retained_pct = round(data.get("retained_pct", 0.0), prec)
+    captured_pct = round(data.get("captured_pct", 0.0), prec)
+    treated_pct = round(data.get("treated_pct", 0.0), prec)
+    bypassed_pct = data["bypassed_pct"] = round(100 - captured_pct, prec)
 
     data["runoff_volume_cuft_retained"] = inflow * retained_pct / 100
     data["runoff_volume_cuft_captured"] = inflow * captured_pct / 100
     data["runoff_volume_cuft_treated"] = inflow * treated_pct / 100
     data["runoff_volume_cuft_bypassed"] = inflow * bypassed_pct / 100
+
+    data["retained_pct"] = retained_pct if data["runoff_volume_cuft_retained"] else 0.0
+    data["captured_pct"] = captured_pct if data["runoff_volume_cuft_captured"] else 0.0
+    data["treated_pct"] = treated_pct if data["runoff_volume_cuft_treated"] else 0.0
+    data["bypassed_pct"] = bypassed_pct if data["runoff_volume_cuft_bypassed"] else 0.0
 
     vol_reduction_cuft = data.get("vol_reduction_cuft", 0.0)
     data["vol_reduction_cuft_cumul"] = (
