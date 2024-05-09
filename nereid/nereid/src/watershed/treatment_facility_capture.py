@@ -104,14 +104,9 @@ def compute_volume_capture_with_nomograph(
 
     # writeup step 3-a. This volume reduction is calculated, but is
     # not used until the next-downstream facility.
-    # NOTE: This doesn't make sense yet if the retention volume > design vol direct.
-    # suggest using the design vol cumul? consider a flow-based facility draining to a
-    # volume based one, there is no direct runoff in this case.
     data["vol_reduction_cuft"] = max(
         0,
-        (data["retained_pct"] / 100)
-        # todo: this should maybe not subtract the retention vol?
-        * (data["design_volume_cuft_direct"] - data["retention_volume_cuft"]),
+        (data["retained_pct"] / 100) * (data["design_volume_cuft_cumul"]),
     )
 
     return data
@@ -236,10 +231,14 @@ def solve_volume_based_compartments(
         ddt = c["ddt"] if size > 1e-6 else 0.0
 
         xoffset = 0.0
-        if prev_performance > 0:
+        if (prev_performance > 0) and (ddt > 0):
             xoffset = volume_nomo(performance=prev_performance, ddt=ddt)
 
-        performance = volume_nomo(size=size + xoffset, ddt=ddt)
+        performance = (
+            volume_nomo(size=size + xoffset, ddt=ddt)
+            if (size + ddt) > 0
+            else prev_performance
+        )
         if numpy.isnan(performance):  # pragma: no cover
             c["error"] = "size and ddt are out of bounds."
         c["performance"] = prev_performance = numpy.nanmax([0.0, performance])
@@ -295,21 +294,35 @@ def compute_volume_based_nested_facility(
         # writeup step 6
         data["ret_vol_xmax"] = data["retention_vol_frac"] + data["us_ret_vol_xoff"]
 
-        data["raw_retained_pct"] = 100 * float(
-            volume_nomo(size=data["ret_vol_xmax"], ddt=data["retention_ddt_hr"])
+        data["raw_retained_pct"] = min(
+            100,
+            100
+            * float(
+                volume_nomo(size=data["ret_vol_xmax"], ddt=data["retention_ddt_hr"])
+            ),
         )
 
         # compute treatment
         # writeup step 7
-        data["trt_vol_xoff"] = float(
-            volume_nomo(
-                performance=data["raw_retained_pct"] / 100, ddt=data["treatment_ddt_hr"]
+        data["trt_vol_xoff"] = (
+            float(
+                volume_nomo(
+                    performance=data["raw_retained_pct"] / 100,
+                    ddt=data["treatment_ddt_hr"],
+                )
             )
+            if data.get("treatment_volume_cuft")
+            else 0
         )
 
     else:
         data["raw_retained_pct"] = 0
-        data["trt_vol_xoff"] = 0
+        data["trt_vol_xoff"] = float(
+            volume_nomo(
+                performance=data["us_vol_reduction_pct"] / 100,
+                ddt=data["treatment_ddt_hr"],
+            )
+        )
 
     # writeup step 8
     data["treatment_vol_frac"] = safe_divide(
@@ -318,45 +331,72 @@ def compute_volume_based_nested_facility(
 
     # writeup step 9; raw_captured_pct aka 'Cumul Capture Eff'
     data["trt_vol_xmax"] = data["treatment_vol_frac"] + data["trt_vol_xoff"]
-    data["raw_captured_pct"] = 100 * float(
-        volume_nomo(size=data["trt_vol_xmax"], ddt=data["treatment_ddt_hr"])
+    data["raw_captured_pct"] = (
+        min(
+            100,
+            100
+            * float(
+                volume_nomo(size=data["trt_vol_xmax"], ddt=data["treatment_ddt_hr"])
+            ),
+        )
+        if data.get("trt_vol_xmax")
+        else data["raw_retained_pct"]
     )
 
     # writeup step 10
     # adjust capture efficiency for upstream retention
     # NOTE: what if the upstream vol reduction is > the raw captured pct???
-    data["adjusted_captured_pct"] = max(
-        0,
-        100
-        * (
-            max(data["raw_captured_pct"] - data["us_vol_reduction_pct"], 0)
-            * safe_divide(1, (100 - data["us_vol_reduction_pct"]))
+    data["adjusted_captured_pct"] = min(
+        100,
+        max(
+            0,
+            100
+            * (
+                max(data["raw_captured_pct"] - data["us_vol_reduction_pct"], 0)
+                * safe_divide(1, (100 - data["us_vol_reduction_pct"]))
+            ),
         ),
     )
 
     # writeup step 11
     # final capture efficiency
-    captured_pct = 100 * safe_divide(
-        (
-            data["adjusted_captured_pct"]
-            / 100
-            * data["during_storm_design_vol_cuft_cumul"]
-            + data["during_storm_det_volume_cuft_upstream"]
-        ),
-        (
-            data["during_storm_design_vol_cuft_cumul"]
-            + data["during_storm_det_volume_cuft_upstream"]
+    captured_pct = min(
+        100,
+        100
+        * safe_divide(
+            (
+                data["adjusted_captured_pct"]
+                / 100
+                * data["during_storm_design_vol_cuft_cumul"]
+                + data["during_storm_det_volume_cuft_upstream"]
+            ),
+            (
+                data["during_storm_design_vol_cuft_cumul"]
+                + data["during_storm_det_volume_cuft_upstream"]
+            ),
         ),
     )
 
     # writeup step 12
     # adjust final retention
-    retained_pct = data["raw_retained_pct"]
-    if data["retention_volume_cuft"] > 0:
-        retained_pct = data["retained_pct"] = max(
-            data["raw_retained_pct"] - data["us_vol_reduction_pct"], 0
-        )
-    retained_pct = min(retained_pct, captured_pct)
+    retained_pct = data["adjusted_retained_pct"] = min(
+        100,
+        max(
+            0,
+            100
+            * (
+                max(data["raw_retained_pct"] - data["us_vol_reduction_pct"], 0)
+                * safe_divide(1, (100 - data["us_vol_reduction_pct"]))
+            ),
+        ),
+    )
+
+    retained_pct = min(retained_pct, captured_pct, 100)
+
+    captured_pct = (
+        captured_pct if data.get("treatment_volume_cuft", 0.0) > 0 else retained_pct
+    )
+
     treated_pct = captured_pct - retained_pct
 
     data["captured_pct"] = captured_pct
@@ -410,7 +450,7 @@ def compute_flow_based_facility(
     Parameters
     ----------
     data : dict
-        all the current node's information. this will be treatment facilily size
+        all the current node's information. this will be treatment facility size
         information and characteristics of incoming upstream flow.
     *_nomo : thinly wrapped 2D CloughTocher Interpolators
         Reference: `nereid.src.nomograph.nomo`
@@ -461,7 +501,7 @@ def compute_dry_well_facility(
     Parameters
     ----------
     data : dict
-        all the current node's information. this will be treatment facilily size
+        all the current node's information. this will be treatment facility size
         information and characteristics of incoming upstream flow.
     *_nomo : thinly wrapped 2D CloughTocher Interpolators
         Reference: `nereid.src.nomograph.nomo`
