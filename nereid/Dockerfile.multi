@@ -4,14 +4,14 @@
 # pattern is able to reduce each image to ~250MB but takes considerable
 # time to build and is considerably more complex for scipy and pandas.
 
-FROM node:lts-bullseye as frontend
+FROM node:lts-bullseye AS frontend
 WORKDIR /app
 COPY ./nereid/static/frontend .
 RUN npm install . && npm run build
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM python:3.11-bullseye as nereid_install
+FROM python:3.11.10-bullseye AS nereid_install
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
@@ -19,12 +19,12 @@ WORKDIR /nereid
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM redis:6.2.13-alpine3.18 as redis
+FROM redis:6.2.14-alpine3.20 AS redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:3.11.8-alpine3.19 as flower
+FROM python:3.11.10-alpine3.19 AS flower
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 RUN pip install --no-cache-dir redis==4.6.0 flower==1.0.0 celery==5.3.4
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
@@ -45,82 +45,81 @@ EXPOSE 5555
 CMD ["celery", "flower"]
 
 
-FROM python:3.11.8-bullseye as core-env
+FROM python:3.11.10-bullseye AS core-env
 RUN apt-get update && apt-get install -y build-essential curl
+ADD https://astral.sh/uv/0.4.16/install.sh /install.sh
+RUN sh /install.sh && rm /install.sh
 ENV VIRTUAL_ENV=/opt/venv \
-    PATH=/opt/venv/bin:$PATH
-ADD --chmod=755 https://astral.sh/uv/install.sh /install.sh
-RUN /install.sh && rm /install.sh
+    PATH=/opt/venv/bin:/root/.cargo/bin/:$PATH
 COPY requirements/requirements_worker.txt /requirements_worker.txt
-RUN /root/.cargo/bin/uv venv /opt/venv && \
-    /root/.cargo/bin/uv pip install --no-cache -r /requirements_worker.txt
+RUN uv venv /opt/venv && \
+    uv pip install --no-cache -r /requirements_worker.txt
 
 
-FROM core-env as server-env
+FROM core-env AS server-env
 COPY requirements/requirements_nereid.txt /requirements_nereid.txt
 COPY requirements/requirements_server.txt /requirements_server.txt
-RUN  /root/.cargo/bin/uv pip install --no-cache \
+RUN  uv pip install --no-cache \
     -r /requirements_nereid.txt \
     -r /requirements_server.txt
 
 
-FROM core-env as test-env
+FROM core-env AS test-env
 COPY requirements/requirements_dev.txt /requirements_dev.txt
-RUN  /root/.cargo/bin/uv pip install --no-cache \
+RUN  uv pip install --no-cache \
     -r /requirements_dev.txt
 
 
-FROM python:3.11.8-slim-bullseye as core-runtime
+FROM python:3.11.10-slim-bullseye AS core-runtime
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
-COPY ./scripts /
-RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
 ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
-COPY ./nereid /nereid/nereid
-COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
 
 
-FROM core-runtime as celeryworker
+FROM core-runtime AS celeryworker
 # Add a user with an explicit UID/GID and create necessary directories
 ENV IMG_USER=celeryworker
 RUN addgroup --gid 1000 ${IMG_USER} \
-    && adduser --system --disabled-password --uid 1000 --gid 1000 ${IMG_USER} \
-    && chown -R ${IMG_USER}:${IMG_USER} /nereid
+    && adduser --no-create-home --system --disabled-password --uid 1000 --gid 1000 ${IMG_USER}
 USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
-CMD /run-worker.sh
+COPY --chmod=+x ./scripts /
+COPY --chown=${IMG_USER}:${IMG_USER} ./nereid /nereid/nereid
+CMD ["bash", "/run-worker.sh"]
 
 
-FROM core-runtime as nereid
+FROM core-runtime AS nereid
 COPY --from=server-env /opt/venv /opt/venv
+COPY --chmod=+x ./scripts /
+COPY ./nereid /nereid/nereid
+COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
 COPY gunicorn_conf.py /gunicorn_conf.py
 EXPOSE 80
-CMD /start.sh
+CMD ["bash", "/start.sh"]
 
 
-FROM core-runtime as nereid-tests
+FROM core-runtime AS nereid-tests
 COPY --from=test-env /opt/venv /opt/venv
 COPY .coveragerc /nereid/.coveragerc
 COPY conftest.py /nereid/conftest.py
+COPY --chmod=+x ./scripts /
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM python:3.12-bullseye as nereid-edge
-RUN apt-get update && apt-get install -y graphviz
-
-RUN apt-get update && apt-get install -y build-essential curl
-ENV VIRTUAL_ENV=/opt/venv \
-    PATH=/opt/venv/bin:$PATH
-ADD --chmod=755 https://astral.sh/uv/install.sh /install.sh
-RUN /install.sh && rm /install.sh
-COPY requirements/requirements_dev.txt /requirements_dev.txt
-RUN awk -F"==" '{print $1}' /requirements_dev.txt > /requirements_edge.txt
-RUN /root/.cargo/bin/uv venv /opt/venv && \
-    /root/.cargo/bin/uv pip install --no-cache -r /requirements_edge.txt
+FROM python:3.12-bullseye AS nereid-edge
+RUN apt-get update -y \
+    && apt-get install -y graphviz build-essential curl \
+    && rm -rf /var/lib/apt/lists/*
+ADD https://astral.sh/uv/0.4.16/install.sh /install.sh
+RUN sh /install.sh && rm /install.sh
+ENV PATH=/opt/venv/bin:/root/.cargo/bin/:$PATH
+COPY ./requirements /
+RUN uv venv /opt/venv && \
+    uv pip install --no-cache -r /requirements_dev_unpinned.txt
 COPY ./nereid /nereid/nereid
 COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
 COPY ./scripts /
@@ -129,10 +128,10 @@ WORKDIR /nereid
 ENV PYTHONPATH=/nereid
 
 
-FROM nereid-edge as nereid-edge-tests
+FROM nereid-edge AS nereid-edge-tests
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM nereid-edge as celeryworker-edge
+FROM nereid-edge AS celeryworker-edge
 ENV C_FORCE_ROOT=1
 CMD /run-worker.sh
