@@ -1,4 +1,5 @@
 """ref: mCoding json config https://github.com/mCodingLLC/VideosSampleCode/blob/master/videos/135_modern_logging/mylogger.py"""
+
 import datetime as dt
 import json
 import logging
@@ -71,7 +72,7 @@ class JSONLogFormatter(logging.Formatter):  # pragma: no cover
 
         for key, val in record.__dict__.items():
             if key not in LOG_RECORD_BUILTIN_ATTRS:
-                message[key] = val
+                message[key] = val  # noqa [PERF403]
 
         return message
 

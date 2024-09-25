@@ -140,10 +140,10 @@ def detailed_loading_results(
     land_surfaces_df: pandas.DataFrame,
     wet_weather_parameters: Iterable[dict[str, str]],
     dry_weather_parameters: Iterable[dict[str, str]],
-    seasons: dict[str, Iterable[str]],
+    seasons: dict[str, Iterable[str] | None],
 ) -> pandas.DataFrame:
     results = (
-        land_surfaces_df.pipe(clean_land_surface_dataframe)
+        land_surfaces_df.pipe(clean_land_surface_dataframe)  # type: ignore
         .pipe(detailed_volume_loading_results)
         .pipe(detailed_dry_weather_volume_loading_results, seasons)
         .pipe(

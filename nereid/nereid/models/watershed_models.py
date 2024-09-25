@@ -396,9 +396,9 @@ EXAMPLE_WATERSHED: dict = {
 class Watershed(BaseModel):
     graph: Graph
     land_surfaces: list[LandSurface] | None = None
-    treatment_facilities: list[dict[str, Any]] | list[
-        STRUCTURAL_FACILITY_TYPE
-    ] | None = None
+    treatment_facilities: (
+        list[dict[str, Any]] | list[STRUCTURAL_FACILITY_TYPE] | None
+    ) = None
     treatment_sites: list[TreatmentSite] | None = None
     previous_results: list[PreviousResult] | None = None
 
