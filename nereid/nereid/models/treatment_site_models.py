@@ -8,7 +8,7 @@ from nereid.models.treatment_facility_models import SimpleFacilityBase
 
 class TreatmentSite(SimpleFacilityBase):
     area_pct: float = Field(0.0, le=100.0, ge=0.0)
-    retained_pct: float = Field(0.0, le=100.0, ge=0.0)
+    retained_pct: float = Field(0.0, le=100.0, ge=0.0)  # type: ignore
     eliminate_all_dry_weather_flow_override: bool = False
 
 

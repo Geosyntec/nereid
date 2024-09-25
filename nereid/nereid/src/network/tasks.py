@@ -41,7 +41,7 @@ def validate_network(graph: dict) -> dict[str, bool | list]:
     else:
         _keys = ["node_cycles", "edge_cycles", "multiple_out_edges", "duplicate_edges"]
         for key, value in zip(_keys, validate.validate_network(g), strict=True):
-            result[key] = value
+            result[key] = value  # noqa [PERF403]
 
         return result
 

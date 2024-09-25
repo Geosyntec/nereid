@@ -5,7 +5,10 @@ from starlette.responses import HTMLResponse
 # Swagger UI includes a supermassive curl div that is not height constrained.
 # Not sure how this hasn't been fixed, but this patches it for this project.
 def get_better_swagger_ui_html(*args, **kwargs) -> HTMLResponse:
-    body_lines = get_swagger_ui_html(**kwargs).body.decode().split("\n")
+    body = get_swagger_ui_html(**kwargs).body
+    if isinstance(body, memoryview):
+        body = body.tobytes()
+    body_lines = body.decode().split("\n")
     ix = 4
     for i, line in enumerate(body_lines):
         if 'type="text/css" rel="stylesheet"' in line:

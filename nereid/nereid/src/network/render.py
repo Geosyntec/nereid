@@ -218,7 +218,7 @@ def fig_to_image(fig: Figure, **kwargs: Any) -> IO:
     _kwargs.update(kwargs)
 
     img = BytesIO()
-    fig.savefig(img, **_kwargs)
+    fig.savefig(img, **_kwargs)  # type: ignore[arg-type]
     img.seek(0)
 
     return img

@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     @field_validator("ALLOW_CORS_ORIGINS", mode="after")
     @classmethod
     def stringify_cors_origins(cls, v: list[str]) -> list[str]:  # pragma: no cover
-        return [str(AnyHttpUrl(url) if url != "*" else url) for url in v]
+        return [str(AnyHttpUrl(url) if url != "*" else url) for url in v]  # type: ignore
 
     model_config = {
         "env_prefix": "NEREID_",
