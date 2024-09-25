@@ -72,7 +72,6 @@ test = ["coverage", "httpx", "pytest", "pytest-cov", "pytest-xdist"]
 dev = [
     "nereid-engine[app]",
     "nereid-engine[test]",
-    "black>=23.3.0,<24.0",
     "mypy",
     "pre-commit>=3.3.3,<4.0.0",
     "ruff",
