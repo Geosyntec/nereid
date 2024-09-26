@@ -2,11 +2,17 @@ import warnings
 from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
-from typing import IO, Any, cast
+from typing import IO, TYPE_CHECKING, Any, cast
 
 import networkx as nx
 import orjson as json
-from matplotlib.pyplot import Axes, Figure  # type: ignore
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+else:
+    Axes = Any
+    Figure = Any
 
 
 def pydot_layout(*args, **kwargs) -> dict:
