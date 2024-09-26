@@ -1,6 +1,5 @@
-from typing import Annotated, Self
-
 from pydantic import BaseModel, Field, StrictStr, model_validator
+from typing_extensions import Annotated, Self
 
 from nereid.models.response_models import JSONAPIResponse
 from nereid.src.tasks import validate_network
