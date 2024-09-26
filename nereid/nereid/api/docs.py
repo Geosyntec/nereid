@@ -6,7 +6,7 @@ from starlette.responses import HTMLResponse
 # Not sure how this hasn't been fixed, but this patches it for this project.
 def get_better_swagger_ui_html(*args, **kwargs) -> HTMLResponse:
     body = get_swagger_ui_html(**kwargs).body
-    if isinstance(body, memoryview):
+    if isinstance(body, memoryview):  # pragma: no cover
         body = body.tobytes()
     body_lines = body.decode().split("\n")
     ix = 4
