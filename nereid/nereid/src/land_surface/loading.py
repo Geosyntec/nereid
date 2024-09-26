@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Mapping
 
 import numpy
 import pandas
@@ -67,7 +67,7 @@ def detailed_volume_loading_results(df: pandas.DataFrame) -> pandas.DataFrame:
 
 
 def detailed_dry_weather_volume_loading_results(
-    df: pandas.DataFrame, seasons: dict[str, Iterable[str] | None]
+    df: pandas.DataFrame, seasons: Mapping[str, Iterable[str] | None]
 ) -> pandas.DataFrame:
     """This function aggregates the dry weather flowrate (dwf) by season according
     to the config file spec.

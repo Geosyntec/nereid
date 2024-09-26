@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import AnyHttpUrl, field_validator
+from pydantic import AnyHttpUrl, TypeAdapter, field_validator
 from pydantic_settings import BaseSettings
 
 import nereid
@@ -43,7 +43,9 @@ class Settings(BaseSettings):
     @field_validator("ALLOW_CORS_ORIGINS", mode="after")
     @classmethod
     def stringify_cors_origins(cls, v: list[str]) -> list[str]:  # pragma: no cover
-        return [str(AnyHttpUrl(url) if url != "*" else url) for url in v]  # type: ignore
+        anyurl = TypeAdapter(AnyHttpUrl)
+        ls = [str(anyurl.validate_python(url) if url != "*" else url) for url in v]
+        return ls
 
     model_config = {
         "env_prefix": "NEREID_",
