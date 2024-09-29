@@ -86,14 +86,14 @@ RUN addgroup --gid 1000 ${IMG_USER} \
     && adduser --no-create-home --system --disabled-password --uid 1000 --gid 1000 ${IMG_USER}
 USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
-COPY --chmod=+x ./scripts /
+COPY --chmod=755 ./scripts /
 COPY --chown=${IMG_USER}:${IMG_USER} ./nereid /nereid/nereid
 CMD ["bash", "/run-worker.sh"]
 
 
 FROM core-runtime AS nereid
 COPY --from=server-env /opt/venv /opt/venv
-COPY --chmod=+x ./scripts /
+COPY --chmod=755 ./scripts /
 COPY ./nereid /nereid/nereid
 COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
 COPY gunicorn_conf.py /gunicorn_conf.py
@@ -105,7 +105,7 @@ FROM core-runtime AS nereid-tests
 COPY --from=test-env /opt/venv /opt/venv
 COPY .coveragerc /nereid/.coveragerc
 COPY conftest.py /nereid/conftest.py
-COPY --chmod=+x ./scripts /
+COPY --chmod=755 ./scripts /
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
@@ -122,8 +122,7 @@ RUN uv venv /opt/venv && \
     uv pip install --no-cache -r /requirements_dev_unpinned.txt
 COPY ./nereid /nereid/nereid
 COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
-COPY ./scripts /
-RUN chmod +x /start.sh /start-reload.sh /prestart.sh /prestart-worker.sh /run-worker.sh
+COPY --chmod=755 ./scripts /
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
 
