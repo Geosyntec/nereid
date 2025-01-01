@@ -4,7 +4,7 @@
 # pattern is able to reduce each image to ~250MB but takes considerable
 # time to build and is considerably more complex for scipy and pandas.
 
-FROM node:lts-bullseye AS frontend
+FROM node:20.18-bullseye AS frontend
 WORKDIR /app
 COPY ./nereid/static/frontend .
 RUN npm install . && npm run build
