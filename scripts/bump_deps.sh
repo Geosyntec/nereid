@@ -2,7 +2,7 @@
 
 set -e
 
-pip install -U "uv>=0.4,<0.5"
+pip install -U "uv>=0.5,<0.6"
 
 # dev
 uv pip compile nereid/requirements/requirements_dev_unpinned.txt > nereid/requirements/requirements_dev.txt
