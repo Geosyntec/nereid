@@ -15,7 +15,27 @@ export async function editableTable(divid, options) {
 
   let merged_options = Object.assign(default_options, options);
 
-  let { default: Tabulator } = await import("tabulator-tables");
-
+  let {
+    Tabulator,
+    EditModule,
+    FormatModule,
+    HistoryModule,
+    InteractionModule,
+    MenuModule,
+    ResizeColumnsModule,
+    SelectRowModule,
+    SortModule,
+  } = await import("tabulator-tables");
+  Tabulator.registerModule([
+    Tabulator,
+    EditModule,
+    FormatModule,
+    HistoryModule,
+    InteractionModule,
+    MenuModule,
+    ResizeColumnsModule,
+    SelectRowModule,
+    SortModule,
+  ]);
   return new Tabulator(divid, merged_options);
 }
