@@ -1,5 +1,6 @@
 import d3 from "../../lib/d3";
 import store from "../../lib/state";
+import * as util from "../../lib/util";
 import Component from "../base/component";
 
 import Map from "./map";
@@ -14,14 +15,16 @@ export default class Editor extends Component {
   }
 
   resize() {
-    this.svg.attr("viewBox", [
-      0,
-      0,
-      d3.select(`#map`).node().getBoundingClientRect().width,
-      d3.select(`#map`).node().getBoundingClientRect().height,
-    ]);
-
-    this?.map?.resize();
+    let self = this;
+    if (util.get(self.store, "state.current_tab") == "editor-tab") {
+      this.svg.attr("viewBox", [
+        0,
+        0,
+        d3.select(`#map`).node().getBoundingClientRect().width,
+        d3.select(`#map`).node().getBoundingClientRect().height,
+      ]);
+      this?.map?.resize();
+    }
   }
 
   _render() {
