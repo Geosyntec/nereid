@@ -7,7 +7,7 @@ import { editor } from "./graph-interface";
 import * as util from "../lib/util";
 import * as nereidUtil from "../lib/nereid-api";
 
-window.onload = async (event) => {
+window.onload = async (_) => {
   await util.getConfigFromUrlQueryParams();
   const app = new Component({
     id: "app",

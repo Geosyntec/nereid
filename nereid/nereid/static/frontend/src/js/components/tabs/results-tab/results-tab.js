@@ -5,6 +5,22 @@ import * as util from "../../../lib/util.js";
 // import * as results from "./result_summary";
 
 async function resultTable(divid, options) {
+  let { default: XLSX } = await import("xlsx");
+  let {
+    Tabulator,
+    DownloadModule,
+    ExportModule,
+    FormatModule,
+    ResizeColumnsModule,
+  } = await import("tabulator-tables");
+
+  Tabulator.registerModule([
+    DownloadModule,
+    ExportModule,
+    FormatModule,
+    ResizeColumnsModule,
+  ]);
+
   let default_options = {
     data: [{}], //load row data from array
     // clipboard: true,
@@ -21,19 +37,10 @@ async function resultTable(divid, options) {
     footerElement: `<div class="tabulator-footer"></div>`, //add a custom button to the footer element
     columns: [],
     initialSort: [{ column: "node_id", dir: "asc" }],
+    dependencies: { XLSX },
   };
 
   let merged_options = Object.assign(default_options, options);
-
-  let { default: Tabulator } = await import("tabulator-tables");
-
-  Tabulator.prototype.extendModule("format", "formatters", {
-    gscwmp: function (cell, formatterParams) {
-      let { precision } = formatterParams;
-      return "before " + cell.getValue() + " after " + `${precision}`;
-    },
-  });
-
   return new Tabulator(divid, merged_options);
 }
 
@@ -141,9 +148,9 @@ export class ResultsTab extends Component {
     self.tables.push(table);
     let scenario_name = self.scenario_name.replaceAll(" ", "-");
 
-    button.on("click", () =>
-      table.download("csv", scenario_name + "-" + filename_csv)
-    );
+    button.on("click", () => {
+      table.download("csv", scenario_name + "-" + filename_csv);
+    });
   }
 
   async update(data) {
@@ -152,12 +159,19 @@ export class ResultsTab extends Component {
     data = data || [];
     self.element.html("");
     if (data?.length > 0) {
+      self.element.select(`#dummy_table`).remove();
+      self.element
+        .append("div")
+        .attr("id", "dummy_table")
+        .classed("hidden", true);
+      let table = await resultTable("#dummy_table");
       let download_all_button = self.element
         .append("div")
         .append("button")
         .classed("btn btn-blue", true)
         .text("Download All Data Summaries (xlsx)");
-      download_all_button.on("click", async () => {
+
+      download_all_button.on("click", () => {
         let sheets = {};
         self.element
           .selectAll("[id$='-results-tabulator']")
@@ -171,15 +185,11 @@ export class ResultsTab extends Component {
               .slice(0, 30);
             if (!id.includes("table-all-data")) sheets[sheet] = "#" + id;
           });
-
         self.element.select(`#dummy_table`).remove();
         self.element
           .append("div")
           .attr("id", "dummy_table")
           .classed("hidden", true);
-
-        let table = await resultTable("#dummy_table");
-
         table.download("xlsx", "AllData.xlsx", { sheets });
       });
     }
