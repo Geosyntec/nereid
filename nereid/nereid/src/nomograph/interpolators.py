@@ -182,7 +182,7 @@ class NomographBase:
         return self._interp_kwargs
 
     @property
-    def ct2di(self):
+    def ct2di(self) -> CT2DI:
         if self._ct2di is None:
             self._ct2di = CT2DI(
                 points=numpy.column_stack((self.x_data, self.t_data)),
