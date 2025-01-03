@@ -34,17 +34,10 @@
       hover:text-blue-400;
   }
   .tab.active {
-    @apply flex-1
-      text-center
-      font-medium
-      pb-3
-      cursor-pointer
-      hover:text-blue-400
-      text-blue-400;
+    @apply text-blue-400;
   }
   .tab-slider {
-    @apply
-      block
+    @apply block
       absolute
       bottom-0
       left-0
