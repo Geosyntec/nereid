@@ -2,6 +2,7 @@ import Store from "./store.js";
 
 const state = {
   DEBUG: false,
+  current_tab: "editor-tab",
   config: {},
   scenario_name: "New Scenario",
   nereid_host: "",
