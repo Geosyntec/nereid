@@ -139,7 +139,7 @@ def render_subgraphs(
     ax.set_yticks([])
     ax.axis("off")
 
-    fig = ax.get_figure() or Figure()
+    fig = ax.get_figure(root=True) or Figure()
 
     return fig
 
@@ -214,7 +214,7 @@ def render_solution_sequence(
 
     ax.legend(loc="center right", bbox_to_anchor=(-0.05, 0.5))
 
-    fig = ax.get_figure() or Figure()
+    fig = ax.get_figure(root=True) or Figure()
 
     return fig
 
