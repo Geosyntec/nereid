@@ -3,6 +3,7 @@ import rewind from "@turf/rewind";
 
 import * as api from "../../lib/nereid-api";
 import store from "../../lib/state.js";
+import d3 from "../../lib/d3";
 import * as util from "../../lib/util.js";
 
 import Component from "./component.js";

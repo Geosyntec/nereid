@@ -1,6 +1,7 @@
 import Component from "../../base/component.js";
 import { get } from "../../../lib/util.js";
 import store from "../../../lib/state.js";
+import d3 from "../../../lib/d3";
 
 class EditorTips extends Component {
   constructor(options) {

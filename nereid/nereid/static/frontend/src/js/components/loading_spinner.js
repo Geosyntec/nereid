@@ -1,5 +1,6 @@
 import Component from "./base/component.js";
 import store from "../lib/state.js";
+import d3 from "../lib/d3.js";
 
 class LoadingSpinner extends Component {
   constructor(options) {

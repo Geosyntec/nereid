@@ -63,7 +63,7 @@ export default class GraphEditor extends Component {
       .attr("markerWidth", 3)
       .attr("markerHeight", 3)
       .attr("orient", "auto")
-      .style("fill", d3.gray(20))
+      .style("fill", "#333")
       .append("svg:path")
       .attr("d", "M0,-5L10,0L0,5");
     // .attr("fill", "#000");

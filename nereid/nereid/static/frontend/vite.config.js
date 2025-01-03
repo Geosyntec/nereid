@@ -1,22 +1,30 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite";
-// import nodePolyfills from "rollup-plugin-polyfill-node";
 import analyze from "rollup-plugin-analyzer";
 
-export default defineConfig({
-  // plugins: [react()],
+/** @type {import('vite').UserConfig} */
+export default {
   root: "src",
   base: "/app", // makes assets relative rather than absolute
-  plugins: [splitVendorChunkPlugin()],
   build: {
     outDir: "../dist",
     emptyOutDir: true,
     rollupOptions: {
-      plugins: [
-        // Enable rollup polyfills plugin
-        // used during production bundling
-        // nodePolyfills({ include: null }),
-        // analyze({ limit: 20 }),
-      ],
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("tabulator")) {
+              return "tabulator";
+            }
+            if (id.includes("d3-")) {
+              return "d3";
+            }
+            if (id.includes("xlsx")) {
+              return "xlsx";
+            }
+            return "vendor";
+          }
+        },
+      },
+      // plugins: [analyze({ limit: 5 })],
     },
   },
-});
+};
