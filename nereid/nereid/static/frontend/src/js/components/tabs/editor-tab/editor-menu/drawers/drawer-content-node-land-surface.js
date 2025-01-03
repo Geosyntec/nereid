@@ -49,7 +49,9 @@ export class LandSurfaceNodeEditorUI extends Component {
         {
           label: "<i class='fas fa-trash'></i> Delete Row",
           action: function (e, row) {
-            row.delete();
+            if (self.table.getRows().length > 1) {
+              row.delete();
+            }
           },
         },
       ],
@@ -62,7 +64,7 @@ export class LandSurfaceNodeEditorUI extends Component {
           title: "Node Id",
           field: "node_id",
           editor: "input",
-          editable: (c) => c.getRow().getPosition() < 1, // only first row is editable
+          editable: (c) => c.getRow().getPosition() == 1, // only first row is editable
         },
         { title: "Surface Key", field: "surface_key", editor: "input" },
         {
