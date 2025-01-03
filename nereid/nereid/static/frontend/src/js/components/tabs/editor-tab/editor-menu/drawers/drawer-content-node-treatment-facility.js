@@ -218,6 +218,31 @@ function build_form(divid, schema, existing_data, disabled, ignored, onSubmit) {
         .text(d.title);
       let input;
 
+      function handleAnyOf(d) {
+        if (d?.anyOf == null) return d;
+
+        for (let t of ["boolean", "number", "string"]) {
+          for (let dt of d.anyOf) {
+            if (dt.type !== t) continue;
+            switch (dt.type) {
+              case "boolean":
+                d.type = "boolean";
+                d.default = dt?.default || false; // careful not to override a falsy default....
+                return d;
+              case "number":
+                d.type = "number";
+                return d;
+              case "string":
+                d.type = "string";
+                return d;
+            }
+          }
+        }
+        return d;
+      }
+
+      d = handleAnyOf(d);
+
       switch (d.type) {
         case "string":
           input = self
@@ -234,9 +259,12 @@ function build_form(divid, schema, existing_data, disabled, ignored, onSubmit) {
             // ["pattern", "placeholder", "default"].forEach(function (key) {
             //   if (key in d) input.attr(key, d[key]);
             // });
-            .attr("pattern", d.pattern || ".*")
+            .attr("pattern", d?.pattern || ".*")
             // .attr("defaultValue", d.default || "") // apparently d3 cannot set a mixed case attribute.
-            .attr("value", d.example || d.default || "");
+            .attr(
+              "value",
+              [d?.example, d?.default, ""].find((v) => v != null)
+            );
           break;
         case "number":
           input = self
@@ -251,7 +279,10 @@ function build_form(divid, schema, existing_data, disabled, ignored, onSubmit) {
           input
             .attr("type", "number")
             .attr("step", "0.001")
-            .attr("value", d.example || d.default || "");
+            .attr(
+              "value",
+              [d?.example, d?.default, ""].find((v) => v != null)
+            );
           // ["pattern", "placeholder", "default"].forEach(function (key) {
           //   if (key in d) input.attr(key, d[key]);
           // });
