@@ -2,6 +2,7 @@ import { FindNodeDrawer } from "./drawers";
 import Component from "../../../../base/component";
 import store from "../../../../../lib/state.js";
 import * as util from "../../../../../lib/util.js";
+import d3 from "../../../../../lib/d3";
 
 class SearchInput extends Component {
   constructor(options) {

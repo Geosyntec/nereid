@@ -66,7 +66,7 @@ export default class DesignStormVectors extends VectorLayer {
       .attr("fill", (d) => {
         return self.colorScale(d.properties[geojson._field]);
       })
-      .attr("stroke", d3.gray(0.2))
+      .attr("stroke", "#eee")
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .style("stroke-width", self.stroke_width / self.transform.k);

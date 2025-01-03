@@ -1,6 +1,4 @@
 import d3 from "../../lib/d3.js";
-// import * as topojson from "topojson-client";
-// import * as api from "../../lib/nereid-api";
 import * as util from "../../lib/util.js";
 import VectorLayer from "../base/vector-layer.js";
 
@@ -67,7 +65,7 @@ export default class RefDataVectors extends VectorLayer {
       .attr("fill", (d) => {
         return self.colorScale(d.properties[geojson._field]);
       })
-      .attr("stroke", d3.gray(0.2))
+      .attr("stroke", "#eee")
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .style("stroke-width", self.stroke_width / self.transform.k);

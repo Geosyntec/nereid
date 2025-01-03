@@ -1,7 +1,8 @@
 import Component from "./base/component.js";
 import store from "../lib/state.js";
+import d3 from "../lib/d3.js";
 
-export class Modal extends Component {
+class Modal extends Component {
   constructor(options) {
     super({ store, id: options.id });
   }
