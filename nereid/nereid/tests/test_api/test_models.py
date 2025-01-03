@@ -96,6 +96,102 @@ from nereid.models.treatment_facility_models import (
                 "design_capacity_cfs": None,
             },
         ),
+        (
+            "retained must equal captured",
+            {
+                "node_id": "1",
+                "facility_type": "infiltration_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": 80,
+                "retained_pct": 50,
+            },
+        ),
+        (
+            "retained must equal captured",
+            {
+                "node_id": "1",
+                "facility_type": "infiltration_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": "80",
+                "retained_pct": "50",
+            },
+        ),
+        (
+            False,
+            {
+                "node_id": "1",
+                "facility_type": "infiltration_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": 80,
+                "retained_pct": "80",
+            },
+        ),
+        (
+            False,
+            {
+                "node_id": "1",
+                "facility_type": "bioretention_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": "80",
+                "retained_pct": "50",
+            },
+        ),
+        (
+            "retained percent must be less than or equal to captured",
+            {
+                "node_id": "1",
+                "facility_type": "bioretention_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": "80",
+                "retained_pct": "85",
+            },
+        ),
+        (
+            "must be between 0.0-100.0",
+            {
+                "node_id": "1",
+                "facility_type": "bioretention_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": "80",
+                "retained_pct": "-5.5",
+            },
+        ),
+        (
+            False,
+            {
+                "node_id": "1",
+                "facility_type": "hydrodynamic_separator_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": "80",
+                "retained_pct": "0",
+            },
+        ),
+        (
+            "retained percent must be zero",
+            {
+                "node_id": "1",
+                "facility_type": "hydrodynamic_separator_simple",
+                "ref_data_key": "10101200",
+                "design_storm_depth_inches": 0.87,
+                "is_online": False,
+                "captured_pct": "80",
+                "retained_pct": "50",
+            },
+        ),
     ],
 )
 def test_build_treatment_facility_nodes_errors(contexts, ctxt_key, err, data_dict):
@@ -106,6 +202,6 @@ def test_build_treatment_facility_nodes_errors(contexts, ctxt_key, err, data_dic
     vm_dict = valid_models[0]
 
     if err:
-        assert err in vm_dict["errors"]
+        assert err in vm_dict["errors"], data_dict
     else:
-        assert vm_dict.get("errors") is None
+        assert vm_dict.get("errors") is None, data_dict
