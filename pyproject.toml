@@ -73,7 +73,7 @@ dev = [
     "nereid-engine[app]",
     "nereid-engine[test]",
     "mypy",
-    "pre-commit>=3.3.3,<4.0.0",
+    "pre-commit>=4,<5",
     "ruff",
 ]
 
