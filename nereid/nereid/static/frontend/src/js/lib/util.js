@@ -197,9 +197,10 @@ export function convertArrayOfObjectsToCSV(args) {
 export const getConfigFromUrlQueryParams = async () => {
   const params = new URLSearchParams(window.location.search);
 
-  let { state, region } = Object.fromEntries(params.entries());
+  let { state, region, host } = Object.fromEntries(params.entries());
 
   const cfg = await getConfig({
+    nereid_host: host,
     nereid_state: state || store.state.nereid_state,
     nereid_region: region || store.state.nereid_region,
   });
