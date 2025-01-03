@@ -43,22 +43,6 @@ const watershed = () => {
 };
 
 const nereid = {
-  // getHost: async () => {
-  //   let rsp;
-  //   try {
-  //     rsp = await util.getJsonResponse("/get_env");
-  //     if (rsp.status === 200) {
-  //       let { nereid_host } = rsp;
-  //       // console.log("host?", nereid_host);
-  //       return nereid_host;
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  //   // console.log("default localhost:9999");
-  //   return ".";
-  // },
-
   getOpenApi: async (host) => {
     let rsp;
     try {
@@ -66,7 +50,7 @@ const nereid = {
       return rsp;
     } catch (err) {
       console.error(err); // TypeError: failed to fetch
-      return __openapi;
+      // return __openapi;
     }
   },
 
@@ -79,12 +63,12 @@ const nereid = {
 
       if (rsp?.detail?.toLowerCase()?.includes("no config")) {
         console.warn(`no config for ${state} ${region}`);
-        return __config;
+        // return __config;
       }
       return rsp;
     } catch (err) {
       console.error(err); // TypeError: failed to fetch
-      return __config;
+      // return __config;
     }
   },
 
