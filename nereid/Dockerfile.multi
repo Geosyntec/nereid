@@ -4,14 +4,14 @@
 # pattern is able to reduce each image to ~250MB but takes considerable
 # time to build and is considerably more complex for scipy and pandas.
 
-FROM node:20.18-bullseye AS frontend
+FROM node:20.19-bullseye AS frontend
 WORKDIR /app
 COPY ./nereid/static/frontend .
 RUN npm install . && npm run build
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM python:3.11.10-bullseye AS nereid_install
+FROM python:3.11.12-bullseye AS nereid_install
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
@@ -19,12 +19,12 @@ WORKDIR /nereid
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM redis:6.2.14-alpine3.20 AS redis
+FROM redis:6.2.17-alpine3.21 AS redis
 COPY redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:3.11.10-alpine3.19 AS flower
+FROM python:3.11.12-alpine3.21 AS flower
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 RUN pip install --no-cache-dir redis==4.6.0 flower==1.0.0 celery==5.3.4
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
@@ -45,12 +45,12 @@ EXPOSE 5555
 CMD ["celery", "flower"]
 
 
-FROM python:3.11.10-bullseye AS core-env
+FROM python:3.11.12-bullseye AS core-env
 RUN apt-get update && apt-get install -y build-essential curl
-ADD https://astral.sh/uv/0.4.16/install.sh /install.sh
+ADD https://astral.sh/uv/0.6.14/install.sh /install.sh
 RUN sh /install.sh && rm /install.sh
 ENV VIRTUAL_ENV=/opt/venv \
-    PATH=/opt/venv/bin:/root/.cargo/bin/:$PATH
+    PATH=/opt/venv/bin:/root/.local/bin/:$PATH
 COPY requirements/requirements_worker.txt /requirements_worker.txt
 RUN uv venv /opt/venv && \
     uv pip install --no-cache -r /requirements_worker.txt
@@ -70,7 +70,7 @@ RUN  uv pip install --no-cache \
     -r /requirements_dev.txt
 
 
-FROM python:3.11.10-slim-bullseye AS core-runtime
+FROM python:3.11.12-slim-bullseye AS core-runtime
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends graphviz \
     && rm -rf /var/lib/apt/lists/*
@@ -114,9 +114,9 @@ FROM python:3.12-bullseye AS nereid-edge
 RUN apt-get update -y \
     && apt-get install -y graphviz build-essential curl \
     && rm -rf /var/lib/apt/lists/*
-ADD https://astral.sh/uv/0.4.16/install.sh /install.sh
+ADD https://astral.sh/uv/0.6.14/install.sh /install.sh
 RUN sh /install.sh && rm /install.sh
-ENV PATH=/opt/venv/bin:/root/.cargo/bin/:$PATH
+ENV PATH=/opt/venv/bin:/root/.local/bin/:$PATH
 COPY ./requirements /
 RUN uv venv /opt/venv && \
     uv pip install --no-cache -r /requirements_dev_unpinned.txt
