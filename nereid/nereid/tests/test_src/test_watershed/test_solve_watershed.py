@@ -667,8 +667,8 @@ def test_watershed_graph_land_surface_only(
 
     assert sum_inflow > 0, f"error, no runoff generated: {surface_discharges}"
     assert outflow > 0, "error, no runoff observed at outfall"
-    assert (
-        abs(sum_inflow - outflow) / sum_inflow < 1e-15
-    ), f"sum inflow: {sum_inflow:.2f}; outfall: {outflow:.2f}"
+    assert abs(sum_inflow - outflow) / sum_inflow < 1e-15, (
+        f"sum inflow: {sum_inflow:.2f}; outfall: {outflow:.2f}"
+    )
 
     return

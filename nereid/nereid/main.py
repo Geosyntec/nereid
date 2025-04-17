@@ -37,7 +37,7 @@ def main():
     # logger.warning("warning message with extras", extra={"x": "hello"})
 
     if unk:
-        logger.warning(f'ignored arguments: {" ".join(unk)}')
+        logger.warning(f"ignored arguments: {' '.join(unk)}")
 
     config = merge_dicts(uvicorn.config.LOGGING_CONFIG, LOGGING_CONFIG)
 

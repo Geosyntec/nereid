@@ -194,7 +194,7 @@ def summary_loading_results(
     )
 
     agg_dict = {
-        **{col: "sum" for col in output_columns_summable},
+        **dict.fromkeys(output_columns_summable, "sum"),
         # add other aggregation requirements for other columns here
     }
 

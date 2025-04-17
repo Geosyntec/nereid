@@ -165,9 +165,9 @@ def test_stable_watershed_stable_subgraph_solutions(
     ]
 
     for data in nested_bmps:
-        assert (
-            data["design_volume_cuft_direct"] < data["design_volume_cuft_cumul"]
-        ), data.get("node_type", "")
+        assert data["design_volume_cuft_direct"] < data["design_volume_cuft_cumul"], (
+            data.get("node_type", "")
+        )
 
 
 @pytest.mark.parametrize(

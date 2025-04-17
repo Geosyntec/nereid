@@ -200,8 +200,8 @@ def compute_volume_based_standalone_facility(
     data["_nomograph_solution_status"] = "successful; volume based; standalone"
     for i, c in enumerate(compartments):
         if c["error"]:  # pragma: no cover
-            data["_nomograph_solution_status"] += f'; c{i}[{c["error"]}]'
-            data["node_errors"].append(f'c{i}[{c["error"]}]')
+            data["_nomograph_solution_status"] += f"; c{i}[{c['error']}]"
+            data["node_errors"].append(f"c{i}[{c['error']}]")
     return data
 
 
