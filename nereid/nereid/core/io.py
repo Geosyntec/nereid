@@ -104,8 +104,7 @@ def parse_expand_fields(
             field = f.get("field")
             if field is None:  # pragma: no cover
                 messages.append(
-                    f"no field in {config_section}:{config_object} "
-                    f"for instructions {f}"
+                    f"no field in {config_section}:{config_object} for instructions {f}"
                 )
                 continue
             sep = f.get("sep", "_")

@@ -130,7 +130,7 @@ def render_subgraphs(
             pos=layout,
             node_size=node_size,
             node_color=f"C{i}",
-            label=f"subgraph {i+1}",
+            label=f"subgraph {i + 1}",
         )
 
     ax.legend(loc="upper center", ncol=4, bbox_to_anchor=(0.5, -0.05))

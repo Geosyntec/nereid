@@ -29,9 +29,9 @@ class SimpleFacilityBase(_Base):
             v = 0.0
         else:
             v = float(v)
-            assert (
-                0.0 <= v <= 100.0
-            ), "Error: This value must be a number between 0.0 - 100.0."
+            assert 0.0 <= v <= 100.0, (
+                "Error: This value must be a number between 0.0 - 100.0."
+            )
         return v
 
 
@@ -46,9 +46,9 @@ class SimpleFacility(SimpleFacilityBase):
             else:
                 v = float(v)
                 assert 0.0 <= v <= 100.0, "retained percent must be between 0.0-100.0"
-                assert v <= float(
-                    data.get("captured_pct", 0.0)
-                ), "retained percent must be less than or equal to captured percent"
+                assert v <= float(data.get("captured_pct", 0.0)), (
+                    "retained percent must be less than or equal to captured percent"
+                )
         return data
 
 
@@ -73,9 +73,9 @@ class SimpleRetFacility(SimpleFacilityBase):
             v = data.get("retained_pct")
             if v is not None:
                 v = float(v)
-                assert v == data.get(
-                    "captured_pct"
-                ), "retained must equal captured for retention BMPs"
+                assert v == data.get("captured_pct"), (
+                    "retained must equal captured for retention BMPs"
+                )
             data["retained_pct"] = float(data.get("captured_pct", 0.0))
         return data
 
