@@ -25,6 +25,7 @@ export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 export COMPOSE_DOCKER_CLI_BUILD=1
+export COMPOSE_BAKE=true
 export COMPOSE_FILE=docker-stack.yml
 
 help:
@@ -50,7 +51,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
 	rm -fr .coverage
 	rm -fr htmlcov/
-	rm -fr .pytest_cache
+	find . -name '.pytest_cache' -exec rm -fr {} +
 	rm -fr .mypy_cache
 
 restart: ## restart the redis server and the background workers
