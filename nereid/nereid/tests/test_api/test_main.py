@@ -8,6 +8,7 @@ import pytest
         ("/redoc", "redoc"),
         ("/config", "test"),
         ("/app", "nereid ui"),
+        ("/clear_cache", ""),
     ],
 )
 def test_docs(client, route, title_contents):
