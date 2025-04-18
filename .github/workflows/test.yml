@@ -20,7 +20,7 @@ jobs:
           python-version: "3.11"
           cache: "pip"
       - name: Install Deps
-        run: pip install -r nereid/requirements/requirements_dev.txt
+        run: pip install -r requirements/requirements_dev.txt
       - name: Run Tests
         run: |
           pytest nereid/nereid/tests/test_src -v -n auto --cov=nereid/nereid/src
@@ -35,7 +35,7 @@ jobs:
       - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -58,7 +58,7 @@ jobs:
       - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -66,8 +66,8 @@ jobs:
         run: |
           pip install --upgrade pip
           awk -F"==" '{print $1}' \
-            nereid/requirements/requirements_dev.txt > nereid/requirements_edge.txt
-          pip install -r nereid/requirements_edge.txt
+            requirements/requirements_dev.txt > requirements/requirements_edge.txt
+          pip install -r requirements/requirements_edge.txt
       - name: Run Edge Tests
         continue-on-error: true
         run: |
@@ -84,18 +84,14 @@ jobs:
           docker --version
           make develop
           make init-test
-
       - name: run docker coverage
         run: |
           docker compose exec -T nereid-tests pytest nereid/tests -s -n auto --cov=nereid/
           docker compose exec -T nereid-tests pytest nereid/tests/test_api -s -n auto --cov=nereid/ --cov-append --async
           docker compose exec -T nereid-tests coverage report -m
-          docker compose exec -T nereid-tests coverage xml
-          docker compose exec -T nereid-tests cat coverage.xml > ./nereid/coverage.xml
+          docker compose exec -T nereid-tests coverage xml && cat coverage.xml > ./coverage.xml
       - name: upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          directory: ./nereid/
+        uses: codecov/codecov-action@v5
 
   test-edge:
     runs-on: ubuntu-latest
@@ -109,6 +105,8 @@ jobs:
           make init-test
       - name: run edge tests
         continue-on-error: true
-        run: docker compose exec -T nereid-tests pytest -v -n auto
+        run: |
+          docker compose exec -T nereid-tests pytest -v -n auto
+          docker compose exec -T nereid-tests pytest nereid/tests/test_api -v -n auto --async
       - name: Exit
         run: exit 0
