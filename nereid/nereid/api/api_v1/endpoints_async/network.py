@@ -95,12 +95,12 @@ async def get_subgraph_network_as_img(
         render_task_id = task.task_id + f"-{media_type}-{npi}"
 
         render_task = bg.render_subgraph_svg.AsyncResult(render_task_id, app=router)
-        if render_task.status.lower() != "started" and not render_task.ready():
+        if not render_task.ready() and render_task.status.lower() != "started":
             render_task = bg.render_subgraph_svg.apply_async(
                 args=(result, npi), task_id=render_task_id
             )
             _ = await wait_a_sec_and_see_if_we_can_return_some_data(
-                render_task, timeout=0.2
+                render_task, timeout=10
             )
 
         if render_task.successful():
@@ -172,12 +172,12 @@ async def get_network_solution_sequence_as_img(
         render_task = bg.render_solution_sequence_svg.AsyncResult(
             render_task_id, app=router
         )
-        if render_task.status.lower() != "started" and not render_task.ready():
+        if not render_task.ready() and render_task.status.lower() != "started":
             render_task = bg.render_solution_sequence_svg.apply_async(
                 args=(result, npi), task_id=render_task_id
             )
             _ = await wait_a_sec_and_see_if_we_can_return_some_data(
-                render_task, timeout=0.2
+                render_task, timeout=10
             )
 
         if render_task.successful():
