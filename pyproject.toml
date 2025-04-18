@@ -77,15 +77,11 @@ dev = [
     "ruff",
 ]
 
-[tool.pytest.ini_options]
-filterwarnings = [
-    # todo: remove after networkx.drawing.nx_pylab is updated for numpy>=2.0.0
-    "ignore:`alltrue` is deprecated.:DeprecationWarning",
-    "ignore:The --rsyncdir command line argument and rsyncdirs config variable are deprecated.:DeprecationWarning",
-]
-
-[tool.coverage.report]
-exclude_also = ["if TYPE_CHECKING:"]
+[tool.coverage]
+run.branch = true
+report.exclude_also = ["if TYPE_CHECKING:"]
+report.omit = ["nereid/data/*", "log.py", "main.py", "startup.py", "_no_git*"]
+report.show_missing = true
 
 [tool.ruff.lint]
 select = [

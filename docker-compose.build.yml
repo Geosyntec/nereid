@@ -1,8 +1,7 @@
 services:
   nereid:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: nereid
     env_file:
       - env.env
@@ -11,30 +10,26 @@ services:
 
   celeryworker:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: celeryworker
     env_file:
       - env.env
 
   nereid-tests:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: nereid-tests
     env_file:
       - env.env
 
   redis:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: redis
 
   flower:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: flower
     env_file:
       - env.env

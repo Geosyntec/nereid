@@ -18,6 +18,10 @@ from nereid.tests.utils import (
 )
 
 
+def pytest_addoption(parser):
+    parser.addoption("--async", action="store_true", default=False)
+
+
 @pytest.fixture(scope="session")
 def async_mode(request):
     return request.config.getoption("--async", False)

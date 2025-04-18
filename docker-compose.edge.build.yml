@@ -1,30 +1,25 @@
 services:
   nereid:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: nereid
 
   celeryworker:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: celeryworker-edge
 
   nereid-tests:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: nereid-edge-tests
 
   redis:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: redis
 
   flower:
     build:
-      context: ./nereid
-      dockerfile: Dockerfile.multi
+      context: .
       target: flower
