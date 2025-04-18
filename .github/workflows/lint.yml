@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: Install Linters
         run: |
           pip install \
-            -r nereid/requirements/requirements_nereid.txt \
-            -r nereid/requirements/requirements_lint.txt
+            -r requirements/requirements_nereid.txt \
+            -r requirements/requirements_lint.txt
       - name: Run Linters
         run: bash scripts/lint.sh
