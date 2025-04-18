@@ -6,7 +6,7 @@
 
 FROM node:20.19-bullseye AS frontend
 WORKDIR /app
-COPY ./nereid/static/frontend .
+COPY ./nereid/nereid/static/frontend .
 RUN npm install . && npm run build
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
@@ -20,7 +20,7 @@ CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
 FROM redis:6.2.17-alpine3.21 AS redis
-COPY redis.conf /redis.conf
+COPY nereid/redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
@@ -86,26 +86,27 @@ RUN addgroup --gid 1000 ${IMG_USER} \
     && adduser --no-create-home --system --disabled-password --uid 1000 --gid 1000 ${IMG_USER}
 USER ${IMG_USER}
 COPY --from=core-env --chown=${IMG_USER} /opt/venv /opt/venv
-COPY --chmod=755 ./scripts /
-COPY --chown=${IMG_USER}:${IMG_USER} ./nereid /nereid/nereid
+COPY --chmod=755 nereid/scripts /
+COPY --chown=${IMG_USER}:${IMG_USER} nereid/nereid /nereid/nereid
 CMD ["bash", "/run-worker.sh"]
 
 
 FROM core-runtime AS nereid
 COPY --from=server-env /opt/venv /opt/venv
-COPY --chmod=755 ./scripts /
-COPY ./nereid /nereid/nereid
+COPY --chmod=755 nereid/scripts /
+COPY nereid/nereid /nereid/nereid
 COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
-COPY gunicorn_conf.py /gunicorn_conf.py
+COPY nereid/gunicorn_conf.py /gunicorn_conf.py
 EXPOSE 80
 CMD ["bash", "/start.sh"]
 
 
 FROM core-runtime AS nereid-tests
 COPY --from=test-env /opt/venv /opt/venv
-COPY .coveragerc /nereid/.coveragerc
-COPY conftest.py /nereid/conftest.py
-COPY --chmod=755 ./scripts /
+# COPY .coveragerc /nereid/.coveragerc
+# COPY conftest.py /nereid/conftest.py
+COPY pyproject.toml /nereid/pyproject.toml
+COPY --chmod=755 nereid/scripts /
 ## This will make the container wait, doing nothing, but alive
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
@@ -117,12 +118,13 @@ RUN apt-get update -y \
 ADD https://astral.sh/uv/0.6.14/install.sh /install.sh
 RUN sh /install.sh && rm /install.sh
 ENV PATH=/opt/venv/bin:/root/.local/bin/:$PATH
-COPY ./requirements /
+COPY requirements /
 RUN uv venv /opt/venv && \
     uv pip install --no-cache -r /requirements_dev_unpinned.txt
-COPY ./nereid /nereid/nereid
+COPY nereid/nereid /nereid/nereid
+COPY pyproject.toml /nereid/pyproject.toml
 COPY --from=frontend /app/dist /nereid/nereid/static/frontend/dist
-COPY --chmod=755 ./scripts /
+COPY --chmod=755 nereid/scripts /
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
 

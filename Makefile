@@ -26,7 +26,6 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 export COMPOSE_DOCKER_CLI_BUILD=1
 export COMPOSE_BAKE=true
-export COMPOSE_FILE=docker-stack.yml
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -65,7 +64,7 @@ test: clean restart init-test ## run tests quickly with the default Python
 	docker compose exec nereid-tests pytest nereid/tests/ -n 4
 	docker compose exec nereid-tests pytest nereid/tests/test_api -n 4 --async
 
-test-integration:
+test-integration: ## run the integration tests for projects mounted in the data directory
 	docker compose exec nereid-tests pytest -k 'integration' -n 4 --dist loadscope
 
 coverage: clean restart init-test ## check code coverage quickly with the default Python
@@ -76,18 +75,18 @@ coverage: clean restart init-test ## check code coverage quickly with the defaul
 lint: clean ## run static type checker
 	bash scripts/lint.sh
 
-stack:
+stack: ## build the docker compose file
 	docker compose \
 		-f docker-compose.build.yml \
 		-f docker-compose.dev.yml \
-		config > docker-stack.yml
+		config > docker-compose.yml
 
-build:
+build: ## build the development environment
 	docker compose build
 
 develop: clean stack build ## build the development environment and launch containers in background
 
-up: stack
+up: stack ## bring up the containers in foreground
 	docker compose up
 
 up-d: stack ## bring up the containers in '-d' mode

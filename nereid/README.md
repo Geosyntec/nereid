@@ -1,6 +1,6 @@
 ## Nereid CI & Coverage
 
-https://travis-ci.org/Geosyntec/nereid
+https://github.com/Geosyntec/nereid/actions?query=workflow%3ATest+branch%3Amain
 
 https://codecov.io/gh/Geosyntec/nereid
 
@@ -8,39 +8,26 @@ https://codecov.io/gh/Geosyntec/nereid
 
 First, ensure you are in the right directory by `cd`-ing into the top level directory of this repo, which contains many docker-compose files (i.e., one level up from this one).
 
-On windows run
-`>scripts\build_dev.bat`
-
 On linux run
-`$bash scripts/build_dev.sh`
+`$make develop`
 
-This script will create a docker-stack.yml file that we can carry forward. This approach lets us define services, variables, connections and commands differently depending on if we are developing, deploying, testing, or just playing around. Right now we are in dev, so we are building a dev version of the stack.
+This script will create a docker-compose.yml file that we can carry forward. This approach lets us define services, variables, connections and commands differently depending on if we are developing, deploying, testing, or just playing around. Right now we are in dev, so we are building a dev version of the stack.
 
 Then we can get our containers up by running
-`docker-compose -f docker-stack.yml up -d`
-
-We aren't using a vanilla docker-compose.yml file for our build stack here, so for docker-compose to recognise the services by name, ensure that your bash or cmd environment includes:
-
-```
-COMPOSE_PATH_SEPARATOR=:
-COMPOSE_FILE=docker-compose.shared.depends.yml:docker-compose.dev.ports.yml:docker-compose.dev.build.yml:docker-compose.dev.env.yml
-```
-
-With these enviroment variables set, you can control the stack without the `-f` jazz.
+`docker compose up -d`
 
 Check that everything is ok by listing the containers:
-`docker-compose ps`
+`docker compose ps`
 
 You should see four containers, `redis`, `celeryworker`, `nereid` and `nereid-tests` and look roughly exactly like this:
 
 ```
-Name                           Command               State                Ports
-    ---------------------------------------------------------------------------------------------------------
-    nereid_celeryworker_1            bash /run-worker.sh              Up
-    nereid_nereid-tests_1            bash -c while true; do sle ...   Up       8888/tcp
-    nereid_nereid_1                  python3                          Exit 0
-    nereid_nereid_run_db0cede0411e   bash /start.sh                   Up       0.0.0.0:8080->80/tcp, 8888/tcp
-    nereid_redis_1                   docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp
+NAME                    IMAGE                 COMMAND                  SERVICE        CREATED          STATUS          PORTS
+nereid-celeryworker-1   nereid-celeryworker   "bash /run-worker.sh"    celeryworker   22 minutes ago   Up 22 minutes
+nereid-flower-1         nereid-flower         "celery flower"          flower         5 seconds ago    Up 4 seconds    0.0.0.0:5555->5555/tcp
+nereid-nereid-1         nereid-nereid         "/start-reload.sh"       nereid         5 seconds ago    Up 4 seconds    0.0.0.0:80->80/tcp, 0.0.0.0:8080->80/tcp
+nereid-nereid-tests-1   nereid-nereid-tests   "bash -c 'while true…"   nereid-tests   22 minutes ago   Up 22 minutes
+nereid-redis-1          nereid-redis          "docker-entrypoint.s…"   redis          22 minutes ago   Up 22 minutes   6379/tcp
 ```
 
 For example, you can run the tests with:

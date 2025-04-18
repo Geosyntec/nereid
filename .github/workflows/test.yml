@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - master
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -77,8 +77,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    env:
-      COMPOSE_FILE: docker-stack.yml
     steps:
       - uses: actions/checkout@v4
       - name: build stack
@@ -101,8 +99,6 @@ jobs:
 
   test-edge:
     runs-on: ubuntu-latest
-    env:
-      COMPOSE_FILE: docker-stack.yml
     steps:
       - uses: actions/checkout@v4
       - name: build stack

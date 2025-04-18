@@ -65,7 +65,7 @@ db.sqlite3
 dump.rdb
 
 # docker stuff:
-docker-stack*
+docker-compose.yml
 
 # node stuff:
 node_modules
