@@ -2,4 +2,4 @@
 
 set -e
 source .env
-az acr login --name $AZURE_CONTAINER_REGISTRY
+az acr login --name $ACR_SERVER
