@@ -159,7 +159,7 @@ export default class LoadFileUIBase extends Component {
                         </div>
                         <div class="flex justify-between items-center text-gray-400"> <span>Accepted file type:.doc only</span> </div>
                     </div>
-                    <div class="mt-3 text-center pb-3"> <button class="w-full h-6 text-md w-20 bg-blue-600 rounded text-white hover:bg-blue-700">Load</button> </div>
+                    <div class="mt-3 text-center pb-3"> <button class="h-6 text-md w-20 bg-blue-600 rounded text-white hover:bg-blue-700">Load</button> </div>
                 </div>
             </div>
         </div>

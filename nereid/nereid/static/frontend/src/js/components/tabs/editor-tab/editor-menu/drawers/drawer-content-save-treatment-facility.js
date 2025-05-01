@@ -78,13 +78,17 @@ export class SaveTmntFacilityUI extends Component {
     let state = util.get(self, `store.state.nereid_state`);
     let region = util.get(self, `store.state.nereid_region`);
 
-    let treatment_facility_fields = util.get(
-      self,
-      `store.state.treatment_facility_fields.${state}.${region}`
-    );
+    let treatment_facility_fields =
+      util.get(
+        self,
+        `store.state.treatment_facility_fields.${state}.${region}`
+      ) || util.get(self, "store.state.treatment_facility_fields.state.region");
+
+    let ignored = treatment_facility_fields?.ignored || [];
+    let disabled = treatment_facility_fields?.disabled || [];
 
     let properties = [...this.facility_properties].filter(
-      (p) => !treatment_facility_fields.ignored.includes(p)
+      (p) => !ignored.includes(p)
     );
 
     for (let [name, type] of Object.entries(this.facility_type_map)) {
@@ -96,7 +100,7 @@ export class SaveTmntFacilityUI extends Component {
         if (schema.required.includes(prop)) {
           text += "-req";
         }
-        if (treatment_facility_fields.disabled.includes(prop)) {
+        if (disabled.includes(prop)) {
           text += "-uneditable";
         }
         record[prop] = text;

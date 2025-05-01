@@ -122,8 +122,8 @@ export class TreatmentFacilityNodeEditorUI extends Component {
           "#facility-form",
           self.config.schema[facility_schema],
           form_data,
-          treatment_facility_fields.disabled,
-          treatment_facility_fields.ignored,
+          treatment_facility_fields?.disabled || [],
+          treatment_facility_fields?.ignored || [],
           onSubmit.bind(self)
         );
       });
