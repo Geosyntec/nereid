@@ -100,7 +100,6 @@ export class DrawerBase extends Component {
           <div
             class="
               drawer-panel
-              translate-x-full
               fixed
               inset-y-0
               right-0
