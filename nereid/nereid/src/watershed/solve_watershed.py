@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Any, Callable
 
 import networkx as nx
@@ -195,7 +196,7 @@ def solve_node(
     """
     data = g.nodes[node]
     data["_current_node"] = node
-    data["_visited"] = True
+    data["_visited_at"] = datetime.now(timezone.utc).isoformat()
     data["node_errors"] = []
     data["node_warnings"] = []
     data["_is_leaf"] = False
