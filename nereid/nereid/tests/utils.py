@@ -24,7 +24,7 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
     tries = 0
     t = 0
     inc = 0.1
-
+    start = time.perf_counter()
     while t < timeout:
         tries += 1
         if verbose:
@@ -43,10 +43,12 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
             )
         if status.lower() == "success":
             return response
-        t += inc
+        t = time.perf_counter() - start
         time.sleep(inc)
 
-    raise TimeoutError(f"Task did not return in time. Tried {tries} times")
+    raise TimeoutError(
+        f"Task did not return in time. Tried {tries} times in {t} seconds."
+    )
 
 
 def is_equal_subset(subset: dict | list | set, superset: dict | list | set) -> bool:
