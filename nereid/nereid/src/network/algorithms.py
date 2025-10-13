@@ -8,9 +8,15 @@ def find_cycle(g: nx.Graph, **kwargs: dict) -> list:
     if no cycle is found.
     """
     try:
-        return list(nx.find_cycle(g, **kwargs))
+        return list(
+            nx.find_cycle(
+                g,
+                source=kwargs.pop("source", None),
+                orientation=kwargs.pop("orientation", None),  # type: ignore
+            )
+        )
 
-    except nx.exception.NetworkXNoCycle:
+    except nx.NetworkXNoCycle:
         return []
 
 
@@ -35,7 +41,7 @@ def get_subset(g: nx.DiGraph, nodes: Hashable | Iterable[Hashable]) -> set:
 def get_all_predecessors(
     g: nx.DiGraph, node: Hashable, subset: set | None = None
 ) -> set:
-    """This algorithm is a good deal faster than the nx.ancestors variant,
+    """This algorithm is a good deal faster (~7x-20x) than the nx.ancestors variant,
     **but** it only works on directed acyclic graphs (DAGs).
     """
     if subset is None:
@@ -77,11 +83,12 @@ def find_leafy_branch_larger_than_size(g: nx.DiGraph, size: int = 1) -> nx.DiGra
         us = get_all_predecessors(g, node)
         us.add(node)
         if len(us) >= size:
-            return g.subgraph(us)
+            return nx.DiGraph(g.subgraph(us))
     return nx.DiGraph()  # pragma: no cover
 
 
-def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> list[list[Hashable]]:
+def sequential_subgraph_nodes(g: nx.Graph, size: int) -> list[list[Hashable]]:
+    g = nx.DiGraph(g)  # make a copy because we'll modify the structure
     if not nx.is_weakly_connected(g):
         raise nx.NetworkXUnfeasible(
             "sequential solutions are not possible for disconnected graphs."
@@ -90,18 +97,16 @@ def sequential_subgraph_nodes(g: nx.DiGraph, size: int) -> list[list[Hashable]]:
     if size < 2:
         raise nx.NetworkXUnfeasible("the minimum directed subgraph length is 2 nodes.")
 
-    g = nx.DiGraph(g.edges())  # make a copy because we'll modify the structure
-
     graphs = []
 
-    while len(g.nodes()) > 1:
+    while len(g.nodes) > 1:
         sg = find_leafy_branch_larger_than_size(g, size)
 
-        graphs.append(list(sg.nodes()))
+        graphs.append(list(sg.nodes))
 
         # trim the upstream nodes out of the graph, except the upstream root
         us_nodes = {n for n, deg in sg.out_degree if deg > 0}
-        g = g.subgraph(g.nodes() - us_nodes)
+        g = nx.DiGraph(g.subgraph(g.nodes - us_nodes))
 
         # rinse and repeat until there's one or fewer nodes left in the graph
 
