@@ -100,8 +100,8 @@ def generate_n_random_valid_watershed_graphs(
     numpy.random.seed(seed)
     for i in range(n_graphs):
         n_nodes = numpy.random.randint(min_graph_nodes, max_graph_nodes)
-        offset = len(G.nodes())
-        g = nx.gnr_graph(n_nodes, 0.0, seed=i)
+        offset = len(G.nodes)
+        g = nx.gn_graph(n_nodes, kernel=lambda _: 1, seed=i)
         G.add_edges_from([((offset + s), (offset + t)) for s, t in g.edges])
     return G
 
