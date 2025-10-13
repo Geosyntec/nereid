@@ -68,7 +68,14 @@ base-app = [
     "websockets",
 ]
 app = ["nereid-engine[async-worker]", "nereid-engine[base-app]"]
-test = ["coverage", "httpx", "pytest", "pytest-cov", "pytest-xdist"]
+test = [
+    "nereid-engine[extras]",
+    "coverage",
+    "httpx",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+]
 dev = [
     "nereid-engine[app]",
     "nereid-engine[test]",

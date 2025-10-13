@@ -3,7 +3,6 @@ from itertools import cycle
 from typing import IO, TYPE_CHECKING, Any, cast
 
 import networkx as nx
-from fast_sugiyama import from_edges
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -59,6 +58,7 @@ def render_subgraphs(
     fig_kwargs: dict | None = None,
 ) -> Figure:
     import matplotlib.pyplot as plt
+    from fast_sugiyama import from_edges
 
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
@@ -137,6 +137,7 @@ def render_solution_sequence(
     fig_kwargs: dict | None = None,
 ) -> Figure:
     import matplotlib.pyplot as plt
+    from fast_sugiyama import from_edges
     from matplotlib import colormaps
 
     if layout is None:  # pragma: no branch
