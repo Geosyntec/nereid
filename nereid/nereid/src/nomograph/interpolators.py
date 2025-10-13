@@ -336,7 +336,7 @@ class NomographBase:
 
         ymax = numpy.nanmax(self.t_data)
         xmax = numpy.nanmax(self.x_data)
-        grid_x, grid_y = numpy.mgrid[0:xmax:700j, 0:ymax:700j]
+        grid_x, grid_y = numpy.mgrid[0:xmax:700j, 0:ymax:700j]  # type: ignore[misc]
         grid_z = griddata(
             numpy.column_stack((self.x_data, self.t_data)),
             self.y_data,
