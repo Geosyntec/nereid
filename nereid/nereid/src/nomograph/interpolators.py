@@ -335,9 +335,8 @@ class NomographBase:
             _, ax = cast(tuple[Any, Axes], plt.subplots())  # type: ignore
 
         ymax = numpy.nanmax(self.t_data)
-        grid_x, grid_y = numpy.mgrid[
-            0 : int(numpy.nanmax(self.x_data)) : 700j, 0 : int(ymax) : 700j  # type: ignore[misc]
-        ]
+        xmax = numpy.nanmax(self.x_data)
+        grid_x, grid_y = numpy.mgrid[0:xmax:700j, 0:ymax:700j]
         grid_z = griddata(
             numpy.column_stack((self.x_data, self.t_data)),
             self.y_data,
@@ -346,7 +345,7 @@ class NomographBase:
         )
         ax.imshow(
             grid_z.T,
-            extent=(0, numpy.nanmax(self.x_data), 0, ymax),
+            extent=(0, xmax, 0, ymax),
             origin="lower",
             aspect="auto",
         )
