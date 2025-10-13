@@ -1,9 +1,14 @@
 from nereid.src.land_surface.tasks import land_surface_loading as land_surface_loading
+from nereid.src.network.tasks import fig_to_image as fig_to_image
 from nereid.src.network.tasks import network_subgraphs as network_subgraphs
+from nereid.src.network.tasks import (
+    render_solution_sequence as render_solution_sequence,
+)
 from nereid.src.network.tasks import (
     render_solution_sequence_svg as render_solution_sequence_svg,
 )
 from nereid.src.network.tasks import render_subgraph_svg as render_subgraph_svg
+from nereid.src.network.tasks import render_subgraphs as render_subgraphs
 from nereid.src.network.tasks import solution_sequence as solution_sequence
 from nereid.src.network.tasks import validate_network as validate_network
 from nereid.src.treatment_facility.tasks import (

@@ -36,20 +36,20 @@ def validate_network(
 
 
 def is_valid(G: GraphType) -> bool:
-    try:
-        # catch cycles
-        deque(nx.topological_sort(G), maxlen=0)
-    except nx.exception.NetworkXUnfeasible:
+    # catch multigraph
+    if len(G.edges()) != len(set(G.edges())):
+        return False
+
+    G = nx.DiGraph(G)
+
+    # catch multiple out connections
+    if not all((v <= 1 for _, v in G.out_degree())):  # type: ignore
         return False
 
     try:
-        out_degs = nx.DiGraph(G).out_degree()
-        # catch multiple out connections
-        assert all((v <= 1 for _, v in out_degs))  # type: ignore
-
-        # catch
-        assert len(G.edges()) == len(set(G.edges()))
-    except Exception:
+        # catch cycles
+        deque(nx.topological_sort(G), maxlen=0)
+    except nx.NetworkXUnfeasible:
         return False
 
     return True

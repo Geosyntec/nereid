@@ -139,9 +139,12 @@ def compute_volume_based_standalone_facility(
     ret_ddt_hr = data.get("retention_ddt_hr", 0.0)
     trt_ddt_hr = data.get("treatment_ddt_hr", 0.0)
 
+    ret_depth_ft = data.get("retention_depth_ft", 0.0)
+    trt_depth_ft = data.get("treatment_depth_ft", 0.0)
+
     design_volume = data["design_volume_cuft_cumul"]
 
-    if ret_vol_cuft > 0 and trt_vol_cuft > 0:
+    if ret_depth_ft > 1 / 12 and trt_depth_ft > 1 / 12:
         q_ret = safe_divide(ret_vol_cuft, (ret_ddt_hr * 3600))
         q_trt = safe_divide(trt_vol_cuft, (trt_ddt_hr * 3600))
         q_tot = q_ret + q_trt

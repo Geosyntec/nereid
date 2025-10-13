@@ -212,9 +212,7 @@ class TmntFacilityWithRetentionOverride(TmntFacility):
 
 class FlowAndRetFacility(FlowFacility, FacilityBase):
     area_sqft: FLOAT_NON_ZERO
-
-    # TODO: if hsg = lined then users may enter zero for the depth.
-    depth_ft: FLOAT_NON_ZERO
+    depth_ft: FLOAT_GE_ZERO
     hsg: str
     _constructor: str = "flow_and_retention_facility_constructor"
 

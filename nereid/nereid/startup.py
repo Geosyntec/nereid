@@ -43,7 +43,7 @@ def get_worker():
     import nereid.bg_worker as bg
 
     try:
-        bg.background_ping.apply_async().get(timeout=0.2)
+        bg.background_ping.apply_async().get(timeout=0.2)  # type: ignore
     except Exception as e:
         logger.error(e)
         raise e

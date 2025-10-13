@@ -24,7 +24,7 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
     tries = 0
     t = 0
     inc = 0.1
-
+    start = time.perf_counter()
     while t < timeout:
         tries += 1
         if verbose:
@@ -43,10 +43,12 @@ def poll_testclient_url(testclient, url, timeout=5, verbose=False):  # pragma: n
             )
         if status.lower() == "success":
             return response
-        t += inc
+        t = time.perf_counter() - start
         time.sleep(inc)
 
-    raise TimeoutError(f"Task did not return in time. Tried {tries} times")
+    raise TimeoutError(
+        f"Task did not return in time. Tried {tries} times in {t} seconds."
+    )
 
 
 def is_equal_subset(subset: dict | list | set, superset: dict | list | set) -> bool:
@@ -69,9 +71,11 @@ def is_equal_subset(subset: dict | list | set, superset: dict | list | set) -> b
 
 
 def check_graph_data_equal(g, subg):
+    # TODO: merge with similar logic in check_subgraph_response_equal
+    unstable_cols = ["_is_leaf", "_visited_at"]
     for node, dct in subg.nodes(data=True):
         for k, v in dct.items():
-            if k == "_is_leaf":
+            if k in unstable_cols:
                 continue
             og = g.nodes[node][k]
             if isinstance(v, str):
@@ -96,8 +100,8 @@ def generate_n_random_valid_watershed_graphs(
     numpy.random.seed(seed)
     for i in range(n_graphs):
         n_nodes = numpy.random.randint(min_graph_nodes, max_graph_nodes)
-        offset = len(G.nodes())
-        g = nx.gnr_graph(n_nodes, 0.0, seed=i)
+        offset = len(G.nodes)
+        g = nx.gn_graph(n_nodes, kernel=lambda _: 1, seed=i)
         G.add_edges_from([((offset + s), (offset + t)) for s, t in g.edges])
     return G
 
@@ -388,11 +392,12 @@ def generate_random_watershed_solve_request(
 
 
 def check_subgraph_response_equal(subgraph_results, original_results):
+    unstable_cols = ["_is_leaf", "_visited_at"]
     for subg_result in subgraph_results:
         node = subg_result["node_id"]
         og_result = [n for n in original_results if n["node_id"] == node][0]
         for k, v in subg_result.items():
-            if k == "_is_leaf":
+            if k in unstable_cols:
                 continue
             og = og_result[k]
             if isinstance(v, str):

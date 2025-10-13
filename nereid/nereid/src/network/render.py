@@ -1,11 +1,8 @@
-import warnings
-from functools import lru_cache
 from io import BytesIO
 from itertools import cycle
 from typing import IO, TYPE_CHECKING, Any, cast
 
 import networkx as nx
-import orjson as json
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -13,28 +10,6 @@ if TYPE_CHECKING:
 else:
     Axes = Any
     Figure = Any
-
-
-def pydot_layout(*args, **kwargs) -> dict:
-    with warnings.catch_warnings():
-        warnings.filterwarnings(action="ignore", message="nx.nx_pydot")
-        v = cast(dict, nx.nx_pydot.pydot_layout(*args, **kwargs))
-    return v
-
-
-@lru_cache(maxsize=100)
-def _cached_layout(edge_json: str, prog: str) -> dict[str | int, tuple[float, float]]:
-    g = nx.from_edgelist(json.loads(edge_json), create_using=nx.MultiDiGraph)
-    layout: dict[str | int, tuple[float, float]] = pydot_layout(g, prog=prog)
-    return layout
-
-
-def cached_layout(
-    g: nx.Graph, prog: str = "dot"
-) -> dict[str | int, tuple[float, float]]:
-    edges = sorted(g.edges(), key=lambda x: str(x))
-    edge_json = json.dumps(list(edges))
-    return _cached_layout(edge_json, prog=prog)
 
 
 def get_figure_width_height_from_graph_layout(
@@ -47,7 +22,7 @@ def get_figure_width_height_from_graph_layout(
     Parameters
     ----------
     layout_dict : dict e.g., {'node_id': (x, y), ...}
-        layout mapping created by nx.nx_pydot.pydot_layout
+        layout mapping
     npi : float, optional (default=3)
         nodes per inch of the final figure
     min_width : float, optional (default=1) in inches
@@ -61,7 +36,10 @@ def get_figure_width_height_from_graph_layout(
 
     xmax = max([v[0] for v in layout_dict.values()])
     ymax = max([v[1] for v in layout_dict.values()])
-    aspect = ymax / xmax
+    if xmax > 0:
+        aspect = ymax / xmax
+    else:  # pragma: no cover
+        aspect = 1
 
     width = min_width + (ndots / npi)
     height = min_height + (ndots / npi) * aspect
@@ -80,12 +58,13 @@ def render_subgraphs(
     fig_kwargs: dict | None = None,
 ) -> Figure:
     import matplotlib.pyplot as plt
+    from fast_sugiyama import from_edges
 
     if fig_kwargs is None:  # pragma: no branch
         fig_kwargs = {}
 
     if layout is None:  # pragma: no branch
-        layout = cached_layout(g, prog="dot")
+        layout = from_edges(g.edges()).dot_layout().to_dict()
 
     if "figsize" not in fig_kwargs:  # pragma: no branch
         width, height = get_figure_width_height_from_graph_layout(layout, npi=npi)
@@ -158,10 +137,11 @@ def render_solution_sequence(
     fig_kwargs: dict | None = None,
 ) -> Figure:
     import matplotlib.pyplot as plt
+    from fast_sugiyama import from_edges
     from matplotlib import colormaps
 
     if layout is None:  # pragma: no branch
-        layout = cached_layout(G, prog="dot")
+        layout = from_edges(G.edges()).dot_layout().to_dict()
     if cmap_str is None:  # pragma: no branch
         cmap_str = "Blues_r"
     if fig_kwargs is None:  # pragma: no branch

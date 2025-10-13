@@ -12,7 +12,6 @@ jobs:
   python-test:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,10 +28,10 @@ jobs:
   python-test-install:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
-      - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -52,10 +51,10 @@ jobs:
   python-edge-test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
-      - run: sudo apt-get install graphviz
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5

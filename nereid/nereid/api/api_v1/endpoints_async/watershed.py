@@ -44,7 +44,7 @@ async def post_solve_watershed(
     ),
 ) -> dict[str, Any]:
     watershed, context = watershed_pkg
-    task = bg.solve_watershed.s(
+    task = bg.solve_watershed.s(  # type: ignore
         watershed=watershed, treatment_pre_validated=True, context=context
     )
     return await run_task(request, task, "get_watershed_result")
@@ -57,5 +57,5 @@ async def post_solve_watershed(
     response_class=ORJSONResponse,
 )
 async def get_watershed_result(request: Request, task_id: str) -> dict[str, Any]:
-    task = bg.solve_watershed.AsyncResult(task_id, app=router)
+    task = bg.solve_watershed.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(request, task, "get_watershed_result")

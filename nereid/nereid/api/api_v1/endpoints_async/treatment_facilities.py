@@ -43,7 +43,7 @@ async def initialize_treatment_facility_parameters(
 ) -> dict[str, Any]:
     treatment_facilities, context = tmnt_facility_req
 
-    task = bg.initialize_treatment_facilities.s(
+    task = bg.initialize_treatment_facilities.s(  # type: ignore
         treatment_facilities=treatment_facilities.model_dump(),
         pre_validated=True,
         context=context,
@@ -60,7 +60,7 @@ async def initialize_treatment_facility_parameters(
 async def get_treatment_facility_parameters(
     request: Request, task_id: str
 ) -> dict[str, Any]:
-    task = bg.initialize_treatment_facilities.AsyncResult(task_id, app=router)
+    task = bg.initialize_treatment_facilities.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(
         request, task, "get_treatment_facility_parameters"
     )

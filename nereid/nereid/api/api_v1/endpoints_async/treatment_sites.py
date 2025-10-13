@@ -25,7 +25,7 @@ async def initialize_treatment_site(
     treatment_sites: TreatmentSites = Body(...),
     context: dict = Depends(get_valid_context),
 ) -> dict[str, Any]:
-    task = bg.initialize_treatment_sites.s(
+    task = bg.initialize_treatment_sites.s(  # type: ignore
         treatment_sites.model_dump(), context=context
     )
 
@@ -41,5 +41,5 @@ async def initialize_treatment_site(
 async def get_treatment_site_parameters(
     request: Request, task_id: str
 ) -> dict[str, Any]:
-    task = bg.initialize_treatment_sites.AsyncResult(task_id, app=router)
+    task = bg.initialize_treatment_sites.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(request, task, "get_treatment_site_parameters")

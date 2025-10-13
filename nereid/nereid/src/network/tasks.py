@@ -35,15 +35,11 @@ def validate_network(graph: dict) -> dict[str, bool | list]:
 
     result: dict[str, bool | list] = {"isvalid": isvalid}
 
-    if isvalid:
-        return result
-
-    else:
+    if not isvalid:
         _keys = ["node_cycles", "edge_cycles", "multiple_out_edges", "duplicate_edges"]
-        for key, value in zip(_keys, validate.validate_network(g), strict=True):
-            result[key] = value  # noqa [PERF403]
+        result.update(**dict(zip(_keys, validate.validate_network(g), strict=True)))
 
-        return result
+    return result
 
 
 def network_subgraphs(
@@ -55,7 +51,7 @@ def network_subgraphs(
 
     g = nx.DiGraph(graph_factory(_graph))
     subset = get_subset(g, node_ids)
-    sub_g = g.subgraph(subset)
+    sub_g = nx.DiGraph(g.subgraph(subset))
 
     subgraph_nodes = [
         {"nodes": [{"id": n} for n in nodes]}
@@ -87,7 +83,7 @@ def render_subgraph_svg(task_result: dict, npi: float | None = None) -> bytes:
 
 def solution_sequence(
     graph: dict[str, Any], min_branch_size: int
-) -> dict[str, dict[str, list[dict[str, list[dict[str, str | dict]]]]]]:
+) -> dict[str, dict[str, list[dict[str, list[dict[str, dict]]]]]]:
     _graph = thin_graph_dict(graph)  # strip unneeded metadata
 
     g = nx.DiGraph(graph_factory(_graph))

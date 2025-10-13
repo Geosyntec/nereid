@@ -215,7 +215,7 @@ def parse_joins(
                     )
                     if "warnings" not in df:
                         df["warnings"] = ""
-                    df.loc[df["_merge"] != "both", "warnings"] += (
+                    df.loc[df["_merge"] != "both", "warnings"] += (  # type: ignore
                         f"Warning: unable join '{j['left_on']}' from {tablename} to '{j['right_on']}' "
                         f"for reference data in {config_section}:{config_object}.\n"
                     )

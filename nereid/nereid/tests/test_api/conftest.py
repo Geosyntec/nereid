@@ -13,7 +13,7 @@ from nereid.tests.utils import generate_n_random_valid_watershed_graphs, get_tes
 
 @pytest.fixture(scope="module")
 def client(async_mode):
-    mode = "none"
+    mode = "add"
     if async_mode:
         mode = "replace"
     app = create_app(settings_override={"ASYNC_MODE": mode})
@@ -102,8 +102,11 @@ def solution_sequence_response(client):
         responses[(bs, ngraph, minmax)] = response
         result_route = response.json().get("result_route")
 
-        if all([minmax == (10, 11), ngraph == 3, bs == 6, result_route]):
-            client.get(result_route + "/img?media_type=svg")
+        if all([minmax in [(3, 4), (10, 11)], ngraph in [1, 3], bs == 6]):
+            if result_route:
+                client.get(result_route + "/img?media_type=svg")
+            else:
+                client.post(route + f"/img?min_branch_size={bs}", json=payload)
             time.sleep(0.5)
 
     yield responses
