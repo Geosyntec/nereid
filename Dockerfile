@@ -12,9 +12,6 @@ CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
 FROM python:3.11.12-bullseye AS nereid_install
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends graphviz \
-    && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
@@ -71,9 +68,6 @@ RUN  uv pip install --no-cache \
 
 
 FROM python:3.11.12-slim-bullseye AS core-runtime
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends graphviz \
-    && rm -rf /var/lib/apt/lists/*
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
@@ -112,9 +106,6 @@ CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
 FROM python:3.12-bullseye AS nereid-edge
-RUN apt-get update -y \
-    && apt-get install -y graphviz build-essential curl \
-    && rm -rf /var/lib/apt/lists/*
 ADD https://astral.sh/uv/0.6.14/install.sh /install.sh
 RUN sh /install.sh && rm /install.sh
 ENV PATH=/opt/venv/bin:/root/.local/bin/:$PATH

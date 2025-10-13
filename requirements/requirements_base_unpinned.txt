@@ -1,8 +1,9 @@
+matplotlib
 networkx>=3.4,<3.5
+fast-sugiyama>=0.5
 orjson
 pandas
 Pint
-pyarrow
 pydantic>=2.4,<3.0
 pydantic_settings
 python-dotenv

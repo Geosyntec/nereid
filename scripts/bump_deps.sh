@@ -2,7 +2,7 @@
 
 set -e
 
-pip install -U "uv>=0.6,<0.7"
+pip install -U "uv>=0.9,<0.10"
 
 # dev
 uv pip compile requirements/requirements_dev_unpinned.txt > requirements/requirements_dev.txt

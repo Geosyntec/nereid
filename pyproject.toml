@@ -57,7 +57,7 @@ where = ["nereid"]
 "*" = ["_no_git*"]
 
 [project.optional-dependencies]
-extras = ["graphviz", "matplotlib", "pydot"]
+extras = ["matplotlib", "fast_sugiyama"]
 async-worker = ["celery[redis]", "nereid-engine[extras]"]
 base-app = [
     "fastapi",

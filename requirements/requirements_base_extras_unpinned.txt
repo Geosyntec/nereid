@@ -1,4 +1,0 @@
-graphviz
-matplotlib
-pydot
-watchfiles
