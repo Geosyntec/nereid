@@ -87,7 +87,7 @@ def render_subgraph_svg(task_result: dict, npi: float | None = None) -> bytes:
 
 def solution_sequence(
     graph: dict[str, Any], min_branch_size: int
-) -> dict[str, dict[str, list[dict[str, list[dict[str, str | dict]]]]]]:
+) -> dict[str, dict[str, list[dict[str, list[dict[str, dict]]]]]]:
     _graph = thin_graph_dict(graph)  # strip unneeded metadata
 
     g = nx.DiGraph(graph_factory(_graph))

@@ -303,14 +303,14 @@ class NomographBase:
 
     def _baseplot(self, ax: Axes | None = None, **kwargs: dict[str, Any]) -> Axes:
         if ax is None:  # pragma: no branch
-            _, ax = cast(tuple[Any, Axes], plt.subplots())
+            _, ax = cast(tuple[Any, Axes], plt.subplots())  # type: ignore
 
         fits = self(x=self.x_data, t=self.t_data)
 
         ax.scatter(
             self.x_data,
             fits,
-            marker="o",  # type: ignore
+            marker="o",
             s=50,
             facecolor="none",
             edgecolor="k",
@@ -332,7 +332,7 @@ class NomographBase:
 
     def _basesurface(self, ax: Axes | None = None, **kwargs: dict[str, Any]) -> Axes:
         if ax is None:  # pragma: no branch
-            _, ax = cast(tuple[Any, Axes], plt.subplots())
+            _, ax = cast(tuple[Any, Axes], plt.subplots())  # type: ignore
 
         ymax = numpy.nanmax(self.t_data)
         grid_x, grid_y = numpy.mgrid[

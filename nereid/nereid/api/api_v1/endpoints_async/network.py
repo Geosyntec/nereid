@@ -29,7 +29,7 @@ async def validate_network(
         openapi_examples=network_models.GraphExamples,  # type: ignore[arg-type]
     ),
 ) -> dict[str, Any]:
-    task = bg.validate_network.s(graph=graph.model_dump(by_alias=True))
+    task = bg.validate_network.s(graph=graph.model_dump(by_alias=True))  # type: ignore
     return await run_task(request, task, "get_validate_network_result")
 
 
@@ -40,7 +40,7 @@ async def validate_network(
     response_class=ORJSONResponse,
 )
 async def get_validate_network_result(request: Request, task_id: str) -> dict[str, Any]:
-    task = bg.validate_network.AsyncResult(task_id, app=router)
+    task = bg.validate_network.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(request, task, "get_validate_network_result")
 
 
@@ -54,7 +54,7 @@ async def subgraph_network(
     request: Request,
     subgraph_req: network_models.SubgraphRequest = Body(...),
 ) -> dict[str, Any]:
-    task = bg.network_subgraphs.s(**subgraph_req.model_dump(by_alias=True))
+    task = bg.network_subgraphs.s(**subgraph_req.model_dump(by_alias=True))  # type: ignore
 
     return await run_task(request, task, "get_subgraph_network_result")
 
@@ -66,7 +66,7 @@ async def subgraph_network(
     response_class=ORJSONResponse,
 )
 async def get_subgraph_network_result(request: Request, task_id: str) -> dict[str, Any]:
-    task = bg.network_subgraphs.AsyncResult(task_id, app=router)
+    task = bg.network_subgraphs.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(request, task, "get_subgraph_network_result")
 
 
@@ -86,17 +86,16 @@ async def get_subgraph_network_as_img(
         detail = f"media_type not supported: '{media_type}'."
         raise HTTPException(status_code=400, detail=detail)
 
-    task = bg.network_subgraphs.AsyncResult(task_id, app=router)
+    task = bg.network_subgraphs.AsyncResult(task_id, app=router)  # type: ignore
     response = {"task_id": task.task_id, "status": task.status}
 
     if task.successful():
         result = task.result
         response["data"] = task.result
         render_task_id = task.task_id + f"-{media_type}-{npi}"
-
-        render_task = bg.render_subgraph_svg.AsyncResult(render_task_id, app=router)
+        render_task = bg.render_subgraph_svg.AsyncResult(render_task_id, app=router)  # type: ignore
         if not render_task.ready() and render_task.status.lower() != "started":
-            render_task = bg.render_subgraph_svg.apply_async(
+            render_task = bg.render_subgraph_svg.apply_async(  # type: ignore
                 args=(result, npi), task_id=render_task_id
             )
             _ = await wait_a_sec_and_see_if_we_can_return_some_data(
@@ -125,7 +124,7 @@ async def network_solution_sequence(
     ),
     min_branch_size: int = Query(4),
 ) -> dict[str, Any]:
-    task = bg.solution_sequence.s(
+    task = bg.solution_sequence.s(  # type: ignore
         graph=graph.model_dump(by_alias=True), min_branch_size=min_branch_size
     )
 
@@ -141,7 +140,7 @@ async def network_solution_sequence(
 async def get_network_solution_sequence(
     request: Request, task_id: str
 ) -> dict[str, Any]:
-    task = bg.solution_sequence.AsyncResult(task_id, app=router)
+    task = bg.solution_sequence.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(request, task, "get_network_solution_sequence")
 
 
@@ -161,7 +160,7 @@ async def get_network_solution_sequence_as_img(
         detail = f"media_type not supported: '{media_type}'."
         raise HTTPException(status_code=400, detail=detail)
 
-    task = bg.solution_sequence.AsyncResult(task_id, app=router)
+    task = bg.solution_sequence.AsyncResult(task_id, app=router)  # type: ignore
     response = {"task_id": task.task_id, "status": task.status}
 
     if task.successful():
@@ -169,11 +168,11 @@ async def get_network_solution_sequence_as_img(
         response["data"] = task.result
         render_task_id = task.task_id + f"-{media_type}-{npi}"
 
-        render_task = bg.render_solution_sequence_svg.AsyncResult(
+        render_task = bg.render_solution_sequence_svg.AsyncResult(  # type: ignore
             render_task_id, app=router
         )
         if not render_task.ready() and render_task.status.lower() != "started":
-            render_task = bg.render_solution_sequence_svg.apply_async(
+            render_task = bg.render_solution_sequence_svg.apply_async(  # type: ignore
                 args=(result, npi), task_id=render_task_id
             )
             _ = await wait_a_sec_and_see_if_we_can_return_some_data(

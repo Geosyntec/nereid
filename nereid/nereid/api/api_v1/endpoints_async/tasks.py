@@ -12,13 +12,13 @@ router = APIRouter(prefix="/task", default_response_class=ORJSONResponse)
 
 @router.get("/ping", response_model=JSONAPIResponse)
 async def get_ping(request: Request) -> dict[str, Any]:  # pragma: no cover
-    task = bg.background_ping.apply_async()
+    task = bg.background_ping.apply_async()  # type: ignore
     return await standard_json_response(request, task)
 
 
 @router.get("/sleep", response_model=JSONAPIResponse)
 async def get_sleep(request: Request, s: int = 1) -> dict[str, Any]:  # pragma: no cover
-    task = bg.background_sleep.s(seconds=s).apply_async()
+    task = bg.background_sleep.s(seconds=s).apply_async()  # type: ignore
     return await standard_json_response(request, task)
 
 

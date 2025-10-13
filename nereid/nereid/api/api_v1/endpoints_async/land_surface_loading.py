@@ -28,7 +28,7 @@ async def calculate_loading(
 ) -> dict[str, Any]:
     land_surfaces_req = land_surfaces.model_dump(by_alias=True)
 
-    task = bg.land_surface_loading.s(
+    task = bg.land_surface_loading.s(  # type: ignore
         land_surfaces=land_surfaces_req, details=details, context=context
     )
 
@@ -45,7 +45,7 @@ async def get_land_surface_loading_result(
     request: Request,
     task_id: str,
 ) -> dict[str, Any]:
-    task = bg.land_surface_loading.AsyncResult(task_id, app=router)
+    task = bg.land_surface_loading.AsyncResult(task_id, app=router)  # type: ignore
     return await standard_json_response(
         request, task, "get_land_surface_loading_result"
     )
