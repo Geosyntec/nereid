@@ -71,9 +71,11 @@ def is_equal_subset(subset: dict | list | set, superset: dict | list | set) -> b
 
 
 def check_graph_data_equal(g, subg):
+    # TODO: merge with similar logic in check_subgraph_response_equal
+    unstable_cols = ["_is_leaf", "_visited_at"]
     for node, dct in subg.nodes(data=True):
         for k, v in dct.items():
-            if k == "_is_leaf":
+            if k in unstable_cols:
                 continue
             og = g.nodes[node][k]
             if isinstance(v, str):
@@ -390,11 +392,12 @@ def generate_random_watershed_solve_request(
 
 
 def check_subgraph_response_equal(subgraph_results, original_results):
+    unstable_cols = ["_is_leaf", "_visited_at"]
     for subg_result in subgraph_results:
         node = subg_result["node_id"]
         og_result = [n for n in original_results if n["node_id"] == node][0]
         for k, v in subg_result.items():
-            if k == "_is_leaf":
+            if k in unstable_cols:
                 continue
             og = og_result[k]
             if isinstance(v, str):
