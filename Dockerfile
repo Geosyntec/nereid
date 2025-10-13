@@ -4,14 +4,14 @@
 # pattern is able to reduce each image to ~250MB but takes considerable
 # time to build and is considerably more complex for scipy and pandas.
 
-FROM node:20.19-bullseye AS frontend
+FROM node:24.10-trixie AS frontend
 WORKDIR /app
 COPY ./nereid/nereid/static/frontend .
 RUN npm install . && npm run build
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM python:3.11.12-bullseye AS nereid_install
+FROM python:3.13.8-trixie AS nereid_install
 WORKDIR /nereid
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
@@ -21,9 +21,9 @@ COPY nereid/redis.conf /redis.conf
 CMD ["redis-server", "/redis.conf"]
 
 
-FROM python:3.11.12-alpine3.21 AS flower
+FROM python:3.13.8-alpine3.22 AS flower
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
-RUN pip install --no-cache-dir redis==4.6.0 flower==1.0.0 celery==5.3.4
+RUN pip install --no-cache-dir redis==5.2.1 flower==2.0.1 celery==5.5.3
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random PYTHONDONTWRITEBYTECODE=1
 ENV FLOWER_DATA_DIR=/data
 ENV PYTHONPATH=${FLOWER_DATA_DIR}
@@ -42,7 +42,7 @@ EXPOSE 5555
 CMD ["celery", "flower"]
 
 
-FROM python:3.11.12-bullseye AS core-env
+FROM python:3.13.8-trixie AS core-env
 RUN apt-get update && apt-get install -y build-essential curl
 ADD https://astral.sh/uv/0.6.14/install.sh /install.sh
 RUN sh /install.sh && rm /install.sh
@@ -67,7 +67,7 @@ RUN  uv pip install --no-cache \
     -r /requirements_dev.txt
 
 
-FROM python:3.11.12-slim-bullseye AS core-runtime
+FROM python:3.13.8-slim-trixie AS core-runtime
 WORKDIR /nereid
 ENV PYTHONPATH=/nereid
 ENV PATH=/opt/venv/bin:$PATH
@@ -105,7 +105,7 @@ COPY --chmod=755 nereid/scripts /
 CMD ["bash", "-c", "while true; do sleep 1; done"]
 
 
-FROM python:3.12-bullseye AS nereid-edge
+FROM python:3.14-trixie AS nereid-edge
 ADD https://astral.sh/uv/0.6.14/install.sh /install.sh
 RUN sh /install.sh && rm /install.sh
 ENV PATH=/opt/venv/bin:/root/.local/bin/:$PATH
