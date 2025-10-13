@@ -4,11 +4,11 @@ from nereid.src.network import tasks
 from nereid.src.network.utils import graph_factory
 
 try:
+    import fast_sugiyama
     import matplotlib
-    import pydot
 except ImportError:  # pragma: no cover
     matplotlib = None
-    pydot = None
+    fast_sugiyama = None
 
 
 @pytest.mark.parametrize(
@@ -82,7 +82,9 @@ def test_network_subgraph_result(subgraph_result):
 
 
 @pytest.mark.skipif(matplotlib is None, reason="optional matplotlib is not installed")
-@pytest.mark.skipif(pydot is None, reason="optional pydot is not installed")
+@pytest.mark.skipif(
+    fast_sugiyama is None, reason="optional fast_sugiyama is not installed"
+)
 def test_render_subgraph_svg(subgraph_result):
     result = tasks.render_subgraph_svg(subgraph_result).decode()
     assert "svg" in result
@@ -102,7 +104,9 @@ def test_solution_sequence_result(solution_sequence_result):
 
 
 @pytest.mark.skipif(matplotlib is None, reason="optional matplotlib is not installed")
-@pytest.mark.skipif(pydot is None, reason="optional pydot is not installed")
+@pytest.mark.skipif(
+    fast_sugiyama is None, reason="optional fast_sugiyama is not installed"
+)
 def test_render_solution_sequence_svg(solution_sequence_result):
     result = tasks.render_solution_sequence_svg(solution_sequence_result).decode()
     assert "svg" in result

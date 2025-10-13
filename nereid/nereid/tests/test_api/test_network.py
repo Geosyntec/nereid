@@ -163,22 +163,34 @@ def test_get_render_subgraph_svg_fast(
         assert svg_response.status_code == 200
 
 
-def test_get_render_subgraph_svg_slow(client):
-    route = "api/v1/network/subgraph"
-
-    slow_graph = clean_graph_dict(nx.gnr_graph(200, p=0.05, seed=42))
+@pytest.mark.parametrize("timeout", [0.000001, 5.0])
+def test_get_render_subgraph_svg_slow(client, timeout):
+    slow_graph = clean_graph_dict(nx.gn_graph(300, kernel=lambda x: 1, seed=42))
     nodes = [{"id": "3"}, {"id": "29"}, {"id": "18"}]
 
     payload = {"graph": slow_graph, "nodes": nodes}
 
+    # test async
+    route = "api/v1/network/subgraph"
     response = client.post(route, json=payload)
     result_route = response.json().get("result_route")
+    q = f"?timeout={timeout:0.9f}" if timeout else ""
     if result_route:
+        svg_response = client.get(result_route + "/img" + q)
+        if "html" not in svg_response.headers["content-type"]:  # pragma: no branch
+            srjson = response.json()
+            assert srjson["status"].lower() != "failure"
+            assert srjson["task_id"] is not None
+            svg_response = poll_testclient_url(client, result_route + "/img" + q)
+
+        assert "DOCTYPE svg PUBLIC" in svg_response.content.decode()
         svg_response = client.get(result_route + "/img")
         assert svg_response.status_code == 200
-        srjson = svg_response.json()
-        assert srjson["status"].lower() != "failure"
-        assert srjson["task_id"] is not None
+    else:
+        # test sync
+        route += "/img"
+        response = client.post(route, json=payload)
+        assert response.status_code == 200, response
 
 
 @pytest.mark.parametrize(
@@ -242,8 +254,14 @@ def test_get_solution_sequence(
 @pytest.mark.parametrize("min_branch_size", [6])
 @pytest.mark.parametrize("n_graphs", [1, 3])
 @pytest.mark.parametrize("min_max", [(3, 4), (10, 11), (20, 40)])
+@pytest.mark.parametrize("timeout", [0.000001, 5.0])
 def test_get_render_solution_sequence(
-    client, solution_sequence_response, min_branch_size, n_graphs, min_max
+    client,
+    solution_sequence_response,
+    min_branch_size,
+    n_graphs,
+    min_max,
+    timeout,
 ):
     key = min_branch_size, n_graphs, min_max
     post_response = solution_sequence_response[key]
@@ -253,14 +271,15 @@ def test_get_render_solution_sequence(
     result_route = prjson.get("result_route")
 
     if result_route:
-        response = client.get(result_route + "/img")
-        assert response.status_code == 200
+        q = f"?timeout={timeout:0.9f}" if timeout else ""
+        response = client.get(result_route + "/img" + q)
+        assert response.status_code == 200, response
 
         if "html" not in response.headers["content-type"]:  # pragma: no branch
             srjson = response.json()
-            assert srjson["status"].lower() != "failure"
+            assert srjson["status"].lower() != "failure", srjson
             assert srjson["task_id"] is not None
-            response = poll_testclient_url(client, result_route + "/img")
+            response = poll_testclient_url(client, result_route + "/img" + q)
 
         assert "DOCTYPE svg PUBLIC" in response.content.decode()
 

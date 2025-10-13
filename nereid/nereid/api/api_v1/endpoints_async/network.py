@@ -81,6 +81,7 @@ async def get_subgraph_network_as_img(
     task_id: str,
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
+    timeout: float | None = Query(None, le=10.0, gt=0.0),
 ) -> dict[str, Any] | Any:
     if media_type != "svg":
         detail = f"media_type not supported: '{media_type}'."
@@ -99,7 +100,7 @@ async def get_subgraph_network_as_img(
                 args=(result, npi), task_id=render_task_id
             )
             _ = await wait_a_sec_and_see_if_we_can_return_some_data(
-                render_task, timeout=10
+                render_task, timeout=timeout or 5.0
             )
 
         if render_task.successful():
@@ -155,6 +156,7 @@ async def get_network_solution_sequence_as_img(
     task_id: str,
     media_type: str = Query("svg"),
     npi: float = Query(4.0),
+    timeout: float | None = Query(None, le=10.0, gt=0.0),
 ) -> dict[str, Any] | Any:
     if media_type != "svg":
         detail = f"media_type not supported: '{media_type}'."
@@ -176,7 +178,7 @@ async def get_network_solution_sequence_as_img(
                 args=(result, npi), task_id=render_task_id
             )
             _ = await wait_a_sec_and_see_if_we_can_return_some_data(
-                render_task, timeout=10
+                render_task, timeout=timeout or 5.0
             )
 
         if render_task.successful():

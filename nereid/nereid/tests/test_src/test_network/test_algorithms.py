@@ -33,7 +33,7 @@ def test_network_algo_get_all_predecessors(g):
     for node in g.nodes():
         nix = tsort.index(node)
         preds = get_all_predecessors(g, node)
-        ancestors = set(nx.ancestors(g, node))
+        ancestors = nx.ancestors(g, node)
 
         # check equivalence with networkx
         assert preds == ancestors

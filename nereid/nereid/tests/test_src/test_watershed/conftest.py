@@ -8,7 +8,7 @@ from nereid.tests.utils import generate_random_land_surface_request
 
 @pytest.fixture
 def watershed_graph():
-    g = nx.gnr_graph(n=13, p=0.0, seed=0)
+    g = nx.gn_graph(n=13, kernel=lambda _: 1, seed=0)
     nx.relabel_nodes(g, lambda x: str(x), copy=False)  # type: ignore
 
     return g

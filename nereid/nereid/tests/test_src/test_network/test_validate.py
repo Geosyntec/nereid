@@ -46,7 +46,7 @@ def test_validate_network(edgelist, isvalid, result):
         (nx.gnc_graph(10, seed=42), False),
         # multiple out connections, cycles, duplicated edges
         (nx.random_k_out_graph(10, 2, 1, seed=42), False),
-        (nx.gn_graph(10, seed=42), True),
+        (nx.gn_graph(10, kernel=lambda _: 1, seed=42), True),
     ],
 )
 def test_isvalid(g, expected):
