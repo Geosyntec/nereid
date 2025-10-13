@@ -47,20 +47,19 @@ def create_app(
     static_path = nereid_path / "static"
     app.mount("/static", StaticFiles(directory=static_path), name="static")
 
-    if _settings.ASYNC_MODE == "replace":  # pragma: no cover
+    if _settings.ASYNC_MODE == "replace":
         from nereid.api import async_router
 
         app.include_router(async_router, tags=["async"])
-    else:
-        app.include_router(sync_router)
-        if _settings.ASYNC_MODE == "add":  # pragma: no cover
-            from nereid.api import async_router
+    elif _settings.ASYNC_MODE == "add":  # pragma: no branch
+        from nereid.api import async_router
 
-            app.include_router(
-                async_router,
-                prefix=_settings.ASYNC_ROUTE_PREFIX,
-                tags=["async"],
-            )
+        app.include_router(
+            async_router,
+            prefix=_settings.ASYNC_ROUTE_PREFIX,
+            tags=["async"],
+        )
+    app.include_router(sync_router)
 
     @app.get("/docs", include_in_schema=False)
     async def custom_swagger_ui_html(req: Request) -> HTMLResponse:
