@@ -39,7 +39,7 @@ flexcache==0.3
     # via pint
 flexparser==0.4
     # via pint
-fonttools==4.57.0
+fonttools==4.61.0
     # via matplotlib
 graphviz==0.20.3
     # via -r nereid/requirements/requirements_base_extras_unpinned.txt
