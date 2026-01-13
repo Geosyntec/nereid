@@ -207,7 +207,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-virtualenv==20.30.0
+virtualenv==20.36.1
     # via pre-commit
 watchfiles==1.0.5
     # via -r nereid/requirements/requirements_base_extras_unpinned.txt
