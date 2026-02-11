@@ -71,7 +71,7 @@ packaging==24.2
     # via matplotlib
 pandas==2.2.3
     # via -r nereid/requirements/requirements_base_unpinned.txt
-pillow==11.2.1
+pillow==12.1.1
     # via matplotlib
 pint==0.24.4
     # via -r nereid/requirements/requirements_base_unpinned.txt
